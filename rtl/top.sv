@@ -2,7 +2,7 @@
 `include "axi_bus.sv"
 
 `define AXI_ADDR_WIDTH    32
-`define AXI_DATA_WIDTH    32
+`define AXI_DATA_WIDTH    64
 `define AXI_ID_MASTER_WIDTH     1
 `define AXI_ID_SLAVE_WIDTH      2
 `define AXI_USER_WIDTH    0

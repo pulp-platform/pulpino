@@ -298,7 +298,7 @@ module core_region
   #(
     .NB_CORES       ( 1  ),
     .AXI_ADDR_WIDTH ( 32 ),
-    .AXI_DATA_WIDTH ( 32 ),
+    .AXI_DATA_WIDTH ( 64 ),
     .AXI_USER_WIDTH ( 0  ),
     .AXI_ID_WIDTH   ( 1  )
     ) adv_dbg_if_i (

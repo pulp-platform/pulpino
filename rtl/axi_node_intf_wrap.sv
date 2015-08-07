@@ -20,8 +20,8 @@ module axi_node_intf_wrap
     AXI_BUS master[NB_MASTER-1:0],
 
     // Memory map
-    input  logic [NB_MASTER-1:0][AXI_DATA_WIDTH-1:0]  start_addr_i,
-    input  logic [NB_MASTER-1:0][AXI_DATA_WIDTH-1:0]  end_addr_i
+    input  logic [NB_MASTER-1:0][AXI_ADDR_WIDTH-1:0]  start_addr_i,
+    input  logic [NB_MASTER-1:0][AXI_ADDR_WIDTH-1:0]  end_addr_i
   );
 
   localparam AXI_STRB_WIDTH = AXI_DATA_WIDTH/8;
@@ -257,7 +257,7 @@ module axi_node_intf_wrap
       .AXI_ADDRESS_W      ( AXI_ADDR_WIDTH    ),
       .AXI_DATA_W         ( AXI_DATA_WIDTH    ),
       .AXI_LITE_ADDRESS_W ( AXI_ADDR_WIDTH    ),
-      .AXI_LITE_DATA_W    ( AXI_DATA_WIDTH    ),
+      .AXI_LITE_DATA_W    ( 32                ),
       .N_INIT_PORT        ( NB_MASTER         ),
       .N_TARG_PORT        ( NB_SLAVE          ),
       .AXI_ID_IN          ( AXI_ID_WIDTH_TARG ),

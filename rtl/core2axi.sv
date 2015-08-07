@@ -147,9 +147,9 @@ module core2axi
   assign master.w_last  = 'h1;
   assign master.w_user  = 'h0;
   assign master.w_strb  = data_be_i;
-  assign master.w_data  = data_wdata_i;
+  assign master.w_data  = {data_wdata_i, data_wdata_i};
 
-  assign data_rdata_o   = master.r_data;
+  assign data_rdata_o   = (data_addr_i[2] == 1'b1) ? master.r_data[63:32] : master.r_data[31:0];
 
   assign data_rvalid_o  = gnt_q;
 
