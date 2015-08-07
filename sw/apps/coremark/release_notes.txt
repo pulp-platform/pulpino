@@ -1,0 +1,59 @@
+File: Release Notes
+	Version: 1.01
+	
+History:
+	Version 1.01
+	- Added validation testing the sizes of datatypes.
+	
+	Version 1.00
+	- First public version.
+
+Validation:
+	This release was tested on the following platforms
+	o x86 cygwin and gcc 3.4 (Quad, dual and single core systems)
+	o x86 linux (Ubuntu/Fedora) and gcc (4.2/4.1) (Quad and single core systems)
+	o MIPS64 BE linux and gcc 3.4 16 cores system
+	o MIPS32 BE linux with CodeSourcery compiler 4.2-177 on Malta/Linux with a 1004K 3-core system
+	o PPC simulator with gcc 4.2.2 (No OS)
+	o PPC 64b BE linux (yellowdog) with gcc 3.4 and 4.1 (Dual core system)
+	o BF533 with VDSP50 
+	o Renesas R8C/H8 MCU with HEW 4.05
+	o NXP LPC1700 armcc v4.0.0.524
+	o NEC 78K with IAR v4.61
+	o ARM simulator with armcc v4
+
+	Coverage:
+	GCOV results can be found on SVN under cover.
+	
+	Memory analysis:
+	Valgrind 3.4.0 used and no errors reported.
+	
+	Balance analysis:
+	Number of instructions executed for each function tested with cachegrind and found balanced with gcc and -O0.
+
+Statistics:
+
+Lines:
+(start table)
+Lines  Blank  Cmnts  Source     AESL     
+=====  =====  =====  =====  ==========  =======================================
+  469     66    170    251       627.5  core_list_join.c  (C)
+  330     18     54    268       670.0  core_main.c  (C)
+  256     32     80    146       365.0  core_matrix.c  (C)
+  240     16     51    186       465.0  core_state.c  (C)
+  165     11     20    134       335.0  core_util.c  (C)
+  150     23     36     98       245.0  coremark.h  (C)
+ 1610    166    411   1083      2707.5  ----- Benchmark -----  (6 files)
+  293     15     74    212       530.0  linux/core_portme.c  (C)
+  235     30    104    104       260.0  linux/core_portme.h  (C)
+  528     45    178    316       790.0  ----- Porting -----  (2 files)
+
+ 
+* For comparison, here are the stats for Dhrystone
+Lines  Blank  Cmnts  Source     AESL     
+=====  =====  =====  =====  ==========  =======================================
+  311     15    242     54       135.0  dhry.h  (C)
+  789    132    119    553      1382.5  dhry_1.c  (C)
+  186     26     68    107       267.5  dhry_2.c  (C)
+ 1286    173    429    714      1785.0  ----- C -----  (3 files)
+(end table)
