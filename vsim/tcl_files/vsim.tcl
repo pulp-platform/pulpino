@@ -3,6 +3,7 @@
 set cmd "vsim -quiet $TB \
   -L or10n_lib \
   -L scm_lib \
+  -L adv_dbg_if_lib \
   -L axi_node_lib \
   -L axi2apb_lib \
   -L apb_uart_lib \

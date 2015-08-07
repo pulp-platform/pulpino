@@ -10,6 +10,7 @@ echo "${Red}"
 
 vlog -quiet -sv +incdir+../tb ../tb/uart.sv                  || exit 1
 vlog -quiet -sv +incdir+../tb ../tb/tb.sv                    || exit 1
+vlog -quiet -sv +incdir+../tb ../tb/dbg_comm_vpi.sv          || exit 1
 
 
 

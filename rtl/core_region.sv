@@ -11,8 +11,16 @@ module core_region
     input logic rst_n,
 
     AXI_BUS.Master core_master,
+    AXI_BUS.Master dbg_master,
     AXI_BUS.Slave  data_slave,
-    AXI_BUS.Slave  instr_slave
+    AXI_BUS.Slave  instr_slave,
+
+    // JTAG signals
+    input  logic tck_i,
+    input  logic trstn_i,
+    input  logic tms_i,
+    input  logic tdi_i,
+    output logic tdo_o
   );
 
   logic         core_instr_en;
@@ -58,6 +66,14 @@ module core_region
   logic         core_axi_rvalid;
   logic [31:0]  core_axi_rdata;
 
+  logic [0:0]             dbginf_stall;
+  logic [0:0]             dbginf_bp;
+  logic [0:0]             dbginf_strobe;
+  logic [0:0]             dbginf_ack;
+  logic [0:0]             dbginf_we;
+  logic [0:0] [15:0]      dbginf_addr;
+  logic [0:0] [31:0]      dbginf_datai;
+  logic [0:0] [31:0]      dbginf_datao;
 
 
   or10n_core or10n_core
@@ -88,14 +104,14 @@ module core_region
     .irq_i           ( 1'b0             ),
     .irq_nm_i        ( 1'b0             ),
 
-    .dbginf_stall_i  ( 1'b0             ),
-    .dbginf_bp_o     (                  ),
-    .dbginf_strobe_i ( 1'b0             ),
-    .dbginf_ack_o    (                  ),
-    .dbginf_we_i     ( 1'b0             ),
-    .dbginf_addr_i   ( 16'h0            ),
-    .dbginf_data_i   ( 32'h0            ),
-    .dbginf_data_o   (                  ),
+    .dbginf_stall_i  ( dbginf_stall[0]  ),
+    .dbginf_bp_o     ( dbginf_bp[0]     ),
+    .dbginf_strobe_i ( dbginf_strobe[0] ),
+    .dbginf_ack_o    ( dbginf_ack[0]    ),
+    .dbginf_we_i     ( dbginf_we[0]     ),
+    .dbginf_addr_i   ( dbginf_addr[0]   ),
+    .dbginf_data_i   ( dbginf_datao[0]  ),
+    .dbginf_data_o   ( dbginf_datai[0]  ),
 
     .fetch_enable_i  ( 1'b1             ),
     .core_busy_o     (                  )
@@ -278,5 +294,84 @@ module core_region
     .slave       ( data_slave           )
   );
 
+  adv_dbg_if
+  #(
+    .NB_CORES       ( 1  ),
+    .AXI_ADDR_WIDTH ( 32 ),
+    .AXI_DATA_WIDTH ( 32 ),
+    .AXI_USER_WIDTH ( 0  ),
+    .AXI_ID_WIDTH   ( 1  )
+    ) adv_dbg_if_i (
 
-endmodule
+      .tms_pad_i   ( tms_i        ),
+      .tck_pad_i   ( tck_i        ),
+      .trstn_pad_i ( trstn_i      ),
+      .tdi_pad_i   ( tdi_i        ),
+      .tdo_pad_o   ( tdo_o        ),
+
+      .test_mode_i ( 1'b0         ),
+
+      .cpu_addr_o  ( dbginf_addr     ),
+      .cpu_data_i  ( dbginf_datai    ),
+      .cpu_data_o  ( dbginf_datao    ),
+      .cpu_bp_i    ( dbginf_bp       ),
+      .cpu_stall_o ( dbginf_stall    ),
+      .cpu_stb_o   ( dbginf_strobe   ),
+      .cpu_we_o    ( dbginf_we       ),
+      .cpu_ack_i   ( dbginf_ack      ),
+      .cpu_rst_o   ( dbginf_rst      ),
+
+      .axi_aclk             ( clk                  ),
+      .axi_aresetn          ( rst_n                ),
+
+      .axi_master_aw_valid  ( dbg_master.aw_valid  ),
+      .axi_master_aw_addr   ( dbg_master.aw_addr   ),
+      .axi_master_aw_prot   ( dbg_master.aw_prot   ),
+      .axi_master_aw_region ( dbg_master.aw_region ),
+      .axi_master_aw_len    ( dbg_master.aw_len    ),
+      .axi_master_aw_size   ( dbg_master.aw_size   ),
+      .axi_master_aw_burst  ( dbg_master.aw_burst  ),
+      .axi_master_aw_lock   ( dbg_master.aw_lock   ),
+      .axi_master_aw_cache  ( dbg_master.aw_cache  ),
+      .axi_master_aw_qos    ( dbg_master.aw_qos    ),
+      .axi_master_aw_id     ( dbg_master.aw_id     ),
+      .axi_master_aw_user   ( dbg_master.aw_user   ),
+      .axi_master_aw_ready  ( dbg_master.aw_ready  ),
+
+      .axi_master_ar_valid  ( dbg_master.ar_valid  ),
+      .axi_master_ar_addr   ( dbg_master.ar_addr   ),
+      .axi_master_ar_prot   ( dbg_master.ar_prot   ),
+      .axi_master_ar_region ( dbg_master.ar_region ),
+      .axi_master_ar_len    ( dbg_master.ar_len    ),
+      .axi_master_ar_size   ( dbg_master.ar_size   ),
+      .axi_master_ar_burst  ( dbg_master.ar_burst  ),
+      .axi_master_ar_lock   ( dbg_master.ar_lock   ),
+      .axi_master_ar_cache  ( dbg_master.ar_cache  ),
+      .axi_master_ar_qos    ( dbg_master.ar_qos    ),
+      .axi_master_ar_id     ( dbg_master.ar_id     ),
+      .axi_master_ar_user   ( dbg_master.ar_user   ),
+      .axi_master_ar_ready  ( dbg_master.ar_ready  ),
+
+      .axi_master_w_valid   ( dbg_master.w_valid   ),
+      .axi_master_w_data    ( dbg_master.w_data    ),
+      .axi_master_w_strb    ( dbg_master.w_strb    ),
+      .axi_master_w_user    ( dbg_master.w_user    ),
+      .axi_master_w_last    ( dbg_master.w_last    ),
+      .axi_master_w_ready   ( dbg_master.w_ready   ),
+
+      .axi_master_r_valid   ( dbg_master.r_valid   ),
+      .axi_master_r_data    ( dbg_master.r_data    ),
+      .axi_master_r_resp    ( dbg_master.r_resp    ),
+      .axi_master_r_last    ( dbg_master.r_last    ),
+      .axi_master_r_id      ( dbg_master.r_id      ),
+      .axi_master_r_user    ( dbg_master.r_user    ),
+      .axi_master_r_ready   ( dbg_master.r_ready   ),
+
+      .axi_master_b_valid   ( dbg_master.b_valid   ),
+      .axi_master_b_resp    ( dbg_master.b_resp    ),
+      .axi_master_b_id      ( dbg_master.b_id      ),
+      .axi_master_b_user    ( dbg_master.b_user    ),
+      .axi_master_b_ready   ( dbg_master.b_ready   )
+      );
+
+    endmodule

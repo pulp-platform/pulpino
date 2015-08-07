@@ -2,6 +2,7 @@
 `define CLK_SEMIPERIOD   10.0ns  // 50 MHz
 
 module tb;
+  parameter  ENABLE_VPI    = 0;
   parameter  BAUDRATE = 3125000;
 
   logic s_clk;
@@ -11,6 +12,35 @@ module tb;
   logic uart_rx;
 
   logic gpio_out;
+
+  logic tck;
+  logic trstn;
+  logic tms;
+  logic tdi;
+  logic tdo;
+
+
+  generate if(ENABLE_VPI == 1)
+  begin
+    // JTAG VERIFICATION IP
+    dbg_comm_vpi
+    #(
+      .TIMEOUT_COUNT ( 6'h2 )
+      )
+    i_jtag
+    (
+      .clk_i    ( s_clk           ),
+      .enable_i ( s_rst_n         ),
+
+      .tms_o    ( tms    ),
+      .tck_o    ( tck    ),
+      .trst_o   ( trstn  ),
+      .tdi_o    ( tdi    ),
+      .tdo_i    ( tdo    )
+     );
+  end
+  endgenerate
+
 
   uart_tb_rx
   #(
@@ -40,7 +70,13 @@ module tb;
     .gpio_in     ( ),
     .gpio_out    ( gpio_out ),
     .gpio_dir    ( ),
-    .gpio_padcfg ( )
+    .gpio_padcfg ( ),
+
+    .tck_i   ( tck   ),
+    .trstn_i ( trstn ),
+    .tms_i   ( tms   ),
+    .tdi_i   ( tdi   ),
+    .tdo_o   ( tdo   )
   );
 
   initial

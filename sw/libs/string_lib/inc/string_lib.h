@@ -17,7 +17,7 @@ int qstrlen (const char *str);
 int  qstrcmp (const char *s1, const char *s2);
 void qstrcpy (const char *s1, const char *s2);
 void qputs(char *s);
-int  qprintf(const char *format, int arg1,int arg2,int arg3,int arg4);
+int qprintf(const char *format, ...);
 void qputchar(char s);
 void _stdout_init(int local_id);
 

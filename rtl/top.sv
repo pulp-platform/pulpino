@@ -23,7 +23,14 @@ module top
     input  logic       [31:0] gpio_in,
     output logic       [31:0] gpio_out,
     output logic       [31:0] gpio_dir,
-    output logic [31:0] [5:0] gpio_padcfg
+    output logic [31:0] [5:0] gpio_padcfg,
+
+    // JTAG signals
+    input  logic tck_i,
+    input  logic trstn_i,
+    input  logic tms_i,
+    input  logic tdi_i,
+    output logic tdo_o
   );
 
   AXI_BUS
@@ -49,12 +56,19 @@ module top
 
   core_region core_region_i
   (
-    .clk         ( clk         ),
-    .rst_n       ( rst_n       ),
+    .clk         ( clk        ),
+    .rst_n       ( rst_n      ),
 
     .core_master ( masters[0] ),
+    .dbg_master  ( masters[1] ),
     .data_slave  ( slaves[0]  ),
-    .instr_slave ( slaves[1]  )
+    .instr_slave ( slaves[1]  ),
+
+    .tck_i       ( tck_i      ),
+    .trstn_i     ( trstn_i    ),
+    .tms_i       ( tms_i      ),
+    .tdi_i       ( tdi_i      ),
+    .tdo_o       ( tdo_o      )
   );
 
 
