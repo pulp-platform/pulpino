@@ -1,0 +1,18 @@
+[submodule "ips/adv_dbg_if"]
+	path = ips/adv_dbg_if
+	url = git@kesch.ee.ethz.ch:pulp-project/adv_dbg_if.git
+[submodule "ips/apb"]
+	path = ips/apb
+	url = git@kesch.ee.ethz.ch:pulp-project/apb.git
+[submodule "ips/axi"]
+	path = ips/axi
+	url = git@kesch.ee.ethz.ch:pulp-project/axi.git
+[submodule "ips/common_cells"]
+	path = ips/common_cells
+	url = git@kesch.ee.ethz.ch:pulp-project/common_cells.git
+[submodule "ips/or10n"]
+	path = ips/or10n
+	url = git@kesch.ee.ethz.ch:pulp-project/or10n.git
+[submodule "ips/scm"]
+	path = ips/scm
+	url = git@kesch.ee.ethz.ch:pulp-project/scm.git
