@@ -1,0 +1,23 @@
+#!/bin/bash
+
+OBJDUMP=`which llvm-objdump`
+OBJCOPY=`which or1kle-elf-objcopy`
+
+COMPILER=`which or1kle-elf-clang`
+TARGET_C_FLAGS="-O2 -std=gnu99 -mcpu=pulp3"
+
+VSIM=`which vsim-10.4a`
+
+PULP_GIT_DIRECTORY=~/git/minisoc/
+SIM_DIRECTORY="$PULP_GIT_DIRECTORY/vsim"
+
+cmake-3.3.0 "$PULP_GIT_DIRECTORY"/sw/ \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DPULP_MODELSIM_DIRECTORY="$SIM_DIRECTORY" \
+    -DCMAKE_C_COMPILER="$COMPILER" \
+    -DVSIM="$VSIM" \
+    -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
+    -DCMAKE_OBJCOPY="$OBJCOPY" \
+    -DCMAKE_OBJDUMP="$OBJDUMP" \
+    -G "Ninja"
+
