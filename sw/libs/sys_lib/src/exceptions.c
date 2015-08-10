@@ -7,7 +7,6 @@
 __attribute__((interrupt)) __attribute__((weak))
 void default_exception_handler_c(unsigned exception_address,unsigned epc)
 {
-  __asm__("l.nop 1");
   for(;;);
 }
 
@@ -15,6 +14,5 @@ void default_exception_handler_c(unsigned exception_address,unsigned epc)
 __attribute__((interrupt)) __attribute__((weak))
 void illegal_insn_handler_c(void)
 {
-  __asm__("l.nop 2");
   for(;;);
 }

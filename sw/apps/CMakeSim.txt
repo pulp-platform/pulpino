@@ -1,0 +1,133 @@
+macro(add_sim_targets NAME)
+  # generate s19 file
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19
+    COMMAND ${CMAKE_OBJCOPY} --srec-len 1 --output-target=srec $<TARGET_FILE:${NAME}.elf> ${NAME}.s19
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.elf)
+  add_custom_target(${NAME}.s19.cmd ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
+
+  # generate stripped binary as in good old common.mk
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.bin
+    COMMAND ${CMAKE_OBJCOPY} -R .debug_frame -R .comment -R .stack -R .heapsram -R .heapscm -R .scmlock -O binary $<TARGET_FILE:${NAME}.elf> ${NAME}.bin
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.elf)
+  add_custom_target(${NAME}.bin.cmd ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.bin)
+
+  ##############################################################################
+  # link do_files, tcl_files, work and modelsim.ini from real modelsim
+  # directory
+  ##############################################################################
+
+  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/work         ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work)
+
+  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/modelsim.ini
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/modelsim.ini ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/modelsim.ini)
+
+  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/tcl_files    ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files)
+
+  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/do_files
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/do_files     ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/do_files)
+
+  add_custom_target(${NAME}.links ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/modelsim.ini
+                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files
+                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work
+                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/do_files)
+
+
+  ##############################################################################
+  # Stimuli generation
+  ##############################################################################
+
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/slm_files/)
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/slm_files/l2_ram.slm
+    COMMAND ${UTILS_DIR}/s19toslm.py ../${NAME}.s19
+    COMMAND ${CMAKE_COMMAND} -E touch l2_ram.slm
+    WORKING_DIRECTORY ./${SUBDIR}/slm_files/
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
+  add_custom_target(${NAME}.slm.cmd ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/slm_files/l2_ram.slm)
+
+
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/vectors/)
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/vectors/stim.txt
+    COMMAND ${UTILS_DIR}/parse_s19.pl ./${NAME}.s19 > ./vectors/stim.txt
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
+  add_custom_target(${NAME}.stim.txt ALL
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/vectors/stim.txt)
+
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/stdout/)
+  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/FS/)
+
+  ##############################################################################
+  # Run simulation
+  ##############################################################################
+
+  # run in modelsim with GUI
+  add_custom_target(${NAME}_vsim
+    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
+    COMMAND ${CMAKE_COMMAND} -E remove FS/*
+    COMMAND ${VSIM} -64 -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>\\;'
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
+    COMMENT "Running ${NAME} in ModelSim"
+    ${USES_TERMINAL})
+
+  # run in modelsim with GUI
+  add_custom_target(${NAME}_vsim_boot
+    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
+    COMMAND ${CMAKE_COMMAND} -E remove FS/*
+    COMMAND ${VSIM} -64 -do 'source tcl_files/run_boot.tcl \\;'
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.slm.cmd boot_code.boot.cmd ${NAME}.links
+    COMMENT "Running ${NAME} in ModelSim")
+
+  # run in modelsim in batch mode, output is only generated after simulation terminates
+  add_custom_target(${NAME}_vsim_batch
+    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
+    COMMAND ${CMAKE_COMMAND} -E remove FS/*
+    COMMAND ${VSIM} -64 -c -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>\\; run -a\\; exit\\;' > vsim.log
+    COMMAND tail -n +1 -- ./stdout/*
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
+    COMMENT "Running ${NAME} in ModelSim")
+
+  # execute on Bologna's FPGA emulation platform
+  if("${ARG_FPGA_FREQ}" STREQUAL "")
+    set(ARG_FPGA_FREQ ${FPGA_FREQ})
+  endif()
+  if("${ARG_FPGA_TIMEOUT}" STREQUAL "")
+    set(ARG_FPGA_TIMEOUT ${FPGA_TIMEOUT})
+  endif()
+
+  add_custom_target(${NAME}_emu_push
+    COMMAND scp ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.bin pulpemu@137.204.213.148:${NAME}.bin
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.bin)
+
+  add_custom_target(${NAME}_emu_run
+    COMMAND ssh pulpemu@137.204.213.148 'sudo wwolf -n --timeout=${ARG_FPGA_TIMEOUT} --freq=${ARG_FPGA_FREQ} ${NAME}.bin'
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}_emu_push)
+
+  # testing targets
+  add_test(NAME ${NAME}_test
+    COMMAND ${UTILS_DIR}/run-and-check.py ${VSIM} $<TARGET_PROPERTY:${NAME}.elf,TB>
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
+
+  add_test(NAME ${NAME}_emu_test
+    COMMAND ${UTILS_DIR}/run-and-check-fpga.sh ${NAME}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
+
+
+  ##############################################################################
+  # Convenience
+  ##############################################################################
+
+  add_custom_target(${NAME}
+    DEPENDS ${NAME}.stim.txt
+    DEPENDS ${NAME}.slm.cmd
+    DEPENDS ${NAME}.bin)
+endmacro()

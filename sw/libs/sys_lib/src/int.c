@@ -35,17 +35,6 @@ int int_add(unsigned long irq, void (* handler)(void *), void *arg)
   return 0;
 }
 
-/* Enable interrupts */ 
-void int_enable(void)
-{
-  mtspr(SPR_SR, mfspr(SPR_SR) | (SPR_SR_IEE));
-}
-
-void int_disable(void)
-{
-  mtspr(SPR_SR, mfspr(SPR_SR) & (~SPR_SR_IEE));
-}
-
 /* Main interrupt handler */
 __attribute__((interrupt))
 void int_main()
@@ -68,6 +57,5 @@ void int_main()
 __attribute__((interrupt)) __attribute__((weak))
 void irq_emergency_handler_c(void)
 {
-  __asm__("l.nop 1");
   for(;;);
 }

@@ -17,6 +17,7 @@ echo ""
 echo "${Green}--> Compiling PULP Platform... ${NC}"
 
 source ${IPS_PATH}/scripts/vcompile_or10n.sh          || exit 1
+source ${IPS_PATH}/scripts/vcompile_riscv.sh          || exit 1
 source ${IPS_PATH}/scripts/vcompile_scm.sh            || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_node.sh       || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi2apb.sh        || exit 1

@@ -92,8 +92,10 @@ void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, u
 __attribute__((interrupt)) __attribute__((weak))
 void illegal_insn_handler_c(void)
 {
+#ifndef __riscv__
   unsigned int exception_address = mfspr(SPR_EPCR_BASE);
   unsigned int insn = *((unsigned int*)(exception_address));
   qprintf("Illegal instruction encountered at address 0x%08X: %X\n", exception_address, insn, 0, 0);
+#endif
   eoc(0);
 }

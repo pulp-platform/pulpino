@@ -1,6 +1,8 @@
 
 set(UTILS_DIR ${CMAKE_SOURCE_DIR}/utils)
 
+include(CMakeSim.txt)
+
 # main application macro
 # Optional arguments:
 #  - UART                (use UART instead of fake stdout)
@@ -24,129 +26,38 @@ macro(add_application NAME SOURCE_FILES)
     ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
   )
 
-  add_executable(${NAME} $<TARGET_OBJECTS:crt0> ${SOURCE_FILES})
+  add_executable(${NAME}.elf $<TARGET_OBJECTS:crt0> ${SOURCE_FILES})
 
   # set subdirectory for add_executable
   if(NOT "${SUBDIR}" STREQUAL "")
-    set_target_properties(${NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${SUBDIR})
+    set_target_properties(${NAME}.elf PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${SUBDIR})
   endif()
 
   # set optional compile flags per application
   if(NOT "${ARG_FLAGS}" STREQUAL "")
-    set_target_properties(${NAME} PROPERTIES COMPILE_FLAGS ${ARG_FLAGS})
+    set_target_properties(${NAME}.elf PROPERTIES COMPILE_FLAGS ${ARG_FLAGS})
   endif()
 
   # link libraries
-  target_link_libraries(${NAME} bench stdio string_uart sys_chip)
+  target_link_libraries(${NAME}.elf bench stdio string_uart sys_chip)
 
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
-    set_target_properties(${NAME} PROPERTIES TB ${ARG_TB})
+    set_target_properties(${NAME}.elf PROPERTIES TB ${ARG_TB})
   else()
-    set_target_properties(${NAME} PROPERTIES TB run.tcl)
+    set_target_properties(${NAME}.elf PROPERTIES TB run.tcl)
   endif()
-
-
-  # generate s19 file
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19
-    COMMAND ${CMAKE_OBJCOPY} --srec-len 1 --output-target=srec $<TARGET_FILE:${NAME}> ${NAME}.s19
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME})
-  add_custom_target(${NAME}.s19.cmd ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
 
   add_custom_target(${NAME}.read)
   add_custom_command(TARGET ${NAME}.read
     POST_BUILD
-    COMMAND ${CMAKE_OBJDUMP} -arch=or1kle -mattr=mac3,mul16,lv32,crtl -mcpu=pulp3 -symbolize -print-imm-hex -show-hr-enc -disassemble -section-headers -r -s $<TARGET_FILE:${NAME}> > ${NAME}.read
+    COMMAND ${CMAKE_OBJDUMP} ${CMAKE_OBJDUMP_FLAGS} $<TARGET_FILE:${NAME}.elf> > ${NAME}.read
     WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME})
+    DEPENDS ${NAME}.elf)
 
-  # generate stripped binary as in good old common.mk
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.bin
-    COMMAND ${CMAKE_OBJCOPY} -R .debug_frame -R .comment -R .stack -R .heapsram -R .heapscm -O binary $<TARGET_FILE:${NAME}> ${NAME}.bin
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME})
-  add_custom_target(${NAME}.bin.cmd ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.bin)
-
-  ##############################################################################
-  # link do_files, tcl_files, work and modelsim.ini from real modelsim
-  # directory
-  ##############################################################################
-
-  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/work         ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work)
-
-  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/boot         ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot)
-
-  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/modelsim.ini
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/modelsim.ini ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/modelsim.ini)
-
-  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/tcl_files    ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files)
-
-  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/do_files
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/do_files     ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/do_files)
-
-  add_custom_target(${NAME}.links ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/modelsim.ini
-                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files
-                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot
-                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work
-                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/do_files)
-
-  ##############################################################################
-  # Generate stimuli
-  ##############################################################################
-
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/slm_files/)
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/slm_files/l2_ram.slm
-    COMMAND ${UTILS_DIR}/s19toslm.py ../${NAME}.s19
-    COMMAND ${CMAKE_COMMAND} -E touch l2_ram.slm
-    WORKING_DIRECTORY ./${SUBDIR}/slm_files/
-    DEPENDS ${NAME}.links ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
-  add_custom_target(${NAME}.slm.cmd ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/slm_files/l2_ram.slm)
-
-
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/vectors/)
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/vectors/stim.txt
-    COMMAND ${UTILS_DIR}/parse_s19.pl ./${NAME}.s19 > ./vectors/stim.txt
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
-  add_custom_target(${NAME}.stim.txt ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/vectors/stim.txt)
-
-
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/stdout/)
-  file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/FS/)
-
-  # run in modelsim with GUI
-  add_custom_target(${NAME}_vsim
-    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
-    COMMAND ${CMAKE_COMMAND} -E remove FS/*
-    COMMAND ${VSIM} -64 -do 'source tcl_files/$<TARGET_PROPERTY:${NAME},TB>\\;'
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt
-    COMMENT "Running ${NAME} in ModelSim"
-    USES_TERMINAL)
-
-  # run in modelsim in batch mode, output is only generated after simulation terminates
-  add_custom_target(${NAME}_vsim_batch
-    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
-    COMMAND ${CMAKE_COMMAND} -E remove FS/*
-    COMMAND ${VSIM} -64 -c -do 'source tcl_files/$<TARGET_PROPERTY:${NAME},TB>\\; run -a\\; exit\\;' > vsim.log
-    COMMAND tail -n +1 -- ./stdout/*
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt
-    COMMENT "Running ${NAME} in ModelSim"
-    USES_TERMINAL)
-
-  # testing targets
-  add_test(NAME ${NAME}_test
-    COMMAND ${UTILS_DIR}/run-and-check.sh ${VSIM} $<TARGET_PROPERTY:${NAME},TB>
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
-
+  # add everything needed for simulation
+  add_sim_targets(${NAME})
 
   # if there are labels available for testing
   if(ARG_LABELS)

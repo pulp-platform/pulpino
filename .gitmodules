@@ -16,3 +16,6 @@
 [submodule "ips/scm"]
 	path = ips/scm
 	url = git@kesch.ee.ethz.ch:pulp-project/scm.git
+[submodule "ips/riscv"]
+	path = ips/riscv
+	url = git@kesch.ee.ethz.ch:pulp-project/riscv.git

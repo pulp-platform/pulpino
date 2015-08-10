@@ -40,10 +40,6 @@ It has changed the way to trigger GP events... now you should:
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 void wait_event(void) {
-    int value;
-    *(volatile int*) (CORE_CLKGATE) = 0x1;
-    // Flush the pipeline
-    asm volatile ("l.psync"); 
 }
 
 
@@ -188,7 +184,6 @@ inline void wait_barrier_event_buff(unsigned int barrier_id) {
     *(volatile int*) (WAIT_BARRIER) =  barrier_id;
     *(volatile int*) (CORE_CLKGATE) =  0x1;
     // Flush the pipeline
-    asm volatile ("l.psync\n");
     *(volatile int*) (EV_BUFF_CLEAR) = 0x1;
 }
 

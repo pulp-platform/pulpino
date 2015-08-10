@@ -2,6 +2,12 @@ cmake_minimum_required (VERSION 3.1)
 
 include(CMakeParseArguments)
 
+if (${CMAKE_VERSION} VERSION_GREATER 3.1.0)
+  set(USES_TERMINAL "USES_TERMINAL")
+else()
+  set(USES_TERMINAL "")
+endif()
+
 # Force object file extension to be .o
 set(UNIX TRUE CACHE STRING "" FORCE)
 
@@ -15,8 +21,37 @@ project (pulp_software C)
 
 enable_testing()
 
+if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
+  set(RISCV 1)
+  message("NOTE: Detected RISCV compiler, using RISCV setup")
+
+  if(${RVC})
+    message("NOTE: Using compressed instructions")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -mtune=pulp3 -mrvc -march=RV32IC -Wa,-march=RV32IMC")
+  else()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -mtune=pulp3 -march=RV32I -Wa,-march=RV32IM")
+  endif()
+
+  set(CMAKE_OBJDUMP_FLAGS -d)
+
+  set(LDSCRIPT "link.riscv.ld")
+elseif(CMAKE_C_COMPILER MATCHES "or1k(.*)")
+  set(RISCV 0)
+  message("NOTE: Detected or1k compiler, using OR1K setup")
+
+  # Clang supports a new ABI that takes care of the variadic function problem if
+  # the function is implicitely defined
+  if(CMAKE_C_COMPILER_ID MATCHES "(C|c?)lang")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mabi=new")
+  endif()
+
+  set(CMAKE_OBJDUMP_FLAGS -arch=or1kle -mattr=mac3,mul16,lv32,crtl -mcpu=pulp3 -symbolize -print-imm-hex -show-hr-enc -section-headers -disassemble -r -s)
+
+  set(LDSCRIPT "link.or1k.ld")
+endif()
+
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -fdata-sections -ffunction-sections -fdiagnostics-color=always")
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T${CMAKE_CURRENT_SOURCE_DIR}/ref/link.ld -nostartfiles -Wl,--gc-sections")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT} -nostartfiles -Wl,--gc-sections")
 
 set(PULP_MODELSIM_DIRECTORY "" CACHE PATH "Path to the ModelSim Pulp build")
 set(VSIM "vsim" CACHE FILEPATH "Path to the vsim executable")
@@ -24,11 +59,18 @@ set(VSIM "vsim" CACHE FILEPATH "Path to the vsim executable")
 add_custom_target(vcompile
   COMMAND tcsh ./scripts/vcompile_all.sh
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
-  USES_TERMINAL)
+  ${USES_TERMINAL})
+
+if(${RISCV})
+  set(crt0      "ref/crt0.riscv.S")
+else()
+  set(crt0      "ref/crt0.S")
+endif()
+
 
 include_directories(libs/sys_lib/inc)
-set_source_files_properties(ref/crt0.S PROPERTIES LANGUAGE C)
-add_library(crt0 OBJECT ref/crt0.S)
+set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
+add_library(crt0 OBJECT ${crt0})
 
 
 add_subdirectory(libs/stdio_lib)

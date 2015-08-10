@@ -56,6 +56,8 @@ module peripherals
   logic        [APB_NUM_SLAVES-1:0]    s_pslverr;
 
 
+  logic [1:0]   s_spim_event;
+
   axi2apb_wrap
   #(
       .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH ),

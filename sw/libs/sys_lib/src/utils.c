@@ -2,18 +2,11 @@
 #include "utils.h"
 #include "pulp.h"
 
-// write to special purpose register
-void 
-mtspr(unsigned long spr, unsigned long value)
-{
-  asm("l.mtspr\t\t%0,%1,0": : "r" (spr), "r" (value));
-}
-
 // get core id
 int
 get_core_id()
 {
-  return mfspr(SPR_CORE_ID);
+  return 0;
 }
 
 // get number of cores
@@ -27,25 +20,13 @@ get_core_num()
 int
 get_cluster_id()
 {
-  return mfspr(SPR_CLUSTER_ID);
+  return 0;
 }
-
-// read from special purpose register
-unsigned long 
-mfspr(unsigned long spr)
-{
-  unsigned long value;
-  asm("l.mfspr\t\t%0,%1,0" : "=r" (value) : "r" (spr));
-  return value;
-}
-
 
 // exit loop
 void 
 exit (int i)
 {
-  asm("l.add r3,r0,%0": : "r" (i));
-  asm("l.nop %0": :"K" (NOP_EXIT));
   while (1);
 }
 

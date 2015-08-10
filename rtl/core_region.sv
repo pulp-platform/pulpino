@@ -1,5 +1,6 @@
 
 `include "axi_bus.sv"
+`include "config.sv"
 
 `define INSTR_ADDR_WIDTH  12
 `define DATA_ADDR_WIDTH   11
@@ -75,47 +76,89 @@ module core_region
   logic [0:0] [31:0]      dbginf_datai;
   logic [0:0] [31:0]      dbginf_datao;
 
+  `ifdef RISCV
+    riscv_core
+    RISCV_CORE
+    (
+      .clk             (  clk             ),
+      .rst_n           (  rst_n           ),
 
-  or10n_core or10n_core
-  (
-    // Clock and Reset
-    .clk             ( clk              ),
-    .rst_n           ( rst_n            ),
+      .boot_addr_i     ( 32'h1C00_0000    ),
+      .core_id_i       ( 5'h0             ),
+      .cluster_id_i    ( 5'h0             ),
 
-    .boot_addr_i     ( 32'h1C00_0000    ),
-    .core_id_i       ( 5'h0             ),
-    .cluster_id_i    ( 5'h0             ),
+      .instr_addr_o    ( core_instr_addr  ),
+      .instr_req_o     ( core_instr_req   ),
+      .instr_rdata_i   ( core_instr_rdata ),
+      .instr_grant_i   ( 1'b1             ),
+      .instr_rvalid_i  ( 1'b1             ),
 
-    .instr_addr_o    ( core_instr_addr  ),
-    .instr_req_o     ( core_instr_req   ),
-    .instr_rdata_i   ( core_instr_rdata ),
-    .instr_grant_i   ( 1'b1             ),
-    .instr_rvalid_i  ( 1'b1             ),
+      .data_addr_o     ( core_addr        ),
+      .data_wdata_o    ( core_wdata       ),
+      .data_we_o       ( core_we          ),
+      .data_req_o      ( core_req         ),
+      .data_be_o       ( core_be          ),
+      .data_rdata_i    ( core_rdata       ),
+      .data_gnt_i      ( core_gnt         ),
+      .data_r_valid_i  ( core_rvalid      ),
 
-    .data_addr_o     ( core_addr        ),
-    .data_wdata_o    ( core_wdata       ),
-    .data_we_o       ( core_we          ),
-    .data_req_o      ( core_req         ),
-    .data_be_o       ( core_be          ),
-    .data_rdata_i    ( core_rdata       ),
-    .data_gnt_i      ( core_gnt         ),
-    .data_r_valid_i  ( core_rvalid      ),
+      .irq_i           ( 1'b0             ),
+      .irq_nm_i        ( 1'b0             ),
 
-    .irq_i           ( 1'b0             ),
-    .irq_nm_i        ( 1'b0             ),
+      .dbginf_stall_i  ( dbginf_stall[0]  ),
+      .dbginf_bp_o     ( dbginf_bp[0]     ),
+      .dbginf_strobe_i ( dbginf_strobe[0] ),
+      .dbginf_ack_o    ( dbginf_ack[0]    ),
+      .dbginf_we_i     ( dbginf_we[0]     ),
+      .dbginf_addr_i   ( dbginf_addr[0]   ),
+      .dbginf_data_i   ( dbginf_datao[0]  ),
+      .dbginf_data_o   ( dbginf_datai[0]  ),
 
-    .dbginf_stall_i  ( dbginf_stall[0]  ),
-    .dbginf_bp_o     ( dbginf_bp[0]     ),
-    .dbginf_strobe_i ( dbginf_strobe[0] ),
-    .dbginf_ack_o    ( dbginf_ack[0]    ),
-    .dbginf_we_i     ( dbginf_we[0]     ),
-    .dbginf_addr_i   ( dbginf_addr[0]   ),
-    .dbginf_data_i   ( dbginf_datao[0]  ),
-    .dbginf_data_o   ( dbginf_datai[0]  ),
+      .fetch_enable_i  ( 1'b1             ),
+      .core_busy_o     (                  )
+    );
+  `else
+    or10n_core or10n_core
+    (
+      // Clock and Reset
+      .clk             ( clk              ),
+      .rst_n           ( rst_n            ),
 
-    .fetch_enable_i  ( 1'b1             ),
-    .core_busy_o     (                  )
-  );
+      .boot_addr_i     ( 32'h1C00_0000    ),
+      .core_id_i       ( 5'h0             ),
+      .cluster_id_i    ( 5'h0             ),
+
+      .instr_addr_o    ( core_instr_addr  ),
+      .instr_req_o     ( core_instr_req   ),
+      .instr_rdata_i   ( core_instr_rdata ),
+      .instr_grant_i   ( 1'b1             ),
+      .instr_rvalid_i  ( 1'b1             ),
+
+      .data_addr_o     ( core_addr        ),
+      .data_wdata_o    ( core_wdata       ),
+      .data_we_o       ( core_we          ),
+      .data_req_o      ( core_req         ),
+      .data_be_o       ( core_be          ),
+      .data_rdata_i    ( core_rdata       ),
+      .data_gnt_i      ( core_gnt         ),
+      .data_r_valid_i  ( core_rvalid      ),
+
+      .irq_i           ( 1'b0             ),
+      .irq_nm_i        ( 1'b0             ),
+
+      .dbginf_stall_i  ( dbginf_stall[0]  ),
+      .dbginf_bp_o     ( dbginf_bp[0]     ),
+      .dbginf_strobe_i ( dbginf_strobe[0] ),
+      .dbginf_ack_o    ( dbginf_ack[0]    ),
+      .dbginf_we_i     ( dbginf_we[0]     ),
+      .dbginf_addr_i   ( dbginf_addr[0]   ),
+      .dbginf_data_i   ( dbginf_datao[0]  ),
+      .dbginf_data_o   ( dbginf_datai[0]  ),
+
+      .fetch_enable_i  ( 1'b1             ),
+      .core_busy_o     (                  )
+    );
+  `endif
 
   core2axi
   #(

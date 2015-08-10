@@ -1,7 +1,8 @@
 # yes I know this looks ugly, but for some reason vsim deso not recognize the VSIM_FLAGS as correct arguments :-/
 # e.g. it did not recognize the -pli ./something.so argument
+#  -L or10n_lib
 set cmd "vsim -quiet $TB \
-  -L or10n_lib \
+  -L riscv_lib \
   -L scm_lib \
   -L adv_dbg_if_lib \
   -L axi_node_lib \

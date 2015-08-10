@@ -4,24 +4,20 @@
 #include "utils.h"
 
 volatile unsigned int setme = 1;
+volatile unsigned int setme2 = 1;
 
 int main() {
+
+#ifdef __riscv__
+  asm volatile ("EBREAK");
+  asm volatile ("EBREAK");
+#endif
 
   while(setme);
 
   qprintf("Hello!\n");
-  qprintf("Hello!\n", 0);
-  qprintf("Hello!\n", 0, 0);
-  qprintf("Hello!\n", 0, 0, 0);
-  qprintf("Hello!\n", 0, 0, 0, 0);
 
-  qprintf("char %c!\n", 'H');
-  qprintf("string %s!\n", "STR");
-  qprintf("HEX %X!\n", 0xABCD0123);
-  qprintf("hex %x!\n", 0xabcd0123);
-  qprintf("Dec %d!\n", 1337);
-  qprintf("Neg %d!\n", -1337);
-  qprintf("Un %u!\n", 1337);
+  while(setme2);
 
   return 0;
 }
