@@ -73,6 +73,7 @@ module axi2mem
     mem_addr_o     = {addr_q[31:3], 3'b000};
     mem_wdata_o    = data_q[31:0];
     mem_we_o       = 1'b0;
+    mem_be_o       = strobe_q[3:0];
 
     case (CS)
       IDLE:
@@ -145,7 +146,7 @@ module axi2mem
       begin
         mem_we_o   = 1'b1;
         mem_req_o  = 1'b1;
-        mem_be_o   = strobe_q;
+        mem_be_o   = strobe_q[3:0];
         mem_addr_o = {addr_q[31:3], 3'b000};
         mem_wdata_o = data_q[31:0];
 
@@ -156,7 +157,7 @@ module axi2mem
       begin
         mem_we_o   = 1'b1;
         mem_req_o  = 1'b1;
-        mem_be_o   = strobe_q;
+        mem_be_o   = strobe_q[7:4];
         mem_addr_o = {addr_q[31:3], 3'b100};
         mem_wdata_o = data_q[63:32];
 
@@ -177,5 +178,6 @@ module axi2mem
   end
 
   assign slave.r_data = data_q;
+  assign slave.r_last = 1'b1;
 
 endmodule

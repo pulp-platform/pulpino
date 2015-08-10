@@ -23,7 +23,5 @@ int main() {
   qprintf("Neg %d!\n", -1337);
   qprintf("Un %u!\n", 1337);
 
-  synch_barrier();
-  eoc(0);
   return 0;
 }

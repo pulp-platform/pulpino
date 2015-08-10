@@ -11,7 +11,7 @@ module tb;
   logic uart_tx;
   logic uart_rx;
 
-  logic gpio_out;
+  logic [31:0] gpio_out;
 
   logic tck;
   logic trstn;
