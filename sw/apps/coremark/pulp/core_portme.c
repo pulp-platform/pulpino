@@ -7,7 +7,8 @@
 */ 
 //#include <stdio.h>
 //#include <stdlib.h>
-#include <utils.h>
+#include "utils.h"
+#include "string_lib.h"
 #include "bar.h"
 #include "timer.h"
 #include "coremark.h"

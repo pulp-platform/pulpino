@@ -2,6 +2,25 @@
 #include "utils.h"
 #include "pulp.h"
 
+#ifndef __riscv__
+// write to special purpose register
+void
+mtspr(unsigned long spr, unsigned long value)
+{
+  asm("l.mtspr\t\t%0,%1,0": : "r" (spr), "r" (value));
+}
+
+// read from special purpose register
+unsigned long 
+mfspr(unsigned long spr)
+{
+  unsigned long value;
+  asm("l.mfspr\t\t%0,%1,0" : "=r" (value) : "r" (spr));
+  return value;
+}
+
+#endif
+
 // get core id
 int
 get_core_id()
@@ -24,7 +43,7 @@ get_cluster_id()
 }
 
 // exit loop
-void 
+void
 exit (int i)
 {
   while (1);
