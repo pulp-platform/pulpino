@@ -13,7 +13,5 @@ int main()
 
   qprintf("Hello World!!!!!\n", 0, 0, 0, 0);
 
-  eoc(0);
-
   return 0;
 }
