@@ -11,6 +11,7 @@ module axi2mem
     input logic rst_n,
 
     output logic                        mem_req_o,
+    input  logic                        mem_gnt_i,
     output logic [AXI_ADDR_WIDTH-1:0]   mem_addr_o,
     output logic                        mem_we_o,
     output logic [3:0]                  mem_be_o,
@@ -26,28 +27,6 @@ module axi2mem
   logic   [AXI_ID_WIDTH-1:0]     awid, awid_q;
   logic   [AXI_DATA_WIDTH-1:0]   data_q, data;
   logic   [AXI_DATA_WIDTH/8-1:0] strobe_q, strobe;
-
-  always_ff @(posedge clk, negedge rst_n)
-  begin
-    if (rst_n == 1'b0)
-    begin
-      CS     <= IDLE;
-      addr_q <= 'h0;
-      arid_q <= 'h0;
-      awid_q <= 'h0;
-      data_q <= 'h0;
-      strobe_q <= 'h0;
-    end
-    else
-    begin
-      CS     <= NS;
-      addr_q <= addr;
-      arid_q <= arid;
-      awid_q <= awid;
-      data_q <= data;
-      strobe_q <= strobe;
-    end
-  end
 
   always_comb
   begin
@@ -80,13 +59,22 @@ module axi2mem
       begin
         if (slave.ar_valid)
         begin
-          NS   = READ_L;
           addr = slave.ar_addr;
           arid = slave.ar_id;
 
+          // direct request to RAM, lower half first
+          mem_addr_o = {addr[31:3], 3'b000};
+          mem_req_o  = 1'b1;
+
+          // if we get a grant immediately, just read the upper half
+          if(mem_gnt_i)
+            NS  = READ_H;
+          else
+            NS = READ_L;
+
           slave.ar_ready = 1'b1;
         end
-        else if(slave.aw_valid)
+        else if (slave.aw_valid)
         begin
           NS  = WRITE_DATA;
           addr = slave.aw_addr;
@@ -101,7 +89,8 @@ module axi2mem
         mem_req_o  = 1'b1;
         mem_addr_o = {addr_q[31:3], 3'b000};
 
-        NS = READ_H;
+        if (mem_gnt_i)
+          NS = READ_H;
       end
 
       READ_H:
@@ -110,9 +99,11 @@ module axi2mem
         mem_addr_o = {addr_q[31:3], 3'b100};
         data[31:0] = mem_rdata_i;
 
-        NS = READ_WAIT;
+        if (mem_gnt_i)
+          NS = READ_WAIT;
       end
 
+      // TODO: here we can still eliminate one cycle
       READ_WAIT:
       begin
         data[63:32] = mem_rdata_i;
@@ -138,7 +129,16 @@ module axi2mem
 
         if (slave.w_valid)
         begin
-          NS = WRITE_L;
+          mem_we_o   = 1'b1;
+          mem_req_o  = 1'b1;
+          mem_be_o   = strobe_q[3:0];
+          mem_addr_o = {addr_q[31:3], 3'b000};
+          mem_wdata_o = data_q[31:0];
+
+          if(mem_gnt_i)
+            NS = WRITE_H;
+          else
+            NS = WRITE_L;
         end
       end
 
@@ -150,7 +150,8 @@ module axi2mem
         mem_addr_o = {addr_q[31:3], 3'b000};
         mem_wdata_o = data_q[31:0];
 
-        NS = WRITE_H;
+        if (mem_gnt_i)
+          NS = WRITE_H;
       end
 
       WRITE_H:
@@ -161,7 +162,8 @@ module axi2mem
         mem_addr_o = {addr_q[31:3], 3'b100};
         mem_wdata_o = data_q[63:32];
 
-        NS = WRITE_DONE;
+        if (mem_gnt_i)
+          NS = WRITE_DONE;
       end
 
       WRITE_DONE:
@@ -170,11 +172,35 @@ module axi2mem
         slave.b_resp  = `OKAY;
         slave.b_valid = 1'b1;
 
+        // TODO: here we can also eliminate one cycle
         if(slave.b_ready)
           NS = IDLE;
       end
 
     endcase
+  end
+
+  // registers
+  always_ff @(posedge clk, negedge rst_n)
+  begin
+    if (rst_n == 1'b0)
+    begin
+      CS       <= IDLE;
+      addr_q   <= 'h0;
+      arid_q   <= 'h0;
+      awid_q   <= 'h0;
+      data_q   <= 'h0;
+      strobe_q <= 'h0;
+    end
+    else
+    begin
+      CS       <= NS;
+      addr_q   <= addr;
+      arid_q   <= arid;
+      awid_q   <= awid;
+      data_q   <= data;
+      strobe_q <= strobe;
+    end
   end
 
   assign slave.r_data = data_q;

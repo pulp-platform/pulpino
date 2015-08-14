@@ -90,8 +90,8 @@ module tb;
     s_rst_n <= 1'b0;
 
     // preload memories
-    $readmemh("slm_files/l2_stim.slm",    top_i.core_region_i.instr_mem.mem);
-    $readmemh("slm_files/tcdm_bank0.slm", top_i.core_region_i.data_mem.mem);
+    $readmemh("slm_files/l2_stim.slm",    top_i.core_region_i.unified_mem.mem);
+    //$readmemh("slm_files/tcdm_bank0.slm", top_i.core_region_i.data_mem.mem);
 
     #10000;
 

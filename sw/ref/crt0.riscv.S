@@ -72,7 +72,7 @@ reset_handler:
   mv x31, x0
 
   /* stack initilization */
-  li   x2, 0x10002000 // stack base addr
+  li   x2, 0x00008000 // stack base addr
 
 
 _start:
@@ -81,6 +81,8 @@ _start:
   /* clear BSS */
   la x26, _bss_start
   la x27, _bss_end
+
+  bge x26, x27, zero_loop_end
 
 zero_loop:
   sw x0, 0(x26)

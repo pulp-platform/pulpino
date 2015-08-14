@@ -40,7 +40,7 @@ module top
     .AXI_ID_WIDTH     ( `AXI_ID_SLAVE_WIDTH   ),
     .AXI_USER_WIDTH   ( `AXI_USER_WIDTH )
   )
-  slaves[2:0]();
+  slaves[1:0]();
 
   AXI_BUS
   #(
@@ -62,7 +62,6 @@ module top
     .core_master ( masters[0] ),
     .dbg_master  ( masters[1] ),
     .data_slave  ( slaves[0]  ),
-    .instr_slave ( slaves[1]  ),
 
     .tck_i       ( tck_i      ),
     .trstn_i     ( trstn_i    ),
@@ -84,7 +83,7 @@ module top
     .clk         ( clk       ),
     .rst_n       ( rst_n     ),
 
-    .slave       ( slaves[2] ),
+    .slave       ( slaves[1] ),
 
     .uart_tx         ( uart_tx  ),
     .uart_rx         ( uart_rx  ),
@@ -118,7 +117,7 @@ module top
 
   axi_node_intf_wrap
   #(
-    .NB_MASTER      ( 3                    ),
+    .NB_MASTER      ( 2                    ),
     .NB_SLAVE       ( 2                    ),
     .AXI_ADDR_WIDTH ( `AXI_ADDR_WIDTH      ),
     .AXI_DATA_WIDTH ( `AXI_DATA_WIDTH      ),
@@ -133,8 +132,8 @@ module top
     .master  ( slaves  ),
     .slave   ( masters ),
 
-    .start_addr_i ( { 32'h1A10_0000, 32'h1C00_0000, 32'h1000_0000 } ),
-    .end_addr_i   ( { 32'h1A12_0000, 32'h1C00_FFFF, 32'h1000_FFFF } )
+    .start_addr_i ( { 32'h1A10_0000, 32'h0000_0000 } ),
+    .end_addr_i   ( { 32'h1A12_0000, 32'h0000_7FFF } )
   );
 
 endmodule
