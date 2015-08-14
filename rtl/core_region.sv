@@ -25,6 +25,7 @@ module core_region
   // signals from/to core
   logic         core_instr_en;
   logic         core_instr_req;
+  logic         core_instr_gnt;
   logic         core_instr_rvalid;
   logic [31:0]  core_instr_addr;
   logic [31:0]  core_instr_rdata;
@@ -58,6 +59,11 @@ module core_region
   logic [31:0]  axi_mem_rdata;
   logic [31:0]  axi_mem_wdata;
 
+
+  // signals to/from instr mem
+  logic         instr_mem_en;
+  logic [`RAM_ADDR_WIDTH+1:0]  instr_mem_addr;
+  logic [31:0]  instr_mem_rdata;
 
   // signals to/from data mem
   logic         data_mem_en;
@@ -105,7 +111,7 @@ module core_region
       .instr_addr_o    ( core_instr_addr   ),
       .instr_req_o     ( core_instr_req    ),
       .instr_rdata_i   ( core_instr_rdata  ),
-      .instr_grant_i   ( core_instr_req    ),
+      .instr_grant_i   ( core_instr_gnt    ),
       .instr_rvalid_i  ( core_instr_rvalid ),
 
       .data_addr_o     ( core_lsu_addr     ),
@@ -146,7 +152,7 @@ module core_region
       .instr_addr_o    ( core_instr_addr   ),
       .instr_req_o     ( core_instr_req    ),
       .instr_rdata_i   ( core_instr_rdata  ),
-      .instr_grant_i   ( core_instr_req    ),
+      .instr_grant_i   ( core_instr_gnt    ),
       .instr_rvalid_i  ( core_instr_rvalid ),
 
       .data_addr_o     ( core_lsu_addr     ),
@@ -174,6 +180,11 @@ module core_region
       .core_busy_o     (                   )
     );
   `endif
+
+  // directly connect core and instr memory
+  assign instr_mem_addr   = core_instr_addr;
+  assign core_instr_gnt   = core_instr_req;
+  assign core_instr_rdata = instr_mem_rdata;
 
   // generate rvalid signals from gnt signals
   always_ff @(posedge clk, negedge rst_n)
@@ -282,8 +293,7 @@ module core_region
   //----------------------------------------------------------------------------//
   // Unified Instruction and Data RAM
   //----------------------------------------------------------------------------//
-
-  assign core_instr_en = (core_instr_addr[31:24] == 8'h00) & core_instr_req;
+  assign instr_mem_en = (core_instr_addr[31:24] == 8'h00) & core_instr_req;
 
   dp_ram
   #(
@@ -293,10 +303,10 @@ module core_region
   (
     .clk       ( clk                                  ),
 
-    .en_a_i    ( core_instr_en                        ),
-    .addr_a_i  ( core_instr_addr[`RAM_ADDR_WIDTH+1:2] ),
+    .en_a_i    ( instr_mem_en                         ),
+    .addr_a_i  ( instr_mem_addr[`RAM_ADDR_WIDTH+1:2]  ),
     .wdata_a_i ( 32'h0                                ),
-    .rdata_a_o ( core_instr_rdata                     ),
+    .rdata_a_o ( instr_mem_rdata                      ),
     .we_a_i    ( 1'b0                                 ),
     .be_a_i    ( 4'h0                                 ),
 
