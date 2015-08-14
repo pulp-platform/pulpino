@@ -5,8 +5,8 @@ module tb;
   parameter  ENABLE_VPI    = 0;
   parameter  BAUDRATE = 3125000;
 
-  logic s_clk;
-  logic s_rst_n;
+  logic s_clk   = 1'b0;
+  logic s_rst_n = 1'b0;
 
   logic uart_tx;
   logic uart_rx;
@@ -81,6 +81,7 @@ module tb;
 
   initial
   begin
+    #(`CLK_SEMIPERIOD);
     s_clk = 1'b1;
     forever s_clk = #(`CLK_SEMIPERIOD) ~s_clk;
   end
