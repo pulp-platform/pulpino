@@ -76,6 +76,8 @@ SECTIONS
         _bss_start = .;
         *(.bss)
         *(.bss.*)
+        *(.sbss)
+        *(.sbss.*)
         *(COMMON)
         _bss_end = .;
     } > ram
