@@ -133,7 +133,7 @@ module top
     .slave   ( masters ),
 
     .start_addr_i ( { 32'h1A10_0000, 32'h0000_0000 } ),
-    .end_addr_i   ( { 32'h1A12_0000, 32'h0000_7FFF } )
+    .end_addr_i   ( { 32'h1A11_FFFF, 32'h0000_7FFF } )
   );
 
 endmodule

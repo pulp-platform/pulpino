@@ -3,7 +3,7 @@
 exec vsim -64 -do "$0"
 
 set TB            tb
-set VSIM_FLAGS    "-gENABLE_VPI=1 -pli ./work/jtag_vpi.so"
+set VSIM_FLAGS    "-gENABLE_VPI=1"
 
 source ./tcl_files/vsim.tcl
 

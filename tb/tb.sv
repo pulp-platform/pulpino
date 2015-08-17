@@ -25,7 +25,7 @@ module tb;
     // JTAG VERIFICATION IP
     dbg_comm_vpi
     #(
-      .TIMEOUT_COUNT ( 6'h2 )
+      .TIMEOUT_COUNT ( 6'd10 )
       )
     i_jtag
     (

@@ -11,11 +11,12 @@
 ////       Igor Mohor (igorm@opencores.org)                       ////
 ////       Gyorgy Jeney (nog@sdf.lonestar.net)                    ////
 ////       Nathan Yawn (nathan.yawn@opencores.org)                ////
+////       Andreas Traber (atraber@iis.ee.ethz.ch)                ////
 ////                                                              ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
-//// Copyright (C) 2000-2008 Authors                              ////
+//// Copyright (C) 2000-2015 Authors                              ////
 ////                                                              ////
 //// This source file may be used and distributed without         ////
 //// restriction provided that this copyright statement is not    ////
@@ -39,42 +40,10 @@
 //// from http://www.opencores.org/lgpl.shtml                     ////
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
-//
-// CVS Revision History
-//
-// $Log: dbg_comm_vpi.v,v $
-// Revision 1.2  2009-05-17 20:55:57  Nathan
-// Changed email address to opencores.org
-//
-// Revision 1.1  2008/07/26 17:33:20  Nathan
-// Added debug comm module for use with VPI / network communication.
-//
-// Revision 1.1  2002/03/28 19:59:54  lampret
-// Added bench directory
-//
-// Revision 1.1.1.1  2001/11/04 18:51:07  lampret
-// First import.
-//
-// Revision 1.3  2001/09/24 14:06:13  mohor
-// Changes connected to the OpenRISC access (SPR read, SPR write).
-//
-// Revision 1.2  2001/09/20 10:10:30  mohor
-// Working version. Few bugs fixed, comments added.
-//
-// Revision 1.1.1.1  2001/09/13 13:49:19  mohor
-// Initial official release.
-//
-//
-//
-//
-//
-
-
-`define TIMEOUT_COUNT 6'h08  // 1/2 of a TCK clock will be this many clk_i ticks.  Must be less than 6 bits.
 
 module dbg_comm_vpi
 #(
-  parameter TCP_PORT      = "4567",
+  parameter TCP_PORT      = 4567,
   parameter TIMEOUT_COUNT = 6'h08 // 1/2 of a TCK clock will be this many clk_i ticks.  Must be less than 6 bits.
 )
 (
@@ -88,65 +57,60 @@ module dbg_comm_vpi
   input     tdo_i
   );
 
-  //parameter Tp = 20;
+  import "DPI-C" function void jtag_init(input int port);
+  import "DPI-C" context function int  jtag_recv(inout logic tck_o, inout logic trst_o, inout logic tdi_o, inout logic tms_o);
+  import "DPI-C" function void jtag_timeout();
 
-  logic [4:0] memory;  // [0:0];
-
-  logic [3:0] in_word_r;
-  logic [5:0] clk_count;
+  export "DPI-C" function rtl_get_tdo;
 
 
-  initial
-  begin
-    clk_count <= TIMEOUT_COUNT + 1;  // Start with the timeout clock stopped
-  end
+  logic [5:0] clk_count = TIMEOUT_COUNT + 1;
+
+  logic tck;
+  logic trstn;
+  logic tdi;
+  logic tms;
+
+
+
+
+  function logic rtl_get_tdo();
+    return tdo_i;
+  endfunction
 
   // Handle commands from the upper level
   initial
   begin
-    in_word_r = 'h0;
-    memory    = 'h0;
-    $jp_init(TCP_PORT);
+    jtag_init(TCP_PORT);
 
     // wait for enable before doing anything
     @(posedge enable_i);
 
     while(1)
     begin
-      #1000; // 1ns
-      $jp_in(memory);  // This will not change memory[][] if no command has been sent from jp
-      if(memory[4])  // was memory[0][4]
+      @(posedge clk_i)
+      if(jtag_recv(tck, trstn, tdi, tms))
       begin
-        in_word_r = memory[3:0];
-        memory[4] = 1'b0;
-        clk_count = 6'b000000;  // Reset the timeout clock in case jp wants to wait for a timeout / half TCK period
+        clk_count = 'h0;  // Reset the timeout clock in case jp wants to wait for a timeout / half TCK period
       end
     end
   end
 
-
-  // Send the output bit to the upper layer
-  always @(tdo_i)
-  begin
-    $jp_out(tdo_i);
-  end
-
-
-  assign tck_o  = in_word_r[0];
-  assign trst_o = in_word_r[1];
-  assign tdi_o  = in_word_r[2];
-  assign tms_o  = in_word_r[3];
-
-
   // Send timeouts / wait periods to the upper layer
   always @(posedge clk_i)
   begin
-    if(clk_count < `TIMEOUT_COUNT) clk_count[5:0] = clk_count[5:0] + 1;
-    else if(clk_count == `TIMEOUT_COUNT) begin
-      $jp_wait_time();
-      clk_count[5:0] = clk_count[5:0] + 1;
+    if(clk_count < TIMEOUT_COUNT)
+      clk_count = clk_count + 1;
+    else if(clk_count == TIMEOUT_COUNT)
+    begin
+      jtag_timeout();
+      clk_count = clk_count + 1;
     end
     // else it's already timed out, don't do anything
   end
 
+  assign tck_o  = tck;
+  assign trst_o = trstn;
+  assign tdi_o  = tdi;
+  assign tms_o  = tms;
 endmodule
