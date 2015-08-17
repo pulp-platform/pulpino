@@ -3,6 +3,38 @@ set IPS ../../ips
 set FPGA_IPS ../ips
 set FPGA_RTL ../rtl
 
+# apb_spio_master
+set SRC_APB_SPIM "
+   $IPS/apb/apb_spi_master/apb_spi_master.sv \
+   $IPS/apb/apb_spi_master/spi_master_apb_if.sv \
+   $IPS/apb/apb_spi_master/spi_master_clkgen.sv \
+   $IPS/apb/apb_spi_master/spi_master_controller.sv \
+   $IPS/apb/apb_spi_master/spi_master_fifo.sv \
+   $IPS/apb/apb_spi_master/spi_master_rx.sv \
+   $IPS/apb/apb_spi_master/spi_master_tx.sv \
+"
+
+# apb_gpio
+set SRC_APB_GPIO "
+   $IPS/apb/apb_gpio/apb_gpio.sv
+"
+
+# apb_uart
+set SRC_APB_UART "
+   $IPS/apb/apb_uart/apb_uart.vhd \
+   $IPS/apb/apb_uart/slib_clock_div.vhd \
+   $IPS/apb/apb_uart/slib_counter.vhd \
+   $IPS/apb/apb_uart/slib_edge_detect.vhd \
+   $IPS/apb/apb_uart/slib_fifo.vhd \
+   $IPS/apb/apb_uart/slib_input_filter.vhd \
+   $IPS/apb/apb_uart/slib_input_sync.vhd \
+   $IPS/apb/apb_uart/slib_mv_filter.vhd \
+   $IPS/apb/apb_uart/uart_baudgen.vhd \
+   $IPS/apb/apb_uart/uart_interrupt.vhd \
+   $IPS/apb/apb_uart/uart_receiver.vhd \
+   $IPS/apb/apb_uart/uart_transmitter.vhd \
+"
+
 # axi_slice
 set SRC_AXI_SLICE "
    $IPS/axi/axi_slice/axi_ar_buffer.sv \
@@ -14,17 +46,25 @@ set SRC_AXI_SLICE "
    $IPS/axi/axi_slice/axi_w_buffer.sv \
 "
 
+# axi2apb
+set SRC_AXI2APB "
+   $IPS/axi/axi2apb/axi2apb_cmd.sv \
+   $IPS/axi/axi2apb/axi2apb_ctrl.sv \
+   $IPS/axi/axi2apb/axi2apb_mux.sv \
+   $IPS/axi/axi2apb/axi2apb_rd.sv \
+   $IPS/axi/axi2apb/axi2apb.sv \
+   $IPS/axi/axi2apb/AXI_2_APB.sv \
+   $IPS/axi/axi2apb/axi2apb_wr.sv \
+   $IPS/axi/axi2apb/prgen_fifo.sv \
+"
+
 set SRC_ADV_DEBUG_IF "
    $IPS/adv_dbg_if/rtl/adbg_axi_biu.sv \
-   $IPS/adv_dbg_if/rtl/adbg_axi_defines.v \
    $IPS/adv_dbg_if/rtl/adbg_axi_module.sv \
    $IPS/adv_dbg_if/rtl/adbg_crc32.v \
-   $IPS/adv_dbg_if/rtl/adbg_defines.v \
    $IPS/adv_dbg_if/rtl/adbg_or1k_biu.sv \
-   $IPS/adv_dbg_if/rtl/adbg_or1k_defines.v \
    $IPS/adv_dbg_if/rtl/adbg_or1k_module.sv \
    $IPS/adv_dbg_if/rtl/adbg_or1k_status_reg.sv \
-   $IPS/adv_dbg_if/rtl/adbg_tap_defines.v \
    $IPS/adv_dbg_if/rtl/adbg_tap_top.v \
    $IPS/adv_dbg_if/rtl/adbg_top.sv \
    $IPS/adv_dbg_if/rtl/adv_dbg_if.sv \
@@ -61,7 +101,6 @@ set SRC_AXI_NODE "
    $IPS/axi/axi_node/axi_response_block.sv \
    $IPS/axi/axi_node/axi_RR_Flag_Req.sv \
    $IPS/axi/axi_node/axi_w_buffer.sv \
-   $IPS/axi/axi_node/defines.v \
    $IPS/axi/axi_node/GENERIC_FIFO.sv \
 "
 
@@ -73,9 +112,6 @@ set SRC_TIMER_UNIT " \
 # generic register file
 set SRC_REGFILE " \
    $FPGA_RTL/register_file_3r_2w.sv \
-   $FPGA_RTL/register_file_1r_1w.sv \
-   $FPGA_RTL/register_file_1r_1w_all.sv \
-   $FPGA_RTL/register_file_2r_1w_asymm.sv \
 "
 
 # or10n
@@ -129,6 +165,7 @@ set SRC_PULPINO " \
    $RTL/core2axi.sv \
    $RTL/core_region.sv \
    $RTL/dp_ram.sv \
+   $RTL/dp_ram_wrap.sv \
    $RTL/peripherals.sv \
    $RTL/ram_mux.sv \
    $RTL/timer_unit.sv \

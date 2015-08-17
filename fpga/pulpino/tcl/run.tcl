@@ -12,11 +12,20 @@ source ../common/messages.tcl
 
 source tcl/src_files.tcl
 
+# add apb_spim
+add_files -norecurse -scan_for_includes $SRC_APB_SPIM
+
+# add apb_gpio
+add_files -norecurse -scan_for_includes $SRC_APB_GPIO
+
+# add apb_uart
+add_files -norecurse -scan_for_includes $SRC_APB_UART
+
+# add axi2apb
+add_files -norecurse -scan_for_includes $SRC_AXI2APB
+
 # add axi_slice
 add_files -norecurse -scan_for_includes $SRC_AXI_SLICE
-
-# add axi_slice_dc
-add_files -norecurse -scan_for_includes $SRC_AXI_SLICE_DC
 
 # add axi_node
 add_files -norecurse -scan_for_includes $SRC_AXI_NODE
@@ -31,12 +40,8 @@ add_files -norecurse -scan_for_includes $SRC_OR10N
 add_files -norecurse -scan_for_includes $SRC_ADV_DEBUG_IF
 
 # add memory cuts
-add_files -norecurse $FPGA_IPS/xilinx_ic_ram_128x32/ip/xilinx_ic_ram_128x32.dcp
-add_files -norecurse $FPGA_IPS/xilinx_tcdm_bank_2048x32/ip/xilinx_tcdm_bank_2048x32.dcp
-add_files -norecurse $FPGA_IPS/xilinx_tcdm_bank_1024x32/ip/xilinx_tcdm_bank_1024x32.dcp
-add_files -norecurse $FPGA_IPS/xilinx_tcdm_bank_512x32/ip/xilinx_tcdm_bank_512x32.dcp
-add_files -norecurse $FPGA_IPS/xilinx_tcdm_bank_256x32/ip/xilinx_tcdm_bank_256x32.dcp
-add_files -norecurse $FPGA_IPS/xilinx_tcdm_bank_128x32/ip/xilinx_tcdm_bank_128x32.dcp
+add_files -norecurse $FPGA_IPS/xilinx_mem_32768x32_dp/ip/xilinx_mem_32768x32_dp.dcp
+#add_files -norecurse $FPGA_IPS/xilinx_tcdm_bank_2048x32/ip/xilinx_tcdm_bank_2048x32.dcp
 
 # add ILA debug cores
 # add_files -norecurse $FPGA_IPS/xilinx_core_ila/ip/xilinx_core_ila.dcp
@@ -72,7 +77,7 @@ catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1}
 update_compile_order -fileset sources_1
 synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1
 
-create_clock -period 4.000 -name clk_i -waveform {0.000 2.000} [get_nets {clk_i}]
+create_clock -period 4.000 -name clk -waveform {0.000 2.000} [get_nets {clk}]
 set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY none [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.KEEP_EQUIVALENT_REGISTERS true [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.RESOURCE_SHARING off [get_runs synth_1]

@@ -295,7 +295,7 @@ module core_region
   //----------------------------------------------------------------------------//
   assign instr_mem_en = (core_instr_addr[31:24] == 8'h00) & core_instr_req;
 
-  dp_ram
+  dp_ram_wrap
   #(
     .ADDR_WIDTH ( `RAM_ADDR_WIDTH    )
   )
