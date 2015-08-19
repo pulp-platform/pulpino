@@ -3,11 +3,11 @@
 
 `define AXI_ADDR_WIDTH    32
 `define AXI_DATA_WIDTH    64
-`define AXI_ID_MASTER_WIDTH     1
-`define AXI_ID_SLAVE_WIDTH      2
+`define AXI_ID_MASTER_WIDTH     2
+`define AXI_ID_SLAVE_WIDTH      4
 `define AXI_USER_WIDTH    0
 
-module top
+module pulpino_top
   (
     // Clock and Reset
     input logic clk,
@@ -52,7 +52,7 @@ module top
     .AXI_ID_WIDTH     ( `AXI_ID_SLAVE_WIDTH   ),
     .AXI_USER_WIDTH   ( `AXI_USER_WIDTH )
   )
-  slaves[1:0]();
+  slaves[2:0]();
 
   AXI_BUS
   #(
@@ -66,7 +66,14 @@ module top
 
 
 
-  core_region core_region_i
+  core_region
+  #(
+    .AXI_ADDR_WIDTH ( `AXI_ADDR_WIDTH      ),
+    .AXI_DATA_WIDTH ( `AXI_DATA_WIDTH      ),
+    .AXI_ID_WIDTH   ( `AXI_ID_MASTER_WIDTH ),
+    .AXI_USER_WIDTH ( `AXI_USER_WIDTH      )
+  )
+  core_region_i
   (
     .clk         ( clk        ),
     .rst_n       ( rst_n      ),
@@ -74,6 +81,7 @@ module top
     .core_master ( masters[0] ),
     .dbg_master  ( masters[1] ),
     .data_slave  ( slaves[0]  ),
+    .instr_slave ( slaves[1]  ),
 
     .tck_i       ( tck_i      ),
     .trstn_i     ( trstn_i    ),
@@ -85,10 +93,11 @@ module top
 
   peripherals
   #(
-    .AXI_ADDR_WIDTH ( `AXI_ADDR_WIDTH ),
-    .AXI_DATA_WIDTH ( `AXI_DATA_WIDTH ),
-    .AXI_ID_WIDTH   ( `AXI_ID_SLAVE_WIDTH   ),
-    .AXI_USER_WIDTH ( `AXI_USER_WIDTH )
+    .AXI_ADDR_WIDTH      ( `AXI_ADDR_WIDTH      ),
+    .AXI_DATA_WIDTH      ( `AXI_DATA_WIDTH      ),
+    .AXI_SLAVE_ID_WIDTH  ( `AXI_ID_SLAVE_WIDTH  ),
+    .AXI_MASTER_ID_WIDTH ( `AXI_ID_MASTER_WIDTH ),
+    .AXI_USER_WIDTH      ( `AXI_USER_WIDTH      )
   )
   peripherals_i
   (
@@ -97,19 +106,19 @@ module top
 
     .axi_spi_master  ( masters[2] ),
 
-    .spi_clk    ( spi_clk_i      ),
-    .spi_cs     ( spi_cs_i       ),
-    .spi_mode   ( spi_mode_o     ),
-    .spi_sdo0   ( spi_sdo0_o     ),
-    .spi_sdo1   ( spi_sdo1_o     ),
-    .spi_sdo2   ( spi_sdo2_o     ),
-    .spi_sdo3   ( spi_sdo3_o     ),
-    .spi_sdi0   ( spi_sdi0_i     ),
-    .spi_sdi1   ( spi_sdi1_i     ),
-    .spi_sdi2   ( spi_sdi2_i     ),
-    .spi_sdi3   ( spi_sdi3_i     ),
+    .spi_clk_i  ( spi_clk_i      ),
+    .spi_cs_i   ( spi_cs_i       ),
+    .spi_mode_o ( spi_mode_o     ),
+    .spi_sdo0_o ( spi_sdo0_o     ),
+    .spi_sdo1_o ( spi_sdo1_o     ),
+    .spi_sdo2_o ( spi_sdo2_o     ),
+    .spi_sdo3_o ( spi_sdo3_o     ),
+    .spi_sdi0_i ( spi_sdi0_i     ),
+    .spi_sdi1_i ( spi_sdi1_i     ),
+    .spi_sdi2_i ( spi_sdi2_i     ),
+    .spi_sdi3_i ( spi_sdi3_i     ),
 
-    .slave           ( slaves[1] ),
+    .slave           ( slaves[2] ),
 
     .uart_tx         ( uart_tx  ),
     .uart_rx         ( uart_rx  ),
@@ -143,7 +152,7 @@ module top
 
   axi_node_intf_wrap
   #(
-    .NB_MASTER      ( 2                    ),
+    .NB_MASTER      ( 3                    ),
     .NB_SLAVE       ( 3                    ),
     .AXI_ADDR_WIDTH ( `AXI_ADDR_WIDTH      ),
     .AXI_DATA_WIDTH ( `AXI_DATA_WIDTH      ),
@@ -158,8 +167,8 @@ module top
     .master  ( slaves  ),
     .slave   ( masters ),
 
-    .start_addr_i ( { 32'h1A10_0000, 32'h0000_0000 } ),
-    .end_addr_i   ( { 32'h1A11_FFFF, 32'h0FFF_FFFF } )
+    .start_addr_i ( { 32'h1A10_0000, 32'h0010_0000, 32'h0000_0000 } ),
+    .end_addr_i   ( { 32'h1A11_FFFF, 32'h001F_FFFF, 32'h000F_FFFF } )
   );
 
 endmodule

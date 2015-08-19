@@ -3,10 +3,11 @@
 
 module peripherals
   #(
-    parameter AXI_ADDR_WIDTH = 32,
-    parameter AXI_DATA_WIDTH = 64,
-    parameter AXI_USER_WIDTH = 6,
-    parameter AXI_ID_WIDTH   = 6
+    parameter AXI_ADDR_WIDTH       = 32,
+    parameter AXI_DATA_WIDTH       = 64,
+    parameter AXI_USER_WIDTH       = 6,
+    parameter AXI_SLAVE_ID_WIDTH   = 6,
+    parameter AXI_MASTER_ID_WIDTH  = 6
   )
   (
     // Clock and Reset
@@ -81,12 +82,10 @@ module peripherals
 
   axi_spi_slave_wrap
   #(
-      .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH ),
-      .AXI_DATA_WIDTH ( AXI_DATA_WIDTH ),
-      .AXI_USER_WIDTH ( AXI_USER_WIDTH ),
-      .AXI_ID_WIDTH   ( AXI_ID_WIDTH   ),
-      .APB_ADDR_WIDTH ( APB_ADDR_WIDTH ),
-      .APB_NUM_SLAVES ( APB_NUM_SLAVES )
+      .AXI_ADDRESS_WIDTH  ( AXI_ADDR_WIDTH       ),
+      .AXI_DATA_WIDTH     ( AXI_DATA_WIDTH       ),
+      .AXI_USER_WIDTH     ( AXI_USER_WIDTH       ),
+      .AXI_ID_WIDTH       ( AXI_MASTER_ID_WIDTH  )
   )
   axi_spi_slave_i
   (
@@ -118,12 +117,12 @@ module peripherals
 
   axi2apb_wrap
   #(
-      .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH ),
-      .AXI_DATA_WIDTH ( AXI_DATA_WIDTH ),
-      .AXI_USER_WIDTH ( AXI_USER_WIDTH ),
-      .AXI_ID_WIDTH   ( AXI_ID_WIDTH   ),
-      .APB_ADDR_WIDTH ( APB_ADDR_WIDTH ),
-      .APB_NUM_SLAVES ( APB_NUM_SLAVES )
+      .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH     ),
+      .AXI_DATA_WIDTH ( AXI_DATA_WIDTH     ),
+      .AXI_USER_WIDTH ( AXI_USER_WIDTH     ),
+      .AXI_ID_WIDTH   ( AXI_SLAVE_ID_WIDTH ),
+      .APB_ADDR_WIDTH ( APB_ADDR_WIDTH     ),
+      .APB_NUM_SLAVES ( APB_NUM_SLAVES     )
   )
   axi2apb_i
   (

@@ -55,7 +55,7 @@ module tb;
   );
 
 
-  top top_i
+  pulpino_top top_i
   (
     .clk   ( s_clk   ),
     .rst_n ( s_rst_n ),
@@ -91,8 +91,8 @@ module tb;
     s_rst_n <= 1'b0;
 
     // preload memories
-    $readmemh("slm_files/l2_stim.slm",    top_i.core_region_i.unified_mem.dp_ram_i.mem);
-    //$readmemh("slm_files/tcdm_bank0.slm", top_i.core_region_i.data_mem.mem);
+    $readmemh("slm_files/l2_stim.slm",    top_i.core_region_i.instr_mem.sp_ram_i.mem);
+    $readmemh("slm_files/tcdm_bank0.slm", top_i.core_region_i.data_mem.sp_ram_i.mem);
 
     #10000;
 

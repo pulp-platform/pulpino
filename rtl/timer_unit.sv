@@ -41,7 +41,7 @@ module timer_unit
     input  logic            PSEL,
     input  logic            PENABLE,
     input  logic            PWRITE,
-    input  logic [11:0]      PADDR,
+    input  logic [11:0]     PADDR,
     input  logic [31:0]     PWDATA,
     output logic [31:0]     PRDATA,
     output logic            PREADY,
@@ -505,4 +505,6 @@ module timer_unit
       assign event_t2_o = (s_count_t2 == r_count_t2_target);
       assign event_t3_o = (s_count_t3 == r_count_t3_target);
 
-    endmodule
+    assign PSLVERR = 1'b0;
+
+endmodule
