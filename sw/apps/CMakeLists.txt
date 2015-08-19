@@ -20,7 +20,6 @@ macro(add_application NAME SOURCE_FILES)
 
   include_directories(
     ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
-    ${CMAKE_SOURCE_DIR}/libs/stdio_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
@@ -39,7 +38,7 @@ macro(add_application NAME SOURCE_FILES)
   endif()
 
   # link libraries
-  target_link_libraries(${NAME}.elf bench stdio string_uart sys_chip)
+  target_link_libraries(${NAME}.elf bench string_uart sys_chip)
 
 
   # this specifies the testbench to use for simulation

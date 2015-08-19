@@ -73,7 +73,6 @@ set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
 add_library(crt0 OBJECT ${crt0})
 
 
-add_subdirectory(libs/stdio_lib)
 add_subdirectory(libs/string_lib)
 add_subdirectory(libs/sys_lib)
 add_subdirectory(libs/bench_lib)
