@@ -7,8 +7,8 @@ int main()
 {
   start_timer();
 
-  qprintf("Time is %d\n", get_time(), 0, 0, 0);
-  qprintf("Hello World!!!!!\n", 0, 0, 0, 0);
+  printf("Time is %d\n", get_time());
+  printf("Hello World!!!!!\n");
 
   return 0;
 }

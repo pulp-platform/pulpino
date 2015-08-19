@@ -64,8 +64,8 @@ int hwce_nongreedy_offload(short int *W_ptr, short int *x_ptr, short int *y_ptr,
     offload_id = offload_id_tmp;
 
 #ifdef DEBUG
-    qprintf("   HWCE offload: W=%08x, x=%08x, y=%08x, w=%d\n", W_ptr, x_ptr_int, y_ptr_int, ow_hwce+fw_hw-1);
-    qprintf("       ow_int=%d, ow_hwce=%d, fw_hw=%d, fw_eff=%d\n", ow_int, ow_hwce, fw_hw, fw_eff);
+    printf("   HWCE offload: W=%08x, x=%08x, y=%08x, w=%d\n", W_ptr, x_ptr_int, y_ptr_int, ow_hwce+fw_hw-1);
+    printf("       ow_int=%d, ow_hwce=%d, fw_hw=%d, fw_eff=%d\n", ow_int, ow_hwce, fw_hw, fw_eff);
 #endif
     // offload job to HWCE
     hwce_setup(hwce_id,
@@ -116,8 +116,8 @@ int hwce_greedy_offload(short int *W_ptr, short int *x_ptr, short int *y_ptr, un
     offload_id = offload_id_tmp;
 
 #ifdef DEBUG
-    qprintf("   HWCE offload: W=%08x, x=%08x, y=%08x, w=%d\n", W_ptr, x_ptr_int, y_ptr_int, ow_hwce+fw_hw-1);
-    qprintf("       ow_int=%d, ow_hwce=%d, fw_hw=%d, fw_eff=%d\n", ow_int, ow_hwce, fw_hw, fw_eff);
+    printf("   HWCE offload: W=%08x, x=%08x, y=%08x, w=%d\n", W_ptr, x_ptr_int, y_ptr_int, ow_hwce+fw_hw-1);
+    printf("       ow_int=%d, ow_hwce=%d, fw_hw=%d, fw_eff=%d\n", ow_int, ow_hwce, fw_hw, fw_eff);
 #endif
     // offload job to HWCE
     hwce_setup(hwce_id,

@@ -85,8 +85,8 @@ static void * mchan_memcpy_async(void *dst, void *src, unsigned int size) {
 #ifdef DMADEBUG
    #pragma omp critical
    {
-      qprintf("[MCHAN] orig dst=%08x src=%08x size=%d\n", dst, src, size, 0);
-      qprintf("[MCHAN] copy dst=%08x src=%08x size=%d\n", dst_int, src_int, size_int, 0);
+      printf("[MCHAN] orig dst=%08x src=%08x size=%d\n", dst, src, size);
+      printf("[MCHAN] copy dst=%08x src=%08x size=%d\n", dst_int, src_int, size_int);
    }
    #pragma omp barrier
 #endif
@@ -312,7 +312,7 @@ static void * mchan_memcpy_async(void *dst, void *src, unsigned int size) {
       unsigned tmp1, tmp2;
       unsigned ci;
       volatile unsigned char *c = (volatile unsigned char *) &ci;
-      // qprintf("mis_src_start = %d\n", mis_src_start);
+      // printf("mis_src_start = %d\n", mis_src_start);
       tmp1 = dst_save_start0; 
       tmp2 = tmp_datum_src_start0;
       if(mis_src_start < 4) {
@@ -370,7 +370,7 @@ static void * mchan_memcpy_async(void *dst, void *src, unsigned int size) {
       unsigned tmp1, tmp2;
       unsigned ci;
       volatile unsigned char *c = (volatile unsigned char *) &ci;
-      // qprintf("mis_src_end = %d\n", mis_src_end);
+      // printf("mis_src_end = %d\n", mis_src_end);
       if(mis_src_end < 4) {
          tmp1 = dst_save_end0;
          tmp2 = tmp_datum_src_end0;

@@ -15,7 +15,7 @@ int main() {
 
   while(setme);
 
-  qprintf("Hello!\n");
+  printf("Hello!\n");
 
   while(setme2);
 

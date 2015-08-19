@@ -11,7 +11,7 @@ int main()
 
   uart_wait_tx_done();
 
-  qprintf("Hello World!!!!!\n", 0, 0, 0, 0);
+  printf("Hello World!!!!!\n");
 
   return 0;
 }
