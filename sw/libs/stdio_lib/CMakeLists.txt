@@ -4,7 +4,7 @@ set(SOURCES
     )
 
 set(HEADERS
-    inc/stdio.h
+    inc/stdio_lib.h
     )
 
 include_directories(inc/)

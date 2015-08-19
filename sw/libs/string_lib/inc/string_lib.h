@@ -1,24 +1,20 @@
-#ifndef STRING
-#define STRING
+#ifndef STRING_LIB_H
+#define STRING_LIB_H
 
 #include <stddef.h>
 
 #include "pulp.h"
 
-#define _stdout STDOUT_BASE_ADDR
+// putchar is defined as a macro which gets in the way of our prototype below
+#ifdef putchar
+#undef putchar
+#endif
 
-#define PAD_RIGHT 1
-#define PAD_ZERO  2
-
-/* the following should be enough for 32 bit int */
-#define PRINT_BUF_LEN 32
-
-int qstrlen (const char *str);
-int  qstrcmp (const char *s1, const char *s2);
-void qstrcpy (const char *s1, const char *s2);
-void qputs(char *s);
-int qprintf(const char *format, ...);
-void qputchar(char s);
-void _stdout_init(int local_id);
+size_t strlen (const char *str);
+int  strcmp (const char *s1, const char *s2);
+char* strcpy (char *s1, const char *s2);
+int puts(const char *s);
+int printf(const char *format, ...);
+int putchar(int s);
 
 #endif

@@ -76,6 +76,8 @@
 #define SPRGROUP_TT	(10<< MAX_SPRS_PER_GRP_BITS)
 #define SPRGROUP_FP	(11<< MAX_SPRS_PER_GRP_BITS)
 #define SPRGROUP_HWLP	(12<< MAX_SPRS_PER_GRP_BITS)
+#define NUM_HWLP 32
+
 
 /* System control and status group */
 #define SPR_VR		(SPRGROUP_SYS + 0)
@@ -87,6 +89,11 @@
 #define SPR_ICCFGR	(SPRGROUP_SYS + 6)
 #define SPR_DCFGR	(SPRGROUP_SYS + 7)
 #define SPR_PCCFGR	(SPRGROUP_SYS + 8)
+#define SPR_VR2         (SPRGROUP_SYS + 9)
+#define SPR_AVR         (SPRGROUP_SYS + 10)
+#define SPR_EVBAR       (SPRGROUP_SYS + 11)
+#define SPR_AECR        (SPRGROUP_SYS + 12)
+#define SPR_AESR        (SPRGROUP_SYS + 13)
 #define SPR_NPC         (SPRGROUP_SYS + 16)  /* CZ 21/06/01 */
 #define SPR_SR		(SPRGROUP_SYS + 17)  /* CZ 21/06/01 */
 #define SPR_PPC         (SPRGROUP_SYS + 18)  /* CZ 21/06/01 */
@@ -96,6 +103,14 @@
 #define SPR_EEAR_BASE	(SPRGROUP_SYS + 48)
 #define SPR_EEAR_LAST	(SPRGROUP_SYS + 63)
 #define SPR_ESR_BASE	(SPRGROUP_SYS + 64)
+#define SPR_ISR0	(SPRGROUP_SYS + 65)
+#define SPR_ISR1	(SPRGROUP_SYS + 66)
+#define SPR_ISR2	(SPRGROUP_SYS + 67)
+#define SPR_ISR3	(SPRGROUP_SYS + 68)
+#define SPR_ISR4	(SPRGROUP_SYS + 69)
+#define SPR_ISR5	(SPRGROUP_SYS + 70)
+#define SPR_ISR6	(SPRGROUP_SYS + 71)
+#define SPR_ISR7	(SPRGROUP_SYS + 72)
 #define SPR_ESR_LAST	(SPRGROUP_SYS + 79)
 #define SPR_GPR_BASE	(SPRGROUP_SYS + 1024)
 
@@ -155,7 +170,8 @@
 
 /* Performance counters group */
 #define SPR_PCCR(N)	(SPRGROUP_PC + (N))
-#define SPR_PCMR(N)	(SPRGROUP_PC + 8 + (N))
+#define SPR_PCER	(SPRGROUP_PC + 32)
+#define SPR_PCMR	(SPRGROUP_PC + 33)
 
 /* Power management group */
 #define SPR_PMR (SPRGROUP_PM + 0)
@@ -164,10 +180,16 @@
 #define SPR_PICMR (SPRGROUP_PIC + 0)
 #define SPR_PICPR (SPRGROUP_PIC + 1)
 #define SPR_PICSR (SPRGROUP_PIC + 2)
+#define SPR_PICWMR (SPRGROUP_PIC + 3)
 
 /* Tick Timer group */
 #define SPR_TTMR (SPRGROUP_TT + 0)
 #define SPR_TTCR (SPRGROUP_TT + 1)
+
+/* Hardware Loop group */
+#define SPR_HWLP_START(ID)    (SPRGROUP_HWLP + (ID) + 0)
+#define SPR_HWLP_END(ID)      (SPRGROUP_HWLP + (ID) + 0x10)
+#define SPR_HWLP_COUNTER(ID)  (SPRGROUP_HWLP + (ID) + 0x20)
 
 /*
  * Bit definitions for the Version Register
@@ -211,7 +233,12 @@
 #define SPR_CPUCFGR_OF32S  0x00000080  /* ORFPX32 supported */
 #define SPR_CPUCFGR_OF64S  0x00000100  /* ORFPX64 supported */
 #define SPR_CPUCFGR_OV64S  0x00000200  /* ORVDX64 supported */
-#define SPR_CPUCFGR_RES	   0xfffffc00  /* Reserved */
+#define SPR_CPUCFGR_ND     0x00000400  /* No delay slots */
+#define SPR_CPUCFGR_AVRP   0x00000800  /* Architecture Version Register (AVR) Present */
+#define SPR_CPUCFGR_EVBARP 0x00001000  /* Exception Vector Base Address Register Present */
+#define SPR_CPUCFGR_ISRP   0x00002000  /* Implementation-Specific Registers (ISR0-7) Present */
+#define SPR_CPUCFGR_AECSRP 0x00004000  /* Arithmetic Exception Control/Status Registers (ARCR/AESR) Present */
+#define SPR_CPUCFGR_RES	   0xffff8000  /* Reserved */
 
 /*
  * JPB: Bit definitions for the Debug configuration register and other
@@ -239,6 +266,56 @@
                                7 == n ? SPR_DCFGR_NDP7 : SPR_DCFGR_NDP8)
 #define MAX_MATCHPOINTS  8
 #define MAX_WATCHPOINTS  (MAX_MATCHPOINTS + 2)
+
+/*
+ * Bit definitions for Version Register 2
+ *
+ */
+
+#define SPR_VR2_CPUID      0xff000000  /* CPU Identification number */
+#define SPR_VR2_VER        0x00ffffff  /* Version */
+
+/*
+ * Bit definitions for Architecture Version Register
+ *
+ */
+
+#define SPR_AVR_RES        0x000000ff  /* Reserved */
+#define SPR_AVR_REV        0x0000ff00  /* Architecture Revision Number */
+#define SPR_AVR_MIN        0x00ff0000  /* Minor Architecture Version Number */
+#define SPR_AVR_MAJ        0xff000000  /* Major Architecture Version Number */
+
+/*
+ * Bit definitions for Exception Vector Base Address Register
+ *
+ */
+
+#define SPR_EVBAR_RES      0x00001fff  /* Reserved */
+#define SPR_EVBAR_EVBA     0xffffe000  /* Exception Vector Base Address */
+
+/*
+ * Bit definitions for the Arithmetic Exception Control Register
+ *
+ */
+#define SPR_AECR_CYADDE    0x00000001 /* unsigned overflow in add */
+#define SPR_AECR_OVADDE    0x00000002 /* signed overflow in add */
+#define SPR_AECR_CYMULE    0x00000004 /* unsigned overflow in mul */
+#define SPR_AECR_OVMULE    0x00000008 /* signed overflow in mul */
+#define SPR_AECR_DBZE      0x00000010 /* divide by zero */
+#define SPR_AECR_CYMACADDE 0x00000020 /* unsigned overflow in mac add */
+#define SPR_AECR_OVMACADDE 0x00000040 /* signed overflow in mac add */
+
+/*
+ * Bit definitions for the Arithmetic Exception Status Register
+ *
+ */
+#define SPR_AESR_CYADDE    0x00000001 /* unsigned overflow in add */
+#define SPR_AESR_OVADDE    0x00000002 /* signed overflow in add */
+#define SPR_AESR_CYMULE    0x00000004 /* unsigned overflow in mul */
+#define SPR_AESR_OVMULE    0x00000008 /* signed overflow in mul */
+#define SPR_AESR_DBZE      0x00000010 /* divide by zero */
+#define SPR_AESR_CYMACADDE 0x00000020 /* unsigned overflow in mac add */
+#define SPR_AESR_OVMACADDE 0x00000040 /* signed overflow in mac add */
 
 /*
  * Bit definitions for the Supervision Register
@@ -552,22 +629,27 @@
  * Bit definitions for Performance counters mode registers
  *
  */
-#define SPR_PCMR_CP	0x00000001  /* Counter present */
-#define SPR_PCMR_UMRA	0x00000002  /* User mode read access */
-#define SPR_PCMR_CISM	0x00000004  /* Count in supervisor mode */
-#define SPR_PCMR_CIUM	0x00000008  /* Count in user mode */
-#define SPR_PCMR_LA	0x00000010  /* Load access event */
-#define SPR_PCMR_SA	0x00000020  /* Store access event */
-#define SPR_PCMR_IF	0x00000040  /* Instruction fetch event*/
-#define SPR_PCMR_DCM	0x00000080  /* Data cache miss event */
-#define SPR_PCMR_ICM	0x00000100  /* Insn cache miss event */
-#define SPR_PCMR_IFS	0x00000200  /* Insn fetch stall event */
-#define SPR_PCMR_LSUS	0x00000400  /* LSU stall event */
-#define SPR_PCMR_BS	0x00000800  /* Branch stall event */
-#define SPR_PCMR_DTLBM	0x00001000  /* DTLB miss event */
-#define SPR_PCMR_ITLBM	0x00002000  /* ITLB miss event */
-#define SPR_PCMR_DDS	0x00004000  /* Data dependency stall event */
-#define SPR_PCMR_WPE	0x03ff8000  /* Watchpoint events */
+#define SPR_PCER_CYCLES		0  /* Count the number of cycles the core was running */
+#define SPR_PCER_INSTR		1  /* Count the number of instructions executed */
+#define SPR_PCER_LOAD		2  /* Number of load data hazards */
+#define SPR_PCER_JUMP		3  /* Number of jump register data hazards */
+#define SPR_PCER_IMISS		4  /* Cycles waiting for instruction fetches. i.e. the number of instructions wasted due to non-ideal caches */
+#define SPR_PCER_BRANCH		5  /* Number of wrong predicted branches */
+#define SPR_PCER_BRANCH_CYC	6  /* Cycles wasted due to wrong predicted branches */
+#define SPR_PCER_LD		7  /* Number of memory loads executed. Misaligned accesses are counted twice */
+#define SPR_PCER_ST		8  /* Number of memory stores executed. Misaligned accesses are counted twice */
+#define SPR_PCER_LD_EXT		9  /* Number of memory loads to EXT executed. Misaligned accesses are counted twice. Every non-TCDM access is considered external */
+#define SPR_PCER_ST_EXT		10  /* Number of memory stores to EXT executed. Misaligned accesses are counted twice. Every non-TCDM access is considered external */
+#define SPR_PCER_LD_EXT_CYC	11  /* Cycles used for memory loads to EXT. Every non-TCDM access is considered external */
+#define SPR_PCER_ST_EXT_CYC	12  /* Cycles used for memory stores to EXT. Every non-TCDM access is considered external */
+#define SPR_PCER_TCDM_CONT	13  /* Cycles wasted due to TCDM/log-interconnect contention */
+
+// Gives from the event ID, the HW mask that can be stored (with an OR with other events mask) to the PCER
+#define SPR_PCER_EVENT_MASK(eventId)	(1<<(eventId))
+#define SPR_PCER_ALL_EVENTS_MASK  0xffffffff
+
+#define SPR_PCMR_ACTIVE           0x1 /* Activate counting */
+#define SPR_PCMR_SATURATE         0x2 /* Activate saturation */
 
 /* 
  * Bit definitions for the Power management register
@@ -601,12 +683,12 @@
  * Bit definitions for Tick Timer Control Register
  *
  */
-#define SPR_TTCR_PERIOD	0x0fffffff  /* Time Period */
-#define SPR_TTMR_PERIOD	SPR_TTCR_PERIOD
-#define SPR_TTMR_IP	0x10000000  /* Interrupt Pending */
-#define SPR_TTMR_IE	0x20000000  /* Interrupt Enable */
-#define SPR_TTMR_DI	0x00000000  /* Disabled */
-#define SPR_TTMR_RT	0x40000000  /* Restart tick */
+#define SPR_TTCR_CNT    0xffffffff  /* Count, time period */
+#define SPR_TTMR_TP     0x0fffffff  /* Time period */
+#define SPR_TTMR_IP     0x10000000  /* Interrupt Pending */
+#define SPR_TTMR_IE     0x20000000  /* Interrupt Enable */
+#define SPR_TTMR_DI     0x00000000  /* Disabled */
+#define SPR_TTMR_RT     0x40000000  /* Restart tick */
 #define SPR_TTMR_SR     0x80000000  /* Single run */
 #define SPR_TTMR_CR     0xc0000000  /* Continuous run */
 #define SPR_TTMR_M      0xc0000000  /* Tick mode */
@@ -644,10 +726,19 @@
 #define NOP_REPORT       0x0002      /* Simple report */
 /*#define NOP_PRINTF       0x0003       Simprintf instruction (obsolete)*/
 #define NOP_PUTC         0x0004      /* JPB: Simputc instruction */
-#define NOP_CNT_RESET    0x0005	     /* Reset statistics counters */
-#define NOP_GET_TICKS    0x0006	     /* JPB: Get # ticks running */
+#define NOP_CNT_RESET    0x0005      /* Reset statistics counters */
+#define NOP_GET_TICKS    0x0006      /* JPB: Get # ticks running */
 #define NOP_GET_PS       0x0007      /* JPB: Get picosecs/cycle */
-#define NOP_REPORT_FIRST 0x0400      /* Report with number */
-#define NOP_REPORT_LAST  0x03ff      /* Report with number */
+#define NOP_TRACE_ON     0x0008      /* Turn on tracing */
+#define NOP_TRACE_OFF    0x0009      /* Turn off tracing */
+#define NOP_RANDOM       0x000a      /* Return 4 random bytes */
+#define NOP_OR1KSIM      0x000b      /* Return non-zero if this is Or1ksim */
+#define NOP_EXIT_SILENT  0x000c      /* End of simulation, quiet version */
+#define NOP_GETC         0x000d      /* Simgetc instruction */
+#define NOP_PUTC_BUFFERED 0x000e      /* Buffered putc */
+#define NOP_PUTC_FLUSH   0x000f      /* Buffered putc flush */
+#define NOP_CUSTOM       0x0100      /* Custom call, used by system simulator */
+#define NOP_CUSTOM_OFFSET      8
+#define NOP_CUSTOM_REGS_OFFSET 13
 
 #endif	/* SPR_DEFS__H */

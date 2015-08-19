@@ -1,9 +1,5 @@
 set(SOURCES
     src/qprintf.c
-    src/qputs.c
-    src/qstrcmp.c
-    src/qstrcpy.c
-    src/qstrlen.c
     )
 
 set(HEADERS

@@ -12,7 +12,6 @@ typedef struct _testresult_t {
 } testresult_t;
 
 typedef struct _testcase_t {
-  int id;
   char *name;
   void (*test)(testresult_t* result, void (*start)(), void (*stop)());
 } testcase_t;
@@ -38,9 +37,8 @@ void run_benchmark(testcase_t *test, testresult_t *result);
 /**
  * @brief Runs a series of benchmarks and prints the results.
  * @param[in] tests an array with the benchmarks to run.
- * @param[in] num the number of benchmarks contained in \a tests.
  */
-void run_suite(testcase_t *tests, size_t num);
+void run_suite(testcase_t *tests);
 
 /**
  * @brief Checks if actual == expected and if not, prints fail_msg and

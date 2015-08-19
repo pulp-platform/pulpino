@@ -11,7 +11,6 @@
 #define CORE_PORTME_H
 
 #include <stddef.h>
-//#include <string_lib.h>
 
 /************************/
 /* Data types and settings */
@@ -46,7 +45,7 @@
 	Define to 1 if the platform has stdio.h and implements the printf function.
 */
 #ifndef HAS_PRINTF
-#define HAS_PRINTF 0
+#define HAS_PRINTF 1
 #endif
 
 /* Configuration : CORE_TICKS
@@ -55,7 +54,9 @@
 #include <timer.h>
 typedef int clock_t;
 typedef clock_t CORE_TICKS;
+#ifndef CLOCKS_PER_SEC
 #define CLOCKS_PER_SEC 50000000
+#endif
 
 /* Definitions : COMPILER_VERSION, COMPILER_FLAGS, MEM_LOCATION
 	Initialize these strings per platform
@@ -183,7 +184,5 @@ void portable_fini(core_portable *p);
 #define VALIDATION_RUN 1
 #endif
 #endif
-
-#define ee_printf qprintf
 
 #endif /* CORE_PORTME_H */
