@@ -12,6 +12,9 @@ source ../common/messages.tcl
 
 source tcl/src_files.tcl
 
+# add axi_spi_slave
+add_files -norecurse -scan_for_includes $SRC_AXI_SLAVE
+
 # add apb_spim
 add_files -norecurse -scan_for_includes $SRC_APB_SPIM
 
@@ -27,6 +30,9 @@ add_files -norecurse -scan_for_includes $SRC_AXI2APB
 # add axi_slice
 add_files -norecurse -scan_for_includes $SRC_AXI_SLICE
 
+# add axi_slice_dc
+add_files -norecurse -scan_for_includes $SRC_AXI_SLICE_DC
+
 # add axi_node
 add_files -norecurse -scan_for_includes $SRC_AXI_NODE
 
@@ -41,7 +47,7 @@ add_files -norecurse -scan_for_includes $SRC_ADV_DEBUG_IF
 
 # add memory cuts
 add_files -norecurse $FPGA_IPS/xilinx_mem_32768x32_dp/ip/xilinx_mem_32768x32_dp.dcp
-#add_files -norecurse $FPGA_IPS/xilinx_tcdm_bank_2048x32/ip/xilinx_tcdm_bank_2048x32.dcp
+add_files -norecurse $FPGA_IPS/xilinx_mem_32768x32/ip/xilinx_mem_32768x32.dcp
 
 # add ILA debug cores
 # add_files -norecurse $FPGA_IPS/xilinx_core_ila/ip/xilinx_core_ila.dcp
@@ -55,8 +61,8 @@ add_files -norecurse $SRC_COMMONCELLS
 # add pulpino
 add_files -norecurse $SRC_PULPINO
 
-# set ulpcluster as top
-set_property top top [current_fileset]
+# set pulpino_top as top
+set_property top pulpino [current_fileset]
 
 # # create or10n mac unit (moved here from FPGA ips)
 # create_ip -name xbip_multadd -vendor xilinx.com -library ip -version 3.0 -module_name xilinx_or10n_mac

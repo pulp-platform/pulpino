@@ -3,7 +3,20 @@ set IPS ../../ips
 set FPGA_IPS ../ips
 set FPGA_RTL ../rtl
 
-# apb_spio_master
+# axi_spi_slave
+set SRC_AXI_SLAVE "
+   $IPS/axi/axi_spi_slave/axi_spi_slave.sv \
+   $IPS/axi/axi_spi_slave/spi_slave_axi_plug.sv \
+   $IPS/axi/axi_spi_slave/spi_slave_cmd_parser.sv \
+   $IPS/axi/axi_spi_slave/spi_slave_controller.sv \
+   $IPS/axi/axi_spi_slave/spi_slave_dc_fifo.sv \
+   $IPS/axi/axi_spi_slave/spi_slave_regs.sv \
+   $IPS/axi/axi_spi_slave/spi_slave_rx.sv \
+   $IPS/axi/axi_spi_slave/spi_slave_syncro.sv \
+   $IPS/axi/axi_spi_slave/spi_slave_tx.sv \
+"
+
+# apb_spi_master
 set SRC_APB_SPIM "
    $IPS/apb/apb_spi_master/apb_spi_master.sv \
    $IPS/apb/apb_spi_master/spi_master_apb_if.sv \
@@ -33,6 +46,18 @@ set SRC_APB_UART "
    $IPS/apb/apb_uart/uart_interrupt.vhd \
    $IPS/apb/apb_uart/uart_receiver.vhd \
    $IPS/apb/apb_uart/uart_transmitter.vhd \
+"
+
+# axi_slice_dc
+set SRC_AXI_SLICE_DC " \
+    $IPS/axi/axi_slice_dc/axi_slice_dc_master.sv \
+    $IPS/axi/axi_slice_dc/axi_slice_dc_slave.sv \
+    $IPS/axi/axi_slice_dc/dc_data_buffer.v \
+    $IPS/axi/axi_slice_dc/dc_full_detector.v \
+    $IPS/axi/axi_slice_dc/dc_synchronizer.v \
+    $IPS/axi/axi_slice_dc/dc_token_ring_fifo_din.v \
+    $IPS/axi/axi_slice_dc/dc_token_ring_fifo_dout.v \
+    $IPS/axi/axi_slice_dc/dc_token_ring.v \
 "
 
 # axi_slice
@@ -133,16 +158,6 @@ set SRC_OR10N "
    $IPS/or10n/wb_stage.sv \
 "
 
-# memory cuts
-set SRC_MEM_CUTS "
-   $FPGA_IPS/xilinx_ic_ram_128x32/ip/xilinx_ic_ram_128x32_stub.v \
-   $FPGA_IPS/xilinx_tcdm_bank_512x32/ip/xilinx_tcdm_bank_2048x32_stub.v \
-   $FPGA_IPS/xilinx_tcdm_bank_512x32/ip/xilinx_tcdm_bank_1024x32_stub.v \
-   $FPGA_IPS/xilinx_tcdm_bank_512x32/ip/xilinx_tcdm_bank_512x32_stub.v \
-   $FPGA_IPS/xilinx_tcdm_bank_256x32/ip/xilinx_tcdm_bank_256x32_stub.v \
-   $FPGA_IPS/xilinx_tcdm_bank_128x32/ip/xilinx_tcdm_bank_128x32_stub.v \
-"
-
 # common cells
 set SRC_COMMONCELLS " \
    $IPS/common_cells/cluster_clock_buffer.sv \
@@ -154,6 +169,8 @@ set SRC_COMMONCELLS " \
    $IPS/common_cells/cluster_level_shifter_out.sv \
    $IPS/common_cells/rstgen.sv \
    $IPS/common_cells/edge_propagator_rx.sv \
+   $IPS/common_cells/pulp_clock_inverter.sv \
+   $IPS/common_cells/pulp_clock_mux2.sv \
    $IPS/common_cells/pulp_sync_wedge.sv \
 "
 
@@ -164,11 +181,13 @@ set SRC_PULPINO " \
    $RTL/axi_node_intf_wrap.sv \
    $RTL/core2axi.sv \
    $RTL/core_region.sv \
-   $RTL/dp_ram.sv \
-   $RTL/dp_ram_wrap.sv \
+   $RTL/sp_ram.sv \
+   $RTL/sp_ram_wrap.sv \
    $RTL/peripherals.sv \
    $RTL/ram_mux.sv \
    $RTL/timer_unit.sv \
+   $RTL/axi_spi_slave_wrap.sv \
    $RTL/top.sv \
+   $FPGA_RTL/pulpino_wrap.v \
 "
 

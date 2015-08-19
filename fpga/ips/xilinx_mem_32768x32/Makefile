@@ -2,6 +2,7 @@ PROJECT:=xilinx_mem_32768x32
 
 all:
 	vivado -mode batch -source tcl/run.tcl
+	mkdir -p ip
 	cp ${PROJECT}.srcs/sources_1/ip/${PROJECT}/${PROJECT}_stub.v ./ip
 	cp ${PROJECT}.srcs/sources_1/ip/${PROJECT}/${PROJECT}.xci ./ip
 	cp ${PROJECT}.srcs/sources_1/ip/${PROJECT}/${PROJECT}.veo ./ip

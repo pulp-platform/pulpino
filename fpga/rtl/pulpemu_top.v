@@ -1,4 +1,4 @@
-module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR_cs_n, DDR_dm, DDR_dq, DDR_dqs_n, DDR_dqs_p, DDR_odt, DDR_ras_n, DDR_reset_n, DDR_we_n, FIXED_IO_ddr_vrn, FIXED_IO_ddr_vrp, FIXED_IO_mio, FIXED_IO_ps_clk, FIXED_IO_ps_porb, FIXED_IO_ps_srstb, PULP_SPI_clk, PULP_SPI_cs, PULP_SPI_mode_1, PULP_SPI_mode_0, PULP_SPI_sdo, PULP_SPI_sdi, PULP_SPI_fetch_en, PULP_SPI_eoc);
+module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR_cs_n, DDR_dm, DDR_dq, DDR_dqs_n, DDR_dqs_p, DDR_odt, DDR_ras_n, DDR_reset_n, DDR_we_n, FIXED_IO_ddr_vrn, FIXED_IO_ddr_vrp, FIXED_IO_mio, FIXED_IO_ps_clk, FIXED_IO_ps_porb, FIXED_IO_ps_srstb, );
 
   inout  [14:0] DDR_addr;
   inout  [2:0]  DDR_ba;
@@ -21,15 +21,6 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   inout         FIXED_IO_ps_clk;
   inout         FIXED_IO_ps_porb;
   inout         FIXED_IO_ps_srstb;
-
-  input         PULP_SPI_clk;    
-  input         PULP_SPI_cs;     
-  output        PULP_SPI_mode_1; 
-  output        PULP_SPI_mode_0; 
-  output        PULP_SPI_sdo;    
-  input         PULP_SPI_sdi;    
-  input         PULP_SPI_fetch_en;
-  output        PULP_SPI_eoc; 
 
   wire [14:0] BRAM_PORTA_addr;
   wire        BRAM_PORTA_clk;
@@ -293,24 +284,6 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   wire        spi_master_sdi1;
   wire        spi_master_sdi2;
   wire        spi_master_sdi3;
-  wire        spi_slave_clk;
-  wire        spi_slave_csn;
-  wire [1:0]  spi_slave_mode;
-  wire        spi_slave_sdo0;
-  wire        spi_slave_sdo1;
-  wire        spi_slave_sdo2;
-  wire        spi_slave_sdo3;
-  wire        spi_slave_sdi0;
-  wire        spi_slave_sdi1;
-  wire        spi_slave_sdi2;
-  wire        spi_slave_sdi3;
-  
-  reg         spi_slave_clk_r; 
-  reg         spi_slave_cs_r;  
-  reg         spi_slave_sdi0_r;
-  reg         PULP_SPI_sdo_r;
-  reg         PULP_SPI_mode_1_r;
-  reg         PULP_SPI_mode_0_r;
 
   wire [31:0] gpio_dir;                // output
   wire [31:0] gpio_in;                 // input
@@ -379,11 +352,9 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   assign ps7_rst_pulp_n   = ps7_rst_n;
   assign ps7_rst_clking_n = ps7_rst_n;
 
-  reg PULP_SPI_eoc_r;
   reg fetch_en_r;
   reg fetch_en_deb;
 
-  assign PULP_SPI_eoc = PULP_SPI_eoc_r;
   assign fetch_en_i = fetch_en_r;
 
   reg [31:0] end_of_operation_r;
@@ -398,13 +369,6 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   end
   assign end_of_operation = end_of_operation_r;
 
-  always @(posedge ps7_clk or negedge ps7_rst_pulp_n)
-  begin
-    if(ps7_rst_pulp_n == 1'b0)
-      PULP_SPI_eoc_r = 1'b0;
-    else
-      PULP_SPI_eoc_r = eoc_o;
-  end
   always @(posedge ps7_clk or negedge ps7_rst_pulp_n)
   begin
     if(ps7_rst_pulp_n == 1'b0)
@@ -425,35 +389,7 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   assign spi_master_sdi2 = 0;
   assign spi_master_sdi3 = 0;
 
-  // spi slave - connected to I/O pins
-  assign spi_slave_sdi0 = spi_slave_sdi0_r;
-  assign spi_slave_sdi1 = 0;
-  assign spi_slave_sdi2 = 0;
-  assign spi_slave_sdi3 = 0;
-  assign spi_slave_clk  = spi_slave_clk_r;
-  assign spi_slave_csn  = spi_slave_cs_r;
-  assign PULP_SPI_sdo   = PULP_SPI_sdo_r;
-  assign PULP_SPI_mode_1 = PULP_SPI_mode_1_r;
-  assign PULP_SPI_mode_0 = PULP_SPI_mode_0_r;
 
-  always @(posedge ps7_clk or negedge ps7_rst_pulp_n)
-  begin
-    if(ps7_rst_pulp_n==1'b0) begin
-      spi_slave_clk_r   <= 1'b1;
-      spi_slave_sdi0_r  <= 1'b0;
-      PULP_SPI_sdo_r    <= 1'b0;
-      PULP_SPI_mode_1_r <= 1'b0;
-      PULP_SPI_mode_0_r <= 1'b0;
-    end
-    else begin
-      spi_slave_clk_r   <= PULP_SPI_clk;
-      spi_slave_sdi0_r  <= PULP_SPI_sdi;
-      PULP_SPI_sdo_r    <= spi_slave_sdo0;
-      PULP_SPI_mode_1_r <= spi_slave_mode[1];
-      PULP_SPI_mode_0_r <= spi_slave_mode[0];
-    end
-  end
- 
   // FETCH EN debouncing
   // FETCH EN is debounced in both transitions
   reg [5:0] fetch_en_counter;
@@ -464,76 +400,7 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
       fetch_en_counter <= 6'd0;
     end
     else begin
-      // if using microcontroller host
-      if(fetch_enable[2] == 1'b1) begin
-        // fetch_en sampled immediately in 1->0 transition
-        if(fetch_en_deb == 1'b0) begin
-          if(PULP_SPI_fetch_en == 1'b0) begin
-            fetch_en_deb     <= 1'b0;
-            fetch_en_counter <= 6'd0;
-          end
-          else if(fetch_en_counter[5] == 1'b0) begin
-            fetch_en_deb     <= 1'b0;
-            fetch_en_counter <= fetch_en_counter + 6'd1;
-          end
-          else begin
-            fetch_en_deb     <= 1'b1;
-            fetch_en_counter <= 6'd0;
-          end
-        end
-        else if(fetch_en_deb == 1'b1) begin
-          if(PULP_SPI_fetch_en == 1'b1) begin
-            fetch_en_deb     <= 1'b1;
-            fetch_en_counter <= 6'd0;
-          end
-          else if(fetch_en_counter[5] == 1'b0) begin
-            fetch_en_deb     <= 1'b1;
-            fetch_en_counter <= fetch_en_counter + 6'd1;
-          end
-          else begin
-            fetch_en_deb     <= 1'b0;
-            fetch_en_counter <= 6'd0;
-          end
-        end
-      end
-      // if not using microcontroller host
-      else begin
-        fetch_en_deb <= 1'b1;
-      end
-    end
-  end
-
-  // SPI CS debouncing
-  // chip select is sampled in first cycle in 1->0 transition
-  // but in 64th cycle in 0->1 transition, to avoid spurious reset
-  reg [5:0] spi_cs_counter;
-  always @(posedge ps7_clk or negedge ps7_rst_pulp_n)
-  begin
-    if(ps7_rst_pulp_n==1'b0) begin
-      spi_slave_cs_r <= 1'b1;
-      spi_cs_counter <= 6'd0;
-    end
-    else begin
-      // chip select sampled immediately in 1->0 transition
-      if((spi_slave_cs_r == 1'b1) && (PULP_SPI_cs == 1'b0))
-        spi_slave_cs_r <= 1'b0;
-      // chip select sampled only after 64 consecutive
-      // cycles in 0->1 transition, to avoid spurious reset
-      // in SPI rx registers
-      else if(spi_slave_cs_r == 1'b0) begin
-        if(PULP_SPI_cs == 1'b0) begin
-          spi_slave_cs_r <= 1'b0;
-          spi_cs_counter <= 6'd0;
-        end
-        else if(spi_cs_counter[5] == 1'b0) begin
-          spi_slave_cs_r <= 1'b0;
-          spi_cs_counter <= spi_cs_counter + 6'd1;
-        end
-        else begin
-          spi_slave_cs_r <= 1'b1;
-          spi_cs_counter <= 6'd0;
-        end
-      end
+      fetch_en_deb <= 1'b1;
     end
   end
 
@@ -793,7 +660,7 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
 );
 
   // PULP SoC
-  top pulpino_i (
+  pulpino pulpino_wrap_i (
     .clk                     (s_clk_soc              ),
     .rst_n                   (s_rstn_cluster_sync    ),
 
@@ -806,38 +673,6 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
     .gpio_in                 (gpio_in                ),
     .gpio_out                (gpio_out               ),
     .gpio_dir                (gpio_dir               ),
-    .\gpio_padcfg[0]            (                       ),
-    .\gpio_padcfg[1]            (                       ),
-    .\gpio_padcfg[2]            (                       ),
-    .\gpio_padcfg[3]            (                       ),
-    .\gpio_padcfg[4]            (                       ),
-    .\gpio_padcfg[5]            (                       ),
-    .\gpio_padcfg[6]            (                       ),
-    .\gpio_padcfg[7]            (                       ),
-    .\gpio_padcfg[8]            (                       ),
-    .\gpio_padcfg[9]            (                       ),
-    .\gpio_padcfg[10]           (                       ),
-    .\gpio_padcfg[11]           (                       ),
-    .\gpio_padcfg[12]           (                       ),
-    .\gpio_padcfg[13]           (                       ),
-    .\gpio_padcfg[14]           (                       ),
-    .\gpio_padcfg[15]           (                       ),
-    .\gpio_padcfg[16]           (                       ),
-    .\gpio_padcfg[17]           (                       ),
-    .\gpio_padcfg[18]           (                       ),
-    .\gpio_padcfg[19]           (                       ),
-    .\gpio_padcfg[20]           (                       ),
-    .\gpio_padcfg[21]           (                       ),
-    .\gpio_padcfg[22]           (                       ),
-    .\gpio_padcfg[23]           (                       ),
-    .\gpio_padcfg[24]           (                       ),
-    .\gpio_padcfg[25]           (                       ),
-    .\gpio_padcfg[26]           (                       ),
-    .\gpio_padcfg[27]           (                       ),
-    .\gpio_padcfg[28]           (                       ),
-    .\gpio_padcfg[29]           (                       ),
-    .\gpio_padcfg[30]           (                       ),
-    .\gpio_padcfg[31]           (                       ),
 
     .uart_tx                 (uart_tx                ), // output
     .uart_rx                 (uart_rx                ), // input
