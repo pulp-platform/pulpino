@@ -2,7 +2,7 @@
 `include "axi_bus.sv"
 `include "config.sv"
 
-`define RAM_ADDR_WIDTH  15
+`define RAM_ADDR_WIDTH  16
 
 module core_region
 #(
@@ -30,7 +30,6 @@ module core_region
   );
 
   // signals from/to core
-  logic         core_instr_en;
   logic         core_instr_req;
   logic         core_instr_gnt;
   logic         core_instr_rvalid;
@@ -300,9 +299,10 @@ module core_region
   // Instruction RAM
   //----------------------------------------------------------------------------//
 
-  sp_ram_wrap
+  instr_ram_wrap
   #(
-    .ADDR_WIDTH ( `RAM_ADDR_WIDTH    )
+    .ADDR_WIDTH ( `RAM_ADDR_WIDTH    ),
+    .NUM_WORDS  ( 32768              )
   )
   instr_mem
   (
@@ -379,7 +379,8 @@ module core_region
   //----------------------------------------------------------------------------//
   sp_ram_wrap
   #(
-    .ADDR_WIDTH ( `RAM_ADDR_WIDTH    )
+    .ADDR_WIDTH ( `RAM_ADDR_WIDTH    ),
+    .NUM_WORDS  ( 32768              )
   )
   data_mem
   (

@@ -1,7 +1,8 @@
 
 module sp_ram
   #(
-    parameter ADDR_WIDTH = 8
+    parameter ADDR_WIDTH = 8,
+    parameter NUM_WORDS  = 256
   )(
     // Clock and Reset
     input  logic clk,
@@ -14,7 +15,7 @@ module sp_ram
     input  logic [3:0]             be_i
   );
 
-  localparam words = 2**ADDR_WIDTH;
+  localparam words = NUM_WORDS;
 
   logic [3:0][7:0] mem[words];
 

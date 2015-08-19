@@ -175,8 +175,8 @@ reset_handler:
     l.mtspr r0, r1, SPR_SR
 
     /* Early Stack initilization */
-    l.movhi r1, 0x0000       // stack starts from high address
-    l.ori   r1, r1, 0x8000
+    l.movhi r1, 0x0011       // stack starts from high address
+    l.ori   r1, r1, 0x0000
 
     /* LOAD program start address into r4 */
     LOAD_SYMBOL_2_GPR(r4, _start)

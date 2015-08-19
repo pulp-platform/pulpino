@@ -45,7 +45,11 @@ elseif(CMAKE_C_COMPILER MATCHES "or1k(.*)")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mabi=new")
   endif()
 
-  set(CMAKE_OBJDUMP_FLAGS -arch=or1kle -mattr=mac3,mul16,lv32,crtl -mcpu=pulp3 -symbolize -print-imm-hex -show-hr-enc -section-headers -disassemble -r -s)
+  if(CMAKE_OBJDUMP MATCHES "llvm-objdump")
+    set(CMAKE_OBJDUMP_FLAGS -arch=or1kle -mattr=mac3,mul16,lv32,crtl -mcpu=pulp3 -symbolize -print-imm-hex -show-hr-enc -section-headers -disassemble -r -s)
+  else()
+  set(CMAKE_OBJDUMP_FLAGS -d)
+  endif()
 
   set(LDSCRIPT "link.or1k.ld")
 endif()

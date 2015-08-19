@@ -72,7 +72,7 @@ reset_handler:
   mv x31, x0
 
   /* stack initilization */
-  li   x2, 0x00008000 // stack base addr
+  li   x2, 0x00120000 // stack base addr
 
 
 _start:

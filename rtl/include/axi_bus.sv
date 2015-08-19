@@ -1,9 +1,7 @@
-// Width of byte enable for a given data width
-`define EVAL_BE_WIDTH(DATAWIDTH) (DATAWIDTH/8)
+`ifndef AXI_BUS_SV
+`define AXI_BUS_SV
 
-// LOG2()
-`define LOG2(VALUE) ((VALUE) < ( 1 ) ? 0 : (VALUE) < ( 2 ) ? 1 : (VALUE) < ( 4 ) ? 2 : (VALUE)< (8) ? 3:(VALUE) < ( 16 )  ? 4 : (VALUE) < ( 32 )  ? 5 : (VALUE) < ( 64 )  ? 6 : (VALUE) < ( 128 ) ? 7 : (VALUE) < ( 256 ) ? 8 : (VALUE) < ( 512 ) ? 9 : 10)
-
+`include "config.sv"
 
 ////////////////////////////////////////////////////////////////////////////////
 //          Only general functions and definitions are defined here           //
@@ -124,3 +122,5 @@ interface AXI_BUS
       );
 
 endinterface
+
+`endif

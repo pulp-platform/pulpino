@@ -3,8 +3,9 @@ __DYNAMIC  =  0;
 
 MEMORY
 {
-    ram         : ORIGIN = 0x00000000, LENGTH = 0x07000
-    stack       : ORIGIN = 0x00000000, LENGTH = 0x01000
+    instrram    : ORIGIN = 0x00000000, LENGTH = 0x20000
+    dataram     : ORIGIN = 0x00100000, LENGTH = 0x18000
+    stack       : ORIGIN = 0x00108000, LENGTH = 0x08000
 }
 
 /* Stack information variables */
@@ -20,8 +21,8 @@ SECTIONS
     {
         . = ALIGN(4);
         KEEP(*(.vectors))
-    } > ram
-        
+    } > instrram
+
     .text : {
         . = ALIGN(4);
         _stext = .;
@@ -40,26 +41,20 @@ SECTIONS
         *(.lit)
         *(.shdata)
         _endtext = .;
-    }  > ram
-    
+    }  > instrram
+
     .rodata : {
         . = ALIGN(4);
         *(.rodata);
         *(.rodata.*)
-    } > ram
+    } > dataram
 
-    /* or1k-specific */
-    .got : { *(.got.plt) * (.igot.plt) *(.got) *(.igot) } > ram
     .shbss :
     {
         . = ALIGN(4);
         *(.shbss)
-    } > ram
-    
-    .talias :
-    { 
-    }  > ram
-    
+    } > dataram
+
     .data : {
         . = ALIGN(4);
         sdata  =  .;
@@ -68,8 +63,8 @@ SECTIONS
         *(.data.*)
         edata  =  .;
         _edata  =  .;
-    } > ram
-    
+    } > dataram
+
     .bss :
     {
         . = ALIGN(4);
@@ -80,8 +75,8 @@ SECTIONS
         *(.sbss.*)
         *(COMMON)
         _bss_end = .;
-    } > ram
-    
+    } > dataram
+
     /* ensure there is enough room for stack */
     .stack (NOLOAD): {
         . = ALIGN(4);
@@ -90,12 +85,12 @@ SECTIONS
         stack = . ;
         _stack = . ;
     } > stack
-    
+
     .stab  0 (NOLOAD) :
     {
         [ .stab ]
     }
-    
+
     .stabstr  0 (NOLOAD) :
     {
         [ .stabstr ]

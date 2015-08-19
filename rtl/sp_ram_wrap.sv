@@ -2,7 +2,8 @@
 
 module sp_ram_wrap
   #(
-    parameter ADDR_WIDTH = 8
+    parameter ADDR_WIDTH = 17,
+    parameter NUM_WORDS  = 32768
   )(
     // Clock and Reset
     input  logic clk,
@@ -19,19 +20,20 @@ module sp_ram_wrap
   xilinx_mem_32768x32
   sp_ram_i
   (
-    .clk   ( clk                ),
-    .rst   ( 1'b1               ),
+    .clka   ( clk                ),
+    .rsta   ( 1'b1               ),
 
-    .en    ( en_i               ),
-    .addr  ( addr_i             ),
-    .din   ( wdata_i            ),
-    .dout  ( rdata_o            ),
-    .we    ( be_i & {4{we_i}}   )
+    .ena    ( en_i               ),
+    .addra  ( addr_i             ),
+    .dina   ( wdata_i            ),
+    .douta  ( rdata_o            ),
+    .wea    ( be_i & {4{we_i}}   )
     );
 `else
   sp_ram
   #(
-    .ADDR_WIDTH ( ADDR_WIDTH )
+    .ADDR_WIDTH ( ADDR_WIDTH ),
+    .NUM_WORDS  ( NUM_WORDS  )
     )
   sp_ram_i
   (

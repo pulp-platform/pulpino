@@ -12,6 +12,8 @@ echo "${Green}Compiling component:   ${Brown} standalone ${NC}"
 echo "${Red}"
 
 
+vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/boot_rom_wrap.sv      || exit 1
+vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/instr_ram_wrap.sv     || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/sp_ram.sv             || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/sp_ram_wrap.sv        || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/core_region.sv        || exit 1

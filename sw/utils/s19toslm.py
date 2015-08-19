@@ -98,13 +98,13 @@ if(len(sys.argv) < 2):
 
 
 l2_banks     = 1
-l2_bank_size = 8192 # in words (32 bit)
+l2_bank_size = 32768 # in words (32 bit)
 l2_start     = 0x00000000
 l2_end       = l2_start + l2_banks * l2_bank_size * 8 - 1
 
 tcdm_banks     = 1
-tcdm_bank_size = 2048 # in words (32 bit)
-tcdm_start     = 0x10000000
+tcdm_bank_size = 32768 # in words (32 bit)
+tcdm_start     = 0x00100000
 tcdm_end       = tcdm_start + tcdm_banks * tcdm_bank_size * 4 - 1
 tcdm_bank_bits = int(math.log(tcdm_banks, 2))
 
@@ -215,7 +215,7 @@ for addr in sorted(slm_dict.keys()):
         l2_base = (addr - l2_start)
         l2_addr = l2_base  + ((tcdm_size+8)/1024+1)*1024
         dump_bytes(flash, l2_addr * 4, data)
-        
+
     # tcdm address range
     if(addr >= tcdm_start and addr <= tcdm_end):
         tcdm_addr = (addr - tcdm_start)
