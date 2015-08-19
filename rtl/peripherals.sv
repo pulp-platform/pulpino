@@ -13,7 +13,22 @@ module peripherals
     input logic clk,
     input logic rst_n,
 
-    AXI_BUS.Slave slave,
+    AXI_BUS.Master axi_spi_master,
+
+    input  logic             spi_clk_i,
+    input  logic             spi_cs_i,
+    output logic [1:0]       spi_mode_o,
+    output logic             spi_sdo0_o,
+    output logic             spi_sdo1_o,
+    output logic             spi_sdo2_o,
+    output logic             spi_sdo3_o,
+    input  logic             spi_sdi0_i,
+    input  logic             spi_sdi1_i,
+    input  logic             spi_sdi2_i,
+    input  logic             spi_sdi3_i,
+
+
+    AXI_BUS.Slave  slave,
 
     output logic              uart_tx,
     input  logic              uart_rx,
@@ -57,6 +72,49 @@ module peripherals
 
 
   logic [1:0]   s_spim_event;
+
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// SPI Slave, AXI Master                                      ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
+
+  axi_spi_slave_wrap
+  #(
+      .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH ),
+      .AXI_DATA_WIDTH ( AXI_DATA_WIDTH ),
+      .AXI_USER_WIDTH ( AXI_USER_WIDTH ),
+      .AXI_ID_WIDTH   ( AXI_ID_WIDTH   ),
+      .APB_ADDR_WIDTH ( APB_ADDR_WIDTH ),
+      .APB_NUM_SLAVES ( APB_NUM_SLAVES )
+  )
+  axi_spi_slave_i
+  (
+      .clk_i      ( clk            ),
+      .rst_ni     ( rst_n          ),
+
+      .test_mode  ( 1'b0           ),
+
+      .axi_master ( axi_spi_master ),
+
+      .spi_clk    ( spi_clk_i      ),
+      .spi_cs     ( spi_cs_i       ),
+      .spi_mode   ( spi_mode_o     ),
+      .spi_sdo0   ( spi_sdo0_o     ),
+      .spi_sdo1   ( spi_sdo1_o     ),
+      .spi_sdo2   ( spi_sdo2_o     ),
+      .spi_sdo3   ( spi_sdo3_o     ),
+      .spi_sdi0   ( spi_sdi0_i     ),
+      .spi_sdi1   ( spi_sdi1_i     ),
+      .spi_sdi2   ( spi_sdi2_i     ),
+      .spi_sdi3   ( spi_sdi3_i     )
+  );
+
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// AXI2APB Bridge                                             ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
 
   axi2apb_wrap
   #(

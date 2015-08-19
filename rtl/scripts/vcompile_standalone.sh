@@ -22,8 +22,7 @@ vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/axi
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/top.sv                || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/peripherals.sv        || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/axi2apb_wrap.sv       || exit 1
+vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/axi_spi_slave_wrap.sv || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/timer_unit.sv         || exit 1
-
-make -s -C ../tb/minsoc_vpi/                                                                       || exit 1
 
 echo "${Cyan}--> standalone compilation complete! ${NC}"

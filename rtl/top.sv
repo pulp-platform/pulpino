@@ -13,6 +13,18 @@ module top
     input logic clk,
     input logic rst_n,
 
+    input  logic             spi_clk_i,
+    input  logic             spi_cs_i,
+    output logic [1:0]       spi_mode_o,
+    output logic             spi_sdo0_o,
+    output logic             spi_sdo1_o,
+    output logic             spi_sdo2_o,
+    output logic             spi_sdo3_o,
+    input  logic             spi_sdi0_i,
+    input  logic             spi_sdi1_i,
+    input  logic             spi_sdi2_i,
+    input  logic             spi_sdi3_i,
+
     output logic              uart_tx,
     input  logic              uart_rx,
     output logic              uart_rts,
@@ -49,7 +61,7 @@ module top
     .AXI_ID_WIDTH     ( `AXI_ID_MASTER_WIDTH   ),
     .AXI_USER_WIDTH   ( `AXI_USER_WIDTH )
   )
-  masters[1:0]();
+  masters[2:0]();
 
 
 
@@ -83,7 +95,21 @@ module top
     .clk         ( clk       ),
     .rst_n       ( rst_n     ),
 
-    .slave       ( slaves[1] ),
+    .axi_spi_master  ( masters[2] ),
+
+    .spi_clk    ( spi_clk_i      ),
+    .spi_cs     ( spi_cs_i       ),
+    .spi_mode   ( spi_mode_o     ),
+    .spi_sdo0   ( spi_sdo0_o     ),
+    .spi_sdo1   ( spi_sdo1_o     ),
+    .spi_sdo2   ( spi_sdo2_o     ),
+    .spi_sdo3   ( spi_sdo3_o     ),
+    .spi_sdi0   ( spi_sdi0_i     ),
+    .spi_sdi1   ( spi_sdi1_i     ),
+    .spi_sdi2   ( spi_sdi2_i     ),
+    .spi_sdi3   ( spi_sdi3_i     ),
+
+    .slave           ( slaves[1] ),
 
     .uart_tx         ( uart_tx  ),
     .uart_rx         ( uart_rx  ),
@@ -118,7 +144,7 @@ module top
   axi_node_intf_wrap
   #(
     .NB_MASTER      ( 2                    ),
-    .NB_SLAVE       ( 2                    ),
+    .NB_SLAVE       ( 3                    ),
     .AXI_ADDR_WIDTH ( `AXI_ADDR_WIDTH      ),
     .AXI_DATA_WIDTH ( `AXI_DATA_WIDTH      ),
     .AXI_ID_WIDTH   ( `AXI_ID_MASTER_WIDTH ),
