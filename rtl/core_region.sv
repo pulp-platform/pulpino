@@ -6,10 +6,11 @@
 
 module core_region
 #(
-    parameter AXI_ADDR_WIDTH = 32,
-    parameter AXI_DATA_WIDTH = 64,
-    parameter AXI_ID_WIDTH   = 10,
-    parameter AXI_USER_WIDTH = 0
+    parameter AXI_ADDR_WIDTH       = 32,
+    parameter AXI_DATA_WIDTH       = 64,
+    parameter AXI_ID_MASTER_WIDTH  = 10,
+    parameter AXI_ID_SLAVE_WIDTH   = 10,
+    parameter AXI_USER_WIDTH       = 0
   )
 (
     // Clock and Reset
@@ -58,8 +59,7 @@ module core_region
   // signals to/from AXI mem
   logic         is_axi_addr;
   logic         axi_mem_req;
-  logic         axi_mem_gnt;
-  logic [31:0]  axi_mem_addr;
+  logic [`RAM_ADDR_WIDTH+1:0]  axi_mem_addr;
   logic         axi_mem_we;
   logic [3:0]   axi_mem_be;
   logic [31:0]  axi_mem_rdata;
@@ -67,8 +67,7 @@ module core_region
 
   // signals to/from AXI instr
   logic         axi_instr_req;
-  logic         axi_instr_gnt;
-  logic [31:0]  axi_instr_addr;
+  logic [`RAM_ADDR_WIDTH+1:0]  axi_instr_addr;
   logic         axi_instr_we;
   logic [3:0]   axi_instr_be;
   logic [31:0]  axi_instr_rdata;
@@ -316,9 +315,13 @@ module core_region
     .be_i    ( instr_mem_be                         )
   );
 
-  axi2mem
+  axi_mem_if_SP_wrap
   #(
-    .AXI_ADDR_WIDTH ( 32   )
+    .AXI_ADDR_WIDTH  ( AXI_ADDR_WIDTH     ),
+    .AXI_DATA_WIDTH  ( AXI_DATA_WIDTH     ),
+    .AXI_ID_WIDTH    ( AXI_ID_SLAVE_WIDTH ),
+    .AXI_USER_WIDTH  ( AXI_USER_WIDTH     ),
+    .MEM_ADDR_WIDTH  ( `RAM_ADDR_WIDTH+2  )
   )
   instr_mem_axi_if
   (
@@ -326,7 +329,6 @@ module core_region
     .rst_n       ( rst_n             ),
 
     .mem_req_o   ( axi_instr_req     ),
-    .mem_gnt_i   ( axi_instr_gnt     ),
     .mem_addr_o  ( axi_instr_addr    ),
     .mem_we_o    ( axi_instr_we      ),
     .mem_be_o    ( axi_instr_be      ),
@@ -348,7 +350,7 @@ module core_region
     .rst_n          ( rst_n             ),
 
     .port0_req_i    ( axi_instr_req     ),
-    .port0_gnt_o    ( axi_instr_gnt     ),
+    .port0_gnt_o    (                   ),
     .port0_rvalid_o (                   ),
     .port0_addr_i   ( axi_instr_addr[`RAM_ADDR_WIDTH+1:0] ),
     .port0_we_i     ( axi_instr_we      ),
@@ -394,24 +396,27 @@ module core_region
     .be_i    ( data_mem_be                          )
   );
 
-  axi2mem
+  axi_mem_if_SP_wrap
   #(
-    .AXI_ADDR_WIDTH ( 32   )
+    .AXI_ADDR_WIDTH  ( AXI_ADDR_WIDTH       ),
+    .AXI_DATA_WIDTH  ( AXI_DATA_WIDTH       ),
+    .AXI_ID_WIDTH    ( AXI_ID_SLAVE_WIDTH   ),
+    .AXI_USER_WIDTH  ( AXI_USER_WIDTH       ),
+    .MEM_ADDR_WIDTH  ( `RAM_ADDR_WIDTH+2    )
   )
   data_mem_axi_if
   (
-    .clk         ( clk             ),
-    .rst_n       ( rst_n           ),
+    .clk         ( clk               ),
+    .rst_n       ( rst_n             ),
 
-    .mem_req_o   ( axi_mem_req     ),
-    .mem_gnt_i   ( axi_mem_gnt     ),
-    .mem_addr_o  ( axi_mem_addr    ),
-    .mem_we_o    ( axi_mem_we      ),
-    .mem_be_o    ( axi_mem_be      ),
-    .mem_rdata_i ( axi_mem_rdata   ),
-    .mem_wdata_o ( axi_mem_wdata   ),
+    .mem_req_o   ( axi_mem_req       ),
+    .mem_addr_o  ( axi_mem_addr      ),
+    .mem_we_o    ( axi_mem_we        ),
+    .mem_be_o    ( axi_mem_be        ),
+    .mem_rdata_i ( axi_mem_rdata     ),
+    .mem_wdata_o ( axi_mem_wdata     ),
 
-    .slave       ( data_slave      )
+    .slave       ( data_slave        )
   );
 
 
@@ -426,7 +431,7 @@ module core_region
     .rst_n          ( rst_n            ),
 
     .port0_req_i    ( axi_mem_req      ),
-    .port0_gnt_o    ( axi_mem_gnt      ),
+    .port0_gnt_o    (                  ),
     .port0_rvalid_o (                  ),
     .port0_addr_i   ( axi_mem_addr[`RAM_ADDR_WIDTH+1:0] ),
     .port0_we_i     ( axi_mem_we       ),
@@ -458,11 +463,11 @@ module core_region
 
   adv_dbg_if
   #(
-    .NB_CORES       ( 1               ),
-    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH  ),
-    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH  ),
-    .AXI_USER_WIDTH ( AXI_USER_WIDTH  ),
-    .AXI_ID_WIDTH   ( AXI_ID_WIDTH    )
+    .NB_CORES           ( 1                   ),
+    .AXI_ADDR_WIDTH     ( AXI_ADDR_WIDTH      ),
+    .AXI_DATA_WIDTH     ( AXI_DATA_WIDTH      ),
+    .AXI_USER_WIDTH     ( AXI_USER_WIDTH      ),
+    .AXI_ID_WIDTH       ( AXI_ID_MASTER_WIDTH )
     )
   adv_dbg_if_i
   (

@@ -1,11 +1,11 @@
 
 `include "axi_bus.sv"
 
-`define AXI_ADDR_WIDTH    32
-`define AXI_DATA_WIDTH    64
+`define AXI_ADDR_WIDTH         32
+`define AXI_DATA_WIDTH         32
 `define AXI_ID_MASTER_WIDTH     2
 `define AXI_ID_SLAVE_WIDTH      4
-`define AXI_USER_WIDTH    0
+`define AXI_USER_WIDTH          0
 
 module pulpino_top
   (
@@ -68,10 +68,11 @@ module pulpino_top
 
   core_region
   #(
-    .AXI_ADDR_WIDTH ( `AXI_ADDR_WIDTH      ),
-    .AXI_DATA_WIDTH ( `AXI_DATA_WIDTH      ),
-    .AXI_ID_WIDTH   ( `AXI_ID_MASTER_WIDTH ),
-    .AXI_USER_WIDTH ( `AXI_USER_WIDTH      )
+    .AXI_ADDR_WIDTH       ( `AXI_ADDR_WIDTH      ),
+    .AXI_DATA_WIDTH       ( `AXI_DATA_WIDTH      ),
+    .AXI_ID_MASTER_WIDTH  ( `AXI_ID_MASTER_WIDTH ),
+    .AXI_ID_SLAVE_WIDTH   ( `AXI_ID_SLAVE_WIDTH  ),
+    .AXI_USER_WIDTH       ( `AXI_USER_WIDTH      )
   )
   core_region_i
   (
@@ -101,8 +102,8 @@ module pulpino_top
   )
   peripherals_i
   (
-    .clk         ( clk       ),
-    .rst_n       ( rst_n     ),
+    .clk             ( clk        ),
+    .rst_n           ( rst_n      ),
 
     .axi_spi_master  ( masters[2] ),
 

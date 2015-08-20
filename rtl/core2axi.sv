@@ -28,7 +28,6 @@ module core2axi
   logic    id, id_q;
   logic    done;
 
-  logic    highlow_q;
 
   always_comb
   begin
@@ -116,14 +115,12 @@ module core2axi
       CS        <= IDLE;
       gnt_q     <= 1'b0;
       id_q      <= 'h0;
-      highlow_q <= 1'b0;
     end
     else
     begin
       CS        <= NS;
       gnt_q     <= data_gnt_o;
       id_q      <= id;
-      highlow_q <= data_addr_i[2];
     end
   end
 
@@ -154,10 +151,10 @@ module core2axi
 
   assign master.w_last  = 'h1;
   assign master.w_user  = 'h0;
-  assign master.w_strb  = (data_addr_i[2] == 1'b1) ? {data_be_i, 4'b0000} : {4'b0000, data_be_i};
-  assign master.w_data  = {data_wdata_i, data_wdata_i};
+  assign master.w_strb  = data_be_i;
+  assign master.w_data  = data_wdata_i;
 
-  assign data_rdata_o   = (highlow_q == 1'b1) ? master.r_data[63:32] : master.r_data[31:0];
+  assign data_rdata_o   = master.r_data[31:0];
 
   assign data_rvalid_o  = gnt_q;
 
