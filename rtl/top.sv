@@ -80,8 +80,8 @@ module pulpino_top
 
     .core_master ( masters[0] ),
     .dbg_master  ( masters[1] ),
-    .data_slave  ( slaves[0]  ),
-    .instr_slave ( slaves[1]  ),
+    .data_slave  ( slaves[1]  ),
+    .instr_slave ( slaves[0]  ),
 
     .tck_i       ( tck_i      ),
     .trstn_i     ( trstn_i    ),

@@ -228,7 +228,7 @@ module core_region
   //----------------------------------------------------------------------------//
   // DEMUX
   //----------------------------------------------------------------------------//
-  assign is_axi_addr   = (core_lsu_addr[31:24] != 8'h00);
+  assign is_axi_addr   = (core_lsu_addr[31:20] != 12'h001);
   assign core_data_req = (~is_axi_addr) & core_lsu_req;
   assign core_axi_req  =   is_axi_addr  & core_lsu_req;
 
