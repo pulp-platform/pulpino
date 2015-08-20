@@ -130,4 +130,14 @@ macro(add_sim_targets NAME)
     DEPENDS ${NAME}.stim.txt
     DEPENDS ${NAME}.slm.cmd
     DEPENDS ${NAME}.bin)
+
+
+  ##############################################################################
+  # Analyze simulation
+  ##############################################################################
+
+  add_custom_target(${NAME}.kcg
+    COMMAND ${PULP_PC_ANALYZE} --rtl --input=trace_core_00.log --binary=${NAME}.elf
+    COMMAND kcachegrind kcg.txt
+    WORKING_DIRECTORY ./${SUBDIR})
 endmacro()

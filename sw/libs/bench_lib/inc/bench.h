@@ -5,6 +5,7 @@
 #include "bar.h"
 #include "timer.h"
 #include <stdint.h>
+#include "cpu_hal.h"
 
 typedef struct _testresult_t {
   int time;
@@ -46,5 +47,32 @@ void run_suite(testcase_t *tests);
  * This function should be used when a fine grained error reporting is needed
  */
 void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, uint32_t expected);
+
+/**
+ * @brief Starts all performance counters
+ */
+static inline void perf_start(void) {
+  cpu_perf_conf_events(SPR_PCER_ALL_EVENTS_MASK);
+  cpu_perf_conf(SPR_PCMR_ACTIVE | SPR_PCMR_SATURATE);
+}
+
+/**
+ * @brief Stops all performance counters
+ */
+static inline void perf_stop(void) {
+  cpu_perf_conf(0);
+}
+
+/**
+ * @brief Resets all performance counters to 0 without stopping them
+ */
+static inline void perf_reset(void) {
+  cpu_perf_setall(0);
+}
+
+/**
+ * @brief Prints all performance counters
+ */
+void perf_print_all(void);
 
 #endif

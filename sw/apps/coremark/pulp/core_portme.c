@@ -12,6 +12,7 @@
 #include "timer.h"
 #include "coremark.h"
 #include "cpu_hal.h"
+#include "bench.h"
 
 #if VALIDATION_RUN
   volatile ee_s32 seed1_volatile=0x3415;
@@ -59,9 +60,8 @@ static CORETIMETYPE start_time_val, stop_time_val;
   or zeroing some system parameters - e.g. setting the cpu clocks cycles to 0.
 */
 void start_time(void) {
-  cpu_perf_setall(0);
-  cpu_perf_conf_events(SPR_PCER_ALL_EVENTS_MASK);
-  //cpu_perf_conf(SPR_PCMR_ACTIVE | SPR_PCMR_SATURATE);
+  perf_reset();
+  perf_start();
 
   start_timer();
 
@@ -75,22 +75,9 @@ void start_time(void) {
 */
 void stop_time(void) {
   stop_timer();
-  //cpu_perf_conf(0);
+  perf_stop();
+  perf_print_all();
 
-  printf("Perf CYCLES: %d\n",     cpu_perf_get(SPR_PCER_CYCLES));
-  printf("Perf INSTR: %d\n",      cpu_perf_get(SPR_PCER_INSTR));
-  printf("Perf LOAD: %d\n",       cpu_perf_get(SPR_PCER_LOAD));
-  printf("Perf JUMP: %d\n",       cpu_perf_get(SPR_PCER_JUMP));
-  printf("Perf IMISS: %d\n",      cpu_perf_get(SPR_PCER_IMISS));
-  printf("Perf BRANCH: %d\n",     cpu_perf_get(SPR_PCER_BRANCH));
-  printf("Perf BRANCH_CYC: %d\n", cpu_perf_get(SPR_PCER_BRANCH_CYC));
-  printf("Perf LD: %d\n",         cpu_perf_get(SPR_PCER_LD));
-  printf("Perf ST: %d\n",         cpu_perf_get(SPR_PCER_ST));
-  printf("Perf LD_EXT: %d\n",     cpu_perf_get(SPR_PCER_LD_EXT));
-  printf("Perf ST_EXT: %d\n",     cpu_perf_get(SPR_PCER_ST_EXT));
-  printf("Perf LD_EXT_CYC: %d\n", cpu_perf_get(SPR_PCER_LD_EXT_CYC));
-  printf("Perf ST_EXT_CYC: %d\n", cpu_perf_get(SPR_PCER_ST_EXT_CYC));
-  printf("Perf TCDM_CONT: %d\n",  cpu_perf_get(SPR_PCER_TCDM_CONT));
   GETMYTIME(&stop_time_val );
 }
 /* Function : time_in_secs

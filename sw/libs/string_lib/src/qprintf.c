@@ -10,6 +10,31 @@
 #define PRINT_BUF_LEN 32
 
 
+static unsigned divu10(unsigned n) {
+  unsigned q, r;
+
+  q = (n >> 1) + (n >> 2);
+  q = q + (q >> 4);
+  q = q + (q >> 8);
+  q = q + (q >> 16);
+  q = q >> 3;
+  r = n - q * 10;
+
+  return q + ((r + 6) >> 4);
+}
+
+char remu10_table[16] = {
+  0, 1, 2, 2, 3, 3, 4, 5,
+  5, 6, 7, 7, 8, 8, 9, 0
+};
+
+static unsigned remu10(unsigned n) {
+  n = (0x19999999 * n + (n >> 1) + (n >> 3)) >> 28;
+  return remu10_table[n];
+}
+
+
+
 int putchar(int s)
 {
 #ifdef PRINTF_USE_UART
@@ -71,14 +96,14 @@ static int qprinti(char **out, int i, int b, int sg, int width, int pad, char le
   register int neg = 0, pc = 0;
   unsigned int t,u = i;
 
-  if (i == 0) 
+  if (i == 0)
   {
     print_buf[0] = '0';
     print_buf[1] = '\0';
     return qprints (out, print_buf, width, pad);
   }
 
-  if (sg && b == 10 && i < 0) 
+  if (sg && b == 10 && i < 0)
   {
     neg = 1;
     u = -i;
@@ -87,22 +112,34 @@ static int qprinti(char **out, int i, int b, int sg, int width, int pad, char le
   s = print_buf + PRINT_BUF_LEN-1;
   *s = '\0';
 
-  while (u) {
-    t = u % b;
-    if( t >= 10 )
-      t += letbase - '0' - 10;
-    *--s = t + '0';
-    u /= b;
+  // treat HEX and decimal differently
+  if(b == 16) {
+    // HEX
+    while (u) {
+      int t = u & 0xF;
+
+      if (t >= 10)
+        t += letbase - '0' - 10;
+
+      *--s = t + '0';
+      u >>= 4;
+    }
+  } else {
+    // decimal
+    while (u) {
+      *--s = remu10(u) + '0';
+      u = divu10(u);
+    }
   }
 
   if (neg) {
-    if( width && (pad & PAD_ZERO) ) 
+    if( width && (pad & PAD_ZERO) )
     {
       qprintchar (out, '-');
       ++pc;
       --width;
     }
-    else 
+    else
     {
       *--s = '-';
     }
@@ -147,16 +184,16 @@ static int qprint(char **out, const char *format, va_list va)
         pc += qprinti (out, va_arg(va, int), 10, 1, width, pad, 'a');
         continue;
       }
+      if( *format == 'u' ) {
+        pc += qprinti (out, va_arg(va, unsigned int), 10, 0, width, pad, 'a');
+        continue;
+      }
       if( *format == 'x' ) {
         pc += qprinti (out, va_arg(va, uint32_t), 16, 0, width, pad, 'a');
         continue;
       }
       if( *format == 'X' ) {
         pc += qprinti (out, va_arg(va, uint32_t), 16, 0, width, pad, 'A');
-        continue;
-      }
-      if( *format == 'u' ) {
-        pc += qprinti (out, va_arg(va, unsigned int), 10, 0, width, pad, 'a');
         continue;
       }
       if( *format == 'c' ) {
@@ -209,6 +246,8 @@ int puts(const char *s)
 
   while(s[i] != '\0')
     putchar(s[i++]);
+
+  putchar('\n');
 
   return i;
 }

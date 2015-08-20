@@ -96,6 +96,18 @@ void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, u
   }
 }
 
+void perf_print_all(void) {
+  printf("Perf CYCLES: %d\n",     cpu_perf_get(SPR_PCER_CYCLES));
+  printf("Perf INSTR: %d\n",      cpu_perf_get(SPR_PCER_INSTR));
+  printf("Perf LOAD: %d\n",       cpu_perf_get(SPR_PCER_LOAD));
+  printf("Perf JUMP: %d\n",       cpu_perf_get(SPR_PCER_JUMP));
+  printf("Perf IMISS: %d\n",      cpu_perf_get(SPR_PCER_IMISS));
+  printf("Perf BRANCH: %d\n",     cpu_perf_get(SPR_PCER_BRANCH));
+  printf("Perf BRANCH_CYC: %d\n", cpu_perf_get(SPR_PCER_BRANCH_CYC));
+  printf("Perf LD: %d\n",         cpu_perf_get(SPR_PCER_LD));
+  printf("Perf ST: %d\n",         cpu_perf_get(SPR_PCER_ST));
+}
+
 // use weak attribute here, so we can overwrite this function to provide custom exception handlers, e.g. for tests
 //__attribute__((interrupt))
 __attribute__((weak))
