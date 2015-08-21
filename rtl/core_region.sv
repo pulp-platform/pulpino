@@ -17,6 +17,8 @@ module core_region
     input logic clk,
     input logic rst_n,
 
+    input logic fetch_enable_i,
+
     AXI_BUS.Master core_master,
     AXI_BUS.Master dbg_master,
     AXI_BUS.Slave  data_slave,
@@ -156,7 +158,7 @@ module core_region
       .dbginf_data_i   ( dbginf_datao[0]   ),
       .dbginf_data_o   ( dbginf_datai[0]   ),
 
-      .fetch_enable_i  ( 1'b1              ),
+      .fetch_enable_i  ( fetch_enable_i    ),
       .core_busy_o     (                   )
     );
   `else
@@ -197,7 +199,7 @@ module core_region
       .dbginf_data_i   ( dbginf_datao[0]   ),
       .dbginf_data_o   ( dbginf_datai[0]   ),
 
-      .fetch_enable_i  ( 1'b1              ),
+      .fetch_enable_i  ( fetch_enable_i    ),
       .core_busy_o     (                   )
     );
   `endif

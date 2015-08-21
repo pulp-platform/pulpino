@@ -145,8 +145,9 @@ for i in range(0, tcdm_banks):
     tcdm_files[i] = open("tcdm_bank%d.slm" % i, 'w')
 
 
-l2_stim = open("l2_stim.slm",    'w')
-flash   = open("flash_stim.slm", 'w')
+spi_stim = open("spi_stim.txt",   'w')
+l2_stim  = open("l2_stim.slm",    'w')
+flash    = open("flash_stim.slm", 'w')
 
 ###############################################################################
 # write the stimuli
@@ -168,6 +169,7 @@ for addr in sorted(slm_dict.keys()):
             l2_cut_files[cut][hilo].write("@%08X %s\n" % (l2_addr, data))
 
         l2_stim.write("@%08X %s\n" % (l2_base, data))
+        spi_stim.write("%08X_%s\n" % (addr << 2, data))
 
 
     # tcdm address range
@@ -232,7 +234,6 @@ for i in l2_cut_files:
 for i in tcdm_files:
     tcdm_files[i].close()
 
+spi_stim.close()
 l2_stim.close()
 flash.close()
-
-

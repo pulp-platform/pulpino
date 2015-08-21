@@ -5,13 +5,15 @@
 `define AXI_DATA_WIDTH         32
 `define AXI_ID_MASTER_WIDTH     2
 `define AXI_ID_SLAVE_WIDTH      4
-`define AXI_USER_WIDTH          0
+`define AXI_USER_WIDTH          1
 
 module pulpino_top
   (
     // Clock and Reset
     input logic clk,
     input logic rst_n,
+
+    input  logic             fetch_enable_i,
 
     input  logic             spi_clk_i,
     input  logic             spi_cs_i,
@@ -78,6 +80,8 @@ module pulpino_top
   (
     .clk         ( clk        ),
     .rst_n       ( rst_n      ),
+
+    .fetch_enable_i ( fetch_enable_i ),
 
     .core_master ( masters[0] ),
     .dbg_master  ( masters[1] ),
