@@ -634,17 +634,18 @@
 #define SPR_PCER_LD_STALL		2  /* Number of load data hazards */
 #define SPR_PCER_JMP_STALL		3  /* Number of jump register data hazards */
 #define SPR_PCER_IMISS		4  /* Cycles waiting for instruction fetches. i.e. the number of instructions wasted due to non-ideal caches */
-#define SPR_PCER_BRANCH		5  /* Number of wrong predicted branches */
-#define SPR_PCER_BRANCH_CYC	6  /* Cycles wasted due to wrong predicted branches */
+#define SPR_PCER_WBRANCH		5  /* Number of wrong predicted branches */
+#define SPR_PCER_WBRANCH_CYC	6  /* Cycles wasted due to wrong predicted branches */
 #define SPR_PCER_LD		7  /* Number of memory loads executed. Misaligned accesses are counted twice */
 #define SPR_PCER_ST		8  /* Number of memory stores executed. Misaligned accesses are counted twice */
-#define SPR_PCER_JUMP		9  /* Number of jump instructions seen, i.e. j, jr, jal, jalr, bf, bnf */
-#define SPR_PCER_DELAY_NOP		10  /* Number of empty delay slots, i.e. delay slots filled with a nop */
-#define SPR_PCER_LD_EXT		11  /* Number of memory loads to EXT executed. Misaligned accesses are counted twice. Every non-TCDM access is considered external */
-#define SPR_PCER_ST_EXT		12  /* Number of memory stores to EXT executed. Misaligned accesses are counted twice. Every non-TCDM access is considered external */
-#define SPR_PCER_LD_EXT_CYC	13  /* Cycles used for memory loads to EXT. Every non-TCDM access is considered external */
-#define SPR_PCER_ST_EXT_CYC	14  /* Cycles used for memory stores to EXT. Every non-TCDM access is considered external */
-#define SPR_PCER_TCDM_CONT	15  /* Cycles wasted due to TCDM/log-interconnect contention */
+#define SPR_PCER_JUMP		9  /* Number of jump instructions seen, i.e. j, jr, jal, jalr */
+#define SPR_PCER_BRANCH		10  /* Number of jump instructions seen, i.e. bf, bnf */
+#define SPR_PCER_DELAY_NOP		11  /* Number of empty delay slots, i.e. delay slots filled with a nop */
+#define SPR_PCER_LD_EXT		12  /* Number of memory loads to EXT executed. Misaligned accesses are counted twice. Every non-TCDM access is considered external */
+#define SPR_PCER_ST_EXT		13  /* Number of memory stores to EXT executed. Misaligned accesses are counted twice. Every non-TCDM access is considered external */
+#define SPR_PCER_LD_EXT_CYC	14  /* Cycles used for memory loads to EXT. Every non-TCDM access is considered external */
+#define SPR_PCER_ST_EXT_CYC	15  /* Cycles used for memory stores to EXT. Every non-TCDM access is considered external */
+#define SPR_PCER_TCDM_CONT	16  /* Cycles wasted due to TCDM/log-interconnect contention */
 
 // Gives from the event ID, the HW mask that can be stored (with an OR with other events mask) to the PCER
 #define SPR_PCER_EVENT_MASK(eventId)	(1<<(eventId))

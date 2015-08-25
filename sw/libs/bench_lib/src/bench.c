@@ -97,17 +97,18 @@ void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, u
 }
 
 void perf_print_all(void) {
-  printf("Perf CYCLES: %d\n",     cpu_perf_get(SPR_PCER_CYCLES));
-  printf("Perf INSTR: %d\n",      cpu_perf_get(SPR_PCER_INSTR));
-  printf("Perf LD_STALL: %d\n",   cpu_perf_get(SPR_PCER_LD_STALL));
-  printf("Perf JMP_STALL: %d\n",  cpu_perf_get(SPR_PCER_JMP_STALL));
-  printf("Perf IMISS: %d\n",      cpu_perf_get(SPR_PCER_IMISS));
-  printf("Perf BRANCH: %d\n",     cpu_perf_get(SPR_PCER_BRANCH));
-  printf("Perf BRANCH_CYC: %d\n", cpu_perf_get(SPR_PCER_BRANCH_CYC));
-  printf("Perf LD: %d\n",         cpu_perf_get(SPR_PCER_LD));
-  printf("Perf ST: %d\n",         cpu_perf_get(SPR_PCER_ST));
-  printf("Perf JUMP: %d\n",       cpu_perf_get(SPR_PCER_JUMP));
-  printf("Perf DELAY NOP: %d\n",  cpu_perf_get(SPR_PCER_DELAY_NOP));
+  printf("Perf CYCLES: %d\n",      cpu_perf_get(SPR_PCER_CYCLES));
+  printf("Perf INSTR: %d\n",       cpu_perf_get(SPR_PCER_INSTR));
+  printf("Perf LD_STALL: %d\n",    cpu_perf_get(SPR_PCER_LD_STALL));
+  printf("Perf JMP_STALL: %d\n",   cpu_perf_get(SPR_PCER_JMP_STALL));
+  printf("Perf IMISS: %d\n",       cpu_perf_get(SPR_PCER_IMISS));
+  printf("Perf WBRANCH: %d\n",     cpu_perf_get(SPR_PCER_WBRANCH));
+  printf("Perf WBRANCH_CYC: %d\n", cpu_perf_get(SPR_PCER_WBRANCH_CYC));
+  printf("Perf LD: %d\n",          cpu_perf_get(SPR_PCER_LD));
+  printf("Perf ST: %d\n",          cpu_perf_get(SPR_PCER_ST));
+  printf("Perf JUMP: %d\n",        cpu_perf_get(SPR_PCER_JUMP));
+  printf("Perf BRANCH: %d\n",      cpu_perf_get(SPR_PCER_BRANCH));
+  printf("Perf DELAY NOP: %d\n",   cpu_perf_get(SPR_PCER_DELAY_NOP));
 }
 
 // use weak attribute here, so we can overwrite this function to provide custom exception handlers, e.g. for tests
