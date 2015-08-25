@@ -36,7 +36,7 @@ int int_add(unsigned long irq, void (* handler)(void *), void *arg)
 }
 
 /* Main interrupt handler */
-__attribute__((interrupt))
+__attribute__((interrupt)) __attribute__((weak))
 void int_main()
 {
   unsigned int core_id = get_core_id();

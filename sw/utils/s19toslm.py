@@ -177,7 +177,9 @@ for addr in sorted(slm_dict.keys()):
         tcdm_addr = (addr - tcdm_start) >> tcdm_bank_bits
         bank      = addr % tcdm_banks
         tcdm_files[bank].write("@%08X %s\n" % (tcdm_addr, data))
-        tcdm_size += 1 
+        tcdm_size += 1
+
+        spi_stim.write("%08X_%s\n" % (addr << 2, data))
 ###############################################################################
 # write flash
 ###############################################################################

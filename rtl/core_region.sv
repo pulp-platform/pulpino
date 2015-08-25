@@ -61,7 +61,7 @@ module core_region
   // signals to/from AXI mem
   logic         is_axi_addr;
   logic         axi_mem_req;
-  logic [`RAM_ADDR_WIDTH+1:0]  axi_mem_addr;
+  logic [`RAM_ADDR_WIDTH-1:0]  axi_mem_addr;
   logic         axi_mem_we;
   logic [3:0]   axi_mem_be;
   logic [31:0]  axi_mem_rdata;
@@ -69,7 +69,7 @@ module core_region
 
   // signals to/from AXI instr
   logic         axi_instr_req;
-  logic [`RAM_ADDR_WIDTH+1:0]  axi_instr_addr;
+  logic [`RAM_ADDR_WIDTH-1:0]  axi_instr_addr;
   logic         axi_instr_we;
   logic [3:0]   axi_instr_be;
   logic [31:0]  axi_instr_rdata;
@@ -323,7 +323,7 @@ module core_region
     .AXI_DATA_WIDTH  ( AXI_DATA_WIDTH     ),
     .AXI_ID_WIDTH    ( AXI_ID_SLAVE_WIDTH ),
     .AXI_USER_WIDTH  ( AXI_USER_WIDTH     ),
-    .MEM_ADDR_WIDTH  ( `RAM_ADDR_WIDTH+2  )
+    .MEM_ADDR_WIDTH  ( `RAM_ADDR_WIDTH    )
   )
   instr_mem_axi_if
   (
@@ -354,7 +354,7 @@ module core_region
     .port0_req_i    ( axi_instr_req     ),
     .port0_gnt_o    (                   ),
     .port0_rvalid_o (                   ),
-    .port0_addr_i   ( axi_instr_addr[`RAM_ADDR_WIDTH+1:0] ),
+    .port0_addr_i   ( {axi_instr_addr[`RAM_ADDR_WIDTH-1:0],2'b00} ),
     .port0_we_i     ( axi_instr_we      ),
     .port0_be_i     ( axi_instr_be      ),
     .port0_rdata_o  ( axi_instr_rdata   ),
@@ -404,7 +404,7 @@ module core_region
     .AXI_DATA_WIDTH  ( AXI_DATA_WIDTH       ),
     .AXI_ID_WIDTH    ( AXI_ID_SLAVE_WIDTH   ),
     .AXI_USER_WIDTH  ( AXI_USER_WIDTH       ),
-    .MEM_ADDR_WIDTH  ( `RAM_ADDR_WIDTH+2    )
+    .MEM_ADDR_WIDTH  ( `RAM_ADDR_WIDTH      )
   )
   data_mem_axi_if
   (
@@ -435,7 +435,7 @@ module core_region
     .port0_req_i    ( axi_mem_req      ),
     .port0_gnt_o    (                  ),
     .port0_rvalid_o (                  ),
-    .port0_addr_i   ( axi_mem_addr[`RAM_ADDR_WIDTH+1:0] ),
+    .port0_addr_i   ( {axi_mem_addr[`RAM_ADDR_WIDTH-1:0],2'b00} ),
     .port0_we_i     ( axi_mem_we       ),
     .port0_be_i     ( axi_mem_be       ),
     .port0_rdata_o  ( axi_mem_rdata    ),

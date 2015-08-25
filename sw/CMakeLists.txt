@@ -68,10 +68,12 @@ add_custom_target(vcompile
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
+################################################################################
+
 if(${RISCV})
   set(crt0      "ref/crt0.riscv.S")
 else()
-  set(crt0      "ref/crt0.S")
+  set(crt0      "ref/crt0.or1k.S")
 endif()
 
 
@@ -79,6 +81,11 @@ include_directories(libs/sys_lib/inc)
 set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
 add_library(crt0 OBJECT ${crt0})
 
+add_library(crt0_boot OBJECT ${crt0})
+set_target_properties(crt0_boot PROPERTIES COMPILE_FLAGS "-DBOOT")
+
+
+################################################################################
 
 add_subdirectory(libs/string_lib)
 add_subdirectory(libs/sys_lib)

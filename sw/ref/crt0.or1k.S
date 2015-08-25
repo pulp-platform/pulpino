@@ -175,7 +175,7 @@ reset_handler:
     l.mtspr r0, r1, SPR_SR
 
     /* Early Stack initilization */
-    l.movhi r1, 0x0011       // stack starts from high address
+    l.movhi r1, 0x0012       // stack starts from high address
     l.ori   r1, r1, 0x0000
 
     /* LOAD program start address into r4 */
