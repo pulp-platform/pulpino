@@ -2,18 +2,33 @@
 #define _UTILS_H_
 
 /* For getting core ID. */
-int get_core_id();
+static inline int get_core_id()
+{
+  return 0;
+}
 
-/* For getting core ID. */
-int get_cluster_id();
+// get number of cores
+static inline int get_core_num()
+{
+  return 0;
+}
 
-int get_core_num();
 
+#ifndef __riscv__
 /* For writing into SPR. */
-void mtspr(unsigned long spr, unsigned long value);
+static inline void mtspr(unsigned long spr, unsigned long value)
+{
+  asm volatile ("l.mtspr\t\t%0,%1,0": : "r" (spr), "r" (value));
+}
 
 /* For reading SPR. */
-unsigned long mfspr(unsigned long spr);
+static inline unsigned long mfspr(unsigned long spr)
+{
+  unsigned long value;
+  asm volatile ("l.mfspr\t\t%0,%1,0" : "=r" (value) : "r" (spr));
+  return value;
+}
+#endif
 
 /* Loops/exits simulation */
 void exit(int i);
