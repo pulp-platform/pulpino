@@ -18,10 +18,12 @@ vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/instr_core_interface.sv   || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/if_stage.sv               || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/id_stage.sv               || goto error
+vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/controller.sv             || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/exc_controller.sv         || goto error
+vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/hwloop_controller.sv      || goto error
+vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/hwloop_regs.sv            || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/register_file.sv          || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/compressed_decoder.sv     || goto error
-vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/controller.sv             || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/ex_stage.sv               || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/alu.sv                    || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/mult.sv                   || goto error
@@ -30,3 +32,7 @@ vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/debug_unit.sv             || goto error
 
 echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+
+error:
+echo "${NC}"
+exit 1
