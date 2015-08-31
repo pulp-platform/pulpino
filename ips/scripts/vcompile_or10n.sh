@@ -28,5 +28,6 @@ vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or
 vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/or10n_core.sv           || exit 1
 vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/debug_unit.sv           || exit 1
 vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/instr_core_interface.sv || exit 1
+vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/register_file.sv        || exit 1
 
 echo "${Cyan}--> or10n processor core compilation complete! ${NC}"

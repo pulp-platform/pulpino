@@ -26,7 +26,6 @@ vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/alu.sv                    || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/mult.sv                   || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/cs_registers.sv           || goto error
-vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/wb_stage.sv               || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/load_store_unit.sv        || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/debug_unit.sv             || goto error
 
