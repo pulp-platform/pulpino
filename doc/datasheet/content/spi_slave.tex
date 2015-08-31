@@ -1,0 +1,17 @@
+\chapter{SPI Slave}
+
+The SPI slave is an active peripheral in the sense that it receives/sends data
+without the assistance of the core. In fact is intended as an external interface
+through which a user of the system can access the internal memories from
+outside.
+This can be used to pre-load programs into the memories, start the system, wait
+for an acknowledgment that the program has terminated and then examine the
+results.
+
+The SPI slave has an AXI master through which it can access all peripherals and
+memories. From the outside it can be accesses by sending SPI/QSPI commands to it.
+QSPI is an extension to SPI that uses four data lanes instead of one and is thus
+four times as fast as the standard SPI.
+
+If pins on an ASIC are scarce, it is possible to just connect the standard SPI
+interface to pins and accept the performance loss in transfers from/to the SoC.
