@@ -148,6 +148,80 @@ rvc_string ##rvc_instr: \
   rv_instr  a2, sp, imm_value; \
   jal helper_check;
 
+
+
+// used for c.add4spn
+#define TEST_BR_TAKE(rvc_instr, r_value) \
+  .data; \
+rvc_string ##rvc_instr: \
+  .string #rvc_instr; \
+  .text; \
+  lui a0,      %hi(rvc_string##rvc_instr); \
+  addi a0, a0, %lo(rvc_string##rvc_instr); \
+  \
+  li a1, r_value; \
+  .option rvc; \
+  rvc_instr a1, rvc_instr##_take; \
+  .option norvc; \
+  jal helper_error; \
+rvc_instr##_take:;
+
+#define TEST_BR_NOT_TAKE(rvc_instr, r_value) \
+  .data; \
+rvc_string2 ##rvc_instr: \
+  .string #rvc_instr; \
+  .text; \
+  lui a0,      %hi(rvc_string2##rvc_instr); \
+  addi a0, a0, %lo(rvc_string2##rvc_instr); \
+  \
+  li a1, r_value; \
+  .option rvc; \
+  rvc_instr a1, rvc_instr##_not_take; \
+  .option norvc; \
+  j rvc_instr##_done; \
+rvc_instr##_not_take:; \
+  jal helper_error; \
+rvc_instr##_done:;
+
+
+#define TEST_J(rvc_instr, should_be_zero) \
+  .data; \
+rvc_string ##rvc_instr: \
+  .string #rvc_instr; \
+  .text; \
+  lui a0,      %hi(rvc_string##rvc_instr); \
+  addi a0, a0, %lo(rvc_string##rvc_instr); \
+  \
+  li ra, 0; \
+  li a1, should_be_zero; \
+  .option rvc; \
+  rvc_instr rvc_instr##_jt; \
+  .option norvc; \
+  jal helper_error; \
+rvc_instr##_jt:; \
+  mv a2, ra; \
+  jal helper_link_check
+
+#define TEST_JR(rvc_instr, should_be_zero) \
+  .data; \
+rvc_string ##rvc_instr: \
+  .string #rvc_instr; \
+  .text; \
+  lui a0,      %hi(rvc_string##rvc_instr); \
+  addi a0, a0, %lo(rvc_string##rvc_instr); \
+  \
+  li ra, 0; \
+  li a1, should_be_zero; \
+  lui  a2,     %hi(rvc_instr##_jt); \
+  addi a2, a2, %lo(rvc_instr##_jt); \
+  .option rvc; \
+  rvc_instr a2; \
+  .option norvc; \
+  jal helper_error; \
+rvc_instr##_jt:; \
+  mv a2, ra; \
+  jal helper_link_check
+
 // --------------------------------------------------------------------------------
 // ---  Entrypoint
 // --------------------------------------------------------------------------------
@@ -161,19 +235,12 @@ compressed_vs_normal_tests:
   addi sp, sp, -4
   sw x1, 0(sp)
 
+  // TODO: what is the syntax of those instructions?!?
   // c.lwsp
   // c.swsp
 
   // c.lw
   // c.sw
-
-  // c.j
-  // c.jal
-  // c.jr
-  // c.jalr
-
-  // c.beqz
-  // c.bnez
 
   //----------------------------------------------------------------------------
   // arithmetic
@@ -283,10 +350,35 @@ compressed_vs_normal_tests:
 
   // c.ebreak
 
-  // Extended RVC instructions
+  //----------------------------------------------------------------------------
+  // branches and jumps
+  //----------------------------------------------------------------------------
+
+  // c.beqz
+  TEST_BR_TAKE(c.beqz, 0x0);
+  TEST_BR_NOT_TAKE(c.beqz, 5);
+
+  // c.bnez
+  TEST_BR_TAKE(c.bnez, 1);
+  TEST_BR_NOT_TAKE(c.bnez, 0x0);
 
   // c.bltz
+  TEST_BR_TAKE(c.bltz, -5);
+  TEST_BR_NOT_TAKE(c.bltz, 5);
+
   // c.bgez
+  TEST_BR_TAKE(c.bgez, 0);
+  TEST_BR_NOT_TAKE(c.bgez, -1);
+
+  // c.j
+  TEST_J(c.j, 1)
+  // c.jal
+  TEST_J(c.jal, 0)
+  // c.jr
+  TEST_JR(c.jr, 1)
+  // c.jalr
+  TEST_JR(c.jalr, 0)
+
 
   // return to calling function
   li a0, 0

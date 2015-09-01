@@ -37,3 +37,15 @@ void helper_check(const char* str, uint32_t compressed, uint32_t normal)
     printf("Instruction %s: Compressed %X, Normal %X\n", str, compressed, normal);
   }
 }
+
+void helper_error(const char* str) {
+  g_error++;
+  printf("Error in executing %s\n", str);
+}
+
+void helper_link_check(const char* str, uint32_t should_be_zero, uint32_t act) {
+  if((should_be_zero && act != 0) || (!should_be_zero && act == 0)) {
+    g_error++;
+    printf("Error in executing %s\n", str);
+  }
+}
