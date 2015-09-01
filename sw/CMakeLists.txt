@@ -55,18 +55,16 @@ elseif(CMAKE_C_COMPILER MATCHES "or1k(.*)")
   set(LDSCRIPT "link.or1k.ld")
 endif()
 
+
 set(PULP_PC_ANALYZE "pulp-pc-analyze" CACHE PATH "path to pulp pc analyze binary")
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -fdata-sections -ffunction-sections -fdiagnostics-color=always")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT} -nostartfiles -Wl,--gc-sections")
 
+set(CMAKE_ASM_FLAGS "${CMAKE_C_FLAGS}")
+
 set(PULP_MODELSIM_DIRECTORY "" CACHE PATH "Path to the ModelSim Pulp build")
 set(VSIM "vsim" CACHE FILEPATH "Path to the vsim executable")
-
-add_custom_target(vcompile
-  COMMAND tcsh ./scripts/vcompile_all.sh
-  WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
-  ${USES_TERMINAL})
 
 ################################################################################
 
@@ -83,6 +81,16 @@ add_library(crt0 OBJECT ${crt0})
 
 add_library(crt0_boot OBJECT ${crt0})
 set_target_properties(crt0_boot PROPERTIES COMPILE_FLAGS "-DBOOT")
+
+
+################################################################################
+# Other targets
+################################################################################
+
+add_custom_target(vcompile
+  COMMAND tcsh ./scripts/vcompile_all.sh
+  WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
+  ${USES_TERMINAL})
 
 
 ################################################################################

@@ -67,7 +67,7 @@ void run_suite(testcase_t *tests)
   while(tests[num].name != 0) num++;
 
   // setup uart
-  uart_set_cfg(0, 26);
+  //uart_set_cfg(0, 26);
 
   unsigned int errors = 0;
   size_t i;
