@@ -32,6 +32,7 @@ vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/debug_unit.sv             || goto error
 
 echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+exit 0
 
 error:
 echo "${NC}"
