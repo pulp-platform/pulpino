@@ -29,8 +29,30 @@ The HDL must be explicitely told which edition you want to build.
 - Change or10n_lib to riscv_lib or vice-versa in vsim/tcl_scripts/vsim.tcl to let modelsim know which version you like to simulate
 
 
+## Version Control
+
+PULPino uses git submodules
+
+To initialize all submodules
+  git submodule update --init --recurisve
+
+To update to the current versions
+  git submodule update --recursive
+
+
+## Documentation
+
+There is a preliminary datasheet available that includes a block diagram and a memory map of PULPino.
+See docs/datasheet/ in this repository.
+
+It is written in LaTeX and there is no pdf included in the repository. Simply type
+  make all
+
+To generate the pdf
+
 ## Debugging the core
 
-To interactively debug the core via gdb, you need the jtag bridge.
+To interactively debug the core via gdb, you need the jtag bridge as well as a
+working version of gdb for the ISA you want to debug.
 
 TODO: more information required
