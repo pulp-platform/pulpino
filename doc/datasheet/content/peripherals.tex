@@ -1,0 +1,34 @@
+\chapter{Peripherals}
+
+All peripherals in \pulpino are connected to the APB bus, except the SPI slave
+which is a very special peripheral and not intended to be used from the core
+itself. See Chapter~\ref{chap:spi_slave} for details on the SPI slave.
+
+\section{UART}
+
+The UART used in this system is compatible with a 16750.
+It features all the typical UART signals, see Table~\ref{tab:uart_signals}, plus
+some additional signals defined by the 16750.
+
+\begin{table}[H]
+ \caption{External UART Signals}
+ \label{tab:uart_signals}
+  \begin{tabularx}{\textwidth}{@{}llX@{}} \toprule
+    \textbf{Signal}   & \textbf{Direction} & \textbf{Description}         \\ \toprule
+    \signal{uart\_tx}  & \textbf{output}    & Transmit Data                \\ \hline
+    \signal{uart\_rx}  & \textbf{input}     & Receive Data                 \\ \hline
+    \signal{uart\_rts} & \textbf{output}    & Request to Send              \\ \hline
+    \signal{uart\_cts} & \textbf{input}     & Clear to send                \\ \hline
+    \signal{uart\_dtr} & \textbf{output}    & Data Terminal Ready          \\ \hline
+    \signal{uart\_dsr} & \textbf{input}     & Data Set Ready               \\ \hline
+  \end{tabularx}
+\end{table}
+
+
+\section{GPIO}
+
+\section{SPI Master}
+
+\section{Timer}
+
+The timer unit has no external signals.
