@@ -3,6 +3,15 @@ set IPS ../../ips
 set FPGA_IPS ../ips
 set FPGA_RTL ../rtl
 
+# axi_mem_if_DP
+set SRC_AXI_MEM_IF_DP "
+   $IPS/axi/axi_mem_if_DP/axi_mem_if_DP_hybr.sv \
+   $IPS/axi/axi_mem_if_DP/axi_mem_if_DP.sv \
+   $IPS/axi/axi_mem_if_DP/axi_mem_if_SP.sv \
+   $IPS/axi/axi_mem_if_DP/axi_read_only_ctrl.sv \
+   $IPS/axi/axi_mem_if_DP/axi_write_only_ctrl.sv \
+"
+
 # axi_spi_slave
 set SRC_AXI_SLAVE "
    $IPS/axi/axi_spi_slave/axi_spi_slave.sv \
@@ -134,11 +143,6 @@ set SRC_TIMER_UNIT " \
    $RTL/timer_unit.sv \
 "
 
-# generic register file
-set SRC_REGFILE " \
-   $FPGA_RTL/register_file_3r_2w.sv \
-"
-
 # or10n
 set SRC_OR10N "
    $IPS/or10n/alu.sv \
@@ -156,6 +160,26 @@ set SRC_OR10N "
    $IPS/or10n/or10n_core.sv \
    $IPS/or10n/sp_registers.sv \
    $IPS/or10n/wb_stage.sv \
+"
+
+# RI5CY
+set SRC_RI5CY "
+   $IPS/riscv/alu.sv \
+   $IPS/riscv/compressed_decoder.sv \
+   $IPS/riscv/controller.sv \
+   $IPS/riscv/cs_registers.sv \
+   $IPS/riscv/debug_unit.sv \
+   $IPS/riscv/exc_controller.sv \
+   $IPS/riscv/ex_stage.sv \
+   $IPS/riscv/hwloop_controller.sv \
+   $IPS/riscv/hwloop_regs.sv \
+   $IPS/riscv/id_stage.sv \
+   $IPS/riscv/if_stage.sv \
+   $IPS/riscv/instr_core_interface.sv \
+   $IPS/riscv/load_store_unit.sv \
+   $IPS/riscv/mult.sv \
+   $IPS/riscv/riscv_core.sv \
+   $FPGA_RTL/riscv_register_file.sv \
 "
 
 # common cells
@@ -177,16 +201,17 @@ set SRC_COMMONCELLS " \
 # pulpino
 set SRC_PULPINO " \
    $RTL/axi2apb_wrap.sv \
-   $RTL/axi2mem.sv \
    $RTL/axi_node_intf_wrap.sv \
    $RTL/core2axi.sv \
    $RTL/core_region.sv \
-   $RTL/sp_ram.sv \
+   $RTL/instr_ram_wrap.sv \
+   $RTL/boot_rom_wrap.sv \
    $RTL/sp_ram_wrap.sv \
    $RTL/peripherals.sv \
    $RTL/ram_mux.sv \
    $RTL/timer_unit.sv \
    $RTL/axi_spi_slave_wrap.sv \
+   $RTL/axi_mem_if_SP_wrap.sv \
    $RTL/top.sv \
    $FPGA_RTL/pulpino_wrap.v \
 "

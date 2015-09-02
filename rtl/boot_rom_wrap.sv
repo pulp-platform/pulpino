@@ -1,17 +1,17 @@
 
+`include "config.sv"
+
 module boot_rom_wrap
-  #(
-    parameter ADDR_WIDTH = 8
-  )(
+  (
     // Clock and Reset
     input  logic clk,
 
-    input  logic                   en_i,
-    input  logic [ADDR_WIDTH-1:0]  addr_i,
-    output logic [31:0]            rdata_o
+    input  logic                         en_i,
+    input  logic [`ROM_ADDR_WIDTH-1:0]  addr_i,
+    output logic [31:0]                 rdata_o
   );
 
-  localparam words = 2**ADDR_WIDTH;
+  localparam words = 2**`ROM_ADDR_WIDTH;
 
   logic [31:0] mem[words];
 

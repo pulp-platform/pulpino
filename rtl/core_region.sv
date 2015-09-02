@@ -122,6 +122,9 @@ module core_region
 
   `ifdef RISCV
     riscv_core
+    #(
+      .N_EXT_PERF_COUNTERS ( 0 )
+    )
     RISCV_CORE
     (
       .clk             (  clk              ),
@@ -159,10 +162,16 @@ module core_region
       .dbginf_data_o   ( dbginf_datai[0]   ),
 
       .fetch_enable_i  ( fetch_enable_i    ),
-      .core_busy_o     (                   )
+      .core_busy_o     (                   ),
+
+      .ext_perf_counters_i (               )
     );
   `else
-    or10n_core or10n_core
+    or10n_core
+    #(
+      .N_EXT_PERF_COUNTERS ( 0 )
+    )
+    or10n_core
     (
       // Clock and Reset
       .clk             ( clk               ),
@@ -200,7 +209,9 @@ module core_region
       .dbginf_data_o   ( dbginf_datai[0]   ),
 
       .fetch_enable_i  ( fetch_enable_i    ),
-      .core_busy_o     (                   )
+      .core_busy_o     (                   ),
+
+      .ext_perf_counters_i (               )
     );
   `endif
 

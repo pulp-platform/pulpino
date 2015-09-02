@@ -104,6 +104,11 @@ module core2axi
         master.r_ready = 1'b1;
         NS = IDLE;
       end
+
+      default:
+      begin
+        NS = IDLE;
+      end
     endcase
   end
 

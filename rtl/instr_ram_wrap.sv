@@ -18,7 +18,6 @@ module instr_ram_wrap
   );
 
   localparam RAM_ADDR_WIDTH = `LOG2(NUM_WORDS);
-  localparam ROM_ADDR_WIDTH = 8;
 
   logic is_boot;
   logic [31:0] rdata_boot;
@@ -46,16 +45,13 @@ module instr_ram_wrap
     );
 
   boot_rom_wrap
-  #(
-    .ADDR_WIDTH ( ROM_ADDR_WIDTH )
-    )
   boot_rom_wrap_i
   (
-    .clk     ( clk                        ),
+    .clk     ( clk                         ),
 
-    .en_i    ( en_i & is_boot             ),
-    .addr_i  ( addr_i[ROM_ADDR_WIDTH-1:0] ),
-    .rdata_o ( rdata_boot                 )
+    .en_i    ( en_i & is_boot              ),
+    .addr_i  ( addr_i[`ROM_ADDR_WIDTH-1:0] ),
+    .rdata_o ( rdata_boot                  )
     );
 
   assign rdata_o = (is_boot == 1'b1) ? rdata_boot : rdata_ram;

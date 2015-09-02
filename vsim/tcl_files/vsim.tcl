@@ -2,7 +2,7 @@
 # e.g. it did not recognize the -pli ./something.so argument
 #  -L or10n_lib
 set cmd "vsim -quiet $TB \
-  -L or10n_lib \
+  -L riscv_lib \
   -L axi_spi_slave_lib \
   -L axi_slice_dc_lib \
   -L scm_lib \

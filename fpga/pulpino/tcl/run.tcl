@@ -3,7 +3,7 @@
 create_project pulpino . -part $::env(XILINX_PART)
 set_property board $::env(XILINX_BOARD) [current_project]
 set_property include_dirs { \
-  ../../ips/or10n/include \
+  ../../ips/riscv/include \
   ../../rtl/include \
 } [current_fileset]
 
@@ -11,6 +11,13 @@ set_property include_dirs { \
 source ../common/messages.tcl
 
 source tcl/src_files.tcl
+
+# add memory cuts
+add_files -norecurse $FPGA_IPS/xilinx_mem_32768x32_dp/ip/xilinx_mem_32768x32_dp.dcp
+add_files -norecurse $FPGA_IPS/xilinx_mem_32768x32/ip/xilinx_mem_32768x32.dcp
+
+# add axi_mem_if_DP
+add_files -norecurse -scan_for_includes $SRC_AXI_MEM_IF_DP
 
 # add axi_spi_slave
 add_files -norecurse -scan_for_includes $SRC_AXI_SLAVE
@@ -36,18 +43,14 @@ add_files -norecurse -scan_for_includes $SRC_AXI_SLICE_DC
 # add axi_node
 add_files -norecurse -scan_for_includes $SRC_AXI_NODE
 
-# add generic register file
-add_files -norecurse -scan_for_includes $SRC_REGFILE
+## add or10n
+#add_files -norecurse -scan_for_includes $SRC_OR10N
 
-# add or10n
-add_files -norecurse -scan_for_includes $SRC_OR10N
+# add RI5CY
+add_files -norecurse -scan_for_includes $SRC_RI5CY
 
 # add adv_dbg_if
 add_files -norecurse -scan_for_includes $SRC_ADV_DEBUG_IF
-
-# add memory cuts
-add_files -norecurse $FPGA_IPS/xilinx_mem_32768x32_dp/ip/xilinx_mem_32768x32_dp.dcp
-add_files -norecurse $FPGA_IPS/xilinx_mem_32768x32/ip/xilinx_mem_32768x32.dcp
 
 # add ILA debug cores
 # add_files -norecurse $FPGA_IPS/xilinx_core_ila/ip/xilinx_core_ila.dcp
@@ -64,22 +67,14 @@ add_files -norecurse $SRC_PULPINO
 # set pulpino_top as top
 set_property top pulpino [current_fileset]
 
-# # create or10n mac unit (moved here from FPGA ips)
-# create_ip -name xbip_multadd -vendor xilinx.com -library ip -version 3.0 -module_name xilinx_or10n_mac
-# set_property -dict [list CONFIG.c_a_width {33} CONFIG.c_b_width {33} CONFIG.c_c_width {64} CONFIG.c_out_high {65} CONFIG.c_ab_latency {0} CONFIG.c_c_latency {0}] [get_ips xilinx_or10n_mac]
-# generate_target {instantiation_template} [get_files /var/lib/jenkins/workspace/PULP3emu/PULP/pulp3/fpga/ulpcluster/ulpcluster.srcs/sources_1/ip/xilinx_or10n_mac/xilinx_or10n_mac.xci]
-# update_compile_order -fileset sources_1
-# generate_target all [get_files  /var/lib/jenkins/workspace/PULP3emu/PULP/pulp3/fpga/ulpcluster/ulpcluster.srcs/sources_1/ip/xilinx_or10n_mac/xilinx_or10n_mac.xci]
-# create_ip_run [get_files -of_objects [get_fileset sources_1] /var/lib/jenkins/workspace/PULP3emu/PULP/pulp3/fpga/ulpcluster/ulpcluster.srcs/sources_1/ip/xilinx_or10n_mac/xilinx_or10n_mac.xci]
-# launch_run -jobs 8 xilinx_or10n_mac_synth_1
-# wait_on_run xilinx_or10n_mac_synth_1
-
 # needed only if used in batch mode
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 
 # run synthesis
+# first try will fail
 catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1}
+
 update_compile_order -fileset sources_1
 synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1
 
