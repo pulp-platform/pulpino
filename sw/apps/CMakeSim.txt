@@ -1,3 +1,6 @@
+
+set(SETENV "env PULP_CORE=${PULP_CORE} ")
+
 macro(add_sim_targets NAME)
   # generate s19 file
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19
@@ -69,11 +72,21 @@ macro(add_sim_targets NAME)
   add_custom_target(${NAME}_vsim
     COMMAND ${CMAKE_COMMAND} -E remove stdout/*
     COMMAND ${CMAKE_COMMAND} -E remove FS/*
-    COMMAND ${VSIM} -64 -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>\\;'
+    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>\\;'"
     WORKING_DIRECTORY ./${SUBDIR}
     DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
     COMMENT "Running ${NAME} in ModelSim"
     ${USES_TERMINAL})
+
+  # run in modelsim in batch mode, output is only generated after simulation terminates
+  add_custom_target(${NAME}_vsim_batch
+    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
+    COMMAND ${CMAKE_COMMAND} -E remove FS/*
+    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -c -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>\\; run -a\\; exit\\;' > vsim.log"
+    COMMAND tail -n +1 -- ./stdout/*
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
+    COMMENT "Running ${NAME} in ModelSim")
 
   # run in modelsim with GUI
   add_custom_target(${NAME}_vsim_boot
@@ -84,41 +97,9 @@ macro(add_sim_targets NAME)
     DEPENDS ${NAME}.slm.cmd boot_code.boot.cmd ${NAME}.links
     COMMENT "Running ${NAME} in ModelSim")
 
-  # run in modelsim in batch mode, output is only generated after simulation terminates
-  add_custom_target(${NAME}_vsim_batch
-    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
-    COMMAND ${CMAKE_COMMAND} -E remove FS/*
-    COMMAND ${VSIM} -64 -c -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>\\; run -a\\; exit\\;' > vsim.log
-    COMMAND tail -n +1 -- ./stdout/*
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
-    COMMENT "Running ${NAME} in ModelSim")
-
-  # execute on Bologna's FPGA emulation platform
-  if("${ARG_FPGA_FREQ}" STREQUAL "")
-    set(ARG_FPGA_FREQ ${FPGA_FREQ})
-  endif()
-  if("${ARG_FPGA_TIMEOUT}" STREQUAL "")
-    set(ARG_FPGA_TIMEOUT ${FPGA_TIMEOUT})
-  endif()
-
-  add_custom_target(${NAME}_emu_push
-    COMMAND scp ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.bin pulpemu@137.204.213.148:${NAME}.bin
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.bin)
-
-  add_custom_target(${NAME}_emu_run
-    COMMAND ssh pulpemu@137.204.213.148 'sudo wwolf -n --timeout=${ARG_FPGA_TIMEOUT} --freq=${ARG_FPGA_FREQ} ${NAME}.bin'
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME}_emu_push)
-
   # testing targets
   add_test(NAME ${NAME}_test
     COMMAND ${UTILS_DIR}/run-and-check.py ${VSIM} $<TARGET_PROPERTY:${NAME}.elf,TB>
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
-
-  add_test(NAME ${NAME}_emu_test
-    COMMAND ${UTILS_DIR}/run-and-check-fpga.sh ${NAME}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
 
 

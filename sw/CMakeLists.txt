@@ -87,8 +87,21 @@ set_target_properties(crt0_boot PROPERTIES COMPILE_FLAGS "-DBOOT")
 # Other targets
 ################################################################################
 
+if(${RISCV})
+  set(PULP_CORE "riscv")
+else()
+  set(PULP_CORE "OR10N")
+endif()
+
+
 add_custom_target(vcompile
-  COMMAND tcsh ./scripts/vcompile_all.sh
+  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./scripts/vcompile_all.sh"
+  WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
+  ${USES_TERMINAL})
+
+add_custom_target(vcompile_core
+  COMMAND tcsh ./scripts/vcompile_riscv.sh
+  COMMAND tcsh ./scripts/vcompile_or10n.sh
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 

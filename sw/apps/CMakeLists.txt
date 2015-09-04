@@ -129,4 +129,8 @@ add_subdirectory(helloworld)
 add_subdirectory(coremark)
 add_subdirectory(timer_test)
 add_subdirectory(debug)
-add_subdirectory(compressed)
+
+# RISCV only tests
+if(${RISCV})
+  add_subdirectory(compressed)
+endif()

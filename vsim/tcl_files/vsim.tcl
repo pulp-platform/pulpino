@@ -1,8 +1,16 @@
 # yes I know this looks ugly, but for some reason vsim deso not recognize the VSIM_FLAGS as correct arguments :-/
 # e.g. it did not recognize the -pli ./something.so argument
-#  -L or10n_lib
+#
+set CORE_LIB "riscv_lib"
+
+if {![info exists $env(PULP_CORE)]} {
+  if {$env(PULP_CORE) == "OR10N"} {
+    set CORE_LIB "or10n_lib"
+  }
+}
+
 set cmd "vsim -quiet $TB \
-  -L riscv_lib \
+  -L $CORE_LIB \
   -L axi_spi_slave_lib \
   -L axi_slice_dc_lib \
   -L scm_lib \
