@@ -24,9 +24,9 @@ The software included in this repository is compatible with both ISAs and
 automatically targets the correct ISA based on the compiler used.
 
 The HDL must be explicitely told which edition you want to build.
+Use the environment variable PULP_CORE and set it to either OR10N or riscv. It
+defaults to riscv when not set.
 
-- (Un)comment "`define RISCV" in rtl/includes/config.sv to build for RISCV
-- Change or10n_lib to riscv_lib or vice-versa in vsim/tcl_scripts/vsim.tcl to let modelsim know which version you like to simulate
 
 
 ## Version Control
@@ -49,6 +49,43 @@ It is written in LaTeX and there is no pdf included in the repository. Simply ty
   make all
 
 To generate the pdf
+
+
+## Running simulations
+
+The software is built using CMake.
+Create a build folder somewhere, e.g. in the sw folder
+  mkdir build
+
+copy the cmake-configure.{or1k/riscv}.{gcc/llvm}.sh bash script to the build folder.
+This script can be found in the sw subfolder of the git repository.
+
+Modify the cmake-configure script to your needs and execute it inside the build folder.
+This will setup everything to run the software.
+
+Inside the build folder, execute
+
+  make vcompile
+
+to compile the RTL libraries.
+
+With the command
+
+  make testname_vsim
+
+you can run simulations in the modelsim GUI
+
+  make testname_vsim_batch
+
+runs simulations in the modelsim console and outputs a summary at the end. This
+is intended for batch processing of a large number of tests.
+
+### Using ninja instead of make
+
+You can use ninja instead make for PULPino, just replace all occurences of make
+with ninja. The same targets are supported on both make and ninja.
+
+
 
 ## Debugging the core
 

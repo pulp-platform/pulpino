@@ -3,21 +3,21 @@
 OBJDUMP=`which llvm-objdump`
 OBJCOPY=`which or1kle-elf-objcopy`
 
-COMPILER=`which or1kle-elf-gcc`
-TARGET_C_FLAGS="-O3 -std=gnu99"
+COMPILER=`which or1kle-elf-clang`
+TARGET_C_FLAGS="-O2 -mcpu=pulp3 -g"
 
-VSIM=`which vsim-10.4a`
+VSIM=`which vsim`
 
-PULP_GIT_DIRECTORY=~/Documents/or10n-standalone/
+PULP_GIT_DIRECTORY=../../
 SIM_DIRECTORY="$PULP_GIT_DIRECTORY/vsim"
 
-cmake-3.3.0 "$PULP_GIT_DIRECTORY"/sw/ \
+cmake "$PULP_GIT_DIRECTORY"/sw/ \
     -DCMAKE_BUILD_TYPE=Release \
     -DPULP_MODELSIM_DIRECTORY="$SIM_DIRECTORY" \
     -DCMAKE_C_COMPILER="$COMPILER" \
     -DVSIM="$VSIM" \
     -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
-    -DCMAKE_OBJDUMP="$OBJDUMP" \
-    -G "Ninja"
+    -DCMAKE_OBJDUMP="$OBJDUMP"
 
+# Add -G "Ninja" to the cmake call above to use ninja instead of make
