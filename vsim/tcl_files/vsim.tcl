@@ -3,7 +3,7 @@
 #
 set CORE_LIB "riscv_lib"
 
-if {![info exists $env(PULP_CORE)]} {
+if {[info exists env(PULP_CORE)]} {
   if {$env(PULP_CORE) == "OR10N"} {
     set CORE_LIB "or10n_lib"
   }
