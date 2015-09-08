@@ -7,7 +7,6 @@
 #include "utils.h"
 #include "spr-defs.h"
 #include "int.h"
-#include "events.h"
 
 /* Interrupt handlers table */
 struct ihnd int_handlers[MAX_INT_HANDLERS];
@@ -39,18 +38,18 @@ int int_add(unsigned long irq, void (* handler)(void *), void *arg)
 __attribute__((interrupt)) __attribute__((weak))
 void int_main()
 {
-  unsigned int core_id = get_core_id();
-  unsigned int irq_id;
+  // unsigned int core_id = get_core_id();
+  // unsigned int irq_id;
 
-  for(irq_id = read_irq_id(core_id); irq_id != 0xFF; irq_id = read_irq_id(core_id)) {
-    if(int_handlers[irq_id].handler != 0) {
-      // call interrupt handler
-      (*int_handlers[irq_id].handler)(int_handlers[irq_id].arg);
-    }
+  // for(irq_id = read_irq_id(core_id); irq_id != 0xFF; irq_id = read_irq_id(core_id)) {
+  //   if(int_handlers[irq_id].handler != 0) {
+  //     // call interrupt handler
+  //     (*int_handlers[irq_id].handler)(int_handlers[irq_id].arg);
+  //   }
 
-    // clear flag in buffer
-    clear_irq_buff_low(1 << irq_id);
-  }
+  //   // clear flag in buffer
+  //   clear_irq_buff_low(1 << irq_id);
+  // }
 }
 
 // use weak attribute here, so we can overwrite this function to provide custom exception handlers, e.g. for tests

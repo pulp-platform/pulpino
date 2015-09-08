@@ -4,7 +4,6 @@
 #include <spi.h>
 #include <gpio.h>
 #include <uart.h>
-#include <icache_ctrl.h>
 #include <utils.h>
 
 
@@ -159,9 +158,6 @@ int main()
     uart_send("Done, disable and flush I$, jumping to L2\n",42);
 
     uart_wait_tx_done();
-
-    // deactivate // will be invalidated when it is re-enabled
-    disable_all_icache_banks();
 
     //jump to program start address (L2 base address)
     jump_and_start((volatile int *)(L2_MEM_BASE_ADDR));

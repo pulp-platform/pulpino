@@ -3,7 +3,6 @@
 
 #include "pulp.h"
 #include "utils.h"
-#include "events.h"
 
 // the following macros are for convenience and compatibility with existing
 // code only
