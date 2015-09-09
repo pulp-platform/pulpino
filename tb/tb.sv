@@ -39,7 +39,7 @@ module tb;
   generate if(ENABLE_VPI == 1)
   begin
     // JTAG VERIFICATION IP
-    dbg_comm_vpi
+    jtag_vpi
     #(
       .TIMEOUT_COUNT ( 6'd10 )
       )
