@@ -1,11 +1,28 @@
+# set default core to RI5CY
+if { ! [info exists ::env(PULP_CORE)] } {
+  set core "RI5CY"
+} else {
+  set core $::env(PULP_CORE)
+}
+puts "Set PULP core to $core"
 
 # create project
 create_project pulpino . -part $::env(XILINX_PART)
 set_property board $::env(XILINX_BOARD) [current_project]
-set_property include_dirs { \
-  ../../ips/riscv/include \
-  ../../rtl/include \
-} [current_fileset]
+
+if { $core == "RI5CY" } {
+  set_property include_dirs { \
+    ../../ips/riscv/include \
+    ../../rtl/include \
+  } [current_fileset]
+}
+
+if { $core == "OR10N" } {
+  set_property include_dirs { \
+    ../../ips/or10n/include \
+    ../../rtl/include \
+  } [current_fileset]
+}
 
 # set up meaningful errors
 source ../common/messages.tcl
@@ -43,20 +60,18 @@ add_files -norecurse -scan_for_includes $SRC_AXI_SLICE_DC
 # add axi_node
 add_files -norecurse -scan_for_includes $SRC_AXI_NODE
 
-## add or10n
-#add_files -norecurse -scan_for_includes $SRC_OR10N
+if { $core == "OR10N" } {
+  # add or10n
+  add_files -norecurse -scan_for_includes $SRC_OR10N
+}
 
-# add RI5CY
-add_files -norecurse -scan_for_includes $SRC_RI5CY
+if { $core == "RI5CY" } {
+  # add RI5CY
+  add_files -norecurse -scan_for_includes $SRC_RI5CY
+}
 
 # add adv_dbg_if
 add_files -norecurse -scan_for_includes $SRC_ADV_DEBUG_IF
-
-# add ILA debug cores
-# add_files -norecurse $FPGA_IPS/xilinx_core_ila/ip/xilinx_core_ila.dcp
-# add_files -norecurse $FPGA_IPS/xilinx_icache_ila/ip/xilinx_icache_ila.dcp
-# add_files -norecurse $FPGA_IPS/xilinx_tcdm_sram_ila/ip/xilinx_tcdm_sram_ila.dcp
-# add_files -norecurse $FPGA_IPS/xilinx_tcdm_scm_ila/ip/xilinx_tcdm_scm_ila.dcp
 
 # add common cells
 add_files -norecurse $SRC_COMMONCELLS
@@ -72,11 +87,22 @@ update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 
 # run synthesis
-# first try will fail
-catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1}
+if { $core == "OR10N" } {
+  # first try will fail
+  catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1}
+  update_compile_order -fileset sources_1
 
-update_compile_order -fileset sources_1
-synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1
+  synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1
+}
+
+if { $core == "RI5CY" } {
+  # first try will fail
+  catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV}
+  update_compile_order -fileset sources_1
+
+  synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV
+}
+
 
 create_clock -period 4.000 -name clk -waveform {0.000 2.000} [get_nets {clk}]
 set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY none [get_runs synth_1]
