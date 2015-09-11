@@ -2,6 +2,8 @@
 #include "string_lib.h"
 #include "utils.h"
 #include "uart.h"
+#include "int.h"
+
 
 int main()
 {
@@ -46,6 +48,23 @@ int main()
 		printf("[ERROR] Timer is %d\n", reg);
 	else printf("Test 4: Passed\n");
 
+	int_disable();
+	int_enable();
+
+	// 5. test interrupt calling
+
+	//write to mtimecmp
+	val = 0x55;
+	asm volatile ("csrw mtimecmp, %0" : /* no output */ : "r" (val));
+	val = 0x40;
+	asm volatile ("csrw mtime, %0" : /* no output */ : "r" (val)); 
+
+	// wait a few cycles
+	for (int i = 0; i < 100; i++)
+		asm volatile ("nop\n"
+					  "nop\n"
+					  );
+	
 	printf("Finished timer testing.\n");
 
   return 0;

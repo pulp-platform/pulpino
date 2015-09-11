@@ -25,9 +25,9 @@
   .org 0x08
   jal x0, illegal_insn_handler
 
-  // unused slot
+  // timer compare interrupt
   .org 0x0c
-  .byte 0, 0, 0, 0
+  jal x0, interrupt_handler
 
   // reset vector
   .org 0x10
@@ -38,6 +38,9 @@
   .section .text
 
 reset_handler:
+  /* initilize mtime and mtimcmp*/
+  csrw mtime, x0
+  csrw mtimecmp, x0
   /* set all registers to zero (use mv for reduced code size) */
   mv  x1, x0
   mv  x2, x0

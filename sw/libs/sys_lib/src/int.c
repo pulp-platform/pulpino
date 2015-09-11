@@ -50,6 +50,7 @@ void int_main()
   //   // clear flag in buffer
   //   clear_irq_buff_low(1 << irq_id);
   // }
+  printf("In interrupt handler\n");
 }
 
 // use weak attribute here, so we can overwrite this function to provide custom exception handlers, e.g. for tests
