@@ -4,6 +4,11 @@
 #include "uart.h"
 #include "int.h"
 
+volatile char status = 0x00;
+
+void int_time_cmp(void) {
+	status = 0x55;
+}
 
 int main()
 {
@@ -72,7 +77,9 @@ int main()
 					  "nop\n"
 					  );
 	
-	printf("Finished timer testing.\n");
+	if (status != 0x55)
+		printf("[ERROR] No interrupt occured");
+	else printf("Test 5: Passed\n");
 
   return 0;
 }

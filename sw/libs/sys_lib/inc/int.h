@@ -30,7 +30,7 @@ int int_add(unsigned long vect, void (* handler)(void *), void *arg);
 void add_handler(unsigned long vector, void (* handler) (void));
 
 /* Initialize routine */
-void int_init();
+void int_init(void);
 
 /** 
  * \brief Disables interrupts globally.
@@ -64,6 +64,28 @@ static inline void int_enable(void) {
 	asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
 }
 
-/* Actual interrup handler function */
-void int_main();
+/** 
+ * \brief Timer compare interrupt service routine.
+ * \param void
+ * \return void
+ *
+ * Interrupt service routine triggered when
+ * 32 bit mtimecmp and mtime match. Only triggered
+ * when interrupts are enabled and mtimecmp is not 0x00.
+ *
+ * Can be redefined by user software.
+ */
+void int_time_cmp(void);
+
+/** 
+ * \brief Timer compare interrupt service routine.
+ * \param void
+ * \return void
+ *
+ * Interrupt service routine for level-triggerd
+ * external irq pin.
+ *
+ * Can be redefined by user software.
+ */
+ void int_main(void);
 #endif // _INT_H_
