@@ -7,6 +7,8 @@
 #include "utils.h"
 #include "spr-defs.h"
 #include "int.h"
+#include "string_lib.h"
+#include "uart.h"
 
 /* Interrupt handlers table */
 struct ihnd int_handlers[MAX_INT_HANDLERS];
@@ -50,7 +52,7 @@ void int_main()
   //   // clear flag in buffer
   //   clear_irq_buff_low(1 << irq_id);
   // }
-  printf("In interrupt handler\n");
+  //printf("In interrupt handler\n");
 }
 
 // use weak attribute here, so we can overwrite this function to provide custom exception handlers, e.g. for tests

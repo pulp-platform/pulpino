@@ -43,9 +43,9 @@ void int_init();
 static inline void int_disable(void) {
 	// read-modify-write
 	int mstatus;
-	asm volatile ("csrr %0, mtime": "=r" (mstatus));
+	asm volatile ("csrr %0, mstatus": "=r" (mstatus));
 	mstatus &= 0xFFFFFFFE;
-	asm volatile ("csrw mtime, %0" : /* no output */ : "r" (mstatus));
+	asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
 }
 
 /** 
@@ -59,9 +59,9 @@ static inline void int_disable(void) {
 static inline void int_enable(void) {
 	// read-modify-write
 	int mstatus;
-	asm volatile ("csrr %0, mtime": "=r" (mstatus));
+	asm volatile ("csrr %0, mstatus": "=r" (mstatus));
 	mstatus |= 0x01;
-	asm volatile ("csrw mtime, %0" : /* no output */ : "r" (mstatus));
+	asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
 }
 
 /* Actual interrup handler function */

@@ -8,6 +8,13 @@
 int main()
 {
 	int reg, val, tmp;
+	int_enable();
+
+	// 0. mstatus -- interrupts enabled
+	asm volatile ("csrr %0, mstatus" : "=r" (reg));
+	if (reg % 2 != 1) 
+		printf("[ERROR] Register content is %d\n", reg);
+	else printf("Test 0: Passed\n");
 
 	// 1. testing read to csr
 	asm volatile ("csrr %0, 0x321" : "=r" (reg));
@@ -38,23 +45,23 @@ int main()
 	
 	val = 0x00;
 	// 4. write to timer register
+	int_disable(); // we want to stay atomic
 	asm volatile ("csrw 0x701, %1\n"
 				  "csrr %0, 0x701\n" 
 				  : "=r" (reg) 
 				  : "r" (val)
 				 );
-	// should probably disable interrupts before
+	int_enable();
+
 	if (val != reg - 1)
 		printf("[ERROR] Timer is %d\n", reg);
 	else printf("Test 4: Passed\n");
-
-	int_disable();
-	int_enable();
-
+	
+	
 	// 5. test interrupt calling
 
 	//write to mtimecmp
-	val = 0x55;
+	val = 0x100;
 	asm volatile ("csrw mtimecmp, %0" : /* no output */ : "r" (val));
 	val = 0x40;
 	asm volatile ("csrw mtime, %0" : /* no output */ : "r" (val)); 
