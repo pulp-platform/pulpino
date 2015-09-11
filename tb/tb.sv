@@ -35,11 +35,13 @@ module tb;
   logic tdi;
   logic tdo;
 
+  logic [31:0] recv_data;
+
 
   generate if(ENABLE_VPI == 1)
   begin
     // JTAG VERIFICATION IP
-    dbg_comm_vpi
+    jtag_vpi
     #(
       .TIMEOUT_COUNT ( 6'd10 )
       )
@@ -127,6 +129,8 @@ module tb;
 
     #10000;
 
+    spi_enable_qpi();
+
     if (LOAD_L2 == "PRELOAD")
     begin
       // preload memories
@@ -137,8 +141,6 @@ module tb;
     begin
       $readmemh("./slm_files/spi_stim.txt", stimuli);  // read in the stimuli vectors  == address_value
 
-      spi_enable_qpi();
-
       spi_load();
     end
 
@@ -146,6 +148,10 @@ module tb;
 
 
     wait(top_i.gpio_out[14]);
+    $stop();
+
+    spi_read_word(1, 8'hB, 32'h0000_0000, recv_data);
+    $display("[SPI] Received %X", recv_data);
     $stop();
   end
 

@@ -1,6 +1,7 @@
 
 #include "svdpi.h"
 
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -12,6 +13,7 @@
 
 extern svLogic rtl_get_tdo();
 
+int jp_check_con();
 
 uint8_t jp_waiting;
 uint8_t count_comp;
@@ -23,7 +25,7 @@ static int jp_comm;   // The socket for communicating with jp
 int socket_port;
 
 
-int socket_open() {
+void socket_open() {
   struct sockaddr_in addr;
   int ret;
 

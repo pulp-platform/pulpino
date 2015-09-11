@@ -1,6 +1,4 @@
 #include "uart.h"
-#include "events.h"
-#include "events_ids.h"
 #include "utils.h"
 
 __attribute__ ((section(".scmlock"))) volatile char lock_uart_lock;

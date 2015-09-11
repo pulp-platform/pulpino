@@ -57,9 +57,9 @@ module dbg_comm_vpi
   input     tdo_i
   );
 
-  import "DPI-C" function void jtag_init(input int port);
+  import "DPI-C"         function void jtag_init(input int port);
   import "DPI-C" context function int  jtag_recv(inout logic tck_o, inout logic trst_o, inout logic tdi_o, inout logic tms_o);
-  import "DPI-C" function void jtag_timeout();
+  import "DPI-C"         function void jtag_timeout();
 
   export "DPI-C" function rtl_get_tdo;
 

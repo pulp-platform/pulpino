@@ -185,6 +185,97 @@
     end
   endtask
 
+  task spi_read_word;
+    input          use_qspi;
+    input    [7:0] command;
+    input   [31:0] addr;
+    output  [31:0] data;
+    begin
+      padmode_spi_master = use_qspi ? `SPI_QUAD_TX : `SPI_STD;
+      spi_sck = 0;
+      #`SPI_SEMIPERIOD spi_sck = 0;
+      #`SPI_SEMIPERIOD spi_sck = 0;
+      spi_csn = 0;
+      #`SPI_SEMIPERIOD spi_sck = 0;
+      #`SPI_SEMIPERIOD spi_sck = 0;
+      if (use_qspi)
+      begin
+        for (int i = 2; i > 0; i--)
+        begin
+          spi_sdo3 = command[4*i-1];
+          spi_sdo2 = command[4*i-2];
+          spi_sdo1 = command[4*i-3];
+          spi_sdo0 = command[4*i-4];
+          #`SPI_SEMIPERIOD spi_sck = 1;
+          #`SPI_SEMIPERIOD spi_sck = 0;
+        end
+      end
+      else
+      begin
+        for (int i = 7; i >= 0; i--)
+        begin
+          spi_sdo0 = command[i];
+          #`SPI_SEMIPERIOD spi_sck = 1;
+          #`SPI_SEMIPERIOD spi_sck = 0;
+        end
+      end
+      if (use_qspi)
+      begin
+        for (int i = 8; i > 0; i--)
+        begin
+          spi_sdo3 = addr[4*i-1];
+          spi_sdo2 = addr[4*i-2];
+          spi_sdo1 = addr[4*i-3];
+          spi_sdo0 = addr[4*i-4];
+          #`SPI_SEMIPERIOD spi_sck = 1;
+          #`SPI_SEMIPERIOD spi_sck = 0;
+        end
+      end
+      else
+      begin
+        for (int i = 31; i >= 0; i--)
+        begin
+          spi_sdo0 = addr[i];
+          #`SPI_SEMIPERIOD spi_sck = 1;
+          #`SPI_SEMIPERIOD spi_sck = 0;
+        end
+      end
+      padmode_spi_master = use_qspi ? `SPI_QUAD_RX : `SPI_STD;
+      for (int i = 32; i >= 0; i--)
+      begin
+        #`SPI_SEMIPERIOD spi_sck = 1;
+        #`SPI_SEMIPERIOD spi_sck = 0;
+      end
+      if (use_qspi)
+      begin
+        for (int i = 8; i > 0; i--)
+        begin
+          #`SPI_SEMIPERIOD spi_sck = 1;
+          data[4*i-1] = spi_sdi3;
+          data[4*i-2] = spi_sdi2;
+          data[4*i-3] = spi_sdi1;
+          data[4*i-4] = spi_sdi0;
+          #`SPI_SEMIPERIOD spi_sck = 0;
+        end
+      end
+      else
+      begin
+        for (int i = 31; i >= 0; i--)
+        begin
+          #`SPI_SEMIPERIOD spi_sck = 1;
+          data[i] = spi_sdi0;
+          #`SPI_SEMIPERIOD spi_sck = 0;
+        end
+      end
+      #`SPI_SEMIPERIOD spi_sck = 0;
+      #`SPI_SEMIPERIOD spi_sck = 0;
+      spi_csn   = 1;
+      #`SPI_SEMIPERIOD spi_sck = 0;
+      #`SPI_SEMIPERIOD spi_sck = 0;
+      padmode_spi_master = use_qspi ? `SPI_QUAD_TX : `SPI_STD;
+    end
+  endtask
+
   task spi_enable_qpi;
     $display("[SPI] Enabling QPI mode");
     //Sets QPI mode

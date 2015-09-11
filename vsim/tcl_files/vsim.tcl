@@ -3,7 +3,7 @@
 #
 set CORE_LIB "riscv_lib"
 
-if {![info exists $env(PULP_CORE)]} {
+if {[info exists env(PULP_CORE)]} {
   if {$env(PULP_CORE) == "OR10N"} {
     set CORE_LIB "or10n_lib"
   }
@@ -23,7 +23,6 @@ set cmd "vsim -quiet $TB \
   -L apb_spi_master_lib \
   -L pulp_common_cells_lib \
   -L standalone_lib \
-  +nowarn \
   +nowarnTRAN \
   +nowarnTSCALE \
   +nowarnTFMPC \
