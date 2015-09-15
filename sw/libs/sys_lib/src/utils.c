@@ -2,6 +2,9 @@
 #include "utils.h"
 #include "pulp.h"
 #include <stdint.h>
+#include "string_lib.h"
+#include "uart.h"
+#include "gpio.h"
 
 // exit loop
 void
@@ -40,7 +43,7 @@ void cpu_perf_set(unsigned int counterId, unsigned int value) {
 }
 
 unsigned int cpu_perf_get(unsigned int counterId) {
-  uint32_t value;
+  uint32_t value = 0;
   // This is stupid! But I really don't know how else we could do that
   switch(counterId) {
    case  0: asm volatile ("csrr %0, 0x780" : "=r" (value)); break;

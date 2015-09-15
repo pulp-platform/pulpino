@@ -16,34 +16,30 @@ int main()
 	int_enable();
 
 	// 0. mstatus -- interrupts enabled
-	asm volatile ("csrr %0, mstatus" : "=r" (reg));
+	csrr(mstatus, reg);
 	if (reg % 2 != 1) 
 		printf("[ERROR] Register content is %d\n", reg);
 	else printf("Test 0: Passed\n");
 
 	// 1. testing read to csr
-	asm volatile ("csrr %0, 0x321" : "=r" (reg));
+	csrr(mtimecmp, reg);
 	if (reg != 0x00)
 		printf("[ERROR] Register content is %d\n", reg);
 	else printf("Test 1: Passed\n");
 	
 	// 2. testing write to csr
 	val = 0x55;
-	asm volatile ("csrw 0x321, %1\n"
-				  "csrr %0, 0x321\n" 
-				  : "=r" (reg) 
-				  : "r" (val)
-				 );
-	
+	csrw(mtimecmp, val);
+	csrr(mtimecmp, reg);
+
 	if (reg != val)
 		printf("[ERROR] Register content is %d\n", reg);
 	else printf("Test 2: Passed\n");
 
 	// 3. testing timer count
+	csrr(mtime, reg);
+	csrr(mtime, val);
 
-	asm volatile ("csrr %0, 0x701\n" : "=r" (reg));
-	asm volatile ("csrr %0, 0x701" : "=r" (val));
-	
 	if (val == reg)
 		printf("[ERROR] Timer doesn't count. Timer value %d and %d\n", reg, val);
 	else printf("Test 3: Passed\n");
@@ -51,11 +47,8 @@ int main()
 	val = 0x00;
 	// 4. write to timer register
 	int_disable(); // we want to stay atomic
-	asm volatile ("csrw 0x701, %1\n"
-				  "csrr %0, 0x701\n" 
-				  : "=r" (reg) 
-				  : "r" (val)
-				 );
+	csrw(mtime, val);
+	csrr(mtime, reg);
 	int_enable();
 
 	if (val != reg - 1)
@@ -67,10 +60,9 @@ int main()
 
 	//write to mtimecmp
 	val = 0x100;
-	asm volatile ("csrw mtimecmp, %0" : /* no output */ : "r" (val));
+	csrw(mtimecmp, val);
 	val = 0x40;
-	asm volatile ("csrw mtime, %0" : /* no output */ : "r" (val)); 
-
+	csrw(mtime, val);
 	// wait a few cycles
 	for (int i = 0; i < 100; i++)
 		asm volatile ("nop\n"
