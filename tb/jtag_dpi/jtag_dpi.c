@@ -99,6 +99,13 @@ int jtag_recv(svLogic* tck, svLogic* trstn, svLogic* tdi, svLogic* tms) {
       case 0:
         // jp wants the TDO
         tdo = rtl_get_tdo();
+
+        // convert from logic to 0/1
+        if (tdo == sv_1)
+          tdo = 1;
+        else
+          tdo = 0;
+
         send(jp_comm, &tdo, 1, 0);
         return 0;
       case 1:

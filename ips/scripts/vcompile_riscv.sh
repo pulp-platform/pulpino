@@ -15,10 +15,11 @@ echo "${Green}Compiling component:   ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
 
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/riscv_core.sv             || goto error
-vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/prefetch_buffer.sv	      || goto error
+vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/prefetch_buffer.sv        || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/if_stage.sv               || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/id_stage.sv               || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/controller.sv             || goto error
+vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/decoder.sv                || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/exc_controller.sv         || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/hwloop_controller.sv      || goto error
 vlog -quiet -sv -work ${IP}_lib +incdir+${IPS_PATH}/${IP}/include ${IPS_PATH}/${IP}/hwloop_regs.sv            || goto error
