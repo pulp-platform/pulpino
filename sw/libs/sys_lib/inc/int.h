@@ -1,13 +1,14 @@
 /**
- * \brief Interrupt library for PULPino.
+ * @file
+ * @brief Interrupt library for PULPino.
  * 
  * Contains various interrupt manipulating functions.
  *
- * \author Name
+ * @author Name
  *
- * \version 1.0
+ * @version 1.0
  *
- * \date 11/9/2015
+ * @date 11/9/2015
  *
  */
 
