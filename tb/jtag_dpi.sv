@@ -1,6 +1,6 @@
 //////////////////////////////////////////////////////////////////////
 ////                                                              ////
-////  dbg_comm_vpi.v                                              ////
+////  jtag_dpi.sv, former dbg_comm_vpi.v                          ////
 ////                                                              ////
 ////                                                              ////
 ////  This file is part of the SoC/OpenRISC Development Interface ////
@@ -41,7 +41,7 @@
 ////                                                              ////
 //////////////////////////////////////////////////////////////////////
 
-module dbg_comm_vpi
+module jtag_dpi
 #(
   parameter TCP_PORT      = 4567,
   parameter TIMEOUT_COUNT = 6'h08 // 1/2 of a TCK clock will be this many clk_i ticks.  Must be less than 6 bits.

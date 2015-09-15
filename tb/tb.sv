@@ -40,8 +40,8 @@ module tb;
 
   generate if(ENABLE_VPI == 1)
   begin
-    // JTAG VERIFICATION IP
-    jtag_vpi
+    // jtag dpi module
+    jtag_dpi
     #(
       .TIMEOUT_COUNT ( 6'd10 )
       )
