@@ -1,0 +1,6 @@
+the_ROM_image:
+{
+	[bootloader]/home/atraber/git/pulpino/fpga/pulpemu/pulpemu.sdk/FSBL/Debug/FSBL.elf
+	/home/atraber/git/pulpino/fpga/pulpemu/pulpemu.runs/impl_1/pulpemu_top.bit
+	/scratch/atraber/zynq_sw/u-boot-xlnx/u-boot
+}
