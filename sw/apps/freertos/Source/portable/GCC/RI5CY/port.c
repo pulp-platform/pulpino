@@ -67,17 +67,10 @@
     1 tab == 4 spaces!
 */
 
-/* 
-
-Changes from V2.6.0
-
-	+ AVR port - Replaced the inb() and outb() functions with direct memory
-	  access.  This allows the port to be built with the 20050414 build of
-	  WinAVR.
-*/
 
 #include <stdlib.h>
-#include <avr/interrupt.h>
+#include "int.h"
+#include "utils.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -121,7 +114,7 @@ extern volatile TCB_t * volatile pxCurrentTCB;
  */
 
 #define portSAVE_CONTEXT()									\
-	asm volatile (	"push	r0						\n\t"	\
+	/* asm volatile (	"push	r0						\n\t"	\
 					"in		r0, __SREG__			\n\t"	\
 					"cli							\n\t"	\
 					"push	r0						\n\t"	\
@@ -164,14 +157,14 @@ extern volatile TCB_t * volatile pxCurrentTCB;
 					"in		r0, 0x3e				\n\t"	\
 					"st		x+, r0					\n\t"	\
 				);
-
+	*/
 /* 
  * Opposite to portSAVE_CONTEXT().  Interrupts will have been disabled during
  * the context save so we can write to the stack pointer. 
  */
 
 #define portRESTORE_CONTEXT()								\
-	asm volatile (	"lds	r26, pxCurrentTCB		\n\t"	\
+	/* asm volatile (	"lds	r26, pxCurrentTCB		\n\t"	\
 					"lds	r27, pxCurrentTCB + 1	\n\t"	\
 					"ld		r28, x+					\n\t"	\
 					"out	__SP_L__, r28			\n\t"	\
@@ -212,6 +205,7 @@ extern volatile TCB_t * volatile pxCurrentTCB;
 					"out	__SREG__, r0			\n\t"	\
 					"pop	r0						\n\t"	\
 				);
+				*/
 
 /*-----------------------------------------------------------*/
 
@@ -403,37 +397,43 @@ void vPortYieldFromTick( void )
  */
 static void prvSetupTimerInterrupt( void )
 {
-uint32_t ulCompareMatch;
-uint8_t ucHighByte, ucLowByte;
+	
+	unsigned int CompareMatch;
+	CompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
+
+	csrw(mtimecmp, CompareMatch);
+
+	//uint32_t ulCompareMatch;
+	//uint8_t ucHighByte, ucLowByte;
 
 	/* Using 16bit timer 1 to generate the tick.  Correct fuses must be
 	selected for the configCPU_CLOCK_HZ clock. */
 
-	ulCompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
+	// ulCompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
 
 	/* We only have 16 bits so have to scale to get our required tick rate. */
-	ulCompareMatch /= portCLOCK_PRESCALER;
+	// ulCompareMatch /= portCLOCK_PRESCALER;
 
 	/* Adjust for correct value. */
-	ulCompareMatch -= ( uint32_t ) 1;
+	// ulCompareMatch -= ( uint32_t ) 1;
 
 	/* Setup compare match value for compare match A.  Interrupts are disabled 
 	before this is called so we need not worry here. */
-	ucLowByte = ( uint8_t ) ( ulCompareMatch & ( uint32_t ) 0xff );
-	ulCompareMatch >>= 8;
-	ucHighByte = ( uint8_t ) ( ulCompareMatch & ( uint32_t ) 0xff );
-	OCR1AH = ucHighByte;
-	OCR1AL = ucLowByte;
+	// ucLowByte = ( uint8_t ) ( ulCompareMatch & ( uint32_t ) 0xff );
+	// ulCompareMatch >>= 8;
+	// ucHighByte = ( uint8_t ) ( ulCompareMatch & ( uint32_t ) 0xff );
+	// OCR1AH = ucHighByte;
+	// OCR1AL = ucLowByte;
 
 	/* Setup clock source and compare match behaviour. */
-	ucLowByte = portCLEAR_COUNTER_ON_MATCH | portPRESCALE_64;
-	TCCR1B = ucLowByte;
+	// ucLowByte = portCLEAR_COUNTER_ON_MATCH | portPRESCALE_64;
+	// TCCR1B = ucLowByte;
 
 	/* Enable the interrupt - this is okay as interrupt are currently globally
 	disabled. */
-	ucLowByte = TIMSK;
-	ucLowByte |= portCOMPARE_MATCH_A_INTERRUPT_ENABLE;
-	TIMSK = ucLowByte;
+	// ucLowByte = TIMSK;
+	// ucLowByte |= portCOMPARE_MATCH_A_INTERRUPT_ENABLE;
+	// TIMSK = ucLowByte;
 }
 /*-----------------------------------------------------------*/
 
@@ -448,7 +448,9 @@ uint8_t ucHighByte, ucLowByte;
 	void SIG_OUTPUT_COMPARE1A( void )
 	{
 		vPortYieldFromTick();
-		asm volatile ( "reti" );
+		// ??????!?!?!?!?!?!?!?!?!?
+		// ??????!?!?!?!?!?!?!?!?!?
+		//asm volatile ( "reti" );
 	}
 #else
 

@@ -19,6 +19,7 @@ int main( void )
 	//	main_full();
 	//}
 	//#endif
-
+	vTaskStartScheduler();
+	
 	return 0;
 }

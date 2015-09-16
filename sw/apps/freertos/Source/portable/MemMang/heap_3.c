@@ -67,84 +67,69 @@
     1 tab == 4 spaces!
 */
 
+
 /*
-Changes from V1.2.3
-
-	+ portCPU_CLOSK_HZ definition changed to 8MHz base 10, previously it
-	  base 16.
-*/
-
-#ifndef PORTMACRO_H
-#define PORTMACRO_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/*-----------------------------------------------------------
- * Port specific definitions.
+ * Implementation of pvPortMalloc() and vPortFree() that relies on the
+ * compilers own malloc() and free() implementations.
  *
- * The settings in this file configure FreeRTOS correctly for the
- * given hardware and compiler.
+ * This file can only be used if the linker is configured to to generate
+ * a heap memory area.
  *
- * These settings should not be altered.
- *-----------------------------------------------------------
+ * See heap_1.c, heap_2.c and heap_4.c for alternative implementations, and the
+ * memory management pages of http://www.FreeRTOS.org for more information.
  */
 
-/* Type definitions. */
-#define portCHAR		char
-#define portFLOAT		float
-#define portDOUBLE		double
-#define portLONG		long
-#define portSHORT		int
-#define portSTACK_TYPE	uint8_t
-#define portBASE_TYPE	char
+#include <stdlib.h>
 
-typedef portSTACK_TYPE StackType_t;
-typedef signed char BaseType_t;
-typedef unsigned char UBaseType_t;
+/* Defining MPU_WRAPPERS_INCLUDED_FROM_API_FILE prevents task.h from redefining
+all the API functions to use the MPU wrappers.  That should only be done when
+task.h is included from an application file. */
+#define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
 
-#if( configUSE_16_BIT_TICKS == 1 )
-	typedef uint16_t TickType_t;
-	#define portMAX_DELAY ( TickType_t ) 0xffff
-#else
-	typedef uint32_t TickType_t;
-	#define portMAX_DELAY ( TickType_t ) 0xffffffffUL
-#endif
+#include "FreeRTOS.h"
+#include "task.h"
+
+#undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+
 /*-----------------------------------------------------------*/
 
-/* Critical section management. */
-#define portENTER_CRITICAL()
-// #define portENTER_CRITICAL()		asm volatile ( "in		__tmp_reg__, __SREG__" :: );	\
-// 									asm volatile ( "cli" :: );								\
-// 									asm volatile ( "push	__tmp_reg__" :: )
-#define portEXIT_CRITICAL() 
-// #define portEXIT_CRITICAL()			asm volatile ( "pop		__tmp_reg__" :: );				\
-// 									asm volatile ( "out		__SREG__, __tmp_reg__" :: )
+void *pvPortMalloc( size_t xWantedSize )
+{
+void *pvReturn;
 
-#define portDISABLE_INTERRUPTS()	int_disable();
-#define portENABLE_INTERRUPTS()		int_enable();
-/*-----------------------------------------------------------*/
+	vTaskSuspendAll();
+	{
+		pvReturn = malloc( xWantedSize );
+		traceMALLOC( pvReturn, xWantedSize );
+	}
+	( void ) xTaskResumeAll();
 
-/* Architecture specifics. */
-#define portSTACK_GROWTH			( -1 )
-#define portTICK_PERIOD_MS			( ( TickType_t ) 1000 / configTICK_RATE_HZ )
-#define portBYTE_ALIGNMENT			1
-#define portNOP()					asm volatile ( "nop" );
-/*-----------------------------------------------------------*/
+	#if( configUSE_MALLOC_FAILED_HOOK == 1 )
+	{
+		if( pvReturn == NULL )
+		{
+			extern void vApplicationMallocFailedHook( void );
+			vApplicationMallocFailedHook();
+		}
+	}
+	#endif
 
-/* Kernel utilities. */
-extern void vPortYield( void ) __attribute__ ( ( naked ) );
-#define portYIELD()					vPortYield()
-/*-----------------------------------------------------------*/
-
-/* Task function macros as described on the FreeRTOS.org WEB site. */
-#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
-#define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
-
-#ifdef __cplusplus
+	return pvReturn;
 }
-#endif
+/*-----------------------------------------------------------*/
 
-#endif /* PORTMACRO_H */
+void vPortFree( void *pv )
+{
+	if( pv )
+	{
+		vTaskSuspendAll();
+		{
+			free( pv );
+			traceFREE( pv, 0 );
+		}
+		( void ) xTaskResumeAll();
+	}
+}
+
+
 

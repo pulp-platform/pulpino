@@ -7,7 +7,7 @@
 volatile char status = 0x00;
 
 void int_time_cmp(void) {
-	status = 0x55;
+	status += 1;
 }
 
 int main()
@@ -64,14 +64,10 @@ int main()
 	val = 0x40;
 	csrw(mtime, val);
 	// wait a few cycles
-	for (int i = 0; i < 100; i++)
-		asm volatile ("nop\n"
-					  "nop\n"
-					  );
-	
-	if (status != 0x55)
-		printf("[ERROR] No interrupt occured");
-	else printf("Test 5: Passed\n");
+	status  = 0;
+	while (status < 5);
+	int_disable();
+	printf("Test 5: Passed\n");
 
   return 0;
 }

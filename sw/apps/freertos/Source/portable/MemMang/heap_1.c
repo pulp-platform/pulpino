@@ -67,84 +67,108 @@
     1 tab == 4 spaces!
 */
 
+
 /*
-Changes from V1.2.3
-
-	+ portCPU_CLOSK_HZ definition changed to 8MHz base 10, previously it
-	  base 16.
-*/
-
-#ifndef PORTMACRO_H
-#define PORTMACRO_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/*-----------------------------------------------------------
- * Port specific definitions.
+ * The simplest possible implementation of pvPortMalloc().  Note that this
+ * implementation does NOT allow allocated memory to be freed again.
  *
- * The settings in this file configure FreeRTOS correctly for the
- * given hardware and compiler.
- *
- * These settings should not be altered.
- *-----------------------------------------------------------
+ * See heap_2.c, heap_3.c and heap_4.c for alternative implementations, and the
+ * memory management pages of http://www.FreeRTOS.org for more information.
  */
+#include <stdlib.h>
 
-/* Type definitions. */
-#define portCHAR		char
-#define portFLOAT		float
-#define portDOUBLE		double
-#define portLONG		long
-#define portSHORT		int
-#define portSTACK_TYPE	uint8_t
-#define portBASE_TYPE	char
+/* Defining MPU_WRAPPERS_INCLUDED_FROM_API_FILE prevents task.h from redefining
+all the API functions to use the MPU wrappers.  That should only be done when
+task.h is included from an application file. */
+#define MPU_WRAPPERS_INCLUDED_FROM_API_FILE
 
-typedef portSTACK_TYPE StackType_t;
-typedef signed char BaseType_t;
-typedef unsigned char UBaseType_t;
+#include "FreeRTOS.h"
+#include "task.h"
 
-#if( configUSE_16_BIT_TICKS == 1 )
-	typedef uint16_t TickType_t;
-	#define portMAX_DELAY ( TickType_t ) 0xffff
-#else
-	typedef uint32_t TickType_t;
-	#define portMAX_DELAY ( TickType_t ) 0xffffffffUL
-#endif
+#undef MPU_WRAPPERS_INCLUDED_FROM_API_FILE
+
+/* A few bytes might be lost to byte aligning the heap start address. */
+#define configADJUSTED_HEAP_SIZE	( configTOTAL_HEAP_SIZE - portBYTE_ALIGNMENT )
+
+/* Allocate the memory for the heap. */
+static uint8_t ucHeap[ configTOTAL_HEAP_SIZE ];
+static size_t xNextFreeByte = ( size_t ) 0;
+
 /*-----------------------------------------------------------*/
 
-/* Critical section management. */
-#define portENTER_CRITICAL()
-// #define portENTER_CRITICAL()		asm volatile ( "in		__tmp_reg__, __SREG__" :: );	\
-// 									asm volatile ( "cli" :: );								\
-// 									asm volatile ( "push	__tmp_reg__" :: )
-#define portEXIT_CRITICAL() 
-// #define portEXIT_CRITICAL()			asm volatile ( "pop		__tmp_reg__" :: );				\
-// 									asm volatile ( "out		__SREG__, __tmp_reg__" :: )
+void *pvPortMalloc( size_t xWantedSize )
+{
+void *pvReturn = NULL;
+static uint8_t *pucAlignedHeap = NULL;
 
-#define portDISABLE_INTERRUPTS()	int_disable();
-#define portENABLE_INTERRUPTS()		int_enable();
-/*-----------------------------------------------------------*/
+	/* Ensure that blocks are always aligned to the required number of bytes. */
+	#if portBYTE_ALIGNMENT != 1
+		if( xWantedSize & portBYTE_ALIGNMENT_MASK )
+		{
+			/* Byte alignment required. */
+			xWantedSize += ( portBYTE_ALIGNMENT - ( xWantedSize & portBYTE_ALIGNMENT_MASK ) );
+		}
+	#endif
 
-/* Architecture specifics. */
-#define portSTACK_GROWTH			( -1 )
-#define portTICK_PERIOD_MS			( ( TickType_t ) 1000 / configTICK_RATE_HZ )
-#define portBYTE_ALIGNMENT			1
-#define portNOP()					asm volatile ( "nop" );
-/*-----------------------------------------------------------*/
+	vTaskSuspendAll();
+	{
+		if( pucAlignedHeap == NULL )
+		{
+			/* Ensure the heap starts on a correctly aligned boundary. */
+			pucAlignedHeap = ( uint8_t * ) ( ( ( portPOINTER_SIZE_TYPE ) &ucHeap[ portBYTE_ALIGNMENT ] ) & ( ~( ( portPOINTER_SIZE_TYPE ) portBYTE_ALIGNMENT_MASK ) ) );
+		}
 
-/* Kernel utilities. */
-extern void vPortYield( void ) __attribute__ ( ( naked ) );
-#define portYIELD()					vPortYield()
-/*-----------------------------------------------------------*/
+		/* Check there is enough room left for the allocation. */
+		if( ( ( xNextFreeByte + xWantedSize ) < configADJUSTED_HEAP_SIZE ) &&
+			( ( xNextFreeByte + xWantedSize ) > xNextFreeByte )	)/* Check for overflow. */
+		{
+			/* Return the next free byte then increment the index past this
+			block. */
+			pvReturn = pucAlignedHeap + xNextFreeByte;
+			xNextFreeByte += xWantedSize;
+		}
 
-/* Task function macros as described on the FreeRTOS.org WEB site. */
-#define portTASK_FUNCTION_PROTO( vFunction, pvParameters ) void vFunction( void *pvParameters )
-#define portTASK_FUNCTION( vFunction, pvParameters ) void vFunction( void *pvParameters )
+		traceMALLOC( pvReturn, xWantedSize );
+	}
+	( void ) xTaskResumeAll();
 
-#ifdef __cplusplus
+	#if( configUSE_MALLOC_FAILED_HOOK == 1 )
+	{
+		if( pvReturn == NULL )
+		{
+			extern void vApplicationMallocFailedHook( void );
+			vApplicationMallocFailedHook();
+		}
+	}
+	#endif
+
+	return pvReturn;
 }
-#endif
+/*-----------------------------------------------------------*/
 
-#endif /* PORTMACRO_H */
+void vPortFree( void *pv )
+{
+	/* Memory cannot be freed using this scheme.  See heap_2.c, heap_3.c and
+	heap_4.c for alternative implementations, and the memory management pages of
+	http://www.FreeRTOS.org for more information. */
+	( void ) pv;
+
+	/* Force an assert as it is invalid to call this function. */
+	configASSERT( pv == NULL );
+}
+/*-----------------------------------------------------------*/
+
+void vPortInitialiseBlocks( void )
+{
+	/* Only required when static memory is not cleared. */
+	xNextFreeByte = ( size_t ) 0;
+}
+/*-----------------------------------------------------------*/
+
+size_t xPortGetFreeHeapSize( void )
+{
+	return ( configADJUSTED_HEAP_SIZE - xNextFreeByte );
+}
+
+
 
