@@ -1,4 +1,26 @@
-module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR_cs_n, DDR_dm, DDR_dq, DDR_dqs_n, DDR_dqs_p, DDR_odt, DDR_ras_n, DDR_reset_n, DDR_we_n, FIXED_IO_ddr_vrn, FIXED_IO_ddr_vrp, FIXED_IO_mio, FIXED_IO_ps_clk, FIXED_IO_ps_porb, FIXED_IO_ps_srstb, );
+module pulpemu_top(
+  DDR_addr,
+  DDR_ba,
+  DDR_cas_n,
+  DDR_ck_n,
+  DDR_ck_p,
+  DDR_cke,
+  DDR_cs_n,
+  DDR_dm,
+  DDR_dq,
+  DDR_dqs_n,
+  DDR_dqs_p,
+  DDR_odt,
+  DDR_ras_n,
+  DDR_reset_n,
+  DDR_we_n,
+  FIXED_IO_ddr_vrn,
+  FIXED_IO_ddr_vrp,
+  FIXED_IO_mio,
+  FIXED_IO_ps_clk,
+  FIXED_IO_ps_porb,
+  FIXED_IO_ps_srstb
+  );
 
   inout  [14:0] DDR_addr;
   inout  [2:0]  DDR_ba;
@@ -22,13 +44,6 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   inout         FIXED_IO_ps_porb;
   inout         FIXED_IO_ps_srstb;
 
-  wire [14:0] BRAM_PORTA_addr;
-  wire        BRAM_PORTA_clk;
-  wire [63:0] BRAM_PORTA_din;
-  wire [63:0] BRAM_PORTA_dout;
-  wire        BRAM_PORTA_en;
-  wire        BRAM_PORTA_rst;
-  wire [7:0]  BRAM_PORTA_we;
   wire [14:0] DDR_addr;
   wire [2:0]  DDR_ba;
   wire        DDR_cas_n;
@@ -50,18 +65,13 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   wire        FIXED_IO_ps_clk;
   wire        FIXED_IO_ps_porb;
   wire        FIXED_IO_ps_srstb;
+
   wire [31:0] end_of_operation;
   wire [31:0] fetch_enable;
   wire        ps7_clk;
   wire        ps7_rst_n;
   wire        ps7_rst_pulp_n;
   wire        ps7_rst_clking_n;
-`ifdef PULP3_PIRMIN
-  wire        intr_mailbox;  
-  wire        intr_rab_miss; 
-  wire        intr_rab_multi;
-  wire        intr_rab_prot; 
-`endif
 
   wire        ref_clk_i;               // input
   wire        test_clk_i;              // input
@@ -72,25 +82,6 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   wire        fetch_en_i;              // input
   wire        eoc_o;                   // output
   wire [1:0]  return_o;                // output
-  wire        rab_lite_aclk;        // input
-  wire        rab_lite_aresetn;     // input
-  wire [10:0] rab_lite_aw_addr;     // input
-  wire        rab_lite_aw_valid;    // input
-  wire        rab_lite_aw_ready;    // output
-  wire [31:0] rab_lite_w_data;      // input
-  wire  [3:0] rab_lite_w_strb;      // input
-  wire        rab_lite_w_valid;     // input
-  wire        rab_lite_w_ready;     // output
-  wire  [1:0] rab_lite_b_resp;      // output
-  wire        rab_lite_b_valid;     // output
-  wire        rab_lite_b_ready;     // input
-  wire [10:0] rab_lite_ar_addr;     // input
-  wire        rab_lite_ar_valid;    // input
-  wire        rab_lite_ar_ready;    // output
-  wire [31:0] rab_lite_r_data;      // output
-  wire  [1:0] rab_lite_r_resp;      // output
-  wire        rab_lite_r_valid;     // output
-  wire        rab_lite_r_ready;     // input
   wire        tck_i;                   // input
   wire        trst_ni;                 // input
   wire        tms_i;                   // input
@@ -115,6 +106,7 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   wire        clking_axi_aclk;    // input
   wire        clking_axi_aresetn; // input
   wire [10:0] clking_axi_awaddr;  // input
+  wire  [2:0] clking_axi_awprot;  // input
   wire        clking_axi_awvalid; // input
   wire        clking_axi_awready; // output
   wire [31:0] clking_axi_wdata;   // input
@@ -125,36 +117,19 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   wire        clking_axi_bvalid;  // output
   wire        clking_axi_bready;  // input
   wire [10:0] clking_axi_araddr;  // input
+  wire  [2:0] clking_axi_arprot;  // input
   wire        clking_axi_arvalid; // input
   wire        clking_axi_arready; // output
   wire [31:0] clking_axi_rdata;   // output
   wire  [1:0] clking_axi_rresp;   // output
   wire        clking_axi_rvalid;  // output
   wire        clking_axi_rready;  // input
-  wire        uart_tx;            // output 
-  wire        uart_rx;            // input  
-  wire        uart_rts;           // output 
-  wire        uart_dtr;           // output 
-  wire        uart_cts;           // input  
-  wire        uart_dsr;           // input  
-  wire        i2c_scl_i;          // input    
-  wire        i2c_scl_o;          // output 
-  wire        i2c_scl_oe_o;       // output  
-  wire        i2c_sda_i;          // input  
-  wire        i2c_sda_o;          // output  
-  wire        i2c_sda_oe_o;       // output   
-  wire [7:0]  audio_i2s_sd_i;     // input 
-  wire        audio_i2s_sck_o;    // output
-  wire        audio_i2s_ws_o;     // output
-  wire [1:0]  cam_i2s_sd_i;       // input 
-  wire        cam_i2s_sck_o;      // output 
-  wire        cam_i2s_ws_o;       // output
-`ifdef PULP3_PIRMIN
-  wire        intr_mailbox_o;          // output
-  wire        intr_rab_miss_o;         // output
-  wire        intr_rab_multi_o;        // output
-  wire        intr_rab_prot_o;         // output
-`endif
+  wire        uart_tx;            // output
+  wire        uart_rx;            // input
+  wire        uart_rts;           // output
+  wire        uart_dtr;           // output
+  wire        uart_cts;           // input
+  wire        uart_dsr;           // input
 
 // clocke generator signals
   wire s_rstn_sync;
@@ -230,25 +205,10 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   // gpio in - constant for now
   assign gpio_in = 0;
 
-  // useless AXI id/user signals
-  // assign rab_slave_aw_id   = 0;
-  assign rab_slave_aw_user = 0;
-  // assign rab_slave_ar_id   = 0;
-  assign rab_slave_ar_user = 0;
-  assign rab_slave_w_user  = 0;
-
   // other unused ulpsoc inputs
   assign uart_cts = 0;
   assign uart_dsr = 0;
   assign uart_rx  = 1'b0;
-  assign i2c_scl_i = 1'b0;
-  assign i2c_sda_i = 1'b0;
-  assign audio_i2s_sd_i = 8'b0;
-  assign cam_i2s_sd_i = 2'b0;
-  assign si = 4'b0;
-  assign se = 1'b0;
-  assign rab_lite_aclk = 1'b0;
-  assign rab_lite_aresetn = 1'b1;
 
   // Zynq Processing System
   ps7_wrapper ps7_wrapper_i (
@@ -267,21 +227,16 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
     .DDR_ras_n         (DDR_ras_n        ),
     .DDR_reset_n       (DDR_reset_n      ),
     .DDR_we_n          (DDR_we_n         ),
+
     .FIXED_IO_ddr_vrn  (FIXED_IO_ddr_vrn ),
     .FIXED_IO_ddr_vrp  (FIXED_IO_ddr_vrp ),
     .FIXED_IO_mio      (FIXED_IO_mio     ),
     .FIXED_IO_ps_clk   (FIXED_IO_ps_clk  ),
     .FIXED_IO_ps_porb  (FIXED_IO_ps_porb ),
     .FIXED_IO_ps_srstb (FIXED_IO_ps_srstb),
-    .end_of_operation  (end_of_operation ),
-    .fetch_enable      (fetch_enable     ),
-    .ps7_clk           (ps7_clk          ),
-    .ps7_rst_n         (ps7_rst_n        ),
-    // .ps7_rst_pulp_n    (ps7_rst_pulp_n   ),
-    // .ps7_rst_clking_n  (ps7_rst_clking_n ),
-    //.M_AXI_aclk   (clking_axi_aclk   ),
-    //M_AXI_aresetn(clking_axi_aresetn),
+
     .clking_axi_awaddr (clking_axi_awaddr ),
+    .clking_axi_awprot (clking_axi_awprot ),
     .clking_axi_awvalid(clking_axi_awvalid),
     .clking_axi_awready(clking_axi_awready),
     .clking_axi_wdata  (clking_axi_wdata  ),
@@ -292,12 +247,19 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
     .clking_axi_bvalid (clking_axi_bvalid ),
     .clking_axi_bready (clking_axi_bready ),
     .clking_axi_araddr (clking_axi_araddr ),
+    .clking_axi_arprot (clking_axi_arprot ),
     .clking_axi_arvalid(clking_axi_arvalid),
     .clking_axi_arready(clking_axi_arready),
     .clking_axi_rdata  (clking_axi_rdata  ),
     .clking_axi_rresp  (clking_axi_rresp  ),
     .clking_axi_rvalid (clking_axi_rvalid ),
-    .clking_axi_rready (clking_axi_rready )
+    .clking_axi_rready (clking_axi_rready ),
+
+    .end_of_operation  (end_of_operation ),
+    .fetch_enable      (fetch_enable     ),
+    .ps7_clk           (ps7_clk          ),
+    .ps7_rst_n         (ps7_rst_n        )
+
   );
 
 

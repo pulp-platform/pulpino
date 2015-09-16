@@ -1,3 +1,5 @@
+NCORES=4
+
 
 all: u-boot linux rootfs devtree sd_image/BOOT.BIN
 
@@ -29,7 +31,6 @@ linux: sd_image/uImage
 ################################################################################
 
 u-boot-xlnx:
-	git clone git://github.com/Xilinx/linux-xlnx.git
 	git clone git://github.com/Xilinx/u-boot-xlnx.git
 	cd u-boot-xlnx && git checkout tags/xilinx-v2015.1
 	cd u-boot-xlnx && patch -p1 < ../u-boot-xlnx-def-env.patch
@@ -80,6 +81,13 @@ sd_image/devicetree.dtb: device-tree/*.dts* $(filter-out $(wildcard linux-xlnx),
 
 .PHONY:
 devtree: sd_image/devicetree.dtb
+
+################################################################################
+# get bitstream
+################################################################################
+
+sd_image/pulpemu_top.bit: ../pulpemu/pulpemu.runs/impl_1/pulpemu_top.bit
+	cp $< $@
 
 ################################################################################
 # boot.bin
