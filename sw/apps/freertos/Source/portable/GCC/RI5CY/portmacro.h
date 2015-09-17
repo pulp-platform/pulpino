@@ -91,13 +91,13 @@ extern "C" {
  *-----------------------------------------------------------
  */
 
-/* Type definitions. */
+/* TODO: Type definitions. */
 #define portCHAR		char
 #define portFLOAT		float
 #define portDOUBLE		double
 #define portLONG		long
 #define portSHORT		int
-#define portSTACK_TYPE	uint8_t
+#define portSTACK_TYPE	int
 #define portBASE_TYPE	char
 
 typedef portSTACK_TYPE StackType_t;
@@ -115,13 +115,14 @@ typedef unsigned char UBaseType_t;
 
 /* Critical section management. */
 #define portENTER_CRITICAL()
-// #define portENTER_CRITICAL()		asm volatile ( "in		__tmp_reg__, __SREG__" :: );	\
+/* #define portENTER_CRITICAL()		asm volatile ( "in		__tmp_reg__, __SREG__" :: );	\
 // 									asm volatile ( "cli" :: );								\
-// 									asm volatile ( "push	__tmp_reg__" :: )
+ 									asm volatile ( "push	__tmp_reg__" :: )
+*/
 #define portEXIT_CRITICAL() 
-// #define portEXIT_CRITICAL()			asm volatile ( "pop		__tmp_reg__" :: );				\
+/* #define portEXIT_CRITICAL()			asm volatile ( "pop		__tmp_reg__" :: );				\
 // 									asm volatile ( "out		__SREG__, __tmp_reg__" :: )
-
+*/
 #define portDISABLE_INTERRUPTS()	int_disable();
 #define portENABLE_INTERRUPTS()		int_enable();
 /*-----------------------------------------------------------*/
@@ -134,7 +135,7 @@ typedef unsigned char UBaseType_t;
 /*-----------------------------------------------------------*/
 
 /* Kernel utilities. */
-extern void vPortYield( void ) __attribute__ ( ( naked ) );
+extern void vPortYield( void );
 #define portYIELD()					vPortYield()
 /*-----------------------------------------------------------*/
 

@@ -67,6 +67,7 @@ int main()
 	status  = 0;
 	while (status < 5);
 	int_disable();
+
 	printf("Test 5: Passed\n");
 
   return 0;

@@ -163,7 +163,7 @@ extern volatile TCB_t * volatile pxCurrentTCB;
  * the context save so we can write to the stack pointer. 
  */
 
-#define portRESTORE_CONTEXT()								\
+#define portRESTORE_CONTEXT()		int_enable();						\
 	/* asm volatile (	"lds	r26, pxCurrentTCB		\n\t"	\
 					"lds	r27, pxCurrentTCB + 1	\n\t"	\
 					"ld		r28, x+					\n\t"	\
@@ -361,7 +361,7 @@ void vPortEndScheduler( void )
  * Manual context switch.  The first thing we do is save the registers so we
  * can use a naked attribute.
  */
-void vPortYield( void ) __attribute__ ( ( naked ) );
+void vPortYield( void );
 void vPortYield( void )
 {
 	portSAVE_CONTEXT();
@@ -378,7 +378,7 @@ void vPortYield( void )
  * difference from vPortYield() is the tick count is incremented as the
  * call comes from the tick ISR.
  */
-void vPortYieldFromTick( void ) __attribute__ ( ( naked ) );
+void vPortYieldFromTick( void );
 void vPortYieldFromTick( void )
 {
 	portSAVE_CONTEXT();
@@ -398,42 +398,15 @@ void vPortYieldFromTick( void )
 static void prvSetupTimerInterrupt( void )
 {
 	
-	unsigned int CompareMatch;
+	unsigned int CompareMatch, time = 0x00;
+	
 	CompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
-
-	csrw(mtimecmp, CompareMatch);
-
-	//uint32_t ulCompareMatch;
-	//uint8_t ucHighByte, ucLowByte;
-
-	/* Using 16bit timer 1 to generate the tick.  Correct fuses must be
-	selected for the configCPU_CLOCK_HZ clock. */
-
-	// ulCompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
-
-	/* We only have 16 bits so have to scale to get our required tick rate. */
-	// ulCompareMatch /= portCLOCK_PRESCALER;
-
-	/* Adjust for correct value. */
-	// ulCompareMatch -= ( uint32_t ) 1;
-
-	/* Setup compare match value for compare match A.  Interrupts are disabled 
-	before this is called so we need not worry here. */
-	// ucLowByte = ( uint8_t ) ( ulCompareMatch & ( uint32_t ) 0xff );
-	// ulCompareMatch >>= 8;
-	// ucHighByte = ( uint8_t ) ( ulCompareMatch & ( uint32_t ) 0xff );
-	// OCR1AH = ucHighByte;
-	// OCR1AL = ucLowByte;
-
-	/* Setup clock source and compare match behaviour. */
-	// ucLowByte = portCLEAR_COUNTER_ON_MATCH | portPRESCALE_64;
-	// TCCR1B = ucLowByte;
-
-	/* Enable the interrupt - this is okay as interrupt are currently globally
+	/* timer interrupts are automatically enabled if mtimecmp is different to 0x00
+	- this is okay as interrupt are currently globally
 	disabled. */
-	// ucLowByte = TIMSK;
-	// ucLowByte |= portCOMPARE_MATCH_A_INTERRUPT_ENABLE;
-	// TIMSK = ucLowByte;
+	csrw(mtimecmp, CompareMatch);
+	csrw(mtime, time);
+
 }
 /*-----------------------------------------------------------*/
 
@@ -444,12 +417,11 @@ static void prvSetupTimerInterrupt( void )
 	 * the context is saved at the start of vPortYieldFromTick().  The tick
 	 * count is incremented after the context is saved.
 	 */
-	void SIG_OUTPUT_COMPARE1A( void ) __attribute__ ( ( signal, naked ) );
-	void SIG_OUTPUT_COMPARE1A( void )
+	void int_time_cmp1(void)
 	{
 		vPortYieldFromTick();
-		// ??????!?!?!?!?!?!?!?!?!?
-		// ??????!?!?!?!?!?!?!?!?!?
+		// we do not need this since the return from interrupt is handled
+		// in the cr0 runtime
 		//asm volatile ( "reti" );
 	}
 #else
@@ -459,8 +431,7 @@ static void prvSetupTimerInterrupt( void )
 	 * tick count.  We don't need to switch context, this can only be done by
 	 * manual calls to taskYIELD();
 	 */
-	void SIG_OUTPUT_COMPARE1A( void ) __attribute__ ( ( signal ) );
-	void SIG_OUTPUT_COMPARE1A( void )
+	void int_time_cmp1(void)
 	{
 		xTaskIncrementTick();
 	}
