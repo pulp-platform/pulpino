@@ -167,6 +167,7 @@ set SRC_RI5CY "
    $IPS/riscv/alu.sv \
    $IPS/riscv/compressed_decoder.sv \
    $IPS/riscv/controller.sv \
+   $IPS/riscv/decoder.sv \
    $IPS/riscv/cs_registers.sv \
    $IPS/riscv/debug_unit.sv \
    $IPS/riscv/exc_controller.sv \
@@ -175,7 +176,7 @@ set SRC_RI5CY "
    $IPS/riscv/hwloop_regs.sv \
    $IPS/riscv/id_stage.sv \
    $IPS/riscv/if_stage.sv \
-   $IPS/riscv/instr_core_interface.sv \
+   $IPS/riscv/prefetch_buffer.sv \
    $IPS/riscv/load_store_unit.sv \
    $IPS/riscv/mult.sv \
    $IPS/riscv/riscv_core.sv \

@@ -146,10 +146,18 @@ proc create_root_design { parentCell } {
   # Create interface ports
   set DDR [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:ddrx_rtl:1.0 DDR ]
   set FIXED_IO [ create_bd_intf_port -mode Master -vlnv xilinx.com:display_processing_system7:fixedio_rtl:1.0 FIXED_IO ]
+  set UART_0 [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:uart_rtl:1.0 UART_0 ]
   set clking_axi [ create_bd_intf_port -mode Master -vlnv xilinx.com:interface:aximm_rtl:1.0 clking_axi ]
   set_property -dict [ list CONFIG.ADDR_WIDTH {32} CONFIG.DATA_WIDTH {32} CONFIG.FREQ_HZ {50000000} CONFIG.PROTOCOL {AXI4LITE}  ] $clking_axi
 
   # Create ports
+  set SPI0_MISO_I [ create_bd_port -dir I SPI0_MISO_I ]
+  set SPI0_MOSI_I [ create_bd_port -dir I SPI0_MOSI_I ]
+  set SPI0_MOSI_O [ create_bd_port -dir O SPI0_MOSI_O ]
+  set SPI0_SCLK_I [ create_bd_port -dir I SPI0_SCLK_I ]
+  set SPI0_SCLK_O [ create_bd_port -dir O SPI0_SCLK_O ]
+  set SPI0_SS_I [ create_bd_port -dir I SPI0_SS_I ]
+  set SPI0_SS_O [ create_bd_port -dir O SPI0_SS_O ]
   set end_of_operation [ create_bd_port -dir I -from 31 -to 0 end_of_operation ]
   set fetch_enable [ create_bd_port -dir O -from 31 -to 0 fetch_enable ]
   set ps7_clk [ create_bd_port -dir O ps7_clk ]
@@ -175,7 +183,7 @@ proc create_root_design { parentCell } {
 
   # Create instance: processing_system7_0, and set properties
   set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0 ]
-  set_property -dict [ list CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {50} CONFIG.PCW_S_AXI_HP0_DATA_WIDTH {64} CONFIG.PCW_USE_S_AXI_HP0 {0} CONFIG.preset {zedboard}  ] $processing_system7_0
+  set_property -dict [ list CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {50} CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1} CONFIG.PCW_SPI0_PERIPHERAL_ENABLE {1} CONFIG.PCW_S_AXI_HP0_DATA_WIDTH {64} CONFIG.PCW_UART0_PERIPHERAL_ENABLE {1} CONFIG.PCW_USE_S_AXI_HP0 {0} CONFIG.preset {ZedBoard}  ] $processing_system7_0
 
   # Create interface connections
   connect_bd_intf_net -intf_net axi_crossbar_0_M00_AXI [get_bd_intf_pins axi_crossbar_0/M00_AXI] [get_bd_intf_pins axi_protocol_converter_0/S_AXI]
@@ -186,12 +194,20 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net processing_system7_0_DDR [get_bd_intf_ports DDR] [get_bd_intf_pins processing_system7_0/DDR]
   connect_bd_intf_net -intf_net processing_system7_0_FIXED_IO [get_bd_intf_ports FIXED_IO] [get_bd_intf_pins processing_system7_0/FIXED_IO]
   connect_bd_intf_net -intf_net processing_system7_0_M_AXI_GP0 [get_bd_intf_pins axi_protocol_converter_1/S_AXI] [get_bd_intf_pins processing_system7_0/M_AXI_GP0]
+  connect_bd_intf_net -intf_net processing_system7_0_UART_0 [get_bd_intf_ports UART_0] [get_bd_intf_pins processing_system7_0/UART_0]
 
   # Create port connections
+  connect_bd_net -net SPI0_MISO_I_1 [get_bd_ports SPI0_MISO_I] [get_bd_pins processing_system7_0/SPI0_MISO_I]
+  connect_bd_net -net SPI0_MOSI_I_1 [get_bd_ports SPI0_MOSI_I] [get_bd_pins processing_system7_0/SPI0_MOSI_I]
+  connect_bd_net -net SPI0_SCLK_I_1 [get_bd_ports SPI0_SCLK_I] [get_bd_pins processing_system7_0/SPI0_SCLK_I]
+  connect_bd_net -net SPI0_SS_I_1 [get_bd_ports SPI0_SS_I] [get_bd_pins processing_system7_0/SPI0_SS_I]
   connect_bd_net -net axi_pulp_control_gpio2_io_o [get_bd_ports fetch_enable] [get_bd_pins axi_pulp_control/gpio2_io_o]
   connect_bd_net -net end_of_operation_1 [get_bd_ports end_of_operation] [get_bd_pins axi_pulp_control/gpio_io_i]
   connect_bd_net -net processing_system7_0_FCLK_CLK0 [get_bd_ports ps7_clk] [get_bd_pins axi_crossbar_0/aclk] [get_bd_pins axi_protocol_converter_0/aclk] [get_bd_pins axi_protocol_converter_1/aclk] [get_bd_pins axi_protocol_converter_2/aclk] [get_bd_pins axi_pulp_control/s_axi_aclk] [get_bd_pins processing_system7_0/FCLK_CLK0] [get_bd_pins processing_system7_0/M_AXI_GP0_ACLK]
   connect_bd_net -net processing_system7_0_FCLK_RESET0_N [get_bd_ports ps7_rst_n] [get_bd_pins axi_crossbar_0/aresetn] [get_bd_pins axi_protocol_converter_0/aresetn] [get_bd_pins axi_protocol_converter_1/aresetn] [get_bd_pins axi_protocol_converter_2/aresetn] [get_bd_pins axi_pulp_control/s_axi_aresetn] [get_bd_pins processing_system7_0/FCLK_RESET0_N]
+  connect_bd_net -net processing_system7_0_SPI0_MOSI_O [get_bd_ports SPI0_MOSI_O] [get_bd_pins processing_system7_0/SPI0_MOSI_O]
+  connect_bd_net -net processing_system7_0_SPI0_SCLK_O [get_bd_ports SPI0_SCLK_O] [get_bd_pins processing_system7_0/SPI0_SCLK_O]
+  connect_bd_net -net processing_system7_0_SPI0_SS_O [get_bd_ports SPI0_SS_O] [get_bd_pins processing_system7_0/SPI0_SS_O]
 
   # Create address segments
   create_bd_addr_seg -range 0x10000 -offset 0x51000000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_pulp_control/S_AXI/Reg] SEG_axi_pulp_control_Reg
@@ -212,4 +228,6 @@ proc create_root_design { parentCell } {
 
 create_root_design ""
 
+
+puts "\n\nWARNING: This Tcl script was generated from a block design that has not been validated. It is possible that design <$design_name> may result in errors during validation."
 

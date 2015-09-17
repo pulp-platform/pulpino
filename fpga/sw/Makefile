@@ -16,7 +16,7 @@ linux-xlnx/.config: $(filter-out $(wildcard linux-xlnx), linux-xlnx)
 	cp ./kernel.config ./linux-xlnx/.config
 
 linux-xlnx/arch/arm/boot/uImage: linux-xlnx/.config
-	cd linux-xlnx && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH}
+	cd linux-xlnx && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH} -j${NCORES}
 
 sd_image/uImage: linux-xlnx/arch/arm/boot/uImage
 	mkdir -p sd_image

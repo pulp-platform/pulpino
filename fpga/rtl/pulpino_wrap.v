@@ -1,31 +1,57 @@
-module pulpino(clk, rst_n, uart_tx, uart_rx, uart_rts, uart_dtr, uart_cts, uart_dsr, gpio_in, gpio_out, gpio_dir, tck_i, trstn_i, tms_i, tdi_i, tdo_o);
+module pulpino(clk,
+  rst_n,
+  spi_clk_i,
+  spi_cs_i,
+  spi_mode_o,
+  spi_sdo0_o,
+  spi_sdo1_o,
+  spi_sdo2_o,
+  spi_sdo3_o,
+  spi_sdi0_i,
+  spi_sdi1_i,
+  spi_sdi2_i,
+  spi_sdi3_i,
+  uart_tx,
+  uart_rx,
+  uart_rts,
+  uart_dtr,
+  uart_cts,
+  uart_dsr,
+  gpio_in,
+  gpio_out,
+  gpio_dir,
+  tck_i,
+  trstn_i,
+  tms_i,
+  tdi_i,
+  tdo_o);
 
   // Clock and Reset
-  input clk;
-  input rst_n;
+  input         clk;
+  input         rst_n;
 
-  // input               spi_clk_i;
-  // input               spi_cs_i;
-  // output  [1:0]       spi_mode_o;
-  // output              spi_sdo0_o;
-  // output              spi_sdo1_o;
-  // output              spi_sdo2_o;
-  // output              spi_sdo3_o;
-  // input               spi_sdi0_i;
-  // input               spi_sdi1_i;
-  // input               spi_sdi2_i;
-  // input               spi_sdi3_i;
+  input         spi_clk_i;
+  input         spi_cs_i;
+  output  [1:0] spi_mode_o;
+  output        spi_sdo0_o;
+  output        spi_sdo1_o;
+  output        spi_sdo2_o;
+  output        spi_sdo3_o;
+  input         spi_sdi0_i;
+  input         spi_sdi1_i;
+  input         spi_sdi2_i;
+  input         spi_sdi3_i;
 
-  output               uart_tx;
-  input                uart_rx;
-  output               uart_rts;
-  output               uart_dtr;
-  input                uart_cts;
-  input                uart_dsr;
+  output        uart_tx;
+  input         uart_rx;
+  output        uart_rts;
+  output        uart_dtr;
+  input         uart_cts;
+  input         uart_dsr;
 
-  input         [31:0] gpio_in;
-  output        [31:0] gpio_out;
-  output        [31:0] gpio_dir;
+  input  [31:0] gpio_in;
+  output [31:0] gpio_out;
+  output [31:0] gpio_dir;
 
   // JTAG signals
   input  tck_i;
@@ -39,17 +65,17 @@ module pulpino(clk, rst_n, uart_tx, uart_rx, uart_rts, uart_dtr, uart_cts, uart_
     .clk              ( clk              ),
     .rst_n            ( rst_n            ),
 
-    .spi_clk_i        ( 1'b0             ),
-    .spi_cs_i         ( 1'b0             ),
-    .spi_mode_o       (                  ),
-    .spi_sdo0_o       (                  ),
-    .spi_sdo1_o       (                  ),
-    .spi_sdo2_o       (                  ),
-    .spi_sdo3_o       (                  ),
-    .spi_sdi0_i       ( 1'b0             ),
-    .spi_sdi1_i       ( 1'b0             ),
-    .spi_sdi2_i       ( 1'b0             ),
-    .spi_sdi3_i       ( 1'b0             ),
+    .spi_clk_i        ( spi_clk_i        ),
+    .spi_cs_i         ( spi_cs_i         ),
+    .spi_mode_o       ( spi_mode_o       ),
+    .spi_sdo0_o       ( spi_sdo0_o       ),
+    .spi_sdo1_o       ( spi_sdo1_o       ),
+    .spi_sdo2_o       ( spi_sdo2_o       ),
+    .spi_sdo3_o       ( spi_sdo3_o       ),
+    .spi_sdi0_i       ( spi_sdi0_i       ),
+    .spi_sdi1_i       ( spi_sdi1_i       ),
+    .spi_sdi2_i       ( spi_sdi2_i       ),
+    .spi_sdi3_i       ( spi_sdi3_i       ),
 
     .uart_tx          ( uart_tx          ), // output
     .uart_rx          ( uart_rx          ), // input
