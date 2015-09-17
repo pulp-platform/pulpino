@@ -114,13 +114,13 @@ typedef unsigned char UBaseType_t;
 /*-----------------------------------------------------------*/
 
 /* Critical section management. */
-#define portENTER_CRITICAL()
+#define portENTER_CRITICAL()        int_disable();
 /* #define portENTER_CRITICAL()		asm volatile ( "in		__tmp_reg__, __SREG__" :: );	\
 // 									asm volatile ( "cli" :: );								\
  									asm volatile ( "push	__tmp_reg__" :: )
 */
-#define portEXIT_CRITICAL() 
-/* #define portEXIT_CRITICAL()			asm volatile ( "pop		__tmp_reg__" :: );				\
+#define portEXIT_CRITICAL()         int_enable();
+/* #define portEXIT_CRITICAL()		asm volatile ( "pop		__tmp_reg__" :: );				\
 // 									asm volatile ( "out		__SREG__, __tmp_reg__" :: )
 */
 #define portDISABLE_INTERRUPTS()	int_disable();

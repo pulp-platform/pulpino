@@ -5,10 +5,6 @@
 
 #define DELAY_LOOP 1000
 
-void int_time_cmp(void) {
-	printf("In interrupt");
-}
-
 void task1 (void *pvParameters) {
 	
 	printf("task2");

@@ -13,7 +13,7 @@ void int_time_cmp(void) {
 int main()
 {
 	int reg, val, tmp;
-	int_enable();
+	int_disable(); // we want to stay atomic
 
 	// 0. mstatus -- interrupts enabled
 	csrr(mstatus, reg);
@@ -46,9 +46,12 @@ int main()
 	
 	val = 0x00;
 	// 4. write to timer register
-	int_disable(); // we want to stay atomic
+	
 	csrw(mtime, val);
 	csrr(mtime, reg);
+
+	val = 0x00;
+	csrw(mtimecmp, val);
 	int_enable();
 
 	if (val != reg - 1)

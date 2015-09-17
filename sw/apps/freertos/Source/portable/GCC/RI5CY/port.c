@@ -113,221 +113,120 @@ extern volatile TCB_t * volatile pxCurrentTCB;
  * so we need not worry about reading/writing to the stack pointer. 
  */
 
-#define portSAVE_CONTEXT()									\
-	/* asm volatile (	"push	r0						\n\t"	\
-					"in		r0, __SREG__			\n\t"	\
-					"cli							\n\t"	\
-					"push	r0						\n\t"	\
-					"push	r1						\n\t"	\
-					"clr	r1						\n\t"	\
-					"push	r2						\n\t"	\
-					"push	r3						\n\t"	\
-					"push	r4						\n\t"	\
-					"push	r5						\n\t"	\
-					"push	r6						\n\t"	\
-					"push	r7						\n\t"	\
-					"push	r8						\n\t"	\
-					"push	r9						\n\t"	\
-					"push	r10						\n\t"	\
-					"push	r11						\n\t"	\
-					"push	r12						\n\t"	\
-					"push	r13						\n\t"	\
-					"push	r14						\n\t"	\
-					"push	r15						\n\t"	\
-					"push	r16						\n\t"	\
-					"push	r17						\n\t"	\
-					"push	r18						\n\t"	\
-					"push	r19						\n\t"	\
-					"push	r20						\n\t"	\
-					"push	r21						\n\t"	\
-					"push	r22						\n\t"	\
-					"push	r23						\n\t"	\
-					"push	r24						\n\t"	\
-					"push	r25						\n\t"	\
-					"push	r26						\n\t"	\
-					"push	r27						\n\t"	\
-					"push	r28						\n\t"	\
-					"push	r29						\n\t"	\
-					"push	r30						\n\t"	\
-					"push	r31						\n\t"	\
-					"lds	r26, pxCurrentTCB		\n\t"	\
-					"lds	r27, pxCurrentTCB + 1	\n\t"	\
-					"in		r0, 0x3d				\n\t"	\
-					"st		x+, r0					\n\t"	\
-					"in		r0, 0x3e				\n\t"	\
-					"st		x+, r0					\n\t"	\
-				);
+  // gp
+    // tp
+    // t0
+    // t1
+    // t2
+    // a0
+    // a1
+    // a2
+    // a3
+    // a4
+    // a5
+    // a6
+    // a7
+    // t3
+    // t4
+    // t5
+    // t6
+
+#define portSAVE_CONTEXT() /*											\
+	 asm volatile (	"sw  x3, 0x00(x2)						\n\t"	\
+					"sw  x4, 0x04(x2)						\n\t"	\
+					"sw  x5, 0x08(x2)						\n\t"	\
+					"sw  x6, 0x0c(x2)						\n\t"	\
+					"sw  x7, 0x10(x2)						\n\t"	\
+					"sw x10, 0x14(x2)						\n\t"	\
+					"sw x11, 0x18(x2)						\n\t"	\
+					"sw x12, 0x1c(x2)						\n\t"	\
+					"sw x13, 0x20(x2)						\n\t"	\
+					"sw x14, 0x24(x2)						\n\t"	\
+					"sw x15, 0x28(x2)						\n\t"	\
+					"sw x16, 0x2c(x2)						\n\t"	\
+					"sw x17, 0x30(x2)						\n\t"	\
+					"sw x28, 0x34(x2)						\n\t"	\
+					"sw x29, 0x38(x2)						\n\t"	\
+					"sw x30, 0x3c(x2)						\n\t"	\
+					"sw x31, 0x40(x2)						\n\t"	\
+				);													\
 	*/
 /* 
  * Opposite to portSAVE_CONTEXT().  Interrupts will have been disabled during
  * the context save so we can write to the stack pointer. 
  */
 
-#define portRESTORE_CONTEXT()		int_enable();						\
-	/* asm volatile (	"lds	r26, pxCurrentTCB		\n\t"	\
-					"lds	r27, pxCurrentTCB + 1	\n\t"	\
-					"ld		r28, x+					\n\t"	\
-					"out	__SP_L__, r28			\n\t"	\
-					"ld		r29, x+					\n\t"	\
-					"out	__SP_H__, r29			\n\t"	\
-					"pop	r31						\n\t"	\
-					"pop	r30						\n\t"	\
-					"pop	r29						\n\t"	\
-					"pop	r28						\n\t"	\
-					"pop	r27						\n\t"	\
-					"pop	r26						\n\t"	\
-					"pop	r25						\n\t"	\
-					"pop	r24						\n\t"	\
-					"pop	r23						\n\t"	\
-					"pop	r22						\n\t"	\
-					"pop	r21						\n\t"	\
-					"pop	r20						\n\t"	\
-					"pop	r19						\n\t"	\
-					"pop	r18						\n\t"	\
-					"pop	r17						\n\t"	\
-					"pop	r16						\n\t"	\
-					"pop	r15						\n\t"	\
-					"pop	r14						\n\t"	\
-					"pop	r13						\n\t"	\
-					"pop	r12						\n\t"	\
-					"pop	r11						\n\t"	\
-					"pop	r10						\n\t"	\
-					"pop	r9						\n\t"	\
-					"pop	r8						\n\t"	\
-					"pop	r7						\n\t"	\
-					"pop	r6						\n\t"	\
-					"pop	r5						\n\t"	\
-					"pop	r4						\n\t"	\
-					"pop	r3						\n\t"	\
-					"pop	r2						\n\t"	\
-					"pop	r1						\n\t"	\
-					"pop	r0						\n\t"	\
-					"out	__SREG__, r0			\n\t"	\
-					"pop	r0						\n\t"	\
-				);
-				*/
-
+#define portRESTORE_CONTEXT()		int_enable();								/*\
+	asm volatile (	"lw  x3, 0x00(x2)						\n\t"	\
+					"lw  x4, 0x04(x2)						\n\t"	\
+					"lw  x5, 0x08(x2)						\n\t"	\
+					"lw  x6, 0x0c(x2)						\n\t"	\
+					"lw  x7, 0x10(x2)						\n\t"	\
+					"lw x10, 0x14(x2)						\n\t"	\
+					"lw x11, 0x18(x2)						\n\t"	\
+					"lw x12, 0x1c(x2)						\n\t"	\
+					"lw x13, 0x20(x2)						\n\t"	\
+					"lw x14, 0x24(x2)						\n\t"	\
+					"lw x15, 0x28(x2)						\n\t"	\
+					"lw x16, 0x2c(x2)						\n\t"	\
+					"lw x17, 0x30(x2)						\n\t"	\
+					"lw x28, 0x34(x2)						\n\t"	\
+					"lw x29, 0x38(x2)						\n\t"	\
+					"lw x30, 0x3c(x2)						\n\t"	\
+					"lw x31, 0x40(x2)						\n\t"	\
+					"lw  x1, 0x44(x2)						\n\t"	\
+				);										    		\
+				int_enable(); 										\
+*/
 /*-----------------------------------------------------------*/
 
 /*
  * Perform hardware setup to enable ticks from timer 1, compare match A.
  */
 static void prvSetupTimerInterrupt( void );
-/*-----------------------------------------------------------*/
+
+/*
+ * Read global pointer
+ */
+static void prvReadGp( int *ulValue )
+{
+	asm volatile( "mv  x3, %0" :: "r"(ulValue) );
+}
 
 /* 
  * See header file for description. 
  */
 StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
 {
-uint16_t usAddress;
+	int usAddress = ( int ) pxCode;
+	StackType_t xGlobalPointer;
 
-	/* Place a few bytes of known values on the bottom of the stack. 
-	This is just useful for debugging. */
+	/* read global pointer */
+    prvReadGp( &xGlobalPointer );
+	
+	/* End of stack marker. */
+    *pxTopOfStack = 0xdeadbeef;
+    pxTopOfStack--;
 
-	*pxTopOfStack = 0x11;
-	pxTopOfStack--;
-	*pxTopOfStack = 0x22;
-	pxTopOfStack--;
-	*pxTopOfStack = 0x33;
-	pxTopOfStack--;
-
-	/* Simulate how the stack would look after a call to vPortYield() generated by 
-	the compiler. */
-
-	/*lint -e950 -e611 -e923 Lint doesn't like this much - but nothing I can do about it. */
-
-	/* The start of the task code will be popped off the stack last, so place
-	it on first. */
-	usAddress = ( uint16_t ) pxCode;
-	*pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
+    /* zero */
+    *pxTopOfStack = ( StackType_t ) 0x00;	/* R1 */
 	pxTopOfStack--;
 
-	usAddress >>= 8;
-	*pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
-	pxTopOfStack--;
+    /* return address*/
+    *pxTopOfStack = ( StackType_t ) pxCode; 
+    pxTopOfStack--;
+    /* stack pointer */
+	StackType_t *pxFramePointer = pxTopOfStack - 1;
+	*pxTopOfStack = ( StackType_t ) pxFramePointer; 
+    pxTopOfStack--;
 
-	/* Next simulate the stack as if after a call to portSAVE_CONTEXT().  
-	portSAVE_CONTEXT places the flags on the stack immediately after r0
-	to ensure the interrupts get disabled as soon as possible, and so ensuring
-	the stack use is minimal should a context switch interrupt occur. */
-	*pxTopOfStack = ( StackType_t ) 0x00;	/* R0 */
-	pxTopOfStack--;
-	*pxTopOfStack = portFLAGS_INT_ENABLED;
-	pxTopOfStack--;
+    /* global pointer */
+    *pxTopOfStack = xGlobalPointer;
+
+    /* reg x4 -> x18 */
+    pxTopOfStack -= 28;
 
 
-	/* Now the remaining registers.   The compiler expects R1 to be 0. */
-	*pxTopOfStack = ( StackType_t ) 0x00;	/* R1 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x02;	/* R2 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x03;	/* R3 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x04;	/* R4 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x05;	/* R5 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x06;	/* R6 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x07;	/* R7 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x08;	/* R8 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x09;	/* R9 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x10;	/* R10 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x11;	/* R11 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x12;	/* R12 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x13;	/* R13 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x14;	/* R14 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x15;	/* R15 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x16;	/* R16 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x17;	/* R17 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x18;	/* R18 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x19;	/* R19 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x20;	/* R20 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x21;	/* R21 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x22;	/* R22 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x23;	/* R23 */
-	pxTopOfStack--;
-
-	/* Place the parameter on the stack in the expected location. */
-	usAddress = ( uint16_t ) pvParameters;
-	*pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
-	pxTopOfStack--;
-
-	usAddress >>= 8;
-	*pxTopOfStack = ( StackType_t ) ( usAddress & ( uint16_t ) 0x00ff );
-	pxTopOfStack--;
-
-	*pxTopOfStack = ( StackType_t ) 0x26;	/* R26 X */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x27;	/* R27 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x28;	/* R28 Y */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x29;	/* R29 */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x30;	/* R30 Z */
-	pxTopOfStack--;
-	*pxTopOfStack = ( StackType_t ) 0x031;	/* R31 */
-	pxTopOfStack--;
-
-	/*lint +e950 +e611 +e923 */
 
 	return pxTopOfStack;
 }
@@ -368,7 +267,7 @@ void vPortYield( void )
 	vTaskSwitchContext();
 	portRESTORE_CONTEXT();
 
-	asm volatile ( "ret" );
+	//asm volatile ( "eret" );
 }
 /*-----------------------------------------------------------*/
 
@@ -388,7 +287,7 @@ void vPortYieldFromTick( void )
 	}
 	portRESTORE_CONTEXT();
 
-	asm volatile ( "ret" );
+	//asm volatile ( "ret" );
 }
 /*-----------------------------------------------------------*/
 
@@ -417,12 +316,12 @@ static void prvSetupTimerInterrupt( void )
 	 * the context is saved at the start of vPortYieldFromTick().  The tick
 	 * count is incremented after the context is saved.
 	 */
-	void int_time_cmp1(void)
+	void int_time_cmp(void)
 	{
 		vPortYieldFromTick();
 		// we do not need this since the return from interrupt is handled
 		// in the cr0 runtime
-		//asm volatile ( "reti" );
+		asm volatile ( "eret" );
 	}
 #else
 
@@ -431,9 +330,10 @@ static void prvSetupTimerInterrupt( void )
 	 * tick count.  We don't need to switch context, this can only be done by
 	 * manual calls to taskYIELD();
 	 */
-	void int_time_cmp1(void)
+	void int_time_cmp(void)
 	{
 		xTaskIncrementTick();
+		asm volatile ( "eret" );
 	}
 #endif
 

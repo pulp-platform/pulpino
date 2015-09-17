@@ -132,10 +132,11 @@ nm_interrupt_handler:
 
   /* ======================================= [ timer_interrupt_handler ] === */
 timer_interrupt_handler:
-  addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
-  jal x1, store_regs
-  la x1, end_except
+  # naked call
+  # addi x2, x2, -EXCEPTION_STACK_SIZE
+  # sw x1, 0x44(x2)
+  # jal x1, store_regs
+  # la x1, end_except
   jal x0, int_time_cmp
 
 /* ================================= [ illegal instruction handler] === */
