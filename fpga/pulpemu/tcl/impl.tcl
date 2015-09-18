@@ -29,7 +29,7 @@ report_utilization -hierarchical -hierarchical_depth 2 -cells pulpino_wrap_i -fi
 write_verilog -force -mode timesim -cell pulpino_wrap_i ../simu/pulpino_impl.v
 write_sdf     -force -cell pulpino_wrap_i ../simu/pulpino_impl.sdf
 
-if { $::env(PROBES) } {
+if { [info exists $::env(PROBES)] } {
    # create new design run for probes
    #create_run impl_2 -flow {Vivado Implementation 2014}
    create_run impl_2 -parent_run synth_1 -flow {Vivado Implementation 2014}

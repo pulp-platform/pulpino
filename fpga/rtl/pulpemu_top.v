@@ -70,14 +70,11 @@ module pulpemu_top(
   wire [31:0] fetch_enable;
   wire        ps7_clk;
   wire        ps7_rst_n;
-  wire        ps7_rst_pulp_n;
   wire        ps7_rst_clking_n;
 
   wire        ref_clk_i;               // input
   wire        rst_ni;                  // input
-  wire        clk_o;                   // output
-  wire        fetch_en_i;              // input
-  wire        eoc_o;                   // output
+  wire        fetch_en;                // input
   wire [1:0]  return_o;                // output
 
   wire        tck_i;                   // input
@@ -116,16 +113,13 @@ module pulpemu_top(
   wire  [1:0] clking_axi_rresp;   // output
   wire        clking_axi_rvalid;  // output
   wire        clking_axi_rready;  // input
+
   wire        uart_tx;            // output
   wire        uart_rx;            // input
 
   // clock generator signals
-  wire s_rstn_sync;
-  wire s_initn_sync;
-  wire s_rstn_cluster_sync;
-  wire s_rstn_cluster_sync_soc;
-  wire s_clk_soc;
-  wire s_clk_cluster;
+  wire s_rstn_pulpino;
+  wire s_clk_pulpino;
 
   assign ref_clk_i          = ps7_clk;
   assign clking_axi_aclk    = ps7_clk;
@@ -135,28 +129,26 @@ module pulpemu_top(
   assign ps7_rst_clking_n   = ps7_rst_n;
 
   reg fetch_en_r;
-  reg fetch_en_deb;
 
-  assign fetch_en_i = fetch_en_r;
+  assign fetch_en = fetch_en_r;
 
   reg [31:0] end_of_operation_r;
-  always @(posedge ps7_clk or negedge ps7_rst_pulp_n)
+  always @(posedge ps7_clk or negedge ps7_rst_n)
   begin
-    if(ps7_rst_pulp_n == 1'b0)
+    if(ps7_rst_n == 1'b0)
       end_of_operation_r = 32'b0;
     else begin
-      end_of_operation_r[0]    = eoc_o;
-      end_of_operation_r[2:1]  = return_o;
+      end_of_operation_r = gpio_out;
     end
   end
   assign end_of_operation = end_of_operation_r;
 
-  always @(posedge ps7_clk or negedge ps7_rst_pulp_n)
+  always @(posedge ps7_clk or negedge ps7_rst_n)
   begin
-    if(ps7_rst_pulp_n == 1'b0)
+    if(ps7_rst_n == 1'b0)
       fetch_en_r = 1'b0;
     else
-      fetch_en_r = fetch_enable[0] & fetch_en_deb;
+      fetch_en_r = fetch_enable[0];
   end
 
   // jtag - constant for now
@@ -164,21 +156,6 @@ module pulpemu_top(
   assign trst_ni = 1'b0;
   assign tms_i   = 1'b0;
   assign td_i    = 1'b0;
-
-
-  // FETCH EN debouncing
-  // FETCH EN is debounced in both transitions
-  reg [5:0] fetch_en_counter;
-  always @(posedge ps7_clk or negedge ps7_rst_pulp_n)
-  begin
-    if(ps7_rst_pulp_n==1'b0) begin
-      fetch_en_deb <= 1'b1;
-      fetch_en_counter <= 6'd0;
-    end
-    else begin
-      fetch_en_deb <= 1'b1;
-    end
-  end
 
   // gpio in - constant for now
   assign gpio_in = 32'b0;
@@ -270,18 +247,16 @@ module pulpemu_top(
     .clking_axi_rvalid       ( clking_axi_rvalid       ),
     .clking_axi_rready       ( clking_axi_rready       ),
 
-    .rstn_sync_o             ( s_rstn_sync             ),
-    .initn_sync_o            ( s_initn_sync            ),
-    .rstn_cluster_o          ( s_rstn_cluster_sync     ),
-    .rstn_cluster_sync_soc_o ( s_rstn_cluster_sync_soc ),
-    .clk_soc_o               ( s_clk_soc               ),
-    .clk_cluster_o           ( s_clk_cluster           )
+    .rstn_pulpino_o          ( s_rstn_pulpino          ),
+    .clk_pulpino_o           ( s_clk_pulpino           )
 );
 
   // PULPino SoC
   pulpino pulpino_wrap_i (
-    .clk        ( s_clk_cluster       ),
-    .rst_n      ( s_rstn_cluster_sync ),
+    .clk            ( s_clk_pulpino       ),
+    .rst_n          ( s_rstn_pulpino      ),
+
+    .fetch_enable_i ( fetch_en            ),
 
     .tck_i      ( tck_i               ),
     .trstn_i    ( trst_ni             ),

@@ -23,16 +23,12 @@ module clk_rst_gen
     output        clking_axi_rvalid,
     input         clking_axi_rready,
 
-    output        rstn_sync_o,
-    output        initn_sync_o,
-    output        rstn_cluster_o,
-    output        rstn_cluster_sync_soc_o,
-    output        clk_soc_o,
-    output        clk_cluster_o
+    output        rstn_pulpino_o,
+    output        clk_pulpino_o
 );
 
     wire s_clk_int;
-  
+
     xilinx_clock_manager clk_manager_i
     (
         .s_axi_aclk    ( clking_axi_aclk    ),
@@ -59,11 +55,7 @@ module clk_rst_gen
         .rst_no        (                    )
     );
 
-    assign rstn_sync_o             = rst_ni;
-    assign initn_sync_o            = rst_ni;
-    assign rstn_cluster_o          = rst_ni;
-    assign rstn_cluster_sync_soc_o = rst_ni;
-    assign clk_soc_o               = s_clk_int;
-    assign clk_cluster_o           = s_clk_int;
+    assign rstn_pulpino_o          = rst_ni;
+    assign clk_pulpino_o           = s_clk_int;
 
 endmodule

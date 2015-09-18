@@ -1,5 +1,6 @@
 module pulpino(clk,
   rst_n,
+  fetch_enable_i,
   spi_clk_i,
   spi_cs_i,
   spi_mode_o,
@@ -29,6 +30,8 @@ module pulpino(clk,
   // Clock and Reset
   input         clk;
   input         rst_n;
+
+  input         fetch_enable_i;
 
   input         spi_clk_i;
   input         spi_cs_i;
@@ -64,6 +67,8 @@ module pulpino(clk,
   pulpino_top pulpino_i (
     .clk              ( clk              ),
     .rst_n            ( rst_n            ),
+
+    .fetch_enable_i   ( fetch_enable_i   ),
 
     .spi_clk_i        ( spi_clk_i        ),
     .spi_cs_i         ( spi_cs_i         ),
