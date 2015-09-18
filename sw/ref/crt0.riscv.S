@@ -27,7 +27,7 @@
 
   // timer compare interrupt
   .org 0x0c
-  jal x0, interrupt_handler
+  jal x0, timer_interrupt_handler
 
   // reset vector
   .org 0x10
@@ -38,7 +38,7 @@
   .section .text
 
 reset_handler:
-  /* initilize mtime and mtimcmp*/
+  /* initilize mtime and mtimcmp - disable timer interrupts */
   csrw mtime, x0
   csrw mtimecmp, x0
   /* set all registers to zero (use mv for reduced code size) */
@@ -129,6 +129,15 @@ nm_interrupt_handler:
   jal x1, store_regs
   la x1, end_except
   jal x0, irq_emergency_handler_c
+
+  /* ======================================= [ timer_interrupt_handler ] === */
+timer_interrupt_handler:
+  # naked call
+  # addi x2, x2, -EXCEPTION_STACK_SIZE
+  # sw x1, 0x44(x2)
+  # jal x1, store_regs
+  # la x1, end_except
+  jal x0, int_time_cmp
 
 /* ================================= [ illegal instruction handler] === */
 illegal_insn_handler:

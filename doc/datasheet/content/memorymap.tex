@@ -7,4 +7,19 @@
   \label{fig:pulpino_memory_map}
 \end{figure}
 
+\section{Interrupt table}
+\begin{figure}[h!]
+\centering
+	\begin{tabular}{|l|l|l|}
+		\hline
+		0 & external interrupt & 0x00000000 \\ \hline
+		1 & non maskable external interrupt & 0x00000004 \\ \hline
+		2 & illegal instruction exception & 0x00000008 \\ \hline
+		3 & timer compare interrupt & 0x0000000c \\ \hline
+		4 & RESET handler & 0x00000010 \\	\hline
+	\end{tabular}
+	\caption{\pulpino interrupt table.}
+	\label{fig:interrupt_table}
+\end{figure}
+
 
