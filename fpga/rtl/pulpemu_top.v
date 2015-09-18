@@ -19,7 +19,15 @@ module pulpemu_top(
   FIXED_IO_mio,
   FIXED_IO_ps_clk,
   FIXED_IO_ps_porb,
-  FIXED_IO_ps_srstb
+  FIXED_IO_ps_srstb,
+  LD0,
+  LD1,
+  LD2,
+  LD3,
+  LD4,
+  LD5,
+  LD6,
+  LD7
   );
 
   inout  [14:0] DDR_addr;
@@ -43,6 +51,15 @@ module pulpemu_top(
   inout         FIXED_IO_ps_clk;
   inout         FIXED_IO_ps_porb;
   inout         FIXED_IO_ps_srstb;
+
+  output LD0;
+  output LD1;
+  output LD2;
+  output LD3;
+  output LD4;
+  output LD5;
+  output LD6;
+  output LD7;
 
   wire [14:0] DDR_addr;
   wire [2:0]  DDR_ba;
@@ -77,6 +94,8 @@ module pulpemu_top(
   wire        fetch_en;                // input
   wire [1:0]  return_o;                // output
 
+  wire [31:0] jtag_emu_i; // input to PS
+  wire [31:0] jtag_emu_o; // output from PS
   wire        tck_i;                   // input
   wire        trst_ni;                 // input
   wire        tms_i;                   // input
@@ -151,14 +170,25 @@ module pulpemu_top(
       fetch_en_r = fetch_enable[0];
   end
 
-  // jtag - constant for now
-  assign tck_i   = 1'b0;
-  assign trst_ni = 1'b0;
-  assign tms_i   = 1'b0;
-  assign td_i    = 1'b0;
+  // JTAG signals
+  assign tck_i            = jtag_emu_o[0];
+  assign trst_ni          = jtag_emu_o[1];
+  assign td_i             = jtag_emu_o[2];
+  assign tms_i            = jtag_emu_o[3];
+  assign jtag_emu_i[3:0]  = 4'b0;
+  assign jtag_emu_i[4]    = td_o;
+  assign jtag_emu_i[31:5] = 27'b0;
 
-  // gpio in - constant for now
-  assign gpio_in = 32'b0;
+
+  // GPIO signals
+  assign LD0 = gpio_out[8];
+  assign LD1 = gpio_out[9];
+  assign LD2 = gpio_out[10];
+  assign LD3 = gpio_out[11];
+  assign LD4 = gpio_out[12];
+  assign LD5 = gpio_out[13];
+  assign LD6 = gpio_out[14];
+  assign LD7 = gpio_out[15];
 
   // Zynq Processing System
   ps7_wrapper ps7_wrapper_i (
@@ -212,6 +242,11 @@ module pulpemu_top(
 
     .UART_0_rxd         ( uart_tx            ),
     .UART_0_txd         ( uart_rx            ),
+
+    .gpio_io_i          ( gpio_out           ),
+    .gpio_io_o          ( gpio_in            ),
+    .jtag_emu_i         ( jtag_emu_i         ),
+    .jtag_emu_o         ( jtag_emu_o         ),
 
     .SPI0_MISO_I        ( spi_miso           ),
     .SPI0_MOSI_O        ( spi_mosi           ),
