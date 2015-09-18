@@ -133,4 +133,5 @@ add_subdirectory(debug)
 # RISCV only tests
 if(${RISCV})
   add_subdirectory(compressed)
+  add_subdirectory(blinken_lights)
 endif()

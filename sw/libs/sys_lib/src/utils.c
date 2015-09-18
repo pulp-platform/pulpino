@@ -12,24 +12,15 @@ exit (int i)
 
 // signal end of computation
 void eoc(int i){
-  *(volatile int*)(EOC_UNIT_BASE_ADDR) = 1;
-
-#ifdef CHIP_USED
   // setup GPIO
-  set_pin_function(15, 1);
-  set_gpio_pin_direction(14, 1);
-  set_gpio_pin_value(14, 1);
-#endif
-}
-
-// set fetch enable
-void fetch_enable() {
-  *(volatile int*)(FETCH_EN_UNIT_BASE_ADDR) = 1;
+  set_pin_function(8, 1);
+  set_gpio_pin_direction(8, 1);
+  set_gpio_pin_value(8, 1);
 }
 
 // sleep for 'iter' iterations. each iteration is approx 10 cycles
 void sleep(volatile int iter)
-{ 
+{
   while(iter--);
 }
 

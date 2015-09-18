@@ -154,7 +154,7 @@ module tb;
     fetch_enable = 1'b1;
 
 
-    wait(top_i.gpio_out[14]);
+    wait(top_i.gpio_out[8]);
     $stop();
 
     spi_read_word(use_qspi, 8'hB, 32'h0000_0000, recv_data);
