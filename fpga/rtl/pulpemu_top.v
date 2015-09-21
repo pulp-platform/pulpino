@@ -1,4 +1,34 @@
-module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR_cs_n, DDR_dm, DDR_dq, DDR_dqs_n, DDR_dqs_p, DDR_odt, DDR_ras_n, DDR_reset_n, DDR_we_n, FIXED_IO_ddr_vrn, FIXED_IO_ddr_vrp, FIXED_IO_mio, FIXED_IO_ps_clk, FIXED_IO_ps_porb, FIXED_IO_ps_srstb, );
+module pulpemu_top(
+  DDR_addr,
+  DDR_ba,
+  DDR_cas_n,
+  DDR_ck_n,
+  DDR_ck_p,
+  DDR_cke,
+  DDR_cs_n,
+  DDR_dm,
+  DDR_dq,
+  DDR_dqs_n,
+  DDR_dqs_p,
+  DDR_odt,
+  DDR_ras_n,
+  DDR_reset_n,
+  DDR_we_n,
+  FIXED_IO_ddr_vrn,
+  FIXED_IO_ddr_vrp,
+  FIXED_IO_mio,
+  FIXED_IO_ps_clk,
+  FIXED_IO_ps_porb,
+  FIXED_IO_ps_srstb,
+  LD0,
+  LD1,
+  LD2,
+  LD3,
+  LD4,
+  LD5,
+  LD6,
+  LD7
+  );
 
   inout  [14:0] DDR_addr;
   inout  [2:0]  DDR_ba;
@@ -22,13 +52,15 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   inout         FIXED_IO_ps_porb;
   inout         FIXED_IO_ps_srstb;
 
-  wire [14:0] BRAM_PORTA_addr;
-  wire        BRAM_PORTA_clk;
-  wire [63:0] BRAM_PORTA_din;
-  wire [63:0] BRAM_PORTA_dout;
-  wire        BRAM_PORTA_en;
-  wire        BRAM_PORTA_rst;
-  wire [7:0]  BRAM_PORTA_we;
+  output LD0;
+  output LD1;
+  output LD2;
+  output LD3;
+  output LD4;
+  output LD5;
+  output LD6;
+  output LD7;
+
   wire [14:0] DDR_addr;
   wire [2:0]  DDR_ba;
   wire        DDR_cas_n;
@@ -50,63 +82,30 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   wire        FIXED_IO_ps_clk;
   wire        FIXED_IO_ps_porb;
   wire        FIXED_IO_ps_srstb;
+
   wire [31:0] end_of_operation;
   wire [31:0] fetch_enable;
   wire        ps7_clk;
   wire        ps7_rst_n;
-  wire        ps7_rst_pulp_n;
   wire        ps7_rst_clking_n;
-`ifdef PULP3_PIRMIN
-  wire        intr_mailbox;  
-  wire        intr_rab_miss; 
-  wire        intr_rab_multi;
-  wire        intr_rab_prot; 
-`endif
 
   wire        ref_clk_i;               // input
-  wire        test_clk_i;              // input
-  wire        mode_select_i;           // input
   wire        rst_ni;                  // input
-  wire        clk_o;                   // output
-  wire        test_mode_i;             // input
-  wire        fetch_en_i;              // input
-  wire        eoc_o;                   // output
+  wire        fetch_en;                // input
   wire [1:0]  return_o;                // output
-  wire        rab_lite_aclk;        // input
-  wire        rab_lite_aresetn;     // input
-  wire [10:0] rab_lite_aw_addr;     // input
-  wire        rab_lite_aw_valid;    // input
-  wire        rab_lite_aw_ready;    // output
-  wire [31:0] rab_lite_w_data;      // input
-  wire  [3:0] rab_lite_w_strb;      // input
-  wire        rab_lite_w_valid;     // input
-  wire        rab_lite_w_ready;     // output
-  wire  [1:0] rab_lite_b_resp;      // output
-  wire        rab_lite_b_valid;     // output
-  wire        rab_lite_b_ready;     // input
-  wire [10:0] rab_lite_ar_addr;     // input
-  wire        rab_lite_ar_valid;    // input
-  wire        rab_lite_ar_ready;    // output
-  wire [31:0] rab_lite_r_data;      // output
-  wire  [1:0] rab_lite_r_resp;      // output
-  wire        rab_lite_r_valid;     // output
-  wire        rab_lite_r_ready;     // input
+
+  wire [31:0] jtag_emu_i; // input to PS
+  wire [31:0] jtag_emu_o; // output from PS
   wire        tck_i;                   // input
   wire        trst_ni;                 // input
   wire        tms_i;                   // input
   wire        td_i;                    // input
   wire        td_o;                    // output
-  wire        spi_master_clk;
-  wire        spi_master_csn;
-  wire [1:0]  spi_master_mode;
-  wire        spi_master_sdo0;
-  wire        spi_master_sdo1;
-  wire        spi_master_sdo2;
-  wire        spi_master_sdo3;
-  wire        spi_master_sdi0;
-  wire        spi_master_sdi1;
-  wire        spi_master_sdi2;
-  wire        spi_master_sdi3;
+
+  wire        spi_mosi;
+  wire        spi_miso;
+  wire        spi_sck;
+  wire        spi_cs;
 
   wire [31:0] gpio_dir;                // output
   wire [31:0] gpio_in;                 // input
@@ -115,6 +114,7 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   wire        clking_axi_aclk;    // input
   wire        clking_axi_aresetn; // input
   wire [10:0] clking_axi_awaddr;  // input
+  wire  [2:0] clking_axi_awprot;  // input
   wire        clking_axi_awvalid; // input
   wire        clking_axi_awready; // output
   wire [31:0] clking_axi_wdata;   // input
@@ -125,179 +125,136 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
   wire        clking_axi_bvalid;  // output
   wire        clking_axi_bready;  // input
   wire [10:0] clking_axi_araddr;  // input
+  wire  [2:0] clking_axi_arprot;  // input
   wire        clking_axi_arvalid; // input
   wire        clking_axi_arready; // output
   wire [31:0] clking_axi_rdata;   // output
   wire  [1:0] clking_axi_rresp;   // output
   wire        clking_axi_rvalid;  // output
   wire        clking_axi_rready;  // input
-  wire        uart_tx;            // output 
-  wire        uart_rx;            // input  
-  wire        uart_rts;           // output 
-  wire        uart_dtr;           // output 
-  wire        uart_cts;           // input  
-  wire        uart_dsr;           // input  
-  wire        i2c_scl_i;          // input    
-  wire        i2c_scl_o;          // output 
-  wire        i2c_scl_oe_o;       // output  
-  wire        i2c_sda_i;          // input  
-  wire        i2c_sda_o;          // output  
-  wire        i2c_sda_oe_o;       // output   
-  wire [7:0]  audio_i2s_sd_i;     // input 
-  wire        audio_i2s_sck_o;    // output
-  wire        audio_i2s_ws_o;     // output
-  wire [1:0]  cam_i2s_sd_i;       // input 
-  wire        cam_i2s_sck_o;      // output 
-  wire        cam_i2s_ws_o;       // output
-`ifdef PULP3_PIRMIN
-  wire        intr_mailbox_o;          // output
-  wire        intr_rab_miss_o;         // output
-  wire        intr_rab_multi_o;        // output
-  wire        intr_rab_prot_o;         // output
-`endif
 
-// clocke generator signals
-  wire s_rstn_sync;
-  wire s_initn_sync;
-  wire s_rstn_cluster_sync;
-  wire s_rstn_cluster_sync_soc;
-  wire s_clk_soc;
-  wire s_clk_cluster;
+  wire        uart_tx;            // output
+  wire        uart_rx;            // input
 
-  assign ref_clk_i        = ps7_clk;
-  assign clking_axi_aclk  = ps7_clk;
+  // clock generator signals
+  wire s_rstn_pulpino;
+  wire s_clk_pulpino;
+
+  assign ref_clk_i          = ps7_clk;
+  assign clking_axi_aclk    = ps7_clk;
   assign clking_axi_aresetn = ps7_rst_clking_n;
-  // assign test_clk_i       = ps7_clk;
-  assign test_clk_i       = 0;
-  assign mode_select_i    = 0;
-  assign test_mode_i      = 1'b0;
-  assign rst_ni           = fetch_enable[31];
-  assign ps7_rst_pulp_n   = ps7_rst_n;
-  assign ps7_rst_clking_n = ps7_rst_n;
+  assign rst_ni             = fetch_enable[31];
+  assign ps7_rst_pulp_n     = ps7_rst_n;
+  assign ps7_rst_clking_n   = ps7_rst_n;
 
   reg fetch_en_r;
-  reg fetch_en_deb;
 
-  assign fetch_en_i = fetch_en_r;
+  assign fetch_en = fetch_en_r;
 
   reg [31:0] end_of_operation_r;
-  always @(posedge ps7_clk or negedge ps7_rst_pulp_n)
+  always @(posedge ps7_clk or negedge ps7_rst_n)
   begin
-    if(ps7_rst_pulp_n == 1'b0)
+    if(ps7_rst_n == 1'b0)
       end_of_operation_r = 32'b0;
     else begin
-      end_of_operation_r[0]    = eoc_o;
-      end_of_operation_r[2:1]  = return_o;
+      end_of_operation_r = gpio_out;
     end
   end
   assign end_of_operation = end_of_operation_r;
 
-  always @(posedge ps7_clk or negedge ps7_rst_pulp_n)
+  always @(posedge ps7_clk or negedge ps7_rst_n)
   begin
-    if(ps7_rst_pulp_n == 1'b0)
+    if(ps7_rst_n == 1'b0)
       fetch_en_r = 1'b0;
     else
-      fetch_en_r = fetch_enable[0] & fetch_en_deb;
+      fetch_en_r = fetch_enable[0];
   end
 
-  // jtag - constant for now
-  assign tck_i   = 0;
-  assign trst_ni = 0;
-  assign tms_i   = 0;
-  assign td_i    = 0;
-
-  // spi master - constant for now
-  assign spi_master_sdi0 = 0;
-  assign spi_master_sdi1 = 0;
-  assign spi_master_sdi2 = 0;
-  assign spi_master_sdi3 = 0;
+  // JTAG signals
+  assign tck_i            = jtag_emu_o[0];
+  assign trst_ni          = jtag_emu_o[1];
+  assign td_i             = jtag_emu_o[2];
+  assign tms_i            = jtag_emu_o[3];
+  assign jtag_emu_i[3:0]  = 4'b0;
+  assign jtag_emu_i[4]    = td_o;
+  assign jtag_emu_i[31:5] = 27'b0;
 
 
-  // FETCH EN debouncing
-  // FETCH EN is debounced in both transitions
-  reg [5:0] fetch_en_counter;
-  always @(posedge ps7_clk or negedge ps7_rst_pulp_n)
-  begin
-    if(ps7_rst_pulp_n==1'b0) begin
-      fetch_en_deb <= 1'b1;
-      fetch_en_counter <= 6'd0;
-    end
-    else begin
-      fetch_en_deb <= 1'b1;
-    end
-  end
-
-  // gpio in - constant for now
-  assign gpio_in = 0;
-
-  // useless AXI id/user signals
-  // assign rab_slave_aw_id   = 0;
-  assign rab_slave_aw_user = 0;
-  // assign rab_slave_ar_id   = 0;
-  assign rab_slave_ar_user = 0;
-  assign rab_slave_w_user  = 0;
-
-  // other unused ulpsoc inputs
-  assign uart_cts = 0;
-  assign uart_dsr = 0;
-  assign uart_rx  = 1'b0;
-  assign i2c_scl_i = 1'b0;
-  assign i2c_sda_i = 1'b0;
-  assign audio_i2s_sd_i = 8'b0;
-  assign cam_i2s_sd_i = 2'b0;
-  assign si = 4'b0;
-  assign se = 1'b0;
-  assign rab_lite_aclk = 1'b0;
-  assign rab_lite_aresetn = 1'b1;
+  // GPIO signals
+  assign LD0 = gpio_out[8];
+  assign LD1 = gpio_out[9];
+  assign LD2 = gpio_out[10];
+  assign LD3 = gpio_out[11];
+  assign LD4 = gpio_out[12];
+  assign LD5 = gpio_out[13];
+  assign LD6 = gpio_out[14];
+  assign LD7 = gpio_out[15];
 
   // Zynq Processing System
   ps7_wrapper ps7_wrapper_i (
-    .DDR_addr          (DDR_addr         ),
-    .DDR_ba            (DDR_ba           ),
-    .DDR_cas_n         (DDR_cas_n        ),
-    .DDR_ck_n          (DDR_ck_n         ),
-    .DDR_ck_p          (DDR_ck_p         ),
-    .DDR_cke           (DDR_cke          ),
-    .DDR_cs_n          (DDR_cs_n         ),
-    .DDR_dm            (DDR_dm           ),
-    .DDR_dq            (DDR_dq           ),
-    .DDR_dqs_n         (DDR_dqs_n        ),
-    .DDR_dqs_p         (DDR_dqs_p        ),
-    .DDR_odt           (DDR_odt          ),
-    .DDR_ras_n         (DDR_ras_n        ),
-    .DDR_reset_n       (DDR_reset_n      ),
-    .DDR_we_n          (DDR_we_n         ),
-    .FIXED_IO_ddr_vrn  (FIXED_IO_ddr_vrn ),
-    .FIXED_IO_ddr_vrp  (FIXED_IO_ddr_vrp ),
-    .FIXED_IO_mio      (FIXED_IO_mio     ),
-    .FIXED_IO_ps_clk   (FIXED_IO_ps_clk  ),
-    .FIXED_IO_ps_porb  (FIXED_IO_ps_porb ),
-    .FIXED_IO_ps_srstb (FIXED_IO_ps_srstb),
-    .end_of_operation  (end_of_operation ),
-    .fetch_enable      (fetch_enable     ),
-    .ps7_clk           (ps7_clk          ),
-    .ps7_rst_n         (ps7_rst_n        ),
-    // .ps7_rst_pulp_n    (ps7_rst_pulp_n   ),
-    // .ps7_rst_clking_n  (ps7_rst_clking_n ),
-    //.M_AXI_aclk   (clking_axi_aclk   ),
-    //M_AXI_aresetn(clking_axi_aresetn),
-    .clking_axi_awaddr (clking_axi_awaddr ),
-    .clking_axi_awvalid(clking_axi_awvalid),
-    .clking_axi_awready(clking_axi_awready),
-    .clking_axi_wdata  (clking_axi_wdata  ),
-    .clking_axi_wstrb  (clking_axi_wstrb  ),
-    .clking_axi_wvalid (clking_axi_wvalid ),
-    .clking_axi_wready (clking_axi_wready ),
-    .clking_axi_bresp  (clking_axi_bresp  ),
-    .clking_axi_bvalid (clking_axi_bvalid ),
-    .clking_axi_bready (clking_axi_bready ),
-    .clking_axi_araddr (clking_axi_araddr ),
-    .clking_axi_arvalid(clking_axi_arvalid),
-    .clking_axi_arready(clking_axi_arready),
-    .clking_axi_rdata  (clking_axi_rdata  ),
-    .clking_axi_rresp  (clking_axi_rresp  ),
-    .clking_axi_rvalid (clking_axi_rvalid ),
-    .clking_axi_rready (clking_axi_rready )
+    .DDR_addr           ( DDR_addr           ),
+    .DDR_ba             ( DDR_ba             ),
+    .DDR_cas_n          ( DDR_cas_n          ),
+    .DDR_ck_n           ( DDR_ck_n           ),
+    .DDR_ck_p           ( DDR_ck_p           ),
+    .DDR_cke            ( DDR_cke            ),
+    .DDR_cs_n           ( DDR_cs_n           ),
+    .DDR_dm             ( DDR_dm             ),
+    .DDR_dq             ( DDR_dq             ),
+    .DDR_dqs_n          ( DDR_dqs_n          ),
+    .DDR_dqs_p          ( DDR_dqs_p          ),
+    .DDR_odt            ( DDR_odt            ),
+    .DDR_ras_n          ( DDR_ras_n          ),
+    .DDR_reset_n        ( DDR_reset_n        ),
+    .DDR_we_n           ( DDR_we_n           ),
+
+    .FIXED_IO_ddr_vrn   ( FIXED_IO_ddr_vrn   ),
+    .FIXED_IO_ddr_vrp   ( FIXED_IO_ddr_vrp   ),
+    .FIXED_IO_mio       ( FIXED_IO_mio       ),
+    .FIXED_IO_ps_clk    ( FIXED_IO_ps_clk    ),
+    .FIXED_IO_ps_porb   ( FIXED_IO_ps_porb   ),
+    .FIXED_IO_ps_srstb  ( FIXED_IO_ps_srstb  ),
+
+    .clking_axi_awaddr  ( clking_axi_awaddr  ),
+    .clking_axi_awprot  ( clking_axi_awprot  ),
+    .clking_axi_awvalid ( clking_axi_awvalid ),
+    .clking_axi_awready ( clking_axi_awready ),
+    .clking_axi_wdata   ( clking_axi_wdata   ),
+    .clking_axi_wstrb   ( clking_axi_wstrb   ),
+    .clking_axi_wvalid  ( clking_axi_wvalid  ),
+    .clking_axi_wready  ( clking_axi_wready  ),
+    .clking_axi_bresp   ( clking_axi_bresp   ),
+    .clking_axi_bvalid  ( clking_axi_bvalid  ),
+    .clking_axi_bready  ( clking_axi_bready  ),
+    .clking_axi_araddr  ( clking_axi_araddr  ),
+    .clking_axi_arprot  ( clking_axi_arprot  ),
+    .clking_axi_arvalid ( clking_axi_arvalid ),
+    .clking_axi_arready ( clking_axi_arready ),
+    .clking_axi_rdata   ( clking_axi_rdata   ),
+    .clking_axi_rresp   ( clking_axi_rresp   ),
+    .clking_axi_rvalid  ( clking_axi_rvalid  ),
+    .clking_axi_rready  ( clking_axi_rready  ),
+
+    .end_of_operation   ( end_of_operation   ),
+    .fetch_enable       ( fetch_enable       ),
+    .ps7_clk            ( ps7_clk            ),
+    .ps7_rst_n          ( ps7_rst_n          ),
+
+    .UART_0_rxd         ( uart_tx            ),
+    .UART_0_txd         ( uart_rx            ),
+
+    .gpio_io_i          ( gpio_out           ),
+    .gpio_io_o          ( gpio_in            ),
+    .jtag_emu_i         ( jtag_emu_i         ),
+    .jtag_emu_o         ( jtag_emu_o         ),
+
+    .SPI0_MISO_I        ( spi_miso           ),
+    .SPI0_MOSI_O        ( spi_mosi           ),
+    .SPI0_MOSI_I        ( 1'b0               ),
+    .SPI0_SCLK_O        ( spi_sck            ),
+    .SPI0_SCLK_I        ( 1'b0               ),
+    .SPI0_SS_O          ( spi_cs             ),
+    .SPI0_SS_I          ( 1'b1               )
   );
 
 
@@ -325,35 +282,45 @@ module pulpemu_top(DDR_addr, DDR_ba, DDR_cas_n, DDR_ck_n, DDR_ck_p, DDR_cke, DDR
     .clking_axi_rvalid       ( clking_axi_rvalid       ),
     .clking_axi_rready       ( clking_axi_rready       ),
 
-    .rstn_sync_o             ( s_rstn_sync             ),
-    .initn_sync_o            ( s_initn_sync            ),
-    .rstn_cluster_o          ( s_rstn_cluster_sync     ),
-    .rstn_cluster_sync_soc_o ( s_rstn_cluster_sync_soc ),
-    .clk_soc_o               ( s_clk_soc               ),
-    .clk_cluster_o           ( s_clk_cluster           )
+    .rstn_pulpino_o          ( s_rstn_pulpino          ),
+    .clk_pulpino_o           ( s_clk_pulpino           )
 );
 
-  // PULP SoC
+  // PULPino SoC
   pulpino pulpino_wrap_i (
-    .clk                     (s_clk_soc              ),
-    .rst_n                   (s_rstn_cluster_sync    ),
+    .clk            ( s_clk_pulpino       ),
+    .rst_n          ( s_rstn_pulpino      ),
 
-    .tck_i                   (tck_i                  ),
-    .trstn_i                 (trst_ni                ),
-    .tms_i                   (tms_i                  ),
-    .tdi_i                   (td_i                   ),
-    .tdo_o                   (td_o                   ),
+    .fetch_enable_i ( fetch_en            ),
 
-    .gpio_in                 (gpio_in                ),
-    .gpio_out                (gpio_out               ),
-    .gpio_dir                (gpio_dir               ),
+    .tck_i      ( tck_i               ),
+    .trstn_i    ( trst_ni             ),
+    .tms_i      ( tms_i               ),
+    .tdi_i      ( td_i                ),
+    .tdo_o      ( td_o                ),
 
-    .uart_tx                 (uart_tx                ), // output
-    .uart_rx                 (uart_rx                ), // input
-    .uart_rts                (uart_rts               ), // output
-    .uart_dtr                (uart_dtr               ), // output
-    .uart_cts                (uart_cts               ), // input
-    .uart_dsr                (uart_dsr               )  // input
+    .spi_clk_i  ( spi_sck             ),
+    .spi_cs_i   ( spi_cs              ),
+    .spi_mode_o (                     ),
+    .spi_sdi0_i ( spi_mosi            ),
+    .spi_sdi1_i ( 1'b0                ),
+    .spi_sdi2_i ( 1'b0                ),
+    .spi_sdi3_i ( 1'b0                ),
+    .spi_sdo0_o ( spi_miso            ),
+    .spi_sdo1_o (                     ),
+    .spi_sdo2_o (                     ),
+    .spi_sdo3_o (                     ),
+
+    .gpio_in    ( gpio_in             ),
+    .gpio_out   ( gpio_out            ),
+    .gpio_dir   ( gpio_dir            ),
+
+    .uart_tx    ( uart_tx             ), // output
+    .uart_rx    ( uart_rx             ), // input
+    .uart_rts   (                     ), // output
+    .uart_dtr   (                     ), // output
+    .uart_cts   ( 1'b0                ), // input
+    .uart_dsr   ( 1'b0                )  // input
   );
 
 endmodule

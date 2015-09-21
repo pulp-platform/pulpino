@@ -1,5 +1,5 @@
 diff --git a/include/configs/zynq-common.h b/include/configs/zynq-common.h
-index 6c37909..f1ffec8 100644
+index 6c37909..2ac5005 100644
 --- a/include/configs/zynq-common.h
 +++ b/include/configs/zynq-common.h
 @@ -240,7 +240,6 @@
@@ -10,7 +10,17 @@ index 6c37909..f1ffec8 100644
  	"kernel_image=uImage\0"	\
  	"kernel_load_address=0x2080000\0" \
  	"ramdisk_image=uramdisk.image.gz\0"	\
-@@ -338,8 +337,6 @@
+@@ -292,8 +291,7 @@
+ 			"echo Copying Linux from SD to RAM... && " \
+ 			"load mmc 0 ${kernel_load_address} ${kernel_image} && " \
+ 			"load mmc 0 ${devicetree_load_address} ${devicetree_image} && " \
+-			"load mmc 0 ${ramdisk_load_address} ${ramdisk_image} && " \
+-			"bootm ${kernel_load_address} ${ramdisk_load_address} ${devicetree_load_address}; " \
++			"bootm ${kernel_load_address} - ${devicetree_load_address}; " \
+ 		"fi\0" \
+ 	"usbboot=if usb start; then " \
+ 			"run uenvboot; " \
+@@ -338,8 +336,6 @@
  		DFU_ALT_INFO
  
  /* Default environment */

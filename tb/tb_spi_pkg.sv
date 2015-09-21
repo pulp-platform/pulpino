@@ -11,6 +11,7 @@
   logic                 more_stim = 1;
 
   logic [31:0]          spi_data;
+  logic [31:0]          spi_data_recv;
   logic [31:0]          spi_addr;
   logic [31:0]          spi_addr_old;
 
@@ -95,39 +96,129 @@
     end
   endtask
 
+  task spi_recv_data;
+    input          use_qspi;
+    output  [31:0] data;
+    begin
+      if (use_qspi)
+      begin
+        for (int i = 8; i > 0; i--)
+        begin
+          data[4*i-1] = spi_sdi3;
+          data[4*i-2] = spi_sdi2;
+          data[4*i-3] = spi_sdi1;
+          data[4*i-4] = spi_sdi0;
+          #`SPI_SEMIPERIOD spi_sck = 1;
+          #`SPI_SEMIPERIOD spi_sck = 0;
+        end
+      end
+      else
+      begin
+        for (int i = 31; i >= 0; i--)
+        begin
+          data[i] = spi_sdi0;
+          #`SPI_SEMIPERIOD spi_sck = 1;
+          #`SPI_SEMIPERIOD spi_sck = 0;
+        end
+      end
+    end
+  endtask
 
   task spi_load;
-    spi_addr        = stimuli[num_stim][63:32]; // assign address
-    spi_data        = stimuli[num_stim][31:0];  // assign data
-
-    $display("[SPI] Loading L2 in QPI mode");
-    spi_csn  = 1'b0;
-    #100  spi_send_cmd_addr(1,8'h2,spi_addr);
-
-    spi_addr_old = spi_addr - 32'h4;
-
-    while (more_stim)                        // loop until we have no more stimuli)
+    input  use_qspi;
     begin
       spi_addr        = stimuli[num_stim][63:32]; // assign address
       spi_data        = stimuli[num_stim][31:0];  // assign data
 
-      if (spi_addr != (spi_addr_old + 32'h4))
-      begin
-        $display("[SPI] Prev address %h current addr %h",spi_addr_old,spi_addr);
-        #100 spi_csn  = 1'b1;
-        #`DELAY_BETWEEN_SPI;
-        spi_csn  = 1'b0;
-        #100  spi_send_cmd_addr(1,8'h2,spi_addr);
-      end
-      spi_send_data(1,spi_data[31:0]);
+      $display("[SPI] Loading L2");
+      spi_csn  = 1'b0;
+      #100  spi_send_cmd_addr(use_qspi,8'h2,spi_addr);
 
-      num_stim     = num_stim + 1;             // increment stimuli
-      spi_addr_old = spi_addr;
-      if (num_stim > 9999 | stimuli[num_stim]===64'bx ) // make sure we have more stimuli
-        more_stim = 0;                    // if not set variable to 0, will prevent additional stimuli to be applied
-    end                                   // end while loop
-    #100 spi_csn  = 1'b1;
-    #`DELAY_BETWEEN_SPI;
+      spi_addr_old = spi_addr - 32'h4;
+
+      while (more_stim)                        // loop until we have no more stimuli)
+      begin
+        spi_addr        = stimuli[num_stim][63:32]; // assign address
+        spi_data        = stimuli[num_stim][31:0];  // assign data
+
+        if (spi_addr != (spi_addr_old + 32'h4))
+        begin
+          $display("[SPI] Prev address %h current addr %h",spi_addr_old,spi_addr);
+          #100 spi_csn  = 1'b1;
+          #`DELAY_BETWEEN_SPI;
+          spi_csn  = 1'b0;
+          #100  spi_send_cmd_addr(use_qspi,8'h2,spi_addr);
+        end
+        spi_send_data(use_qspi,spi_data[31:0]);
+
+        num_stim     = num_stim + 1;             // increment stimuli
+        spi_addr_old = spi_addr;
+        if (num_stim > 9999 | stimuli[num_stim]===64'bx ) // make sure we have more stimuli
+          more_stim = 0;                    // if not set variable to 0, will prevent additional stimuli to be applied
+      end                                   // end while loop
+      #100 spi_csn  = 1'b1;
+      #`DELAY_BETWEEN_SPI;
+    end
+  endtask
+
+  task spi_check;
+    input  use_qspi;
+    begin
+      num_stim  = 0;
+      more_stim = 1;
+
+      spi_addr        = stimuli[num_stim][63:32]; // assign address
+      spi_data        = stimuli[num_stim][31:0];  // assign data
+
+      $display("[SPI] Checking L2");
+      spi_csn  = 1'b0;
+      #100  spi_send_cmd_addr(use_qspi,8'hB,spi_addr);
+      spi_addr_old = spi_addr - 32'h4;
+
+      // dummy cycles
+      padmode_spi_master = use_qspi ? `SPI_QUAD_RX : `SPI_STD;
+      for (int i = 33; i >= 0; i--)
+      begin
+        #`SPI_SEMIPERIOD spi_sck = 1;
+        #`SPI_SEMIPERIOD spi_sck = 0;
+      end
+
+      while (more_stim)                        // loop until we have no more stimuli)
+      begin
+        spi_addr        = stimuli[num_stim][63:32]; // assign address
+        spi_data        = stimuli[num_stim][31:0];  // assign data
+
+        if (spi_addr != (spi_addr_old + 32'h4))
+        begin
+          $display("[SPI] Prev address %h current addr %h",spi_addr_old,spi_addr);
+          #100 spi_csn  = 1'b1;
+          #`DELAY_BETWEEN_SPI;
+          spi_csn  = 1'b0;
+          padmode_spi_master = use_qspi ? `SPI_QUAD_TX : `SPI_STD;
+          #100  spi_send_cmd_addr(use_qspi,8'hB,spi_addr);
+
+          // dummy cycles
+          padmode_spi_master = use_qspi ? `SPI_QUAD_RX : `SPI_STD;
+          for (int i = 33; i >= 0; i--)
+          begin
+            #`SPI_SEMIPERIOD spi_sck = 1;
+            #`SPI_SEMIPERIOD spi_sck = 0;
+          end
+        end
+        spi_recv_data(use_qspi,spi_data_recv[31:0]);
+
+        if (spi_data_recv != spi_data)
+          $display("%t: [SPI] Readback has failed, expected %X, got %X", $time, spi_data, spi_data_recv);
+
+        num_stim     = num_stim + 1;             // increment stimuli
+        spi_addr_old = spi_addr;
+        if (num_stim > 9999 | stimuli[num_stim]===64'bx ) // make sure we have more stimuli
+          more_stim = 0;                    // if not set variable to 0, will prevent additional stimuli to be applied
+      end                                   // end while loop
+      #100 spi_csn  = 1'b1;
+      #`DELAY_BETWEEN_SPI;
+      padmode_spi_master = use_qspi ? `SPI_QUAD_TX : `SPI_STD;
+    end
   endtask
 
   task spi_write_reg;

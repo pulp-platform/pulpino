@@ -1,3 +1,5 @@
+NCORES=4
+
 
 all: u-boot linux rootfs devtree sd_image/BOOT.BIN
 
@@ -14,7 +16,7 @@ linux-xlnx/.config: $(filter-out $(wildcard linux-xlnx), linux-xlnx)
 	cp ./kernel.config ./linux-xlnx/.config
 
 linux-xlnx/arch/arm/boot/uImage: linux-xlnx/.config
-	cd linux-xlnx && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH}
+	cd linux-xlnx && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH} -j${NCORES}
 
 sd_image/uImage: linux-xlnx/arch/arm/boot/uImage
 	mkdir -p sd_image
@@ -29,7 +31,6 @@ linux: sd_image/uImage
 ################################################################################
 
 u-boot-xlnx:
-	git clone git://github.com/Xilinx/linux-xlnx.git
 	git clone git://github.com/Xilinx/u-boot-xlnx.git
 	cd u-boot-xlnx && git checkout tags/xilinx-v2015.1
 	cd u-boot-xlnx && patch -p1 < ../u-boot-xlnx-def-env.patch
@@ -82,8 +83,15 @@ sd_image/devicetree.dtb: device-tree/*.dts* $(filter-out $(wildcard linux-xlnx),
 devtree: sd_image/devicetree.dtb
 
 ################################################################################
+# get bitstream
+################################################################################
+
+sd_image/pulpemu_top.bit: ../pulpemu/pulpemu.runs/impl_1/pulpemu_top.bit
+	cp $< $@
+
+################################################################################
 # boot.bin
 ################################################################################
 
-sd_image/BOOT.BIN: sd_image/u-boot.elf sd_image/pulpemu_top.bit boot.bif
+sd_image/BOOT.BIN: sd_image/u-boot.elf sd_image/pulpemu_top.bit boot.bif sd_image/fsbl.elf
 	bootgen -image ./boot.bif -o i ./sd_image/BOOT.BIN -w on

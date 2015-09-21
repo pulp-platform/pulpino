@@ -21,7 +21,7 @@ module sp_ram_wrap
   sp_ram_i
   (
     .clka   ( clk                ),
-    .rsta   ( 1'b1               ),
+    .rsta   ( 1'b0               ), // reset is active high
 
     .ena    ( en_i               ),
     .addra  ( addr_i             ),

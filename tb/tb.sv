@@ -3,6 +3,7 @@
 
 module tb;
   parameter  LOAD_L2       = "PRELOAD";   // valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
+  parameter  SPI           = "SINGLE";    // valid values are "SINGLE", "QUAD"
   parameter  ENABLE_VPI    = 0;
   parameter  BAUDRATE      = 3125000;
 
@@ -118,8 +119,12 @@ module tb;
     forever s_clk = #(`CLK_SEMIPERIOD) ~s_clk;
   end
 
+  logic use_qspi;
+
   initial
   begin
+    use_qspi = SPI == "QUAD" ? 1'b1 : 1'b0;
+
     s_rst_n      = 1'b0;
     fetch_enable = 1'b0;
 
@@ -129,7 +134,8 @@ module tb;
 
     #10000;
 
-    spi_enable_qpi();
+    if (use_qspi)
+      spi_enable_qpi();
 
     if (LOAD_L2 == "PRELOAD")
     begin
@@ -141,16 +147,17 @@ module tb;
     begin
       $readmemh("./slm_files/spi_stim.txt", stimuli);  // read in the stimuli vectors  == address_value
 
-      spi_load();
+      spi_load(use_qspi);
+      spi_check(use_qspi);
     end
 
     fetch_enable = 1'b1;
 
 
-    wait(top_i.gpio_out[14]);
+    wait(top_i.gpio_out[8]);
     $stop();
 
-    spi_read_word(1, 8'hB, 32'h0000_0000, recv_data);
+    spi_read_word(use_qspi, 8'hB, 32'h0000_0000, recv_data);
     $display("[SPI] Received %X", recv_data);
     $stop();
   end
