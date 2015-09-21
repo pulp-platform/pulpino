@@ -113,71 +113,89 @@ extern volatile TCB_t * volatile pxCurrentTCB;
  * so we need not worry about reading/writing to the stack pointer. 
  */
 
-  // gp
-    // tp
-    // t0
-    // t1
-    // t2
-    // a0
-    // a1
-    // a2
-    // a3
-    // a4
-    // a5
-    // a6
-    // a7
-    // t3
-    // t4
-    // t5
-    // t6
-
-#define portSAVE_CONTEXT() /*											\
-	 asm volatile (	"sw  x3, 0x00(x2)						\n\t"	\
-					"sw  x4, 0x04(x2)						\n\t"	\
-					"sw  x5, 0x08(x2)						\n\t"	\
-					"sw  x6, 0x0c(x2)						\n\t"	\
-					"sw  x7, 0x10(x2)						\n\t"	\
-					"sw x10, 0x14(x2)						\n\t"	\
-					"sw x11, 0x18(x2)						\n\t"	\
-					"sw x12, 0x1c(x2)						\n\t"	\
-					"sw x13, 0x20(x2)						\n\t"	\
-					"sw x14, 0x24(x2)						\n\t"	\
-					"sw x15, 0x28(x2)						\n\t"	\
-					"sw x16, 0x2c(x2)						\n\t"	\
-					"sw x17, 0x30(x2)						\n\t"	\
-					"sw x28, 0x34(x2)						\n\t"	\
-					"sw x29, 0x38(x2)						\n\t"	\
-					"sw x30, 0x3c(x2)						\n\t"	\
-					"sw x31, 0x40(x2)						\n\t"	\
+#define portSAVE_CONTEXT() 											\
+	 asm volatile (	"lw   sp,   pxCurrentTCB				\n\t" 	\
+	 				"lw   sp,   (sp)						\n\t" 	\
+	 				"sw  x1, 0x04(x2)						\n\t"	\
+	 				"sw  x3, 0x08(x2)						\n\t"	\
+					"sw  x4, 0x0c(x2)						\n\t"	\
+					"sw  x5, 0x10(x2)						\n\t"	\
+					"sw  x6, 0x14(x2)						\n\t"	\
+					"sw  x7, 0x18(x2)						\n\t"	\
+					"sw  x8, 0x1C(x2)						\n\t"	\
+					"sw  x9, 0x20(x2)						\n\t"	\
+					"sw x10, 0x24(x2)						\n\t"	\
+					"sw x11, 0x28(x2)						\n\t"	\
+					"sw x12, 0x2c(x2)						\n\t"	\
+					"sw x13, 0x30(x2)						\n\t"	\
+					"sw x14, 0x34(x2)						\n\t"	\
+					"sw x15, 0x38(x2)						\n\t"	\
+					"sw x16, 0x3C(x2)						\n\t"	\
+					"sw x17, 0x40(x2)						\n\t"	\
+					"sw x18, 0x44(x2)						\n\t"	\
+					"sw x19, 0x48(x2)						\n\t"	\
+					"sw x20, 0x4C(x2)						\n\t"	\
+					"sw x21, 0x50(x2)						\n\t"	\
+					"sw x22, 0x54(x2)						\n\t"	\
+					"sw x23, 0x58(x2)						\n\t"	\
+					"sw x24, 0x5c(x2)						\n\t"	\
+					"sw x25, 0x60(x2)						\n\t"	\
+					"sw x26, 0x64(x2)						\n\t"	\
+					"sw x27, 0x68(x2)						\n\t"	\
+					"sw x28, 0x6c(x2)						\n\t"	\
+					"sw x29, 0x70(x2)						\n\t"	\
+					"sw x30, 0x74(x2)						\n\t"	\
+					"sw x31, 0x78(x2)						\n\t"	\
+					"csrr t0, mepc							\n\t"	\
+					"sw t0, 0x00(x2)						\n\t"	\
+					"addi sp, sp, -0x80						\n\t"	\
+					"sw   sp,   (sp)						\n\t"	\
 				);													\
-	*/
 /* 
  * Opposite to portSAVE_CONTEXT().  Interrupts will have been disabled during
  * the context save so we can write to the stack pointer. 
  */
+// TODO: reverse order
+#define portRESTORE_CONTEXT()											\
+	asm volatile (	"lw   sp,   pxCurrentTCB					\n\t"   \
+					"lw	  sp, 	(sp)	 						\n\t"	\					
+					"lw   t0,   0x00(sp)						\n\t"	\
+					"csrw mepc, t0								\n\t"	\
+					"lw   x1,   0x04(sp)						\n\t"	\
+					"lw   x3,   0x08(sp)						\n\t"	\
+					"lw   x4,   0x0c(sp)						\n\t"	\
+					"lw   x5,   0x10(sp)						\n\t"	\
+					"lw   x6,   0x14(sp)						\n\t"	\
+					"lw   x7,   0x18(sp)						\n\t"	\
+					"lw   x8,   0x1c(sp)						\n\t"	\
+					"lw   x9,   0x20(sp)						\n\t"	\
+					"lw   x10,  0x24(sp)						\n\t"	\
+					"lw   x11,  0x28(sp)						\n\t"	\
+					"lw   x12,  0x2c(sp)						\n\t"	\
+					"lw   x13,  0x30(sp)						\n\t"	\
+					"lw   x14,  0x34(sp)						\n\t"	\
+					"lw   x15,  0x38(sp)						\n\t"	\
+					"lw   x16,  0x3c(sp)						\n\t"	\
+					"lw   x17,  0x40(sp)						\n\t"	\
+					"lw   x18,  0x44(sp)						\n\t"	\
+					"lw   x19,  0x48(sp)						\n\t"	\
+					"lw   x20,  0x4C(sp)						\n\t"	\
+					"lw   x21,  0x50(sp)						\n\t"	\
+					"lw   x22,  0x54(sp)						\n\t"	\
+					"lw   x23,  0x58(sp)						\n\t"	\
+					"lw   x24,  0x5C(sp)						\n\t"	\
+					"lw   x25,  0x60(sp)						\n\t"	\
+					"lw   x26,  0x64(sp)						\n\t"	\
+					"lw   x27,  0x68(sp)						\n\t"	\
+					"lw   x28,  0x6C(sp)						\n\t"	\
+					"lw   x29,  0x70(sp)						\n\t"	\
+					"lw   x30,  0x74(sp)						\n\t"	\
+					"lw   x31,  0x78(sp)						\n\t"	\
+					"addi sp,   sp,				0x80			\n\t"	\
+					"sw   sp, 	(sp)							\n\t"	\
+				);										    			\
+				int_enable(); 											\
 
-#define portRESTORE_CONTEXT()		int_enable();								/*\
-	asm volatile (	"lw  x3, 0x00(x2)						\n\t"	\
-					"lw  x4, 0x04(x2)						\n\t"	\
-					"lw  x5, 0x08(x2)						\n\t"	\
-					"lw  x6, 0x0c(x2)						\n\t"	\
-					"lw  x7, 0x10(x2)						\n\t"	\
-					"lw x10, 0x14(x2)						\n\t"	\
-					"lw x11, 0x18(x2)						\n\t"	\
-					"lw x12, 0x1c(x2)						\n\t"	\
-					"lw x13, 0x20(x2)						\n\t"	\
-					"lw x14, 0x24(x2)						\n\t"	\
-					"lw x15, 0x28(x2)						\n\t"	\
-					"lw x16, 0x2c(x2)						\n\t"	\
-					"lw x17, 0x30(x2)						\n\t"	\
-					"lw x28, 0x34(x2)						\n\t"	\
-					"lw x29, 0x38(x2)						\n\t"	\
-					"lw x30, 0x3c(x2)						\n\t"	\
-					"lw x31, 0x40(x2)						\n\t"	\
-					"lw  x1, 0x44(x2)						\n\t"	\
-				);										    		\
-				int_enable(); 										\
-*/
 /*-----------------------------------------------------------*/
 
 /*
@@ -200,32 +218,27 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 {
 	int usAddress = ( int ) pxCode;
 	StackType_t xGlobalPointer;
+	StackType_t *tmpStackPointer;
 
 	/* read global pointer */
-    prvReadGp( &xGlobalPointer );
+    //prvReadGp( &xGlobalPointer );
 	
 	/* End of stack marker. */
-    *pxTopOfStack = 0xdeadbeef;
+    *pxTopOfStack = ( StackType_t ) 0xdeadbeef;
     pxTopOfStack--;
 
-    /* zero */
-    *pxTopOfStack = ( StackType_t ) 0x00;	/* R1 */
-	pxTopOfStack--;
+	/* reg x31 -> x2 */
+    pxTopOfStack -= 30;
 
     /* return address*/
     *pxTopOfStack = ( StackType_t ) pxCode; 
     pxTopOfStack--;
-    /* stack pointer */
-	StackType_t *pxFramePointer = pxTopOfStack - 1;
-	*pxTopOfStack = ( StackType_t ) pxFramePointer; 
-    pxTopOfStack--;
 
-    /* global pointer */
-    *pxTopOfStack = xGlobalPointer;
+    // zero register not pushed to stack - zero anyway
 
-    /* reg x4 -> x18 */
-    pxTopOfStack -= 28;
-
+	/* mepc */
+	*pxTopOfStack = ( StackType_t ) 0xcafecafe;
+    //pxTopOfStack--;
 
 
 	return pxTopOfStack;
@@ -237,11 +250,17 @@ BaseType_t xPortStartScheduler( void )
 	/* Setup the hardware to generate the tick. */
 	prvSetupTimerInterrupt();
 
+	//asm volatile("lw t0, pxCurrentTCB\n"
+	//			 "lw		sp, (t0) \n");		// Load the address of the pxCurrentTCB pointer
+
+	//printf("pxCurrentTCP %d", pxCurrentTCB);
+
 	/* Restore the context of the first task that is going to run. */
 	portRESTORE_CONTEXT();
 
 	/* Simulate a function call end as generated by the compiler.  We will now
 	jump to the start of the task the context of which we have just restored. */
+
 	asm volatile ( "ret" );
 
 	/* Should not get here. */
@@ -261,13 +280,12 @@ void vPortEndScheduler( void )
  * can use a naked attribute.
  */
 void vPortYield( void );
-void vPortYield( void )
+void vPortYield( void ) // TODO: Make this a Macro - calling would clobber the registers
 {
 	portSAVE_CONTEXT();
 	vTaskSwitchContext();
 	portRESTORE_CONTEXT();
-
-	//asm volatile ( "eret" );
+	//asm volatile ( "ret" );
 }
 /*-----------------------------------------------------------*/
 
@@ -278,7 +296,7 @@ void vPortYield( void )
  * call comes from the tick ISR.
  */
 void vPortYieldFromTick( void );
-void vPortYieldFromTick( void )
+void vPortYieldFromTick( void ) // TODO: Make this a Macro - calling would clobber the registers
 {
 	portSAVE_CONTEXT();
 	if( xTaskIncrementTick() != pdFALSE )
@@ -286,13 +304,13 @@ void vPortYieldFromTick( void )
 		vTaskSwitchContext();
 	}
 	portRESTORE_CONTEXT();
-
 	//asm volatile ( "ret" );
+
 }
 /*-----------------------------------------------------------*/
 
 /*
- * Setup timer 1 compare match A to generate a tick interrupt.
+ * Setup mtime and mtimecmp registers accordingly.
  */
 static void prvSetupTimerInterrupt( void )
 {
@@ -318,9 +336,12 @@ static void prvSetupTimerInterrupt( void )
 	 */
 	void int_time_cmp(void)
 	{
+		// interrupts are disabled until eret
 		vPortYieldFromTick();
 		// we do not need this since the return from interrupt is handled
 		// in the cr0 runtime
+
+		// TODO: set return address in empc register
 		asm volatile ( "eret" );
 	}
 #else
@@ -333,6 +354,7 @@ static void prvSetupTimerInterrupt( void )
 	void int_time_cmp(void)
 	{
 		xTaskIncrementTick();
+		// TODO: set return address in empc register
 		asm volatile ( "eret" );
 	}
 #endif
