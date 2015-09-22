@@ -285,7 +285,7 @@ void vPortYield( void ) // TODO: Make this a Macro - calling would clobber the r
 	portSAVE_CONTEXT();
 	vTaskSwitchContext();
 	portRESTORE_CONTEXT();
-	//asm volatile ( "ret" );
+	asm volatile ( "ret" ); //called in a non interrupt context only
 }
 /*-----------------------------------------------------------*/
 
@@ -295,7 +295,7 @@ void vPortYield( void ) // TODO: Make this a Macro - calling would clobber the r
  * difference from vPortYield() is the tick count is incremented as the
  * call comes from the tick ISR.
  */
-void vPortYieldFromTick( void );
+//void vPortYieldFromTick( void );
 void vPortYieldFromTick( void ) // TODO: Make this a Macro - calling would clobber the registers
 {
 	portSAVE_CONTEXT();

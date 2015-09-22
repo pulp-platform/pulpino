@@ -7,9 +7,9 @@
 
 void task1 (void *pvParameters) {
 	
-	//printf("task2");
+	printf("task2");
 	
-	for(;;);
+	//for(;;);
 		
 	vTaskDelete(NULL);
 }
@@ -31,8 +31,5 @@ int main( void )
  	// xTaskCreate(task2, "Task 2", 100, NULL, 1, NULL);
 	vTaskStartScheduler();
 
-	//printf("Hello World!\n");
-
-	for(;;);
 	return 0;
 }
