@@ -19,3 +19,6 @@
 [submodule "ips/riscv"]
 	path = ips/riscv
 	url = git@kesch.ee.ethz.ch:pulp-project/riscv.git
+[submodule "imperio"]
+	path = imperio
+	url = git@iis-git.ee.ethz.ch:pulp-project/imperio.git
