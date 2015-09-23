@@ -104,7 +104,9 @@ if { $core == "RI5CY" } {
 }
 
 
-create_clock -period 4.000 -name clk -waveform {0.000 2.000} [get_nets {clk}]
+create_clock -period  4.000 -name clk   -waveform {0.000 2.000} [get_nets {clk}]
+create_clock -period 10.000 -name clk   -waveform {0.000 5.000} [get_nets {spi_clk_i}]
+create_clock -period 10.000 -name tck_i -waveform {0.000 5.000} [get_nets {tck_i}]
 set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY none [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.KEEP_EQUIVALENT_REGISTERS true [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.RESOURCE_SHARING off [get_runs synth_1]
