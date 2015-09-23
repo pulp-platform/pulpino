@@ -100,6 +100,7 @@ void perf_print_all(void) {
 #ifdef __riscv__
   printf("Perf CYCLES: %d\n",      cpu_perf_get(0));
   printf("Perf INSTR: %d\n",       cpu_perf_get(1));
+  printf("Perf CINSTR: %d\n",      cpu_perf_get(9));
   printf("Perf LD_STALL: %d\n",    cpu_perf_get(2));
   printf("Perf JR_STALL: %d\n",    cpu_perf_get(3));
   printf("Perf IMISS: %d\n",       cpu_perf_get(4));
