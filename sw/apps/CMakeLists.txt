@@ -15,7 +15,8 @@ include(CMakeSim.txt)
 macro(add_application NAME SOURCE_FILES)
   # optional argument parsing
   set(oneValueArgs SUBDIR TB LABELS FLAGS)
-  cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "" ${ARGN})
+  set(multiValueArgs LIBS)
+  cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   set(SUBDIR ${ARG_SUBDIR})
 
   include_directories(
@@ -38,7 +39,7 @@ macro(add_application NAME SOURCE_FILES)
   endif()
 
   # link libraries
-  target_link_libraries(${NAME}.elf bench string_uart sys_chip)
+  target_link_libraries(${NAME}.elf bench string_uart sys_chip ${ARG_LIBS})
 
 
   # this specifies the testbench to use for simulation
@@ -130,6 +131,7 @@ add_subdirectory(coremark)
 add_subdirectory(timer_test)
 add_subdirectory(freertos)
 add_subdirectory(debug)
+add_subdirectory(bench)
 
 # RISCV only tests
 if(${RISCV})
