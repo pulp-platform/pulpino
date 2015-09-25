@@ -22,3 +22,9 @@
 [submodule "imperio"]
 	path = imperio
 	url = git@iis-git.ee.ethz.ch:pulp-project/imperio.git
+[submodule "ips/apb_internals"]
+	path = ips/apb_internals
+	url = git@iis-git.ee.ethz.ch:pulp-project/apb_internals.git
+[submodule "ips/apb_peripherals"]
+	path = ips/apb_peripherals
+	url = git@iis-git.ee.ethz.ch:pulp-project/apb_peripherals.git
