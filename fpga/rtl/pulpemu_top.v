@@ -20,14 +20,7 @@ module pulpemu_top(
   FIXED_IO_ps_clk,
   FIXED_IO_ps_porb,
   FIXED_IO_ps_srstb,
-  LD0,
-  LD1,
-  LD2,
-  LD3,
-  LD4,
-  LD5,
-  LD6,
-  LD7
+  LD_o
   );
 
   inout  [14:0] DDR_addr;
@@ -52,14 +45,8 @@ module pulpemu_top(
   inout         FIXED_IO_ps_porb;
   inout         FIXED_IO_ps_srstb;
 
-  output LD0;
-  output LD1;
-  output LD2;
-  output LD3;
-  output LD4;
-  output LD5;
-  output LD6;
-  output LD7;
+  output  [7:0] LD_o;
+
 
   wire [14:0] DDR_addr;
   wire [2:0]  DDR_ba;
@@ -92,7 +79,6 @@ module pulpemu_top(
   wire        ref_clk_i;               // input
   wire        rst_ni;                  // input
   wire        fetch_en;                // input
-  wire [1:0]  return_o;                // output
 
   wire [31:0] jtag_emu_i; // input to PS
   wire [31:0] jtag_emu_o; // output from PS
@@ -110,6 +96,8 @@ module pulpemu_top(
   wire [31:0] gpio_dir;                // output
   wire [31:0] gpio_in;                 // input
   wire [31:0] gpio_out;                // output
+
+  reg   [7:0] LD_q;
 
   wire        clking_axi_aclk;    // input
   wire        clking_axi_aresetn; // input
@@ -181,14 +169,15 @@ module pulpemu_top(
 
 
   // GPIO signals
-  assign LD0 = gpio_out[8];
-  assign LD1 = gpio_out[9];
-  assign LD2 = gpio_out[10];
-  assign LD3 = gpio_out[11];
-  assign LD4 = gpio_out[12];
-  assign LD5 = gpio_out[13];
-  assign LD6 = gpio_out[14];
-  assign LD7 = gpio_out[15];
+  always @(posedge s_clk_pulpino or negedge s_rstn_pulpino)
+  begin
+    if (~s_rstn_pulpino)
+      LD_q <= 8'b0;
+    else
+      LD_q <= gpio_out[15:8];
+  end
+
+  assign LD_o = LD_q;
 
   // Zynq Processing System
   ps7_wrapper ps7_wrapper_i (

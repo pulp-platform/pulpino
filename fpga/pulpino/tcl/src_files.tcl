@@ -27,34 +27,34 @@ set SRC_AXI_SLAVE "
 
 # apb_spi_master
 set SRC_APB_SPIM "
-   $IPS/apb/apb_spi_master/apb_spi_master.sv \
-   $IPS/apb/apb_spi_master/spi_master_apb_if.sv \
-   $IPS/apb/apb_spi_master/spi_master_clkgen.sv \
-   $IPS/apb/apb_spi_master/spi_master_controller.sv \
-   $IPS/apb/apb_spi_master/spi_master_fifo.sv \
-   $IPS/apb/apb_spi_master/spi_master_rx.sv \
-   $IPS/apb/apb_spi_master/spi_master_tx.sv \
+   $IPS/apb_peripherals/apb_spi_master/apb_spi_master.sv \
+   $IPS/apb_peripherals/apb_spi_master/spi_master_apb_if.sv \
+   $IPS/apb_peripherals/apb_spi_master/spi_master_clkgen.sv \
+   $IPS/apb_peripherals/apb_spi_master/spi_master_controller.sv \
+   $IPS/apb_peripherals/apb_spi_master/spi_master_fifo.sv \
+   $IPS/apb_peripherals/apb_spi_master/spi_master_rx.sv \
+   $IPS/apb_peripherals/apb_spi_master/spi_master_tx.sv \
 "
 
 # apb_gpio
 set SRC_APB_GPIO "
-   $IPS/apb/apb_gpio/apb_gpio.sv
+   $IPS/apb_peripherals/apb_gpio/apb_gpio.sv
 "
 
 # apb_uart
 set SRC_APB_UART "
-   $IPS/apb/apb_uart/apb_uart.vhd \
-   $IPS/apb/apb_uart/slib_clock_div.vhd \
-   $IPS/apb/apb_uart/slib_counter.vhd \
-   $IPS/apb/apb_uart/slib_edge_detect.vhd \
-   $IPS/apb/apb_uart/slib_fifo.vhd \
-   $IPS/apb/apb_uart/slib_input_filter.vhd \
-   $IPS/apb/apb_uart/slib_input_sync.vhd \
-   $IPS/apb/apb_uart/slib_mv_filter.vhd \
-   $IPS/apb/apb_uart/uart_baudgen.vhd \
-   $IPS/apb/apb_uart/uart_interrupt.vhd \
-   $IPS/apb/apb_uart/uart_receiver.vhd \
-   $IPS/apb/apb_uart/uart_transmitter.vhd \
+   $IPS/apb_peripherals/apb_uart/apb_uart.vhd \
+   $IPS/apb_peripherals/apb_uart/slib_clock_div.vhd \
+   $IPS/apb_peripherals/apb_uart/slib_counter.vhd \
+   $IPS/apb_peripherals/apb_uart/slib_edge_detect.vhd \
+   $IPS/apb_peripherals/apb_uart/slib_fifo.vhd \
+   $IPS/apb_peripherals/apb_uart/slib_input_filter.vhd \
+   $IPS/apb_peripherals/apb_uart/slib_input_sync.vhd \
+   $IPS/apb_peripherals/apb_uart/slib_mv_filter.vhd \
+   $IPS/apb_peripherals/apb_uart/uart_baudgen.vhd \
+   $IPS/apb_peripherals/apb_uart/uart_interrupt.vhd \
+   $IPS/apb_peripherals/apb_uart/uart_receiver.vhd \
+   $IPS/apb_peripherals/apb_uart/uart_transmitter.vhd \
 "
 
 # axi_slice_dc
