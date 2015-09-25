@@ -1,6 +1,6 @@
 PROJECT:=pulpemu
 
-all: synth bitwrap
+all: synth
 
 synth:
 	vivado -mode batch -source tcl/run.tcl
@@ -12,19 +12,11 @@ impl:
 	cp pulpemu_top.runs/impl_1/pulpemu_top.bit .
 	cp pulpemu_top.runs/impl_1/*.dcp .
 
-gui:
-	vivado -mode gui -source tcl/setup_impl.tcl &
-
 gui-synth:
 	vivado -mode gui -source tcl/run.tcl &
 
 gui-impl:
 	vivado -mode gui -source tcl/impl.tcl &
-
-bitwrap:
-	bootgen -image bitstream.bif -split bin -o i boot.bin
-	rm -rf bitstream.bin u-boot.elf.bin
-	mv pulpemu_top.bit.bin pulp4emu_latest.bit.bin
 
 continue:
 	vivado -mode gui pulpemu_top.xpr

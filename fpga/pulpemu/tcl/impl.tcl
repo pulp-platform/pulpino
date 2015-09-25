@@ -2,8 +2,9 @@
 #source tcl/false_paths.tcl
 
 # clocks
-create_clock -period 20.000 -name ref_clk_i  -waveform { 0.0 10.0 } [get_nets {ref_clk_i}]
-#create_clock -period 10.000 -name ps7_clk -waveform { 0.0 5.0 } [get_pins {ps7_wrapper_i/ps7_i/processing_system7_0/inst/PS7_i/FCLKCLK[0]}]
+create_clock -period 20.000 -name clk        -waveform { 0.0 10.0 } [get_nets {pulpino_wrap_i/clk}]
+create_clock -period 20.000 -name spi_sck    -waveform { 0.0 10.0 } [get_nets {pulpino_wrap_i/spi_clk_i}]
+create_clock -period 20.000 -name tck        -waveform { 0.0 10.0 } [get_nets {pulpino_wrap_i/tck_i}]
 
 set_property PACKAGE_PIN T22 [get_ports {LD0}];  # "LD0"
 set_property PACKAGE_PIN T21 [get_ports {LD1}];  # "LD1"
@@ -22,7 +23,7 @@ set_property IOSTANDARD LVCMOS33 [get_ports -of_objects [get_iobanks 33]];
 save_constraints
 
 # set for RuntimeOptimized implementation
-set_property "steps.opt_design.args.directive" "RuntimeOptimized" [get_runs impl_1]
+set_property "steps.opt_design.args.directive" "RuntimeOptimized"   [get_runs impl_1]
 set_property "steps.place_design.args.directive" "RuntimeOptimized" [get_runs impl_1]
 set_property "steps.route_design.args.directive" "RuntimeOptimized" [get_runs impl_1]
 
@@ -39,7 +40,7 @@ report_utilization -hierarchical -hierarchical_depth 2 -cells pulpino_wrap_i -fi
 write_verilog -force -mode timesim -cell pulpino_wrap_i ../simu/pulpino_impl.v
 write_sdf     -force -cell pulpino_wrap_i ../simu/pulpino_impl.sdf
 
-if { [info exists $::env(PROBES)] } {
+if { [info exists ::env(PROBES)] } {
    # create new design run for probes
    #create_run impl_2 -flow {Vivado Implementation 2014}
    create_run impl_2 -parent_run synth_1 -flow {Vivado Implementation 2014}
