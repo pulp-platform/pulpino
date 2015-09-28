@@ -20,7 +20,9 @@ module pulpemu_top(
   FIXED_IO_ps_clk,
   FIXED_IO_ps_porb,
   FIXED_IO_ps_srstb,
-  LD_o
+  LD_o,
+  sw_i,
+  btn_i
   );
 
   inout  [14:0] DDR_addr;
@@ -46,6 +48,8 @@ module pulpemu_top(
   inout         FIXED_IO_ps_srstb;
 
   output  [7:0] LD_o;
+  input   [7:0] sw_i;
+  input   [4:0] btn_i;
 
 
   wire [14:0] DDR_addr;
@@ -95,6 +99,7 @@ module pulpemu_top(
 
   wire [31:0] gpio_dir;                // output
   wire [31:0] gpio_in;                 // input
+  wire [31:0] gpio_in_ps7;             // output of ps7 => to pulpino
   wire [31:0] gpio_out;                // output
 
   reg   [7:0] LD_q;
@@ -179,6 +184,11 @@ module pulpemu_top(
 
   assign LD_o = LD_q;
 
+  assign gpio_in[7:0]   = sw_i;
+  assign gpio_in[15:8]  = 8'b0;
+  assign gpio_in[20:16] = btn_i;
+  assign gpio_in[31:21] = gpio_in_ps7[31:21];
+
   // Zynq Processing System
   ps7_wrapper ps7_wrapper_i (
     .DDR_addr           ( DDR_addr           ),
@@ -233,7 +243,7 @@ module pulpemu_top(
     .UART_0_txd         ( uart_rx            ),
 
     .gpio_io_i          ( gpio_out           ),
-    .gpio_io_o          ( gpio_in            ),
+    .gpio_io_o          ( gpio_in_ps7        ),
     .jtag_emu_i         ( jtag_emu_i         ),
     .jtag_emu_o         ( jtag_emu_o         ),
 

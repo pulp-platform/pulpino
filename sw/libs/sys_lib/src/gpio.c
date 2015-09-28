@@ -37,20 +37,20 @@ int  get_gpio_pin_direction(int pinnumber) {
 }
 
 void set_gpio_pin_value(int pinnumber, int value) {
-  volatile int old_dir;
-  old_dir = *(volatile int*) (GPIO_REG_PADOUT);
+  volatile int v;
+  v = *(volatile int*) (GPIO_REG_PADOUT);
   if (value == 0)
-    old_dir &= ~(1 << pinnumber);
+    v &= ~(1 << pinnumber);
   else
-    old_dir |= 1 << pinnumber;
-  *(volatile int*) (GPIO_REG_PADOUT) = old_dir;
+    v |= 1 << pinnumber;
+  *(volatile int*) (GPIO_REG_PADOUT) = v;
 
 }
 
 int  get_gpio_pin_value(int pinnumber) {
-  volatile int old_dir;
-  old_dir = *(volatile int*) (GPIO_REG_PADIN);
-  old_dir = (old_dir >> (pinnumber*2) & 0x01);
-  return old_dir;
+  volatile int v;
+  v = *(volatile int*) (GPIO_REG_PADIN);
+  v = (v >> pinnumber) & 0x01;
+  return v;
 }
 

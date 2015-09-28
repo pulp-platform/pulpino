@@ -136,5 +136,5 @@ add_subdirectory(bench)
 # RISCV only tests
 if(${RISCV})
   add_subdirectory(compressed)
-  add_subdirectory(blinken_lights)
+  add_subdirectory(fpga_test)
 endif()
