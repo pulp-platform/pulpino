@@ -1,9 +1,6 @@
 [submodule "ips/adv_dbg_if"]
 	path = ips/adv_dbg_if
 	url = git@kesch.ee.ethz.ch:pulp-project/adv_dbg_if.git
-[submodule "ips/apb"]
-	path = ips/apb
-	url = git@kesch.ee.ethz.ch:pulp-project/apb.git
 [submodule "ips/axi"]
 	path = ips/axi
 	url = git@kesch.ee.ethz.ch:pulp-project/axi.git
@@ -22,9 +19,6 @@
 [submodule "imperio"]
 	path = imperio
 	url = git@iis-git.ee.ethz.ch:pulp-project/imperio.git
-[submodule "ips/apb_internals"]
-	path = ips/apb_internals
-	url = git@iis-git.ee.ethz.ch:pulp-project/apb_internals.git
 [submodule "ips/apb_peripherals"]
 	path = ips/apb_peripherals
 	url = git@iis-git.ee.ethz.ch:pulp-project/apb_peripherals.git
