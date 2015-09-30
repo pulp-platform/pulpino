@@ -39,6 +39,8 @@
 #define GPIO_BASE_ADDR                ( SOC_PERIPHERALS_BASE_ADDR + 0x1000 )
 #define SPI_BASE_ADDR                 ( SOC_PERIPHERALS_BASE_ADDR + 0x2000 )
 #define TIMER_BASE_ADDR               ( SOC_PERIPHERALS_BASE_ADDR + 0x3000 )
+#define EVENT_UNIT_BASE_ADDR 		  ( SOC_PERIPHERALS_BASE_ADDR + 0x4000 )	
+
 #define CVP_BASE_ADDR                 ( SOC_PERIPHERALS_BASE_ADDR + 0x0000 )
 #define CLK_DIV_ADDR                  ( SOC_PERIPHERALS_BASE_ADDR + 0x4000 )
 #define I2C_BASE_ADDR                 ( SOC_PERIPHERALS_BASE_ADDR + 0x5000 )

@@ -60,7 +60,7 @@ module peripherals
   );
 
   localparam APB_ADDR_WIDTH  = 12;
-  localparam APB_NUM_SLAVES  = 4;
+  localparam APB_NUM_SLAVES  = 5;
 
   logic                                s_penable;
   logic                                s_pwrite;
@@ -272,5 +272,31 @@ module peripherals
       .event_t3_o (              )
   );
 
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// APB Slave 4: Event Unit                                    ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
+
+  apb_event_unit
+  apb_event_unit_i
+  (
+      .HCLK(clk),
+      .HRESETn(rst_n),
+
+      .PADDR(s_paddr),
+      .PWDATA(s_pwdata),
+      .PWRITE(s_pwrite),
+      .PSEL(s_psel[4]),
+      .PENABLE(s_penable),
+      .PRDATA(s_prdata[4]),
+      .PREADY(s_pready[4]),
+      .PSLVERR(s_pslverr[4]),
+
+      .irq_i            (          ),      
+      .event_i          (          ),
+      .fetch_enable_o   (          ),
+      .irq_o            (          )
+  );
 
 endmodule
