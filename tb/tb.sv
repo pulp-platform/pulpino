@@ -128,7 +128,7 @@ module tb;
     s_rst_n      = 1'b0;
     fetch_enable = 1'b0;
 
-    #10000;
+    #25000;
 
     s_rst_n = 1'b1;
 
@@ -155,6 +155,7 @@ module tb;
 
 
     wait(top_i.gpio_out[8]);
+    $fflush();
     $stop();
 
     spi_read_word(use_qspi, 8'hB, 32'h0000_0000, recv_data);

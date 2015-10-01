@@ -111,6 +111,7 @@ module core_region
   logic [0:0]             dbginf_bp;
   logic [0:0]             dbginf_strobe;
   logic [0:0]             dbginf_ack;
+  logic [0:0]             dbginf_rst;
   logic [0:0]             dbginf_we;
   logic [0:0] [15:0]      dbginf_addr;
   logic [0:0] [31:0]      dbginf_datai;

@@ -13,9 +13,9 @@ int main()
 
   printf("Hello World!!!!!\n");
 
-  IER = 0x55;
+  IER = 0x55555555;
   
   printf("Reg Valu: %d", IER);
-  
+
   return 0;
 }
