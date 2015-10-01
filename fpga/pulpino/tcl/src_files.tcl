@@ -25,6 +25,13 @@ set SRC_AXI_SLAVE "
    $IPS/axi/axi_spi_slave/spi_slave_tx.sv \
 "
 
+# apb_event_unit
+set SRC_APB_EVENT_UNIT "
+   $IPS/apb_peripherals/apb_event_unit/apb_event_unit.sv \
+   $IPS/apb_peripherals/apb_event_unit/core_distributor.sv \
+   $IPS/apb_peripherals/apb_event_unit/core_if.sv \
+"
+
 # apb_spi_master
 set SRC_APB_SPIM "
    $IPS/apb_peripherals/apb_spi_master/apb_spi_master.sv \

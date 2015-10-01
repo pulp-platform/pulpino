@@ -6,6 +6,16 @@ if { ! [info exists ::env(PULP_CORE)] } {
 }
 puts "Set PULP core to $core"
 
+
+if { ![info exists ::env(XILINX_PART)] } {
+  set ::env(XILINX_PART) "xc7z020clg484-1"
+}
+
+if { ![info exists ::env(XILINX_BOARD)] } {
+  set ::env(XILINX_BOARD) "em.avnet.com:zynq:zed:c"
+}
+
+
 # create project
 create_project pulpino . -part $::env(XILINX_PART)
 set_property board $::env(XILINX_BOARD) [current_project]
@@ -13,6 +23,7 @@ set_property board $::env(XILINX_BOARD) [current_project]
 if { $core == "RI5CY" } {
   set_property include_dirs { \
     ../../ips/riscv/include \
+    ../../ips/apb_peripherals/apb_event_unit/include \
     ../../rtl/include \
   } [current_fileset]
 }
@@ -20,6 +31,7 @@ if { $core == "RI5CY" } {
 if { $core == "OR10N" } {
   set_property include_dirs { \
     ../../ips/or10n/include \
+    ../../ips/apb_peripherals/apb_event_unit/include \
     ../../rtl/include \
   } [current_fileset]
 }
@@ -38,6 +50,9 @@ add_files -norecurse -scan_for_includes $SRC_AXI_MEM_IF_DP
 
 # add axi_spi_slave
 add_files -norecurse -scan_for_includes $SRC_AXI_SLAVE
+
+# add apb_event_unit
+add_files -norecurse -scan_for_includes $SRC_APB_EVENT_UNIT
 
 # add apb_spim
 add_files -norecurse -scan_for_includes $SRC_APB_SPIM

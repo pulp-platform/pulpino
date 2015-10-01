@@ -1,3 +1,13 @@
+
+if { ![info exists ::env(XILINX_PART)] } {
+  set ::env(XILINX_PART) "xc7z020clg484-1"
+}
+
+if { ![info exists ::env(XILINX_BOARD)] } {
+  set ::env(XILINX_BOARD) "em.avnet.com:zynq:zed:c"
+}
+
+
 set RTL ../../rtl
 set IPS ../../ips
 set FPGA_IPS ../ips
