@@ -1,7 +1,7 @@
 #ifndef _GPIO_H_
 #define _GPIO_H_
 
-#include <pulp.h>
+#include <pulpino.h>
 #define GPIO_REG_PADDIR               ( GPIO_BASE_ADDR + 0x00 )
 #define GPIO_REG_PADIN                ( GPIO_BASE_ADDR + 0x04 )
 #define GPIO_REG_PADOUT               ( GPIO_BASE_ADDR + 0x08 )

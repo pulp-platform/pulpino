@@ -1,4 +1,22 @@
-#include <pulp.h>
+/**
+ * @file
+ * @brief Event library for PULPino.
+ * 
+ * Contains event manipulating functions and event related
+ * registers.
+ *
+ * @author Florian Zaruba
+ *
+ * @version 1.0
+ *
+ * @date 2/10/2015
+ *
+ */
+
+#ifndef	__EVENT_H__
+#define __EVENT_H__
+
+#include <pulpino.h>
 
 #define REG_IRQ_ENABLE         	0x00
 #define REG_IRQ_PENDING      	0x04
@@ -32,3 +50,5 @@
 
 // event acknowledge register
 #define EAR __PE__(REG_EVENT_ACK)
+
+#endif

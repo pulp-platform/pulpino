@@ -4,7 +4,7 @@
  * 
  * Contains various interrupt manipulating functions.
  *
- * @author Name
+ * @author Florian Zaruba
  *
  * @version 1.0
  *

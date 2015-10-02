@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-#include "pulp.h"
+#include "pulpino.h"
 
 // putchar is defined as a macro which gets in the way of our prototype below
 #ifdef putchar

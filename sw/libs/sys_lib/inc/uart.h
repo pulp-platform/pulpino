@@ -1,7 +1,7 @@
 #ifndef _UART_H
 #define _UART_H
 
-#include "pulp.h"
+#include "pulpino.h"
 #include <stdint.h>
 
 #define UART_REG_RBR ( UART_BASE_ADDR + 0x00)

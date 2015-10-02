@@ -15,7 +15,7 @@
 #define SPI_CSN2 2
 #define SPI_CSN3 3
 
-#include <pulp.h>
+#include <pulpino.h>
 
 #define SPI_REG_STATUS                ( SPI_BASE_ADDR + 0x00 )
 #define SPI_REG_CLKDIV                ( SPI_BASE_ADDR + 0x04 )

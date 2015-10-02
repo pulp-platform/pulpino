@@ -1,7 +1,7 @@
 #ifndef	__TIMER_H__
 #define __TIMER_H__
 
-#include "pulp.h"
+#include "pulpino.h"
 
 #define START_TIME_ADDR    (TIMER_BASE_ADDR + 0x0)
 #define STOP_TIME_ADDR     (TIMER_BASE_ADDR + 0x04)

@@ -21,6 +21,7 @@ set cmd "vsim -quiet $TB \
   -L apb_uart_lib \
   -L apb_gpio_lib \
   -L apb_event_unit_lib \
+  -L apb_timer_lib \
   -L apb_spi_master_lib \
   -L pulp_common_cells_lib \
   -L standalone_lib \

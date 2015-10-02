@@ -160,7 +160,7 @@ int main()
     uart_wait_tx_done();
 
     //jump to program start address (L2 base address)
-    jump_and_start((volatile int *)(L2_MEM_BASE_ADDR));
+    //jump_and_start((volatile int *)(L2_MEM_BASE_ADDR));
   }
 }
 

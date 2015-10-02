@@ -73,6 +73,7 @@ module peripherals
 
 
   logic [1:0]   s_spim_event;
+  logic [1:0]   timer_irq;
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
@@ -251,11 +252,11 @@ module peripherals
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
 
-  timer_unit
+  apb_timer
   apb_timer_i
   (
-      .clk_i      ( clk          ),
-      .rst_ni     ( rst_n        ),
+      .HCLK      ( clk          ),
+      .HRESETn     ( rst_n        ),
 
       .PADDR      ( s_paddr      ),
       .PWDATA     ( s_pwdata     ),
@@ -266,10 +267,7 @@ module peripherals
       .PREADY     ( s_pready[3]  ),
       .PSLVERR    ( s_pslverr[3] ),
 
-      .event_t0_o (              ),
-      .event_t1_o (              ),
-      .event_t2_o (              ),
-      .event_t3_o (              )
+      .irq_o      ( timer_irq    )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -293,10 +291,10 @@ module peripherals
       .PREADY(s_pready[4]),
       .PSLVERR(s_pslverr[4]),
 
-      .irq_i            (   32'b0  ),      
-      .event_i          (          ),
-      .fetch_enable_o   (          ),
-      .irq_o            (          )
+      .irq_i            ( {timer_irq, 30'b0} ),      
+      .event_i          (                    ),
+      .fetch_enable_o   (                    ),
+      .irq_o            (                    )
   );
 
 endmodule

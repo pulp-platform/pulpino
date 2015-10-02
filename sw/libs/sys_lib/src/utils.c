@@ -1,6 +1,6 @@
 #include "spr-defs.h"
 #include "utils.h"
-#include "pulp.h"
+#include "pulpino.h"
 #include <stdint.h>
 #include "string_lib.h"
 #include "uart.h"
