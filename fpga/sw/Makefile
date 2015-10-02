@@ -1,7 +1,7 @@
 NCORES=4
 
 
-all: u-boot linux rootfs devtree sd_image/BOOT.BIN
+all: u-boot linux rootfs devtree fsbl sd_image/BOOT.BIN
 
 
 ################################################################################
@@ -22,7 +22,7 @@ sd_image/uImage: linux-xlnx/arch/arm/boot/uImage
 	mkdir -p sd_image
 	cp linux-xlnx/arch/arm/boot/uImage ./sd_image/uImage
 
-.PHONY:
+.PHONY: linux
 linux: sd_image/uImage
 
 
@@ -46,7 +46,7 @@ sd_image/u-boot.elf: u-boot-xlnx/u-boot
 	mkdir -p sd_image
 	cp u-boot-xlnx/u-boot ./sd_image/u-boot.elf
 
-.PHONY:
+.PHONY: u-boot
 u-boot: sd_image/u-boot.elf
 
 
@@ -68,7 +68,7 @@ sd_image/rootfs.tar: buildroot/output/images/rootfs.tar
 	mkdir -p sd_image
 	cp buildroot/output/images/rootfs.tar sd_image/rootfs.tar
 
-.PHONY:
+.PHONY: rootfs
 rootfs: sd_image/rootfs.tar
 
 
@@ -79,8 +79,24 @@ rootfs: sd_image/rootfs.tar
 sd_image/devicetree.dtb: device-tree/*.dts* $(filter-out $(wildcard linux-xlnx), linux-xlnx)
 	cd device-tree && ../linux-xlnx/scripts/dtc/dtc -I dts -O dtb -o ../sd_image/devicetree.dtb system.dts
 
-.PHONY:
+.PHONY: devtree
 devtree: sd_image/devicetree.dtb
+
+################################################################################
+# fsbl
+################################################################################
+
+hsi/pulpemu_top.sysdef: ../pulpemu/pulpemu.runs/impl_1/pulpemu_top.sysdef
+	cp $< $@
+
+hsi/fsbl/executable.elf: hsi/pulpemu_top.sysdef
+	cd hsi && hsi -mode tcl -source ./fsbl.tcl
+
+sd_image/fsbl.elf: hsi/fsbl/executable.elf
+	cp $< $@
+
+.PHONY: fsbl
+fsbl: sd_image/fsbl.elf
 
 ################################################################################
 # get bitstream
