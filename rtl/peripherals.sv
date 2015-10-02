@@ -293,7 +293,7 @@ module peripherals
       .PREADY(s_pready[4]),
       .PSLVERR(s_pslverr[4]),
 
-      .irq_i            (          ),      
+      .irq_i            (   32'b0  ),      
       .event_i          (          ),
       .fetch_enable_o   (          ),
       .irq_o            (          )
