@@ -13,6 +13,7 @@ clean:
 	rm -rf ip/*
 	mkdir -p ip
 	rm -rf ${PROJECT}.xpr
+	rm -rf ${PROJECT}.hw
 	rm -rf ${PROJECT}.data
 	rm -rf ${PROJECT}.runs
 	rm -rf ${PROJECT}.srcs

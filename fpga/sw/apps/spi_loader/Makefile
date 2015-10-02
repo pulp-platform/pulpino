@@ -8,4 +8,4 @@ spiload: main.c
 
 
 push: spiload
-	scp ./spiload root@129.132.157.51:/root/
+	scp ./spiload $(FPGA_HOSTNAME):/root/

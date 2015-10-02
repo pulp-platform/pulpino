@@ -8,4 +8,4 @@ gpio_access: main.c
 
 
 push: gpio_access
-	scp ./gpio_access root@129.132.157.51:/root/
+	scp ./gpio_access $(FPGA_HOSTNAME):/root/
