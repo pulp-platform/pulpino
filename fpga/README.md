@@ -86,29 +86,29 @@ Some of GPIO pins are connected to LEDs, switches and buttons on the ZedBoard.
 
 Specifically the following is connected:
 
-PULPino GPIO pin  0: SW 0
-PULPino GPIO pin  1: SW 1
-PULPino GPIO pin  2: SW 2
-PULPino GPIO pin  3: SW 3
-PULPino GPIO pin  4: SW 4
-PULPino GPIO pin  5: SW 5
-PULPino GPIO pin  6: SW 6
-PULPino GPIO pin  7: SW 7
+    PULPino GPIO pin  0: SW 0
+    PULPino GPIO pin  1: SW 1
+    PULPino GPIO pin  2: SW 2
+    PULPino GPIO pin  3: SW 3
+    PULPino GPIO pin  4: SW 4
+    PULPino GPIO pin  5: SW 5
+    PULPino GPIO pin  6: SW 6
+    PULPino GPIO pin  7: SW 7
 
-PULPino GPIO pin  8: LD 0
-PULPino GPIO pin  9: LD 1
-PULPino GPIO pin 10: LD 2
-PULPino GPIO pin 11: LD 3
-PULPino GPIO pin 12: LD 4
-PULPino GPIO pin 13: LD 5
-PULPino GPIO pin 14: LD 6
-PULPino GPIO pin 15: LD 7
+    PULPino GPIO pin  8: LD 0
+    PULPino GPIO pin  9: LD 1
+    PULPino GPIO pin 10: LD 2
+    PULPino GPIO pin 11: LD 3
+    PULPino GPIO pin 12: LD 4
+    PULPino GPIO pin 13: LD 5
+    PULPino GPIO pin 14: LD 6
+    PULPino GPIO pin 15: LD 7
 
-PULPino GPIO pin 16: BTNC
-PULPino GPIO pin 17: BTND
-PULPino GPIO pin 18: BTNL
-PULPino GPIO pin 19: BTNR
-PULPino GPIO pin 20: BTNU
+    PULPino GPIO pin 16: BTNC
+    PULPino GPIO pin 17: BTND
+    PULPino GPIO pin 18: BTNL
+    PULPino GPIO pin 19: BTNR
+    PULPino GPIO pin 20: BTNU
 
 
 
