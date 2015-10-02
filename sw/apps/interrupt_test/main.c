@@ -13,12 +13,13 @@ int main()
 
   printf("Hello World!!!!!\n");
 
-  IER = 0xff;
+  EER = 0xff;
+  IER = 0xAA;
   
   for(int i = 0; i < 100; i++)
   	asm volatile ( "nop" );
 
-  printf("Reg Valu: %d", IAR);
-
+  printf("Reg Valu: %d", EER);
+  printf("Reg Valu: %d", IER);
   return 0;
 }
