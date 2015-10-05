@@ -48,13 +48,14 @@ def s19_parse(filename, s19_dict):
         rec_field = line[:2]
         prefix    = line[:4]
 
-        if rec_field == "S0" or prefix == "S009" or prefix == "S505" or prefix == "S705" or prefix == "S017" or line == "":
+        if rec_field == "S0" or prefix == "S009" or prefix == "S505" or prefix == "S705" or prefix == "S017" or prefix == "S804" or line == "":
             continue
 
         data = line[-6:-4] # extract data byte
         str_addr = line[4:-6]
 
         addr = int("0x%s" % str_addr, 0)
+
 
         s19_dict[addr] = data
 
@@ -118,7 +119,6 @@ slm_dict = {}
 s19_parse(sys.argv[1], s19_dict)
 
 bytes_to_words(s19_dict, slm_dict)
-
 
 
 # word align all addresses
