@@ -47,6 +47,8 @@ module pulpino_top
     output logic tdo_o
   );
 
+  logic irq_to_core_int;
+
   AXI_BUS
   #(
     .AXI_ADDR_WIDTH   ( `AXI_ADDR_WIDTH ),
@@ -82,7 +84,8 @@ module pulpino_top
     .rst_n       ( rst_n      ),
 
     .fetch_enable_i ( fetch_enable_i ),
-
+    .irq_i          ( irq_to_core_int ),
+    
     .core_master ( masters[0] ),
     .dbg_master  ( masters[1] ),
     .data_slave  ( slaves[1]  ),
@@ -147,10 +150,12 @@ module pulpino_top
     .spi_master_sdi2 ( ),
     .spi_master_sdi3 ( ),
 
-    .gpio_in         ( gpio_in     ),
-    .gpio_out        ( gpio_out    ),
-    .gpio_dir        ( gpio_dir    ),
-    .gpio_padcfg     ( gpio_padcfg )
+    .gpio_in         ( gpio_in         ),
+    .gpio_out        ( gpio_out        ),
+    .gpio_dir        ( gpio_dir        ),
+    .gpio_padcfg     ( gpio_padcfg     ),
+
+    .irq_o           ( irq_to_core_int )
   );
 
 

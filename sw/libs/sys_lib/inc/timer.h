@@ -3,40 +3,19 @@
 
 #include "pulpino.h"
 
-#define START_TIME_ADDR    (TIMER_BASE_ADDR + 0x0)
-#define STOP_TIME_ADDR     (TIMER_BASE_ADDR + 0x04)
-#define RESET_TIME_ADDR    (TIMER_BASE_ADDR + 0x08)
-#define GET_TIME_LO_ADDR   (TIMER_BASE_ADDR + 0x0C)
-#define GET_TIME_HI_ADDR   (TIMER_BASE_ADDR + 0x10)
+#define TIMERA_ADDR 	    0x0
+#define TIMERA_PRESCALER    0x04
+#define TIMERA_OUPUT_CMP    0x08
 
-#define START_TIME_T0_ADDR (TIMER_BASE_ADDR + 0x40)
-#define STOP_TIME_T0_ADDR  (TIMER_BASE_ADDR + 0x44)
-#define RESET_TIME_T0_ADDR (TIMER_BASE_ADDR + 0x48)
-#define GET_TIME_T0_ADDR   (TIMER_BASE_ADDR + 0x4C)
-#define START_TIME_T1_ADDR (TIMER_BASE_ADDR + 0x80)
-#define STOP_TIME_T1_ADDR  (TIMER_BASE_ADDR + 0x84)
-#define RESET_TIME_T1_ADDR (TIMER_BASE_ADDR + 0x88)
-#define GET_TIME_T1_ADDR   (TIMER_BASE_ADDR + 0x8C)
-#define START_TIME_T2_ADDR (TIMER_BASE_ADDR + 0xC0)
-#define STOP_TIME_T2_ADDR  (TIMER_BASE_ADDR + 0xC4)
-#define RESET_TIME_T2_ADDR (TIMER_BASE_ADDR + 0xC8)
-#define GET_TIME_T2_ADDR   (TIMER_BASE_ADDR + 0xCC)
-#define START_TIME_T3_ADDR (TIMER_BASE_ADDR + 0x100)
-#define STOP_TIME_T3_ADDR  (TIMER_BASE_ADDR + 0x104)
-#define RESET_TIME_T3_ADDR (TIMER_BASE_ADDR + 0x108)
-#define GET_TIME_T3_ADDR   (TIMER_BASE_ADDR + 0x10C)
+// pointer to mem of timer unit - PointerTimer
+#define __PT__(a) *(volatile int*) (TIMER_BASE_ADDR + a)
 
-void start_timer();
-void stop_timer();
-void reset_timer();
+// timer A register - contains the actual cycle counter
+#define TIRA __PT__(REG_IRQ_ENABLE)
 
-int get_time();
-int get_time_hi();
+// timer A prescaler register
+#define TPRA __PT__(REG_IRQ_PENDING)
 
-void start_core_timer(int timernum);
-void stop_core_timer(int timernum);
-void reset_core_timer(int timernum);
-int  get_core_time(int timernum);
-void set_core_time(int timernum,int timerval);
-
+// timer A output compare register
+#define TOCRA __PT__(REG_IRQ_ACK)
 #endif

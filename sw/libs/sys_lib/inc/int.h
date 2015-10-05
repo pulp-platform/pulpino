@@ -24,14 +24,35 @@ struct ihnd {
 	void	*arg;
 };
 
-/* Add interrupt handler */ 
+/** 
+ * @brief Add interrupt handler. 
+ *
+ * Adds a new interrupt handler on position vect.
+ * @param unsigned long vect - interrupt address to which interrupt handler is added.
+ * @param void (* handler)(void *) - pointer to function that is called when the ISR. is executed
+ * @param void* arg - arguments for the ISR.
+ *
+ * @return 0 on error, 1 otherwise
+ */ 
 int int_add(unsigned long vect, void (* handler)(void *), void *arg);
 
-/* Add exception vector handler */
-void add_handler(unsigned long vector, void (* handler) (void));
 
-/* Initialize routine */
+/**
+ * @brief Interrupt initialization routine 
+ *
+ * Initializes an empty interrupt service table,
+ * capable to handle 32 interrupts.
+ *
+ */
 void int_init(void);
+
+/**
+ * @brief Main interrupt service routine.
+ * 
+ * Calls the appropiate ISR.
+ *
+ */
+void int_main();
 
 /** 
  * \brief Disables interrupts globally.

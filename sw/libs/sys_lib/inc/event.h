@@ -51,4 +51,8 @@
 // event acknowledge register
 #define EAR __PE__(REG_EVENT_ACK)
 
+// ISRS
+#define TIMER_A_OVERFLOW 		0x1e
+#define TIMER_A_OUTPUT_CMP 		0x1f
+
 #endif

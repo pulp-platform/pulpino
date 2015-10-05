@@ -56,7 +56,9 @@ module peripherals
     input  logic       [31:0] gpio_in,
     output logic       [31:0] gpio_out,
     output logic       [31:0] gpio_dir,
-    output logic [31:0] [5:0] gpio_padcfg
+    output logic [31:0] [5:0] gpio_padcfg,
+
+    output logic              irq_o
   );
 
   localparam APB_ADDR_WIDTH  = 12;
@@ -294,7 +296,7 @@ module peripherals
       .irq_i            ( {timer_irq, 30'b0} ),      
       .event_i          (                    ),
       .fetch_enable_o   (                    ),
-      .irq_o            (                    )
+      .irq_o            (        irq_o       )
   );
 
 endmodule
