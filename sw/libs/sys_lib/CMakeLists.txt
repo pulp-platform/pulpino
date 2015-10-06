@@ -12,7 +12,7 @@ set(HEADERS
     inc/bar.h
     inc/gpio.h
     inc/int.h
-    inc/pulp.h
+    inc/pulpino.h
     inc/spi.h
     inc/spr-defs.h
     inc/timer.h
