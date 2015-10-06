@@ -24,9 +24,9 @@ echo ""
 source ${RTL_PATH}/scripts/vcompile_standalone.sh     || exit 1
 
 if ( $PULP_CORE == "riscv" ) then
-  source ${IPS_PATH}/scripts/vcompile_riscv.sh          || exit 1
+  source ${IPS_PATH}/scripts/vcompile_riscv.sh        || exit 1
 else
-  source ${IPS_PATH}/scripts/vcompile_or10n.sh          || exit 1
+  source ${IPS_PATH}/scripts/vcompile_or10n.sh        || exit 1
 endif
 
 source ${IPS_PATH}/scripts/vcompile_scm.sh            || exit 1
@@ -36,10 +36,11 @@ source ${IPS_PATH}/scripts/vcompile_apb_uart.sh       || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_spi_master.sh || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_gpio.sh       || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_event_unit.sh || exit 1
-source ${IPS_PATH}/scripts/vcompile_apb_timer.sh 	  || exit 1
+source ${IPS_PATH}/scripts/vcompile_apb_timer.sh      || exit 1
 source ${IPS_PATH}/scripts/vcompile_common_cells.sh   || exit 1
 source ${IPS_PATH}/scripts/vcompile_adv_dbg_if.sh     || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_spi_slave.sh  || exit 1
+source ${IPS_PATH}/scripts/vcompile_axi_slice.sh      || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_slice_dc.sh   || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_mem_if_DP.sh  || exit 1
 

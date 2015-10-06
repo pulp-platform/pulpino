@@ -27,12 +27,9 @@ vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/
 vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/axi_FanInPrimitive_Req.sv  || exit 1
 vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/axi_multiplexer.sv         || exit 1
 vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/axi_node.sv                || exit 1
-vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/axi_onehot_to_bin.sv       || exit 1
-vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/axi_regs_top.v             || exit 1
+vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/axi_regs_top.sv             || exit 1
 vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/axi_request_block.sv       || exit 1
 vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/axi_response_block.sv      || exit 1
 vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/axi_RR_Flag_Req.sv         || exit 1
-vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/GENERIC_FIFO.sv            || exit 1
-vlog -work axi_node_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_node/axi_regs_top.v             || exit 1
 
 echo "${Cyan}--> AXI node compilation complete! ${NC}"

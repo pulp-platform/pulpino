@@ -19,3 +19,24 @@
 [submodule "ips/apb_peripherals"]
 	path = ips/apb_peripherals
 	url = git@iis-git.ee.ethz.ch:pulp-project/apb_peripherals.git
+[submodule "ips/axi/axi2apb"]
+	path = ips/axi/axi2apb
+	url = git@iis-git.ee.ethz.ch:pulp-project/axi2apb.git
+[submodule "ips/axi/axi_mem_if_DP"]
+	path = ips/axi/axi_mem_if_DP
+	url = git@iis-git.ee.ethz.ch:pulp-project/axi_mem_if_DP.git
+[submodule "ips/axi/axi_node"]
+	path = ips/axi/axi_node
+	url = git@iis-git.ee.ethz.ch:pulp-project/axi_node.git
+[submodule "ips/axi/axi_slice"]
+	path = ips/axi/axi_slice
+	url = git@iis-git.ee.ethz.ch:pulp-project/axi_slice.git
+[submodule "ips/axi/axi_spi_slave"]
+	path = ips/axi/axi_spi_slave
+	url = git@iis-git.ee.ethz.ch:pulp-project/axi_spi_slave.git
+[submodule "ips/axi/axi_spi_master"]
+	path = ips/axi/axi_spi_master
+	url = git@iis-git.ee.ethz.ch:pulp-project/axi_spi_master.git
+[submodule "ips/axi/axi_slice_dc"]
+	path = ips/axi/axi_slice_dc
+	url = git@iis-git.ee.ethz.ch:pulp-project/axi_slice_dc.git
