@@ -35,6 +35,8 @@ int main() {
   TOCRA = 0xe80;
   TPRA = 0x0f; // set prescaler
 
+  sleep();
+  
   while(!timer_triggered)
   	asm volatile ( "nop" );
 

@@ -22,7 +22,7 @@ void eoc(int i){
 }
 
 // sleep for 'iter' iterations. each iteration is approx 10 cycles
-void sleep(volatile int iter)
+void sleep_busy(volatile int iter)
 {
   while(iter--);
 }

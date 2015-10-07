@@ -58,7 +58,10 @@ module peripherals
     output logic       [31:0] gpio_dir,
     output logic [31:0] [5:0] gpio_padcfg,
 
-    output logic              irq_o
+    input  logic              core_busy_i,
+    output logic              irq_o,
+    output logic              fetch_enable_o,
+    output logic              clk_gate_core_o
   );
 
   localparam APB_ADDR_WIDTH  = 12;
@@ -294,9 +297,12 @@ module peripherals
       .PSLVERR(s_pslverr[4]),
 
       .irq_i            ( {timer_irq, 30'b0} ),      
-      .event_i          (                    ),
-      .fetch_enable_o   (                    ),
-      .irq_o            (        irq_o       )
+      .event_i          ( {timer_irq, 30'b0} ),
+      .irq_o            (        irq_o       ),
+
+      .fetch_enable_o   ( fetch_enable_o     ),
+      .clk_gate_core_o  ( clk_gate_core_o    ),
+      .core_busy_i      ( core_busy_i        )
   );
 
 endmodule

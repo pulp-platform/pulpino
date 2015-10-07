@@ -19,6 +19,7 @@ module core_region
 
     input logic fetch_enable_i,
     input irq_i,
+    output core_busy_o,
 
     AXI_BUS.Master core_master,
     AXI_BUS.Master dbg_master,
@@ -164,7 +165,7 @@ module core_region
       .dbginf_data_o   ( dbginf_datai[0]   ),
 
       .fetch_enable_i  ( fetch_enable_i    ),
-      .core_busy_o     (                   ),
+      .core_busy_o     ( core_busy_o       ),
 
       .ext_perf_counters_i (               )
     );
@@ -211,7 +212,7 @@ module core_region
       .dbginf_data_o   ( dbginf_datai[0]   ),
 
       .fetch_enable_i  ( fetch_enable_i    ),
-      .core_busy_o     (                   ),
+      .core_busy_o     ( core_busy_o       ),
 
       .ext_perf_counters_i (               )
     );

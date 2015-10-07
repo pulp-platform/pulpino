@@ -47,7 +47,10 @@ module pulpino_top
     output logic tdo_o
   );
 
-  logic irq_to_core_int;
+  logic clk_core_int;
+  logic irq_to_core_int, fetch_enable_int, fetch_enable_peripheral_int, core_busy_int, clk_gate_core_int;
+
+  assign fetch_enable_int = fetch_enable_i & fetch_enable_peripheral_int;
 
   AXI_BUS
   #(
@@ -67,8 +70,14 @@ module pulpino_top
   )
   masters[2:0]();
 
-
-
+  // core clock gate
+  cluster_clock_gating CG_WE_GLOBAL
+  (
+    .clk_o(clk_core_int),
+    .en_i(clk_gate_core_int),
+    .test_en_i(1'b0),
+    .clk_i(clk)
+  );
 
   core_region
   #(
@@ -80,12 +89,13 @@ module pulpino_top
   )
   core_region_i
   (
-    .clk         ( clk        ),
-    .rst_n       ( rst_n      ),
+    .clk         ( clk_core_int ),
+    .rst_n       ( rst_n        ),
 
-    .fetch_enable_i ( fetch_enable_i ),
+    .fetch_enable_i ( fetch_enable_int ),
     .irq_i          ( irq_to_core_int ),
-    
+    .core_busy_o    ( core_busy_int ),
+
     .core_master ( masters[0] ),
     .dbg_master  ( masters[1] ),
     .data_slave  ( slaves[1]  ),
@@ -155,7 +165,10 @@ module pulpino_top
     .gpio_dir        ( gpio_dir        ),
     .gpio_padcfg     ( gpio_padcfg     ),
 
-    .irq_o           ( irq_to_core_int )
+    .core_busy_i     ( core_busy_int),
+    .irq_o           ( irq_to_core_int ),
+    .fetch_enable_o  ( fetch_enable_peripheral_int ),
+    .clk_gate_core_o ( clk_gate_core_int )
   );
 
 
