@@ -6,6 +6,8 @@ add wave -group "RF"                         /tb/top_i/core_region_i/RISCV_CORE/
 add wave -group "Decoder"                    /tb/top_i/core_region_i/RISCV_CORE/id_stage_i/decoder_i/*
 add wave -group "Controller"                 /tb/top_i/core_region_i/RISCV_CORE/id_stage_i/controller_i/*
 add wave -group "Exc Ctrl"                   /tb/top_i/core_region_i/RISCV_CORE/id_stage_i/exc_controller_i/*
+add wave -group "Hwloop Regs"                /tb/top_i/core_region_i/RISCV_CORE/id_stage_i/hwloop_regs_i/*
+add wave -group "Hwloop Controller"          /tb/top_i/core_region_i/RISCV_CORE/id_stage_i/hwloop_controller_i/*
 add wave -group "EX Stage" -group "ALU"      /tb/top_i/core_region_i/RISCV_CORE/ex_stage_i/alu_i/*
 add wave -group "EX Stage" -group "MUL"      /tb/top_i/core_region_i/RISCV_CORE/ex_stage_i/mult_i/*
 add wave -group "EX Stage"                   /tb/top_i/core_region_i/RISCV_CORE/ex_stage_i/*
