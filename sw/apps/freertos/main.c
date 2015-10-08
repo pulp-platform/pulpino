@@ -7,7 +7,14 @@
 #define TRUE 1
 void task1 (void *pvParameters) {
 	
-	printf("task1");
+	while(TRUE) {
+	
+		printf("task1");
+		
+		for(int i = 0; i < DELAY_LOOP; i++)
+			portNOP();
+	}
+
 	vTaskDelete(NULL);
 
 }
@@ -20,7 +27,7 @@ void task2 (void *pvParameters) {
 		
 		for(int i = 0; i < DELAY_LOOP; i++)
 			portNOP();
-		}
+	}
 
 	vTaskDelete(NULL);
 }
@@ -29,7 +36,7 @@ void task2 (void *pvParameters) {
 int main( void )
 {
 	
-	xTaskCreate(task1, "Task 1", 90, NULL, 1, NULL);
+	xTaskCreate(task1, "Task 1", 100, NULL, 1, NULL);
  	xTaskCreate(task2, "Task 2", 100, NULL, 1, NULL);
 	vTaskStartScheduler();
 

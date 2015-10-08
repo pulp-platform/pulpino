@@ -71,6 +71,8 @@
 #include <stdlib.h>
 #include "int.h"
 #include "utils.h"
+#include "timer.h"
+#include "event.h"
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -216,6 +218,14 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 
 BaseType_t xPortStartScheduler( void )
 {
+    // Configure ISRs
+    int_init();
+    int_add(TIMER_A_OUTPUT_CMP, (void *) int_time_cmp, 0);
+    int_enable();	
+
+    // enable timer interrupt
+    IER = 0xC0000000; // enable all timer interrupts
+
 	/* Setup the hardware to generate the tick. */
 	prvSetupTimerInterrupt();
 
@@ -282,13 +292,14 @@ void vPortYieldFromTick( void )
 static void prvSetupTimerInterrupt( void )
 {
 	
-	unsigned int CompareMatch, time = 0x00;
+
+    unsigned int CompareMatch;
 	
 	CompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
-	/* timer interrupts are automatically enabled if mtimecmp is different to 0x00
-	- this is okay as interrupt are currently globally disabled. */
-	csrw(mtimecmp, CompareMatch);
-	csrw(mtime, time);
+	
+	/* Setup Timer A */
+  	TOCRA = CompareMatch;
+  	//TPRA = 0x0f; // set prescaler
 
 }
 /*-----------------------------------------------------------*/

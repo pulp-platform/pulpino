@@ -74,6 +74,7 @@
 #include "utils.h"
 #include "uart.h"
 #include "int.h"
+#include "timer.h"
 
 /*-----------------------------------------------------------
  * Application specific definitions.
