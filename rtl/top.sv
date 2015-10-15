@@ -48,7 +48,8 @@ module pulpino_top
   );
 
   logic clk_core_int;
-  logic irq_to_core_int, fetch_enable_int, fetch_enable_peripheral_int, core_busy_int, clk_gate_core_int;
+  logic fetch_enable_int, fetch_enable_peripheral_int, core_busy_int, clk_gate_core_int;
+  logic [31:0] irq_to_core_int;
 
   assign fetch_enable_int = fetch_enable_i & fetch_enable_peripheral_int;
 

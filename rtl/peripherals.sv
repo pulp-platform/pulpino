@@ -59,7 +59,7 @@ module peripherals
     output logic [31:0] [5:0] gpio_padcfg,
 
     input  logic              core_busy_i,
-    output logic              irq_o,
+    output logic [31:0]       irq_o,
     output logic              fetch_enable_o,
     output logic              clk_gate_core_o
   );
@@ -81,8 +81,6 @@ module peripherals
   logic [1:0]   timer_irq;
   logic [31:0]  irq_int;
 
-  // TODO: remove only intermediate solution
-  assign irq_o = irq_int[0];
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
@@ -300,9 +298,9 @@ module peripherals
       .PREADY(s_pready[4]),
       .PSLVERR(s_pslverr[4]),
 
-      .irq_i            ( {timer_irq, 30'b0} ),      
+      .irq_i            ( {timer_irq, 30'b0} ),
       .event_i          ( {timer_irq, 30'b0} ),
-      .irq_o            (        irq_int     ),
+      .irq_o            ( irq_o              ),
 
       .fetch_enable_o   ( fetch_enable_o     ),
       .clk_gate_core_o  ( clk_gate_core_o    ),

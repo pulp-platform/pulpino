@@ -17,7 +17,7 @@ module core_region
     input logic rst_n,
 
     input logic fetch_enable_i,
-    input irq_i,
+    input [31:0] irq_i,
     output core_busy_o,
 
     AXI_BUS.Master core_master,
@@ -152,7 +152,6 @@ module core_region
       .data_rvalid_i   ( core_lsu_rvalid   ),
 
       .irq_i           ( irq_i             ),
-      .irq_nm_i        ( 1'b0              ),
 
       .dbginf_stall_i  ( dbginf_stall[0]   ),
       .dbginf_bp_o     ( dbginf_bp[0]      ),
