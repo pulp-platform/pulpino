@@ -4,6 +4,7 @@ OBJDUMP=`which llvm-objdump`
 OBJCOPY=`which or1kle-elf-objcopy`
 
 COMPILER=`which or1kle-elf-clang`
+SIZE=`which or1kle-elf-size`
 TARGET_C_FLAGS="-O2 -mcpu=pulp3 -g"
 
 VSIM=`which vsim`
@@ -18,6 +19,7 @@ cmake "$PULP_GIT_DIRECTORY"/sw/ \
     -DVSIM="$VSIM" \
     -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
-    -DCMAKE_OBJDUMP="$OBJDUMP"
+    -DCMAKE_OBJDUMP="$OBJDUMP" \
+    -DCMAKE_SIZE="$SIZE"
 
 # Add -G "Ninja" to the cmake call above to use ninja instead of make

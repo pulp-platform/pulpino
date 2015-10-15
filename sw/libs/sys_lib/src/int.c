@@ -40,8 +40,8 @@ void int_main(void) {
   // select correct interrupt
   // read status register to get pending interrupt - therefore acknowledging the interrupt
   // execute ISR. Offset by -1 since the addressing in the register starts with 1..32
-  
-  unsigned long irq = IAR;
+
+  unsigned long irq = 0; //IAR;
   if (int_handlers[irq].handler != 0)
     int_handlers[irq].handler(int_handlers[irq].arg);
 }

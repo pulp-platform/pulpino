@@ -11,11 +11,11 @@
 #define __PT__(a) *(volatile int*) (TIMER_BASE_ADDR + a)
 
 // timer A register - contains the actual cycle counter
-#define TIRA __PT__(REG_IRQ_ENABLE)
+#define TIRA __PT__(TIMERA_ADDR)
 
 // timer A prescaler register
-#define TPRA __PT__(REG_IRQ_PENDING)
+#define TPRA __PT__(TIMERA_PRESCALER)
 
 // timer A output compare register
-#define TOCRA __PT__(REG_IRQ_ACK)
+#define TOCRA __PT__(TIMERA_OUPUT_CMP)
 #endif
