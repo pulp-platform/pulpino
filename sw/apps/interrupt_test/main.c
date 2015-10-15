@@ -15,11 +15,6 @@ void timer_overflow_isr(void) {
 
 
 int main() {
-  uart_set_cfg(0, 0);
-
-  uart_send("Hello!\n", 7);
-
-  uart_wait_tx_done();
 
   printf("Hello World!!!!!\n");
 
@@ -35,9 +30,9 @@ int main() {
   TOCRA = 0xe80;
   TPRA = 0x0f; // set prescaler
 
-  sleep();
+  //sleep();
   
-  while(!timer_triggered)
+  while(timer_triggered < 2)
   	asm volatile ( "nop" );
 
   int_disable();

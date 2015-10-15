@@ -79,6 +79,10 @@ module peripherals
 
   logic [1:0]   s_spim_event;
   logic [1:0]   timer_irq;
+  logic [31:0]  irq_int;
+
+  // TODO: remove only intermediate solution
+  assign irq_o = irq_int[0];
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
@@ -298,7 +302,7 @@ module peripherals
 
       .irq_i            ( {timer_irq, 30'b0} ),      
       .event_i          ( {timer_irq, 30'b0} ),
-      .irq_o            (        irq_o       ),
+      .irq_o            (        irq_int     ),
 
       .fetch_enable_o   ( fetch_enable_o     ),
       .clk_gate_core_o  ( clk_gate_core_o    ),

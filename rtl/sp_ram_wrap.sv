@@ -28,6 +28,19 @@ module sp_ram_wrap
     .dina   ( wdata_i            ),
     .douta  ( rdata_o            ),
     .wea    ( be_i & {4{we_i}}   )
+  );
+`elsif SYNTHESIS
+   SHKA65_8192X8X4CM16
+   sp_ram_i
+   (
+      .DO   ( rdata_o           ),
+      .A    ( addr_i            ),
+      .DI   ( wdata_i           ),
+      .WEB  ( be_i & {4{we_i}}  ),
+      .DVSE ( 1'b0              ),
+      .DVS  ( 3'b0              ),
+      .CK   ( clk               ), 
+      .CSB  ( 1'b0              )
     );
 `else
   sp_ram
@@ -45,7 +58,7 @@ module sp_ram_wrap
     .rdata_o ( rdata_o   ),
     .we_i    ( we_i      ),
     .be_i    ( be_i      )
-    );
+  );
 `endif
 
 endmodule

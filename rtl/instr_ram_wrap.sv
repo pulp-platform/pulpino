@@ -17,7 +17,7 @@ module instr_ram_wrap
     input  logic [3:0]             be_i
   );
 
-  localparam RAM_ADDR_WIDTH = `LOG2(NUM_WORDS);
+  //localparam RAM_ADDR_WIDTH = `LOG2(NUM_WORDS);
 
   logic is_boot;
   logic [31:0] rdata_boot;
@@ -29,7 +29,7 @@ module instr_ram_wrap
 
   sp_ram_wrap
   #(
-    .ADDR_WIDTH ( RAM_ADDR_WIDTH ),
+    .ADDR_WIDTH ( ADDR_WIDTH ),
     .NUM_WORDS  ( NUM_WORDS      )
     )
   sp_ram_wrap_i
@@ -37,7 +37,7 @@ module instr_ram_wrap
     .clk     ( clk                        ),
 
     .en_i    ( en_i & (~is_boot)          ),
-    .addr_i  ( addr_i[RAM_ADDR_WIDTH-1:0] ),
+    .addr_i  ( addr_i[ADDR_WIDTH-1:0] ),
     .wdata_i ( wdata_i                    ),
     .rdata_o ( rdata_ram                  ),
     .we_i    ( we_i                       ),
