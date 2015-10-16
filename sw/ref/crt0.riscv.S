@@ -6,25 +6,26 @@
 /* =================================================== [ exceptions ] === */
   .section .vectors, "ax"
 
-  // external interrupt handler
-  .org 0x00
-  jal x0, interrupt_handler
-
-  // non maskable interrupts
-  .org 0x04
-  jal x0, nm_interrupt_handler
-
-  // illegal instruction exception
-  .org 0x08
-  jal x0, illegal_insn_handler
-
-  // timer compare interrupt
-  .org 0x0c
-  jal x0, timer_interrupt_handler
+  // space for external interrupts
+  .rept 32
+  .byte 0, 0, 0, 0
+  .endr
 
   // reset vector
-  .org 0x10
+  .org 0x80
   jal x0, reset_handler
+
+  // illegal instruction exception
+  .org 0x84
+  jal x0, illegal_insn_handler
+
+  // ecall handler
+  .org 0x88
+  jal x0, 0
+
+  // timer compare interrupt
+  //jal x0, timer_interrupt_handler
+
 
 
 /* ========================================================= [ entry ] === */

@@ -9,28 +9,34 @@
 #include "string_lib.h"
 #include "uart.h"
 #include "event.h"
+
 /* Interrupt handlers table */
-struct ihnd int_handlers[MAX_INT_HANDLERS];
+//struct ihnd int_handlers[MAX_INT_HANDLERS];
+
+/* Interrupt handler table at start of crt0 as function pointers */
+void (**int_handlers)(void) = (void (**)(void)) 0x00;
+
 
 /* Initialize routine */
 void int_init(void)
 {
   for(int i = 0; i < MAX_INT_HANDLERS; i++) {
-    int_handlers[i].handler = 0;
-    int_handlers[i].arg = 0;
-  } 
+    //int_handlers[i].handler = 0;
+    //int_handlers[i].arg = 0;
+    int_handlers[i] = 0;
+  }
 }
 
-/* Add interrupt handler */ 
+/* Add interrupt handler */
 int int_add(unsigned long irq, void (* handler)(void *), void *arg)
 {
-  
   if(irq >= MAX_INT_HANDLERS)
     return 0;
 
-  int_handlers[irq].handler = handler;
-  int_handlers[irq].arg = arg;
-  
+  //int_handlers[irq].handler = handler;
+  //int_handlers[irq].arg = arg;
+  int_handlers[irq] = handler;
+
   return 1;
 }
 
@@ -46,7 +52,7 @@ void int_main(void) {
     int_handlers[irq].handler(int_handlers[irq].arg);
 }
 
-/** 
+/**
  * \brief Timer compare interrupt service routine.
  * \param void
  * \return void
@@ -62,7 +68,7 @@ void int_time_cmp(void) {
 
 }
 
-/** 
+/**
  * \brief Timer compare interrupt service routine.
  * \param void
  * \return void
@@ -72,7 +78,7 @@ void int_time_cmp(void) {
  *
  * Can be redefined by user software.
  */
-__attribute__((weak)) 
+__attribute__((weak))
 // use weak attribute here, so we can overwrite this function to provide custom exception handlers, e.g. for tests
 void irq_emergency_handler_c(void)
 {

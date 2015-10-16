@@ -17,7 +17,7 @@ int main()
 
 	// 0. mstatus -- interrupts enabled
 	csrr(mstatus, reg);
-	if (reg % 2 != 1) 
+	if (reg % 2 != 1)
 		printf("[ERROR] Register content is %d\n", reg);
 	else printf("Test 0: Passed\n");
 

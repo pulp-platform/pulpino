@@ -17,6 +17,8 @@ void timer_overflow_isr(void) {
 int main() {
 
   printf("Hello World!!!!!\n");
+  asm volatile (".byte 0,0,0,0");
+  printf("Post ILLINSN\n");
 
   // Configure ISRs
   int_init();
@@ -27,7 +29,7 @@ int main() {
   IER = 0xC0000000; // enable all timer interrupts
   
   /* Setup Timer A */
-  TOCRA = 0xe80;
+  //TOCRA = 0xe80;
   TPRA = 0x0f; // set prescaler
 
   //sleep();
