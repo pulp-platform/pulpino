@@ -6,10 +6,13 @@
 /* =================================================== [ exceptions ] === */
   .section .vectors, "ax"
 
-  // space for external interrupts
-  .rept 32
-  .byte 0, 0, 0, 0
+  // external interrupts are handled by the same callback
+  // until compiler supports IRQ routines
+  .org 0x00
+  .rept 31
+  nop
   .endr
+  jal x0, interrupt_handler
 
   // reset vector
   .org 0x80
@@ -22,10 +25,6 @@
   // ecall handler
   .org 0x88
   jal x0, 0
-
-  // timer compare interrupt
-  //jal x0, timer_interrupt_handler
-
 
 
 /* ========================================================= [ entry ] === */
@@ -114,23 +113,6 @@ interrupt_handler:
   jal x1, store_regs
   la x1, end_except
   jal x0, int_main
-
-/* ======================================= [ nm_interrupt handler ] === */
-nm_interrupt_handler:
-  addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
-  jal x1, store_regs
-  la x1, end_except
-  jal x0, irq_emergency_handler_c
-
-  /* ======================================= [ timer_interrupt_handler ] === */
-timer_interrupt_handler:
-  # naked call
-  # addi x2, x2, -EXCEPTION_STACK_SIZE
-  # sw x1, 0x44(x2)
-  # jal x1, store_regs
-  # la x1, end_except
-  jal x0, int_time_cmp
 
 /* ================================= [ illegal instruction handler] === */
 illegal_insn_handler:

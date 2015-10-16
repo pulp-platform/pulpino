@@ -11,19 +11,15 @@
 #include "event.h"
 
 /* Interrupt handlers table */
-//struct ihnd int_handlers[MAX_INT_HANDLERS];
-
-/* Interrupt handler table at start of crt0 as function pointers */
-void (**int_handlers)(void) = (void (**)(void)) 0x00;
+struct ihnd int_handlers[MAX_INT_HANDLERS];
 
 
 /* Initialize routine */
 void int_init(void)
 {
   for(int i = 0; i < MAX_INT_HANDLERS; i++) {
-    //int_handlers[i].handler = 0;
-    //int_handlers[i].arg = 0;
-    int_handlers[i] = 0;
+    int_handlers[i].handler = 0;
+    int_handlers[i].arg = 0;
   }
 }
 
@@ -33,9 +29,8 @@ int int_add(unsigned long irq, void (* handler)(void *), void *arg)
   if(irq >= MAX_INT_HANDLERS)
     return 0;
 
-  //int_handlers[irq].handler = handler;
-  //int_handlers[irq].arg = arg;
-  int_handlers[irq] = handler;
+  int_handlers[irq].handler = handler;
+  int_handlers[irq].arg = arg;
 
   return 1;
 }
@@ -47,9 +42,21 @@ void int_main(void) {
   // read status register to get pending interrupt - therefore acknowledging the interrupt
   // execute ISR. Offset by -1 since the addressing in the register starts with 1..32
 
-  unsigned long irq = 0; //IAR;
+  /* unsigned long irq = 0; //IAR;
   if (int_handlers[irq].handler != 0)
-    int_handlers[irq].handler(int_handlers[irq].arg);
+    int_handlers[irq].handler(int_handlers[irq].arg); */
+
+  int mcause;
+  csrr(mcause, mcause);
+
+  printf("In ISR. cause = %d\n", mcause);
+
+  if (mcause & (1 << 31)) {
+    // interrupt handler called because of external IRQ
+    int_handlers[mcause & 0x1f].handler(int_handlers[mcause & 0x1f].arg);
+  }
+
+  printf("Leaving ISR.\n");
 }
 
 /**

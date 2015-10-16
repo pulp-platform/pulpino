@@ -1,4 +1,3 @@
-
 set(UTILS_DIR ${CMAKE_SOURCE_DIR}/utils)
 
 include(CMakeSim.txt)
@@ -44,7 +43,7 @@ macro(add_application NAME SOURCE_FILES)
   # display object size
   add_custom_command(TARGET ${NAME}.elf
     POST_BUILD
-    COMMAND ${CMAKE_SIZE} ${NAME}.elf
+    COMMAND "${CMAKE_SIZE}" "${NAME}.elf"
   )
 
   # this specifies the testbench to use for simulation
@@ -142,5 +141,4 @@ add_subdirectory(bench)
 if(${RISCV})
   add_subdirectory(compressed)
   add_subdirectory(fpga_test)
-  add_subdirectory(irq_test)
 endif()
