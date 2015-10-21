@@ -49,6 +49,7 @@ void int_main(void) {
   int mcause;
   csrr(mcause, mcause);
 
+  ICP = mcause;
   printf("In ISR. cause = %d\n", mcause);
 
   if (mcause & (1 << 31)) {

@@ -16,6 +16,7 @@ module core_region
     input logic clk,
     input logic rst_n,
 
+    input  logic  testmode_i,
     input logic fetch_enable_i,
     input [31:0] irq_i,
     output core_busy_o,
@@ -326,7 +327,8 @@ module core_region
     .wdata_i ( instr_mem_wdata                      ),
     .rdata_o ( instr_mem_rdata                      ),
     .we_i    ( instr_mem_we                         ),
-    .be_i    ( instr_mem_be                         )
+    .be_i    ( instr_mem_be                         ),
+    .bypass_en_i ( testmode_i )
   );
 
   axi_mem_if_SP_wrap
@@ -407,7 +409,8 @@ module core_region
     .wdata_i ( data_mem_wdata                       ),
     .rdata_o ( data_mem_rdata                       ),
     .we_i    ( data_mem_we                          ),
-    .be_i    ( data_mem_be                          )
+    .be_i    ( data_mem_be                          ),
+    .bypass_en_i  ( testmode_i )
   );
 
   axi_mem_if_SP_wrap
@@ -491,7 +494,7 @@ module core_region
     .tdi_pad_i   ( tdi_i        ),
     .tdo_pad_o   ( tdo_o        ),
 
-    .test_mode_i ( 1'b0         ),
+    .test_mode_i ( testmode_i   ),
 
     .cpu_addr_o  ( dbginf_addr     ),
     .cpu_data_i  ( dbginf_datai    ),

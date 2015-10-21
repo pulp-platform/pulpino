@@ -17,6 +17,7 @@ module peripherals
     AXI_BUS.Master axi_spi_master,
 
     input  logic             spi_clk_i,
+    input  logic             testmode_i,
     input  logic             spi_cs_i,
     output logic [1:0]       spi_mode_o,
     output logic             spi_sdo0_o,
@@ -100,7 +101,7 @@ module peripherals
       .clk_i      ( clk            ),
       .rst_ni     ( rst_n          ),
 
-      .test_mode  ( 1'b0           ),
+      .test_mode  ( testmode_i ),
 
       .axi_master ( axi_spi_master ),
 

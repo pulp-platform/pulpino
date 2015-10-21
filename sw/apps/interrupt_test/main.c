@@ -6,7 +6,7 @@
 #include "timer.h"
 #include "int.h"
 
-static volatile int timer_triggered = 0;
+volatile int timer_triggered = 0;
 
 void timer_overflow_isr(void) {
   timer_triggered++;
@@ -23,14 +23,14 @@ int main() {
 
   // Configure ISRs
   int_init();
-  int_add(0, (void *) timer_overflow_isr, 0);
+  int_add(TIMER_A_OUTPUT_CMP, (void *) timer_overflow_isr, 0);
   int_enable();
 
   EER = 0xff;
   IER = 0xC0000000; // enable all timer interrupts
 
   /* Setup Timer A */
-  TOCRA = 0x80;
+  TOCRA = 0x800;
   TPRA = 0x02; // set prescaler
   sleep();
 

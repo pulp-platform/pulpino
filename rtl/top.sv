@@ -13,6 +13,8 @@ module pulpino_top
     input logic clk,
     input logic rst_n,
 
+    input  logic             scan_en_i,
+    input  logic             testmode_i,
     input  logic             fetch_enable_i,
 
     input  logic             spi_clk_i,
@@ -93,6 +95,7 @@ module pulpino_top
     .clk         ( clk_core_int ),
     .rst_n       ( rst_n        ),
 
+    .testmode_i      ( testmode_i ),
     .fetch_enable_i ( fetch_enable_int ),
     .irq_i          ( irq_to_core_int ),
     .core_busy_o    ( core_busy_int ),
@@ -126,6 +129,7 @@ module pulpino_top
     .axi_spi_master  ( masters[2] ),
 
     .spi_clk_i  ( spi_clk_i      ),
+    .testmode_i ( testmode_i ),
     .spi_cs_i   ( spi_cs_i       ),
     .spi_mode_o ( spi_mode_o     ),
     .spi_sdo0_o ( spi_sdo0_o     ),

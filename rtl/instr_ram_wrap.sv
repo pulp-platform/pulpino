@@ -14,7 +14,8 @@ module instr_ram_wrap
     input  logic [31:0]            wdata_i,
     output logic [31:0]            rdata_o,
     input  logic                   we_i,
-    input  logic [3:0]             be_i
+    input  logic [3:0]             be_i,
+    input  logic                   bypass_en_i
   );
 
   //localparam RAM_ADDR_WIDTH = `LOG2(NUM_WORDS);
@@ -41,7 +42,8 @@ module instr_ram_wrap
     .wdata_i ( wdata_i                    ),
     .rdata_o ( rdata_ram                  ),
     .we_i    ( we_i                       ),
-    .be_i    ( be_i                       )
+    .be_i    ( be_i                       ),
+    .bypass_en_i ( bypass_en_i )
     );
 
   boot_rom_wrap
