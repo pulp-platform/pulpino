@@ -40,14 +40,14 @@ module sp_ram_wrap
    SHKA65_8192X8X4CM16
    sp_ram_i
    (
-      .DO   ( rdata_o           ),
+      .DO   ( ram_out_int       ),
       .A    ( addr_i            ),
       .DI   ( wdata_i           ),
       .WEB  ( be_i & {4{we_i}}  ),
       .DVSE ( 1'b0              ),
       .DVS  ( 3'b0              ),
       .CK   ( clk               ), 
-      .CSB  ( 1'b0              )
+      .CSB  ( bypass_en_i       )
     );
 `else
   sp_ram

@@ -11,7 +11,7 @@ volatile int timer_triggered = 0;
 void timer_overflow_isr(void) {
   timer_triggered++;
   printf("In ISR\n");
-  int_disable();
+  //int_disable();
 }
 
 
@@ -31,10 +31,10 @@ int main() {
 
   /* Setup Timer A */
   TOCRA = 0x800;
-  TPRA = 0x02; // set prescaler
+  TPRA = 0x04; // set prescaler
   sleep();
 
-  while(timer_triggered < 1)
+  while(timer_triggered < 3)
   asm volatile ( "nop" );
 
   int_disable();
