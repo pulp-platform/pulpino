@@ -54,6 +54,13 @@ module peripherals
     input  logic              spi_master_sdi2,
     input  logic              spi_master_sdi3,
 
+    input  logic              scl_pad_i,
+    output logic              scl_pad_o,
+    output logic              scl_padoen_o,
+    input  logic              sda_pad_i,
+    output logic              sda_pad_o,
+    output logic              sda_padoen_o,
+
     input  logic       [31:0] gpio_in,
     output logic       [31:0] gpio_out,
     output logic       [31:0] gpio_dir,
@@ -66,7 +73,7 @@ module peripherals
   );
 
   localparam APB_ADDR_WIDTH  = 12;
-  localparam APB_NUM_SLAVES  = 5;
+  localparam APB_NUM_SLAVES  = 6;
 
   logic                                s_penable;
   logic                                s_pwrite;
@@ -79,8 +86,7 @@ module peripherals
 
 
   logic [1:0]   s_spim_event;
-  logic [1:0]   timer_irq;
-  logic [31:0]  irq_int;
+  logic [3:0]   timer_irq;
 
 
   //////////////////////////////////////////////////////////////////
@@ -299,13 +305,50 @@ module peripherals
       .PREADY(s_pready[4]),
       .PSLVERR(s_pslverr[4]),
 
-      .irq_i            ( {timer_irq, 30'b0} ),
-      .event_i          ( {timer_irq, 30'b0} ),
+      .irq_i            ( {timer_irq, 28'b0} ),
+      .event_i          ( {timer_irq, 28'b0} ),
       .irq_o            ( irq_o              ),
 
       .fetch_enable_o   ( fetch_enable_o     ),
       .clk_gate_core_o  ( clk_gate_core_o    ),
       .core_busy_i      ( core_busy_i        )
   );
+
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// APB Slave 5: I2C                                           ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
+
+  apb_i2c
+  apb_i2c_i
+  (
+      .HCLK         ( clk           ),
+      .HRESETn      ( rst_n         ),
+
+      .PADDR        ( s_paddr       ),
+      .PWDATA       ( s_pwdata      ),
+      .PWRITE       ( s_pwrite      ),
+      .PSEL         ( s_psel[5]     ),
+      .PENABLE      ( s_penable     ),
+      .PRDATA       ( s_prdata[5]   ),
+      .PREADY       ( s_pready[5]   ),
+      .PSLVERR      ( s_pslverr[5]  ),
+      .interrupt_o  (               ),
+      .scl_pad_i    ( scl_pad_i     ),
+      .scl_pad_o    ( scl_pad_o     ),
+      .scl_padoen_o ( scl_padoen_o  ),
+      .sda_pad_i    ( sda_pad_i     ),
+      .sda_pad_o    ( sda_pad_o     ),
+      .sda_padoen_o ( sda_padoen_o  )
+  );
+
+
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// APB Slave 6: FLL Ctrl                                      ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
+
 
 endmodule

@@ -1,3 +1,6 @@
+// IPM: Inflexion Point Method
+// see http://ch.mathworks.com/help/images/morphology-fundamentals-dilation-and-erosion.html
+
 #include "ipm.h"
 
 #define max(x,y) (x > y ? x : y)

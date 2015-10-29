@@ -128,17 +128,20 @@ endmacro()
 
 ################################################################################
 
-add_subdirectory(boot_code)
+add_subdirectory(spi_regression)
+
+# add_subdirectory(boot_code)
 
 add_subdirectory(helloworld)
 add_subdirectory(timer_test)
 add_subdirectory(interrupt_test)
 add_subdirectory(freertos)
 add_subdirectory(debug)
-add_subdirectory(bench)
+# add_subdirectory(bench)
 
 # RISCV only tests
 if(${RISCV})
   add_subdirectory(compressed)
   add_subdirectory(fpga_test)
+  add_subdirectory(riscv_tests)
 endif()

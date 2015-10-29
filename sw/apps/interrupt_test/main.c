@@ -30,8 +30,8 @@ int main() {
   IER = 0xC0000000; // enable all timer interrupts
 
   /* Setup Timer A */
-  TOCRA = 0x800;
-  TPRA = 0x04; // set prescaler
+  TOCRA = TOCRB = 0x800;
+  TPRA = TPRB = 0x3F; // set prescaler, enable interrupts and start timer.
   sleep();
 
   while(timer_triggered < 3)
