@@ -71,7 +71,7 @@ module core_region
 
   // signals to/from AXI instr
   logic         axi_instr_req;
-  logic [`RAM_ADDR_WIDTH-1:0]  axi_instr_addr;
+  logic [`INSTR_RAM_ADDR_WIDTH-1:0]  axi_instr_addr;
   logic         axi_instr_we;
   logic [3:0]   axi_instr_be;
   logic [31:0]  axi_instr_rdata;
@@ -80,7 +80,7 @@ module core_region
 
   // signals to/from instr mem
   logic                        instr_mem_en;
-  logic [`RAM_ADDR_WIDTH+1:0]  instr_mem_addr;
+  logic [`INSTR_RAM_ADDR_WIDTH+1:0]  instr_mem_addr;
   logic                        instr_mem_we;
   logic [3:0]                  instr_mem_be;
   logic [31:0]                 instr_mem_rdata;
@@ -315,15 +315,15 @@ module core_region
 
   instr_ram_wrap
   #(
-    .ADDR_WIDTH ( `RAM_ADDR_WIDTH    ),
+    .ADDR_WIDTH ( `INSTR_RAM_ADDR_WIDTH  ),
     .NUM_WORDS  ( `NUM_WORD          )
   )
   instr_mem
   (
     .clk     ( clk                                  ),
-
+    .rst_n   ( rst_n                                ),
     .en_i    ( instr_mem_en                         ),
-    .addr_i  ( instr_mem_addr[`RAM_ADDR_WIDTH+1:2]  ),
+    .addr_i  ( instr_mem_addr[`INSTR_RAM_ADDR_WIDTH+1:2]  ),
     .wdata_i ( instr_mem_wdata                      ),
     .rdata_o ( instr_mem_rdata                      ),
     .we_i    ( instr_mem_we                         ),
@@ -337,7 +337,7 @@ module core_region
     .AXI_DATA_WIDTH  ( AXI_DATA_WIDTH     ),
     .AXI_ID_WIDTH    ( AXI_ID_SLAVE_WIDTH ),
     .AXI_USER_WIDTH  ( AXI_USER_WIDTH     ),
-    .MEM_ADDR_WIDTH  ( `RAM_ADDR_WIDTH    )
+    .MEM_ADDR_WIDTH  ( `INSTR_RAM_ADDR_WIDTH    )
   )
   instr_mem_axi_if
   (
@@ -357,7 +357,7 @@ module core_region
 
   ram_mux
   #(
-    .ADDR_WIDTH ( `RAM_ADDR_WIDTH+2 ),
+    .ADDR_WIDTH ( `INSTR_RAM_ADDR_WIDTH+2 ),
     .DATA_WIDTH ( 32                )
   )
   instr_ram_mux_i
@@ -368,7 +368,7 @@ module core_region
     .port0_req_i    ( axi_instr_req     ),
     .port0_gnt_o    (                   ),
     .port0_rvalid_o (                   ),
-    .port0_addr_i   ( {axi_instr_addr[`RAM_ADDR_WIDTH-1:0],2'b00} ),
+    .port0_addr_i   ( {axi_instr_addr[`INSTR_RAM_ADDR_WIDTH-1:0],2'b00} ),
     .port0_we_i     ( axi_instr_we      ),
     .port0_be_i     ( axi_instr_be      ),
     .port0_rdata_o  ( axi_instr_rdata   ),
@@ -377,14 +377,14 @@ module core_region
     .port1_req_i    ( core_instr_req    ),
     .port1_gnt_o    ( core_instr_gnt    ),
     .port1_rvalid_o ( core_instr_rvalid ),
-    .port1_addr_i   ( core_instr_addr[`RAM_ADDR_WIDTH+1:0] ),
+    .port1_addr_i   ( core_instr_addr[`INSTR_RAM_ADDR_WIDTH+1:0] ),
     .port1_we_i     ( 1'b0              ),
     .port1_be_i     ( 4'b1111           ),
     .port1_rdata_o  ( core_instr_rdata  ),
     .port1_wdata_i  ( 32'h0             ),
 
     .ram_en_o       ( instr_mem_en      ),
-    .ram_addr_o     ( instr_mem_addr[`RAM_ADDR_WIDTH+1:0] ),
+    .ram_addr_o     ( instr_mem_addr[`INSTR_RAM_ADDR_WIDTH+1:0] ),
     .ram_we_o       ( instr_mem_we      ),
     .ram_be_o       ( instr_mem_be      ),
     .ram_rdata_i    ( instr_mem_rdata   ),

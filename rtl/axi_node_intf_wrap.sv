@@ -15,9 +15,9 @@ module axi_node_intf_wrap
     input logic clk,
     input logic rst_n,
 
-    AXI_BUS slave[NB_SLAVE-1:0],
+    AXI_BUS.Slave slave[NB_SLAVE-1:0],
 
-    AXI_BUS master[NB_MASTER-1:0],
+    AXI_BUS.Master master[NB_MASTER-1:0],
 
     // Memory map
     input  logic [NB_MASTER-1:0][AXI_ADDR_WIDTH-1:0]  start_addr_i,

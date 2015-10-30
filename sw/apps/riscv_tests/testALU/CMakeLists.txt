@@ -1,0 +1,1 @@
+add_application(testALU testALU.c LABELS "riscv_tests")

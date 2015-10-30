@@ -8,6 +8,7 @@ module instr_ram_wrap
   )(
     // Clock and Reset
     input  logic clk,
+    input  logic rst_n,
 
     input  logic                   en_i,
     input  logic [ADDR_WIDTH-1:0]  addr_i,
@@ -20,7 +21,7 @@ module instr_ram_wrap
 
   //localparam RAM_ADDR_WIDTH = `LOG2(NUM_WORDS);
 
-  logic is_boot;
+  logic is_boot, is_boot_q;
   logic [31:0] rdata_boot;
   logic [31:0] rdata_ram;
 
@@ -30,15 +31,15 @@ module instr_ram_wrap
 
   sp_ram_wrap
   #(
-    .ADDR_WIDTH ( ADDR_WIDTH ),
-    .NUM_WORDS  ( NUM_WORDS      )
+    .ADDR_WIDTH ( ADDR_WIDTH-1 ),
+    .NUM_WORDS  ( NUM_WORDS  )
     )
   sp_ram_wrap_i
   (
     .clk     ( clk                        ),
 
     .en_i    ( en_i & (~is_boot)          ),
-    .addr_i  ( addr_i[ADDR_WIDTH-1:0] ),
+    .addr_i  ( addr_i[ADDR_WIDTH-2:0] ),
     .wdata_i ( wdata_i                    ),
     .rdata_o ( rdata_ram                  ),
     .we_i    ( we_i                       ),
@@ -56,6 +57,17 @@ module instr_ram_wrap
     .rdata_o ( rdata_boot                  )
     );
 
-  assign rdata_o = (is_boot == 1'b1) ? rdata_boot : rdata_ram;
+
+  assign rdata_o = (is_boot_q == 1'b1) ? rdata_boot : rdata_ram;
+
+  
+  // Delay the boot signal for one clock cycle in order to execute the last instruction of the boot rom
+  always_ff @(posedge clk, negedge rst_n)
+  begin
+    if (rst_n == 1'b0)
+      is_boot_q <= 1'b0;
+    else
+      is_boot_q <= is_boot;
+  end
 
 endmodule

@@ -19,6 +19,8 @@
 `define RAM_ADDR_WIDTH  13
 `define NUM_WORD 8192
 
+`define INSTR_RAM_ADDR_WIDTH  14
+
 `define ROM_ADDR_WIDTH      8
 
 `endif

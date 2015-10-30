@@ -1,0 +1,8 @@
+Still missing:
+- All tests for load instructions
+- All tests for store instructions
+- Fence instruction tests
+
+Intentionally missing:
+- All tests for atomic instructions (include lr/sc)
+- All div/rem tests (not implemented)

@@ -1,0 +1,11 @@
+stages:
+  - build
+  - test
+
+before_script:
+  - ./ci/setup.csh
+
+riscv_tests:
+  stage: test
+  script:
+    - ./ci/riscv-tests.csh

@@ -3,15 +3,15 @@
 #include "spr-defs.h"
 
 void bench_timer_start(void) {
-  start_core_timer(get_core_id());
+  //start_core_timer(get_core_id());
 }
 
 void bench_timer_stop(void) {
-  stop_core_timer(get_core_id());
+  //stop_core_timer(get_core_id());
 }
 
 void bench_timer_reset(void) {
-  reset_core_timer(get_core_id());
+  //reset_core_timer(get_core_id());
 }
 
 void print_result(testcase_t *test, testresult_t *result)
@@ -33,19 +33,14 @@ void print_result(testcase_t *test, testresult_t *result)
 
 void print_summary(unsigned int errors)
 {
-  volatile int* ptr = (int*)(0x10001000+get_core_id()*4*2);
-
   printf("==== SUMMARY: ");
-  ptr[1] = errors;
 
   if (errors == 0) {
     printf("SUCCESS\n");
     printf("OOOOOOK!!!!!!\n"); // TODO: remove this one
-    ptr[0] = 0xABBAABBA;                // and this
   } else {
     printf("FAIL\n");
     printf("NOT OK!!!!!\n");   // TODO: remove this one
-    ptr[0] = 0xDEADBEEF;                // and this
   }
 }
 
@@ -57,7 +52,7 @@ void run_benchmark(testcase_t *test, testresult_t *result)
 
   test->test(result, bench_timer_start, bench_timer_stop);
 
-  result->time = get_core_time(get_core_id());
+  result->time = 0; //get_core_time(get_core_id());
 }
 
 void run_suite(testcase_t *tests)
