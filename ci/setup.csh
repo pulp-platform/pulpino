@@ -12,7 +12,7 @@ set SIZE=`which riscv32-unknown-elf-size`
 set RISCV=1
 set RVC=1
 
-set VSIM=`which vsim-10.4c`
+set VSIM=`which vsim`
 
 set GIT_DIR=../../
 set SIM_DIR="$GIT_DIR/vsim"
@@ -36,7 +36,7 @@ cmake-3.3.0 "$SW_DIR" \
 
 # Add -G "Ninja" to the cmake call above to use ninja instead of make
 # compile RTL
-#ninja vcompile
+ninja vcompile
 
 # compile SW
 ninja

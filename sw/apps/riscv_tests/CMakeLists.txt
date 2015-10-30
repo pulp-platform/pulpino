@@ -1,7 +1,7 @@
 include_directories(includes)
 
 add_subdirectory(basic)
-add_subdirectory(official)
+#add_subdirectory(official)
 
 # memory access
 # add_subdirectory(testLoadStore)
