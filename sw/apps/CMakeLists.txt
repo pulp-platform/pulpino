@@ -142,7 +142,7 @@ add_subdirectory(freertos)
 
 # RISCV only tests
 if(${RISCV})
-  add_subdirectory(compressed)
+  #add_subdirectory(compressed)
   add_subdirectory(fpga_test)
   add_subdirectory(riscv_tests)
 endif()
