@@ -51,8 +51,6 @@ int main()
     run_suite(testcases);
   }
 
-  synch_barrier();
-
   return 0;
 }
 
@@ -206,13 +204,13 @@ void check_shifts(testresult_t *result, void (*start)(), void (*stop)()) {
   //-----------------------------------------------------------------
   // Check p.ror
   //-----------------------------------------------------------------
-  for(i = 0; i < (sizeof(g_ror_act)/4); i++) {
-    asm volatile ("p.ror %[c], %[a], %[b]\n"
-                  : [c] "+r" (g_ror_act[i])
-                  : [a] "r"  (g_ror_a[i]), [b] "r" (g_ror_b[i]));
+  // for(i = 0; i < (sizeof(g_ror_act)/4); i++) {
+  //   asm volatile ("p.ror %[c], %[a], %[b]\n"
+  //                 : [c] "+r" (g_ror_act[i])
+  //                 : [a] "r"  (g_ror_a[i]), [b] "r" (g_ror_b[i]));
 
-    check_uint32(result, "p.ror", g_ror_act[i],  g_ror_exp[i]);
-  }
+  //   check_uint32(result, "p.ror", g_ror_act[i],  g_ror_exp[i]);
+  // }
 }
 
 void check_shifts_imm(testresult_t *result, void (*start)(), void (*stop)()) {
@@ -348,6 +346,7 @@ void check_setflags(testresult_t *result, void (*start)(), void (*stop)()) {
     check_uint32(result, "l.sfles", act, g_sfles_exp[i]);
   }
 }
+*/
 
 /*
 

@@ -35,8 +35,6 @@ int main()
     run_suite(testcases);
   }
 
-  synch_barrier();
-
   return 0;
 }
 
