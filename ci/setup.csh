@@ -10,7 +10,7 @@ set TARGET_C_FLAGS="-m32 -O3"
 set COMPILER="riscv32-unknown-elf-gcc"
 set SIZE=`which riscv32-unknown-elf-size`
 set RISCV=1
-set RVC=1
+set RVC=0
 
 set VSIM=`which vsim`
 
