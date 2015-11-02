@@ -41,10 +41,12 @@ macro(add_application NAME SOURCE_FILES)
   target_link_libraries(${NAME}.elf bench string_uart sys_chip ${ARG_LIBS})
 
   # display object size
+  if("${SUBDIR}" STREQUAL "")
   add_custom_command(TARGET ${NAME}.elf
     POST_BUILD
     COMMAND "${CMAKE_SIZE}" "${NAME}.elf"
   )
+  endif()
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
@@ -146,3 +148,5 @@ if(${RISCV})
   add_subdirectory(fpga_test)
   add_subdirectory(riscv_tests)
 endif()
+
+add_subdirectory(sequential_tests)

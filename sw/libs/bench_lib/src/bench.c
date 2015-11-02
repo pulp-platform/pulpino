@@ -42,6 +42,7 @@ void print_summary(unsigned int errors)
     printf("FAIL\n");
     printf("NOT OK!!!!!\n");   // TODO: remove this one
   }
+  uart_wait_tx_done();
 }
 
 void run_benchmark(testcase_t *test, testresult_t *result)

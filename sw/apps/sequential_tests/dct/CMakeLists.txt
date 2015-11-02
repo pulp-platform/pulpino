@@ -1,0 +1,1 @@
+add_application(dct dct.c)

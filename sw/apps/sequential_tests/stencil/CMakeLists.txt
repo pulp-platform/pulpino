@@ -1,0 +1,1 @@
+add_application(stencil stencil.c)

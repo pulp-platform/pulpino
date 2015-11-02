@@ -17,7 +17,7 @@
 // timer A register - contains the actual cycle counter
 #define TIRA __PT__(TIMERA_ADDR)
 
-// timer A prescaler register
+// timer A control register
 #define TPRA __PT__(TIMERA_CTRL)
 
 // timer A output compare register
@@ -26,9 +26,18 @@
 // timer A register - contains the actual cycle counter
 #define TIRB __PT__(TIMERB_ADDR)
 
-// timer A prescaler register
+// timer A control register
 #define TPRB __PT__(TIMERB_CTRL)
 
 // timer A output compare register
 #define TOCRB __PT__(TIMERB_OUPUT_CMP)
+
+void reset_timer(void);
+
+void start_timer(void);
+
+void stop_timer(void);
+
+int get_time(void);
+
 #endif

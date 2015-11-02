@@ -9,3 +9,8 @@ riscv_tests:
   stage: test
   script:
     - ./ci/riscv-tests.csh
+
+sequential_tests:
+  stage: test
+  script:
+    - ./ci/rtl-sequential_tests.csh

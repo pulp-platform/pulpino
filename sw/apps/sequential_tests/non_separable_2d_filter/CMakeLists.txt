@@ -1,0 +1,1 @@
+add_application(non_separable_2d_filter non_separable_2d_filter.c LABELS "sequential_tests")

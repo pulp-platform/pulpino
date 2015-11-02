@@ -31,9 +31,6 @@
   .section .text
 
 reset_handler:
-  /* initilize mtime and mtimcmp - disable timer interrupts */
-  csrw mtime, x0
-  csrw mtimecmp, x0
   /* set all registers to zero */
   mv  x1, x0
   mv  x2, x1
