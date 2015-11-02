@@ -8,6 +8,6 @@ int main() {
 
   print_summary(0);
 
-  return coreid;
+  return 0;
 }
 
