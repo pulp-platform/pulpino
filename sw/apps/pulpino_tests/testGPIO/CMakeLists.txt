@@ -1,0 +1,1 @@
+add_application(testGPIO testGPIO.c)

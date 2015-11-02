@@ -135,7 +135,6 @@ endmacro()
 # add_subdirectory(boot_code)
 
 add_subdirectory(helloworld)
-add_subdirectory(timer_test)
 add_subdirectory(interrupt_test)
 add_subdirectory(freertos)
 

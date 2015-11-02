@@ -1,5 +1,6 @@
 adv_dbg_if
 apb_peripherals
+apb_internals
 axi/axi2apb
 axi/axi_mem_if_DP
 axi/axi_node
