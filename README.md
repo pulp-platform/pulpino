@@ -31,15 +31,14 @@ defaults to riscv when not set.
 
 ## Version Control
 
-PULPino uses git submodules
+PULPino uses multiple git subrepositories
 
-To initialize all submodules
+To clone those subrepositores and update them, use
 
-    git submodule update --init --recurisve
+    ./update-ips.py
 
-To update to the current versions
-
-    git submodule update --recursive
+This script will read the `ips_lists.txt` file and update to the versions
+specified in there. You can choose specific commits, tags or branches.
 
 
 ## Documentation
