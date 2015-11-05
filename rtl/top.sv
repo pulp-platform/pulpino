@@ -133,7 +133,7 @@ module pulpino_top
     .CFGQ       ( cfgq_fll_int      ),
     .CFGWEB     ( cfgweb_n_fll_int  ),
     .RSTB       ( rst_n             ),
-    .PWDB       (                   ),
+    .PWDB       ( 1'b1              ),
     .TM         ( testmode_i        ),
     .TE         ( scan_en_i         ),
     .TD         (                   ),

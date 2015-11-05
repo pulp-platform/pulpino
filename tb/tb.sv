@@ -1,5 +1,5 @@
 
-`define CLK_SEMIPERIOD   10.0ns  // 50 MHz
+`define CLK_SEMIPERIOD   15.25us  // 32.786 kHz
 
 module tb;
   parameter  LOAD_L2       = "PRELOAD";   // valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
@@ -79,7 +79,7 @@ module tb;
     .clk   ( s_clk   ),
     .rst_n ( s_rst_n ),
 
-    .clk_sel_i      (1'b0),
+    .clk_sel_i      (1'b1),
     .scan_en_i      (1'b0),
     .testmode_i     (1'b0),
     .fetch_enable_i ( fetch_enable ),
@@ -120,7 +120,7 @@ module tb;
 
 
     .uart_tx   ( uart_rx  ),
-    .uart_rx   (          ),
+    .uart_rx   ( uart_rx  ),
     .uart_rts  (          ),
     .uart_dtr  (          ),
     .uart_cts  ( 1'b0     ),

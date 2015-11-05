@@ -33,4 +33,4 @@ ips/or10n                				3635652cd562401c383af6dec2eda7dcfbb69247
 ips/riscv                				b1862dd33a07f56e75b9c47926ade18d48c6dc23
 ips/fll 								832d04d1cbdf66d4cdbf9ff17f7c238788ac632c
 # chip
-imperio                  				d2d1fe9e8d1f8883767977e06ea3343afbdb9516
+imperio                  				master
