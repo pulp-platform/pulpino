@@ -24,12 +24,14 @@ void uart_set_cfg(int parity, uint16_t clk_counter);
 void uart_send(const char* str, unsigned int len);
 void uart_sendchar(const char c);
 
+char uart_getchar();
+
 void uart_wait_tx_done(void);
 
 
 extern volatile char lock_uart_lock;
 
-#define uart_lock()
-#define uart_unlock()
+#define uart_lock() while(lock_uart_lock != 0)
+#define uart_unlock() lock_uart_lock = 0
 
 #endif

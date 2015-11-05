@@ -11,7 +11,7 @@ module peripherals
   )
   (
     // Clock and Reset
-    input logic clk,
+    input logic clk_i,
     input logic rst_n,
 
     AXI_BUS.Master axi_spi_master,
@@ -69,11 +69,19 @@ module peripherals
     input  logic              core_busy_i,
     output logic [31:0]       irq_o,
     output logic              fetch_enable_o,
-    output logic              clk_gate_core_o
+    output logic              clk_gate_core_o,
+
+    output logic  fll1_req_o,
+    output logic  fll1_wrn_o,
+    output logic  fll1_add_o,
+    output logic  fll1_wdata_o,
+    input  logic  fll1_ack_i,
+    input  logic  fll1_rdata_i.
+    input  logic  fll1_lock_i 
   );
 
   localparam APB_ADDR_WIDTH  = 12;
-  localparam APB_NUM_SLAVES  = 6;
+  localparam APB_NUM_SLAVES  = 7;
 
   logic                                s_penable;
   logic                                s_pwrite;
@@ -87,7 +95,6 @@ module peripherals
 
   logic [1:0]   s_spim_event;
   logic [3:0]   timer_irq;
-
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
@@ -104,7 +111,7 @@ module peripherals
   )
   axi_spi_slave_i
   (
-      .clk_i      ( clk            ),
+      .clk_i      ( clk_i            ),
       .rst_ni     ( rst_n          ),
 
       .test_mode  ( testmode_i ),
@@ -141,7 +148,7 @@ module peripherals
   )
   axi2apb_i
   (
-      .clk_i     ( clk       ),
+      .clk_i     ( clk_i       ),
       .rst_ni    ( rst_n     ),
 
       .axi_slave ( slave     ),
@@ -198,7 +205,7 @@ module peripherals
 
   apb_gpio apb_gpio_i
   (
-      .HCLK(clk),
+      .HCLK(clk_i),
       .HRESETn(rst_n),
 
       .PADDR(s_paddr),
@@ -230,7 +237,7 @@ module peripherals
   )
   apb_spi_master_i
   (
-      .HCLK(clk),
+      .HCLK(clk_i),
       .HRESETn(rst_n),
 
       .PADDR(s_paddr),
@@ -269,7 +276,7 @@ module peripherals
   apb_timer
   apb_timer_i
   (
-      .HCLK      ( clk          ),
+      .HCLK      ( clk_i          ),
       .HRESETn     ( rst_n        ),
 
       .PADDR      ( s_paddr      ),
@@ -293,7 +300,7 @@ module peripherals
   apb_event_unit
   apb_event_unit_i
   (
-      .HCLK(clk),
+      .HCLK(clk_i),
       .HRESETn(rst_n),
 
       .PADDR(s_paddr),
@@ -323,7 +330,7 @@ module peripherals
   apb_i2c
   apb_i2c_i
   (
-      .HCLK         ( clk           ),
+      .HCLK         ( clk_i           ),
       .HRESETn      ( rst_n         ),
 
       .PADDR        ( s_paddr       ),
@@ -350,5 +357,35 @@ module peripherals
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
 
+    apb_fll_if apb_fll_if_i
+    (
+          .HCLK        ( clk_i        ),
+          .HRESETn     ( rst_ni       ),
+
+          .PADDR       ( s_paddr      ),
+          .PWDATA      ( s_pwdata     ),
+          .PWRITE      ( s_pwrite     ),
+          .PSEL        ( s_psel[6]    ),
+          .PENABLE     ( s_penable    ),
+          .PRDATA      ( s_prdata[6]  ),
+          .PREADY      ( s_pready[6]  ),
+          .PSLVERR     ( s_pslverr[6] ),
+
+          .fll1_req    ( fll1_req_o   ),
+          .fll1_wrn    ( fll1_wrn_o   ),
+          .fll1_add    ( fll1_add_o   ),
+          .fll1_data   ( fll1_wdata_o ),
+          .fll1_ack    ( fll1_ack_i   ),
+          .fll1_r_data ( fll1_rdata_i ),
+          .fll1_lock   ( fll1_lock_i  ),
+
+          .fll2_req    (              ),
+          .fll2_wrn    (              ),
+          .fll2_add    (              ),
+          .fll2_data   (              ),
+          .fll2_ack    (              ),
+          .fll2_r_data ( 'b0          ),
+          .fll2_lock   ( 1'b0         )
+      );
 
 endmodule

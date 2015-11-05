@@ -94,10 +94,10 @@ module tb;
     .spi_sdi3_i ( spi_sdo3 ),
 
     .uart_tx   ( uart_rx  ),
-    .uart_rx   ( uart_tx  ),
+    .uart_rx   ( uart_rx  ), //loopback
     .uart_rts  (          ),
     .uart_dtr  (          ),
-    .uart_cts  (          ),
+    .uart_cts  ( 1'b0     ),
     .uart_dsr  (          ),
 
     .gpio_in     ( ),
@@ -153,7 +153,7 @@ module tb;
 
     fetch_enable = 1'b1;
 
-
+    // end of computation
     wait(top_i.gpio_out[8]);
     $fflush();
     $stop();

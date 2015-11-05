@@ -18,7 +18,7 @@ ips/apb_peripherals/apb_uart 			370cef8639ceea20412cf6e253f3634dc08ba79a
 ips/apb_peripherals/apb_event_unit 		master
 ips/apb_peripherals/apb_i2c 			58bcb35fbde1cd06f8789b895bdd559bd96aa8be
 ips/apb_peripherals/apb_timer			master
-ips/apb_internals/apb_fll_if			master
+ips/apb_internals/apb_fll_if			9463c71351f671c262295d0d9785a4db2a0c39ee
 
 ips/axi/axi2apb          				1bceea6032ad163bf90baf91d4622fc250629999
 ips/axi/axi_mem_if_DP    				6c2667b6476cbeac499eca71fe5b99471fc14673
@@ -31,6 +31,6 @@ ips/common_cells         				f406b779278ffc3c3b7affbe8ed32e8b957459f1
 ips/scm                  				80e7fe078b3fd1d312a7dafdfc3827d0219a197d
 ips/or10n                				3635652cd562401c383af6dec2eda7dcfbb69247
 ips/riscv                				b1862dd33a07f56e75b9c47926ade18d48c6dc23
-
+ips/fll 								832d04d1cbdf66d4cdbf9ff17f7c238788ac632c
 # chip
 imperio                  				d2d1fe9e8d1f8883767977e06ea3343afbdb9516
