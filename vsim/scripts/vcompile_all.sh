@@ -21,6 +21,7 @@ echo ""
 echo "${Green}--> Compiling PULPino Platform... ${NC}"
 echo ""
 
+source ${RTL_PATH}/scripts/vcompile_stdcells.sh		  || exit 1
 source ${RTL_PATH}/scripts/vcompile_standalone.sh     || exit 1
 
 if ( $PULP_CORE == "riscv" ) then
@@ -30,6 +31,7 @@ else
 endif
 
 source ${IPS_PATH}/scripts/vcompile_scm.sh            || exit 1
+source ${IPS_PATH}/scripts/vcompile_fll_umc65.sh      || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_node.sh       || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi2apb.sh        || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_uart.sh       || exit 1
@@ -38,6 +40,7 @@ source ${IPS_PATH}/scripts/vcompile_apb_gpio.sh       || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_event_unit.sh || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_timer.sh      || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_i2c.sh        || exit 1
+source ${IPS_PATH}/scripts/vcompile_apb_fll_if.sh     || exit 1
 source ${IPS_PATH}/scripts/vcompile_common_cells.sh   || exit 1
 source ${IPS_PATH}/scripts/vcompile_adv_dbg_if.sh     || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_spi_slave.sh  || exit 1

@@ -71,13 +71,13 @@ module peripherals
     output logic              fetch_enable_o,
     output logic              clk_gate_core_o,
 
-    output logic  fll1_req_o,
-    output logic  fll1_wrn_o,
-    output logic  fll1_add_o,
-    output logic  fll1_wdata_o,
-    input  logic  fll1_ack_i,
-    input  logic  fll1_rdata_i.
-    input  logic  fll1_lock_i 
+    output logic              fll1_req_o,
+    output logic              fll1_wrn_o,
+    output logic [1:0]        fll1_add_o,
+    output logic [31:0]       fll1_wdata_o,
+    input  logic              fll1_ack_i,
+    input  logic [31:0]       fll1_rdata_i,
+    input  logic              fll1_lock_i 
   );
 
   localparam APB_ADDR_WIDTH  = 12;
@@ -171,7 +171,7 @@ module peripherals
 
   apb_uart i_apb_uart
   (
-      .CLK(clk),
+      .CLK(clk_i),
       .RSTN(rst_n),
 
       .PSEL(s_psel[0]),

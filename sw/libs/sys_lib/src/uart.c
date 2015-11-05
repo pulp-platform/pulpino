@@ -24,12 +24,14 @@ void uart_set_cfg(int parity, uint16_t clk_counter) {
   *(volatile unsigned int*)(UART_REG_DLL) =  clk_counter       & 0xFF;
   *(volatile unsigned int*)(UART_REG_FCR) = 0xA7; //enables 16byte FIFO and clear FIFOs
   *(volatile unsigned int*)(UART_REG_LCR) = 0x03; //sets 8N1 and set DLAB to 0
-
+  
   *(volatile unsigned int*)(UART_REG_IER) = ((*(volatile unsigned int*)(UART_REG_IER)) & 0xF0) | 0x02; // set IER (interrupt enable register) on UART
 }
 
 void uart_send(const char* str, unsigned int len) {
   unsigned int i;
+  
+  unsigned int core_id = get_core_id();
 
   // ensure that we are the only core that currently accesses the UART, this
   // ensures that messages "stay together"
@@ -58,13 +60,6 @@ void uart_sendchar(const char c) {
   // load FIFO
   *(volatile unsigned int*)(UART_REG_THR) = c;
 }
-
-char uart_getchar() {
-  while((*((volatile int*)UART_REG_LSR) & 0x1) != 0x1);
-
-  return *(volatile int*)UART_REG_RBR;
-}
-
 
 void uart_wait_tx_done(void) {
   // wait until there is space in the fifo

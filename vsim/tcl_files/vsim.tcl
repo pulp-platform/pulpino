@@ -11,14 +11,17 @@ if {[info exists env(PULP_CORE)]} {
 
 set cmd "vsim -quiet $TB \
   -L $CORE_LIB \
+  -L std_cells_lib \
   -L axi_spi_slave_lib \
   -L axi_slice_lib \
   -L axi_slice_dc_lib \
   -L scm_lib \
+  -L fll_lib \
   -L adv_dbg_if_lib \
   -L axi_mem_if_DP_lib \
   -L axi_node_lib \
   -L axi2apb_lib \
+  -L apb_fll_if_lib \
   -L apb_uart_lib \
   -L apb_gpio_lib \
   -L apb_event_unit_lib \

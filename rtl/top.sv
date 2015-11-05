@@ -74,9 +74,26 @@ module pulpino_top
     output logic tdo_o
   );
 
-  logic clk_core_int;
-  logic fetch_enable_int, fetch_enable_peripheral_int, core_busy_int, clk_gate_core_int;
+  logic clk_int;
+
+  logic fetch_enable_int;
+  logic fetch_enable_peripheral_int;
+  logic core_busy_int;
+  logic clk_gate_core_int;
   logic [31:0] irq_to_core_int;
+
+  logic clk_fll_int;
+  logic lock_fll_int;
+  logic cfreq_fll_int;
+  logic cfack_fll_int;
+  logic cfgack_fll_int;
+  logic [1:0]  cfgad_fll_int;
+  logic [31:0] cfgd_fll_int;
+  logic [31:0] cfgq_fll_int;
+  logic cfgweb_n_fll_int;
+
+  // clk select mux
+  assign clk_int = (clk_sel_i) ? clk_fll_int : clk;
 
   assign fetch_enable_int = fetch_enable_i & fetch_enable_peripheral_int;
 
@@ -97,16 +114,35 @@ module pulpino_top
     .AXI_USER_WIDTH   ( `AXI_USER_WIDTH )
   )
   masters[2:0]();
+  
+  //----------------------------------------------------------------------------//
+  // FLL
+  //----------------------------------------------------------------------------//
 
-  // core clock gate
-  cluster_clock_gating CG_WE_GLOBAL
+  umcL65_LL_FLL
+  fll_i
   (
-    .clk_o(clk_core_int),
-    .en_i(clk_gate_core_int),
-    .test_en_i(1'b0),
-    .clk_i(clk)
+    .FLLCLK     ( clk_fll_int       ),
+    .FLLOE      ( 1'b1              ),
+    .REFCLK     ( clk               ),
+    .LOCK       ( lock_fll_int      ),
+    .CFGREQ     ( cfreq_fll_int     ),
+    .CFGACK     ( cfgack_fll_int    ),
+    .CFGAD      ( cfgad_fll_int     ),
+    .CFGD       ( cfgd_fll_int      ),
+    .CFGQ       ( cfgq_fll_int      ),
+    .CFGWEB     ( cfgweb_n_fll_int  ),
+    .RSTB       ( rst_n             ),
+    .PWDB       (                   ),
+    .TM         ( testmode_i        ),
+    .TE         ( scan_en_i         ),
+    .TD         (                   ),
+    .TQ         (                   )
   );
 
+  //----------------------------------------------------------------------------//
+  // Core region
+  //----------------------------------------------------------------------------//
   core_region
   #(
     .AXI_ADDR_WIDTH       ( `AXI_ADDR_WIDTH      ),
@@ -117,13 +153,14 @@ module pulpino_top
   )
   core_region_i
   (
-    .clk         ( clk_core_int ),
+    .clk         ( clk_int  ),
     .rst_n       ( rst_n        ),
 
-    .testmode_i      ( testmode_i ),
-    .fetch_enable_i ( fetch_enable_int ),
-    .irq_i          ( irq_to_core_int ),
-    .core_busy_o    ( core_busy_int ),
+    .testmode_i     ( testmode_i        ),
+    .fetch_enable_i ( fetch_enable_int  ),
+    .irq_i          ( irq_to_core_int   ),
+    .core_busy_o    ( core_busy_int     ),
+    .clock_gating_i ( clk_gate_core_int ),
 
     .core_master ( masters[0] ),
     .dbg_master  ( masters[1] ),
@@ -137,7 +174,9 @@ module pulpino_top
     .tdo_o       ( tdo_o      )
   );
 
-
+  //----------------------------------------------------------------------------//
+  // Peripherals
+  //----------------------------------------------------------------------------//
   peripherals
   #(
     .AXI_ADDR_WIDTH      ( `AXI_ADDR_WIDTH      ),
@@ -148,7 +187,7 @@ module pulpino_top
   )
   peripherals_i
   (
-    .clk             ( clk        ),
+    .clk_i           ( clk_int        ),
     .rst_n           ( rst_n      ),
 
     .axi_spi_master  ( masters[2] ),
@@ -202,13 +241,24 @@ module pulpino_top
     .gpio_dir        ( gpio_dir        ),
     .gpio_padcfg     ( gpio_padcfg     ),
 
-    .core_busy_i     ( core_busy_int),
-    .irq_o           ( irq_to_core_int ),
-    .fetch_enable_o  ( fetch_enable_peripheral_int ),
-    .clk_gate_core_o ( clk_gate_core_int )
+    .core_busy_i     ( core_busy_int                ),
+    .irq_o           ( irq_to_core_int              ),
+    .fetch_enable_o  ( fetch_enable_peripheral_int  ),
+    .clk_gate_core_o ( clk_gate_core_int            ),
+
+    .fll1_req_o      ( cfreq_fll_int        ),
+    .fll1_wrn_o      ( cfgweb_n_fll_int     ),
+    .fll1_add_o      ( cfgad_fll_int        ),
+    .fll1_wdata_o    ( cfgd_fll_int         ),
+    .fll1_ack_i      ( cfgack_fll_int       ),
+    .fll1_rdata_i    ( cfgq_fll_int         ),
+    .fll1_lock_i     ( lock_fll_int         )
   );
 
 
+  //----------------------------------------------------------------------------//
+  // Axi node
+  //----------------------------------------------------------------------------//
 
   axi_node_intf_wrap
   #(
@@ -221,7 +271,7 @@ module pulpino_top
   )
   axi_interconnect_i
   (
-    .clk     ( clk                       ),
+    .clk     ( clk_int               ),
     .rst_n   ( rst_n                     ),
 
     .master  ( slaves  ),

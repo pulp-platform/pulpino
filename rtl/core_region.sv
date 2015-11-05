@@ -20,6 +20,7 @@ module core_region
     input logic fetch_enable_i,
     input [31:0] irq_i,
     output core_busy_o,
+    input clock_gating_i,
 
     AXI_BUS.Master core_master,
     AXI_BUS.Master dbg_master,
@@ -119,6 +120,20 @@ module core_region
   logic [0:0] [31:0]      dbginf_datai;
   logic [0:0] [31:0]      dbginf_datao;
 
+  logic         clk_core_int;
+  
+  //----------------------------------------------------------------------------//
+  // Core clock gating
+  //----------------------------------------------------------------------------//
+  cluster_clock_gating core_clock_gate
+  (
+    .clk_o(clk_core_int),
+    .en_i(clock_gating_i),
+    .test_en_i(1'b0),
+    .clk_i(clk)
+  );
+
+
   //----------------------------------------------------------------------------//
   // Core Instantiation
   //----------------------------------------------------------------------------//
@@ -130,7 +145,7 @@ module core_region
     )
     RISCV_CORE
     (
-      .clk             (  clk              ),
+      .clk             (  clk_core_int     ),
       .rst_n           (  rst_n            ),
 
       .boot_addr_i     ( 32'h0000_0000     ),
@@ -176,7 +191,7 @@ module core_region
     or10n_core
     (
       // Clock and Reset
-      .clk             ( clk               ),
+      .clk             ( clk_core_int      ),
       .rst_n           ( rst_n             ),
 
       .boot_addr_i     ( 32'h0000_0000     ),
