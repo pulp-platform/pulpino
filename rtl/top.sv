@@ -32,11 +32,11 @@ module pulpino_top
     input  logic             spi_sdi3_i,
 
     //SPI Master
-    output logic             spi_master_clk,
-    output logic             spi_master_csn0,
-    output logic             spi_master_csn1,
-    output logic             spi_master_csn2,
-    output logic             spi_master_csn3,
+    output logic             spi_master_clk_o,
+    output logic             spi_master_csn0_o,
+    output logic             spi_master_csn1_o,
+    output logic             spi_master_csn2_o,
+    output logic             spi_master_csn3_o,
     output logic [1:0]       spi_master_mode_o,
     output logic             spi_master_sdo0_o,
     output logic             spi_master_sdo1_o,
@@ -71,7 +71,11 @@ module pulpino_top
     input  logic trstn_i,
     input  logic tms_i,
     input  logic tdi_i,
-    output logic tdo_o
+    output logic tdo_o,
+
+    // PULPino specific pad config
+    output logic [31:0] [5:0] pad_cfg_o,
+    output logic       [31:0] pad_mux_o
   );
 
   logic clk_int;

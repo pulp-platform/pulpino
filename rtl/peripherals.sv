@@ -77,11 +77,14 @@ module peripherals
     output logic [31:0]       fll1_wdata_o,
     input  logic              fll1_ack_i,
     input  logic [31:0]       fll1_rdata_i,
-    input  logic              fll1_lock_i 
+    input  logic              fll1_lock_i,
+
+    output logic [31:0] [5:0] pad_cfg_o,
+    output logic       [31:0] pad_mux_o  
   );
 
   localparam APB_ADDR_WIDTH  = 12;
-  localparam APB_NUM_SLAVES  = 7;
+  localparam APB_NUM_SLAVES  = 8;
 
   logic                                s_penable;
   logic                                s_pwrite;
@@ -95,6 +98,9 @@ module peripherals
 
   logic [1:0]   s_spim_event;
   logic [3:0]   timer_irq;
+  logic s_uart_event;
+  logic s_power_event;
+  logic s_gpio_event;
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
@@ -171,30 +177,30 @@ module peripherals
 
   apb_uart i_apb_uart
   (
-      .CLK(clk_i),
-      .RSTN(rst_n),
+      .CLK    ( clk_i ),
+      .RSTN   ( rst_n ),
 
-      .PSEL(s_psel[0]),
-      .PENABLE(s_penable),
-      .PWRITE(s_pwrite),
-      .PADDR(s_paddr[4:2]),
-      .PWDATA(s_pwdata),
-      .PRDATA(s_prdata[0]),
-      .PREADY(s_pready[0]),
-      .PSLVERR(s_pslverr[0]),
+      .PSEL     ( s_psel[0]    ),
+      .PENABLE  ( s_penable    ),
+      .PWRITE   ( s_pwrite     ),
+      .PADDR    ( s_paddr[4:2] ),
+      .PWDATA   ( s_pwdata     ),
+      .PRDATA   ( s_prdata[0]  ),
+      .PREADY   ( s_pready[0]  ),
+      .PSLVERR  ( s_pslverr[0] ),
 
-      .INT(s_uart_event),                      //Interrupt output
+      .INT      ( s_uart_event ),   //Interrupt output
 
-      .OUT1N(),                    //Output 1
-      .OUT2N(),                    //Output 2
-      .RTSN(uart_rts),             //RTS output
-      .DTRN(uart_dtr),             //DTR output
-      .CTSN(uart_cts),             //CTS input
-      .DSRN(uart_dsr),             //DSR input
-      .DCDN(1'b1),                 //DCD input
-      .RIN(1'b1),                  //RI input
-      .SIN(uart_rx),
-      .SOUT(uart_tx)
+      .OUT1N    (),                    //Output 1
+      .OUT2N    (),                    //Output 2
+      .RTSN     ( uart_rts    ),       //RTS output
+      .DTRN     ( uart_dtr    ),       //DTR output
+      .CTSN     ( uart_cts    ),       //CTS input
+      .DSRN     ( uart_dsr    ),       //DSR input
+      .DCDN     ( 1'b1        ),       //DCD input
+      .RIN      ( 1'b1        ),       //RI input
+      .SIN      ( uart_rx     ),
+      .SOUT     ( uart_tx     )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -205,24 +211,24 @@ module peripherals
 
   apb_gpio apb_gpio_i
   (
-      .HCLK(clk_i),
-      .HRESETn(rst_n),
+      .HCLK       ( clk_i ),
+      .HRESETn    ( rst_n ),
 
-      .PADDR(s_paddr),
-      .PWDATA(s_pwdata),
-      .PWRITE(s_pwrite),
-      .PSEL(s_psel[1]),
-      .PENABLE(s_penable),
-      .PRDATA(s_prdata[1]),
-      .PREADY(s_pready[1]),
-      .PSLVERR(s_pslverr[1]),
+      .PADDR      ( s_paddr      ),
+      .PWDATA     ( s_pwdata     ),
+      .PWRITE     ( s_pwrite     ),
+      .PSEL       ( s_psel[1]    ),
+      .PENABLE    ( s_penable    ),
+      .PRDATA     ( s_prdata[1]  ),
+      .PREADY     ( s_pready[1]  ),
+      .PSLVERR    ( s_pslverr[1] ),
 
-      .gpio_in(gpio_in),
-      .gpio_out(gpio_out),
-      .gpio_dir(gpio_dir),
-      .gpio_padcfg(gpio_padcfg),
-      .power_event(s_power_event),
-      .interrupt(s_gpio_event)
+      .gpio_in      ( gpio_in       ),
+      .gpio_out     ( gpio_out      ),
+      .gpio_dir     ( gpio_dir      ),
+      .gpio_padcfg  ( gpio_padcfg   ),
+      .power_event  ( s_power_event ),
+      .interrupt    ( s_gpio_event  )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -237,34 +243,34 @@ module peripherals
   )
   apb_spi_master_i
   (
-      .HCLK(clk_i),
-      .HRESETn(rst_n),
+      .HCLK         ( clk_i ),
+      .HRESETn      ( rst_n ),
 
-      .PADDR(s_paddr),
-      .PWDATA(s_pwdata),
-      .PWRITE(s_pwrite),
-      .PSEL(s_psel[2]),
-      .PENABLE(s_penable),
-      .PRDATA(s_prdata[2]),
-      .PREADY(s_pready[2]),
-      .PSLVERR(s_pslverr[2]),
+      .PADDR        ( s_paddr      ),
+      .PWDATA       ( s_pwdata     ),
+      .PWRITE       ( s_pwrite     ),
+      .PSEL         ( s_psel[2]    ),
+      .PENABLE      ( s_penable    ),
+      .PRDATA       ( s_prdata[2]  ),
+      .PREADY       ( s_pready[2]  ),
+      .PSLVERR      ( s_pslverr[2] ),
 
-      .events_o(s_spim_event),
+      .events_o     ( s_spim_event ),
 
-      .spi_clk(spi_master_clk),
-      .spi_csn0(spi_master_csn0),
-      .spi_csn1(spi_master_csn1),
-      .spi_csn2(spi_master_csn2),
-      .spi_csn3(spi_master_csn3),
-      .spi_mode(spi_master_mode),
-      .spi_sdo0(spi_master_sdo0),
-      .spi_sdo1(spi_master_sdo1),
-      .spi_sdo2(spi_master_sdo2),
-      .spi_sdo3(spi_master_sdo3),
-      .spi_sdi0(spi_master_sdi0),
-      .spi_sdi1(spi_master_sdi1),
-      .spi_sdi2(spi_master_sdi2),
-      .spi_sdi3(spi_master_sdi3)
+      .spi_clk      ( spi_master_clk  ),
+      .spi_csn0     ( spi_master_csn0 ),
+      .spi_csn1     ( spi_master_csn1 ),
+      .spi_csn2     ( spi_master_csn2 ),
+      .spi_csn3     ( spi_master_csn3 ),
+      .spi_mode     ( spi_master_mode ),
+      .spi_sdo0     ( spi_master_sdo0 ),
+      .spi_sdo1     ( spi_master_sdo1 ),
+      .spi_sdo2     ( spi_master_sdo2 ),
+      .spi_sdo3     ( spi_master_sdo3 ),
+      .spi_sdi0     ( spi_master_sdi0 ),
+      .spi_sdi1     ( spi_master_sdi1 ),
+      .spi_sdi2     ( spi_master_sdi2 ),
+      .spi_sdi3     ( spi_master_sdi3 )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -300,17 +306,17 @@ module peripherals
   apb_event_unit
   apb_event_unit_i
   (
-      .HCLK(clk_i),
-      .HRESETn(rst_n),
+      .HCLK             ( clk_i ),
+      .HRESETn          ( rst_n ),
 
-      .PADDR(s_paddr),
-      .PWDATA(s_pwdata),
-      .PWRITE(s_pwrite),
-      .PSEL(s_psel[4]),
-      .PENABLE(s_penable),
-      .PRDATA(s_prdata[4]),
-      .PREADY(s_pready[4]),
-      .PSLVERR(s_pslverr[4]),
+      .PADDR            ( s_paddr      ),
+      .PWDATA           ( s_pwdata     ),
+      .PWRITE           ( s_pwrite     ),
+      .PSEL             ( s_psel[4]    ),
+      .PENABLE          ( s_penable    ),
+      .PRDATA           ( s_prdata[4]  ),
+      .PREADY           ( s_pready[4]  ),
+      .PSLVERR          ( s_pslverr[4] ),
 
       .irq_i            ( {timer_irq, 28'b0} ),
       .event_i          ( {timer_irq, 28'b0} ),
@@ -360,7 +366,7 @@ module peripherals
     apb_fll_if apb_fll_if_i
     (
           .HCLK        ( clk_i        ),
-          .HRESETn     ( rst_ni       ),
+          .HRESETn     ( rst_n       ),
 
           .PADDR       ( s_paddr      ),
           .PWDATA      ( s_pwdata     ),
@@ -388,4 +394,27 @@ module peripherals
           .fll2_lock   ( 1'b0         )
       );
 
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// APB Slave 7: FLL Ctrl                                      ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
+
+    apb_pulpino apb_pulpino_i
+    (
+          .HCLK        ( clk_i        ),
+          .HRESETn     ( rst_n       ),
+
+          .PADDR       ( s_paddr      ),
+          .PWDATA      ( s_pwdata     ),
+          .PWRITE      ( s_pwrite     ),
+          .PSEL        ( s_psel[7]    ),
+          .PENABLE     ( s_penable    ),
+          .PRDATA      ( s_prdata[7]  ),
+          .PREADY      ( s_pready[7]  ),
+          .PSLVERR     ( s_pslverr[7] ),
+
+          .pad_cfg_o    ( pad_cfg_o   ),
+          .pad_mux_o    ( pad_mux_o   )
+      );
 endmodule
