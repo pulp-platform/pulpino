@@ -23,6 +23,7 @@ set cmd "vsim -quiet $TB \
   -L axi2apb_lib \
   -L apb_fll_if_lib \
   -L apb_uart_lib \
+  -L apb_pulpino_lib \
   -L apb_gpio_lib \
   -L apb_event_unit_lib \
   -L apb_timer_lib \

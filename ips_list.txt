@@ -18,7 +18,9 @@ ips/apb_peripherals/apb_uart 			370cef8639ceea20412cf6e253f3634dc08ba79a
 ips/apb_peripherals/apb_event_unit 		master
 ips/apb_peripherals/apb_i2c 			58bcb35fbde1cd06f8789b895bdd559bd96aa8be
 ips/apb_peripherals/apb_timer			master
+ips/apb_peripherals/apb_pulpino			master
 ips/apb_internals/apb_fll_if			9463c71351f671c262295d0d9785a4db2a0c39ee
+
 
 ips/axi/axi2apb          				1bceea6032ad163bf90baf91d4622fc250629999
 ips/axi/axi_mem_if_DP    				6c2667b6476cbeac499eca71fe5b99471fc14673

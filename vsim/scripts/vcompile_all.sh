@@ -41,6 +41,7 @@ source ${IPS_PATH}/scripts/vcompile_apb_event_unit.sh || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_timer.sh      || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_i2c.sh        || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_fll_if.sh     || exit 1
+source ${IPS_PATH}/scripts/vcompile_apb_pulpino.sh     || exit 1
 source ${IPS_PATH}/scripts/vcompile_common_cells.sh   || exit 1
 source ${IPS_PATH}/scripts/vcompile_adv_dbg_if.sh     || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_spi_slave.sh  || exit 1
