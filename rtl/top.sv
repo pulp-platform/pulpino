@@ -86,7 +86,6 @@ module pulpino_top
   logic clk_gate_core_int;
   logic [31:0] irq_to_core_int;
 
-  logic clk_fll_int;
   logic lock_fll_int;
   logic cfreq_fll_int;
   logic cfack_fll_int;
@@ -95,9 +94,7 @@ module pulpino_top
   logic [31:0] cfgd_fll_int;
   logic [31:0] cfgq_fll_int;
   logic cfgweb_n_fll_int;
-
-  // clk select mux
-  assign clk_int = (clk_sel_i) ? clk_fll_int : clk;
+  logic rstn_int;
 
   assign fetch_enable_int = fetch_enable_i & fetch_enable_peripheral_int;
 
@@ -120,29 +117,32 @@ module pulpino_top
   masters[2:0]();
   
   //----------------------------------------------------------------------------//
-  // FLL
+  // Clock and reset generation
   //----------------------------------------------------------------------------//
-
-  umcL65_LL_FLL
-  fll_i
+  clk_rst_gen
+  clk_rst_gen_i
   (
-    .FLLCLK     ( clk_fll_int       ),
-    .FLLOE      ( 1'b1              ),
-    .REFCLK     ( clk               ),
-    .LOCK       ( lock_fll_int      ),
-    .CFGREQ     ( cfreq_fll_int     ),
-    .CFGACK     ( cfgack_fll_int    ),
-    .CFGAD      ( cfgad_fll_int     ),
-    .CFGD       ( cfgd_fll_int      ),
-    .CFGQ       ( cfgq_fll_int      ),
-    .CFGWEB     ( cfgweb_n_fll_int  ),
-    .RSTB       ( rst_n             ),
-    .PWDB       ( 1'b1              ),
-    .TM         ( testmode_i        ),
-    .TE         ( scan_en_i         ),
-    .TD         (                   ),
-    .TQ         (                   )
-  );
+      .clk_i    ( clk   ),
+      .rstn_i   ( rst_n ),
+
+      .clk_sel_i  ( clk_sel_i  ),
+      .testmode_i ( testmode_i ),
+      .scan_en_i  ( scan_en_i  ),
+      .scan_i     ( ),
+      .scan_o     ( ),
+
+
+      .fll_req_i    ( cfreq_fll_int     ),
+      .fll_wrn_i    ( cfgweb_n_fll_int  ),
+      .fll_add_i    ( cfgad_fll_int     ),
+      .fll_data_i   ( cfgd_fll_int      ),
+      .fll_ack_o    ( cfgack_fll_int    ),
+      .fll_r_data_o ( cfgq_fll_int      ),
+      .fll_lock_o   ( lock_fll_int      ),
+
+      .clk_o        ( clk_int   ),
+      .rstn_o       ( rstn_int  )
+    );
 
   //----------------------------------------------------------------------------//
   // Core region
@@ -158,7 +158,7 @@ module pulpino_top
   core_region_i
   (
     .clk         ( clk_int  ),
-    .rst_n       ( rst_n        ),
+    .rst_n       ( rstn_int        ),
 
     .testmode_i     ( testmode_i        ),
     .fetch_enable_i ( fetch_enable_int  ),
@@ -192,7 +192,7 @@ module pulpino_top
   peripherals_i
   (
     .clk_i           ( clk_int        ),
-    .rst_n           ( rst_n      ),
+    .rst_n           ( rstn_int      ),
 
     .axi_spi_master  ( masters[2] ),
 
@@ -276,7 +276,7 @@ module pulpino_top
   axi_interconnect_i
   (
     .clk     ( clk_int               ),
-    .rst_n   ( rst_n                     ),
+    .rst_n   ( rstn_int              ),
 
     .master  ( slaves  ),
     .slave   ( masters ),

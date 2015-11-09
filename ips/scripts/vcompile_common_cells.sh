@@ -41,5 +41,6 @@ vlog -sv -work pulp_common_cells_lib -quiet ${IPS_PATH}/common_cells/cluster_clo
 vlog -sv -work pulp_common_cells_lib -quiet ${IPS_PATH}/common_cells/cluster_clock_and2.sv     || exit 1
 
 vlog -sv -work pulp_common_cells_lib -quiet ${IPS_PATH}/common_cells/generic_fifo.sv           || exit 1
+vlog -sv -work pulp_common_cells_lib -quiet ${IPS_PATH}/common_cells/rstgen.sv      	       || exit 1
 
 echo "${Cyan}--> pulp_common_cells compilation complete! ${NC}"
