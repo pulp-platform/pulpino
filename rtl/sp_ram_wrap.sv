@@ -37,18 +37,20 @@ module sp_ram_wrap
 
    assign rdata_o = (bypass_en_i) ? wdata_i : ram_out_int;   
    
-   SHKA65_8192X8X4CM16
-   sp_ram_i
+
+   sp_ram_bank
+   sp_ram_bank_i
    (
-      .DO   ( ram_out_int       ),
-      .A    ( addr_i            ),
-      .DI   ( wdata_i           ),
-      .WEB  ( be_i & {4{we_i}}  ),
-      .DVSE ( 1'b0              ),
-      .DVS  ( 3'b0              ),
-      .CK   ( clk               ), 
-      .CSB  ( bypass_en_i       )
-    );
+    .clk     ( clk                     ),
+    .rstn_i  ( rstn_i                  ),
+    .en_i    ( en_i                    ),
+    .addr_i  ( addr_i                  ),
+    .wdata_i ( wdata_i                 ),
+    .rdata_o ( ram_out_int             ),
+    .we_i    ( (we_i & ~bypass_en_i)   ),
+    .be_i    ( be_i                    )
+   );
+
 `else
   sp_ram
   #(
