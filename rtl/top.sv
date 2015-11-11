@@ -81,7 +81,6 @@ module pulpino_top
   logic clk_int;
 
   logic fetch_enable_int;
-  logic fetch_enable_peripheral_int;
   logic core_busy_int;
   logic clk_gate_core_int;
   logic [31:0] irq_to_core_int;
@@ -96,7 +95,6 @@ module pulpino_top
   logic cfgweb_n_fll_int;
   logic rstn_int;
 
-  assign fetch_enable_int = fetch_enable_i & fetch_enable_peripheral_int;
 
   AXI_BUS
   #(
@@ -247,7 +245,8 @@ module pulpino_top
 
     .core_busy_i     ( core_busy_int                ),
     .irq_o           ( irq_to_core_int              ),
-    .fetch_enable_o  ( fetch_enable_peripheral_int  ),
+    .fetch_enable_i  ( fetch_enable_i               ),
+    .fetch_enable_o  ( fetch_enable_int             ),
     .clk_gate_core_o ( clk_gate_core_int            ),
 
     .fll1_req_o      ( cfreq_fll_int        ),

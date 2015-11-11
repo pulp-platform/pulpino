@@ -68,6 +68,7 @@ module peripherals
 
     input  logic              core_busy_i,
     output logic [31:0]       irq_o,
+    input  logic              fetch_enable_i,
     output logic              fetch_enable_o,
     output logic              clk_gate_core_o,
 
@@ -322,6 +323,7 @@ module peripherals
       .event_i          ( {timer_irq, 28'b0} ),
       .irq_o            ( irq_o              ),
 
+      .fetch_enable_i   ( fetch_enable_i     ),
       .fetch_enable_o   ( fetch_enable_o     ),
       .clk_gate_core_o  ( clk_gate_core_o    ),
       .core_busy_i      ( core_busy_i        )

@@ -121,7 +121,16 @@ module core_region
   logic [0:0] [31:0]      dbginf_datao;
 
   logic         clk_core_int;
-  
+
+  AXI_BUS
+  #(
+    .AXI_ADDR_WIDTH   ( AXI_ADDR_WIDTH ),
+    .AXI_DATA_WIDTH   ( AXI_DATA_WIDTH ),
+    .AXI_ID_WIDTH     ( AXI_ID_MASTER_WIDTH   ),
+    .AXI_USER_WIDTH   ( AXI_USER_WIDTH )
+  )
+  core_master_int();
+
   //----------------------------------------------------------------------------//
   // Core clock gating
   //----------------------------------------------------------------------------//
@@ -251,8 +260,32 @@ module core_region
     .data_rdata_o  ( core_axi_rdata  ),
     .data_wdata_i  ( core_axi_wdata  ),
 
-    .master        ( core_master     )
+    .master        ( core_master_int )
   );
+
+  //----------------------------------------------------------------------------//
+  // AXI Slices
+  //----------------------------------------------------------------------------//
+
+   axi_slice_wrap
+   #(
+     .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH       ),
+     .AXI_DATA_WIDTH ( AXI_DATA_WIDTH       ),
+     .AXI_USER_WIDTH ( AXI_USER_WIDTH       ),
+     .AXI_ID_WIDTH   ( AXI_ID_MASTER_WIDTH  ),
+     .SLICE_DEPTH    ( 2                    )
+   )
+   axi_slice_core2axi
+   (
+     .clk_i      ( clk                 ),
+     .rst_ni     ( rst_n               ),
+
+     .test_en_i  ( testmode_i          ),
+
+     .axi_slave  ( core_master_int ),
+     .axi_master ( core_master     )
+   );
+
 
   //----------------------------------------------------------------------------//
   // DEMUX

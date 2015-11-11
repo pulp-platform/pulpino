@@ -26,7 +26,8 @@ module clk_rst_gen
   logic clk_fll_int;
   logic clk_int;
 
-  pulp_clock_mux2 clk_mux_i
+  cluster_clock_mux2
+  clk_mux_i
   (
       .clk_sel_i ( clk_sel_i  	 ),
       .clk0_i    ( clk_i 	     ),
