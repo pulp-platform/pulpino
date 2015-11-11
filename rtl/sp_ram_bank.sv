@@ -7,7 +7,7 @@ mem_bank_i \
   .WEN       ( wen[j]      ), \
   .A         ( add[j]      ), \
   .D         ( wdata[j]    ), \
-  .Q         ( rdata[j]    ), \
+  .Q         ( rdata[j]    )  \
 )
 
 module sp_ram_bank
@@ -21,19 +21,19 @@ module sp_ram_bank
     input  logic  							clk_i,
     input  logic 							rstn_i,
     input  logic                   			en_i,
-    input  logic [ADDR_WIDTH-1:0:0]  	    addr_i,
+    input  logic [ADDR_WIDTH-1:0]   	    addr_i,
     input  logic [31:0]            			wdata_i,
     output logic [31:0]            			rdata_o,
     input  logic                   			we_i,
-    input  logic [3:0]             			be_i,
+    input  logic [3:0]             			be_i
   );
 
-  	logic [$clog2(BANK_SIZE)-1:0][NUM_BANKS] add;
-	logic [NUM_BANKS][31:0]                  wdata;
-    logic                         			 csn;
-    logic                         			 wen;
-    logic [NUM_BANKS][3:0]                   ben;
-    logic [NUM_BANKS][31:0]                  rdata;
+  	logic [$clog2(BANK_SIZE)-1:0][NUM_BANKS:0] add;
+	logic [NUM_BANKS:0][31:0]                  wdata;
+    logic                         			   csn;
+    logic                         			   wen;
+    logic [NUM_BANKS:0][3:0]                   ben;
+    logic [NUM_BANKS:0][31:0]                  rdata;
 
     logic [$clog2(NUM_BANKS)-1:0] addr_q;
     
@@ -55,25 +55,33 @@ module sp_ram_bank
 	    	assign wen[j]   = (~we_i);
 	    	assign ben[j]   = (~be_i);
 
-    		case(BANK_SIZE)
+ 			case(BANK_SIZE)
 	    		1024:
+	    		begin
 	    			shka65_1024x32x1
 	    			`UMC65_SRAM_BANK_INSTANCE;
+	    		end
 	    		4096:
+	    		begin
 	    			shka65_4096x16x2
 	    			`UMC65_SRAM_BANK_INSTANCE;
+	    		end
 	    		8192:
+	    		begin
 	    			shka65_8192x32x1
 	    			`UMC65_SRAM_BANK_INSTANCE;
+	    		end
 	    		default:
+	    		begin
 
+	    		end
 	    	endcase
 	    end
 	endgenerate
 
-	always_ff @ (posedge clk_i, negedge rst_ni)
+	always_ff @ (posedge clk_i, negedge rstn_i)
   	begin
-	    if (~rst_ni)
+	    if (~rstn_i)
 	      addr_q <= 'b0;
 	    else
 	      addr_q <= addr_i[$clog2(NUM_BANKS)+$clog2(BANK_SIZE)-1:$clog2(BANK_SIZE)];

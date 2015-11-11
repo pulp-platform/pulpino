@@ -37,7 +37,7 @@ module instr_ram_wrap
   sp_ram_wrap_i
   (
     .clk     ( clk                        ),
-
+    .rstn_i  ( rst_n                      ),
     .en_i    ( en_i & (~is_boot)          ),
     .addr_i  ( addr_i[ADDR_WIDTH-2:0] ),
     .wdata_i ( wdata_i                    ),

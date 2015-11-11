@@ -7,7 +7,7 @@ module sp_ram_wrap
   )(
     // Clock and Reset
     input  logic clk,
-
+    input  logic rstn_i,
     input  logic                   en_i,
     input  logic [ADDR_WIDTH-1:0]  addr_i,
     input  logic [31:0]            wdata_i,

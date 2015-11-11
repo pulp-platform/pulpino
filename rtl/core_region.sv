@@ -451,7 +451,7 @@ module core_region
   data_mem
   (
     .clk     ( clk                                  ),
-
+    .rstn_i  ( rst_n                                ),
     .en_i    ( data_mem_en                          ),
     .addr_i  ( data_mem_addr[`RAM_ADDR_WIDTH+1:2]   ),
     .wdata_i ( data_mem_wdata                       ),

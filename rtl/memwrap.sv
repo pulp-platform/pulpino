@@ -8,7 +8,7 @@ module shka65_8192x32x1
 	input  logic [31:0]     D,
 	input  logic [3:0]      BEN,
 	output logic [31:0] 	Q
-)
+);
 	// memcuts
 
     SHKA65_8192X8X4CM16
@@ -36,11 +36,11 @@ module shka65_4096x16x2
 	input  logic [31:0]     D,
 	input  logic [3:0]      BEN,
 	output logic [31:0] 	Q
-)
+);
 	// memcuts
 
     SHKA65_4096X8X2CM16
-    cut
+    cut_lo
     (
     	.DO   ( Q[31:16]			 ),
     	.A    ( A    				 ),
@@ -53,7 +53,7 @@ module shka65_4096x16x2
     );
 
     SHKA65_4096X8X2CM16
-    cut
+    cut_hi
     (
     	.DO   ( Q[15:0] 			 ),
     	.A    ( A    				 ),
@@ -76,7 +76,7 @@ module shka65_1024x32x1
 	input  logic [31:0]     D,
 	input  logic [3:0]      BEN,
 	output logic [31:0] 	Q
-)
+);
 
 	// memcuts
 
