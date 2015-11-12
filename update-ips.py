@@ -29,6 +29,12 @@ def execute(cmd, silent=False):
 
     return subprocess.call(cmd.split(), stdout=stdout)
 
+def execute_out(cmd, silent=False):
+    p = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
+    out, err = p.communicate()
+
+    return out
+
 # get a list of all IPs that we are interested in from ips_list.txt
 ips = []
 for ips_el in ips_list:
@@ -81,8 +87,9 @@ for ip in ips:
             continue
 
         # check if we are in detached HEAD mode
-        ret = execute("%s status | grep \"HEAD detached\"" % (git), True)
-        if ret != 0:
+        stdout = execute_out("%s status" % git)
+
+        if not ("HEAD detached" in stdout):
             # only do the pull if we are not in detached head mode
             ret = execute("%s pull --ff-only" % git)
             if ret != 0:
