@@ -28,16 +28,16 @@ module sp_ram_bank
     input  logic [3:0]             			be_i
   );
 
-  	logic [$clog2(BANK_SIZE)-1:0][NUM_BANKS:0] add;
+  	logic [NUM_BANKS:0][$clog2(BANK_SIZE)-1:0] add;
 	logic [NUM_BANKS:0][31:0]                  wdata;
-    logic                         			   csn;
-    logic                         			   wen;
+    logic [NUM_BANKS:0]         			   csn;
+    logic [NUM_BANKS:0]           			   wen;
     logic [NUM_BANKS:0][3:0]                   ben;
     logic [NUM_BANKS:0][31:0]                  rdata;
 
     logic [$clog2(NUM_BANKS)-1:0] addr_q;
     
-    logic bank_sel;
+
 
 	// RAM select
 	// Address
@@ -48,9 +48,11 @@ module sp_ram_bank
 	    for (j = 0; j < NUM_BANKS; j = j + 1) 
 	    begin: sram_bank_gen
 
-            assign bank_sel = (add[$clog2(NUM_BANKS)+$clog2(BANK_SIZE)-1:$clog2(BANK_SIZE)] == j);
+	    	logic bank_sel;
+
+            assign bank_sel = (addr_i[$clog2(NUM_BANKS)+$clog2(BANK_SIZE)-1:$clog2(BANK_SIZE)] == j);
 	    	assign add[j]   = addr_i[$clog2(BANK_SIZE)-1:0];
-	    	assign wdata[j] = wdata;
+	    	assign wdata[j] = wdata_i;
 	    	assign csn[j]   = bank_sel ? (~en_i) : 1'b1;
 	    	assign wen[j]   = (~we_i);
 	    	assign ben[j]   = (~be_i);

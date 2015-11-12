@@ -39,9 +39,15 @@ module sp_ram_wrap
    
 
    sp_ram_bank
+   #(
+    .ADDR_WIDTH ( ADDR_WIDTH ),
+    .NUM_WORDS  ( NUM_WORDS  ),
+    .NUM_BANKS  ( 8          ),
+    .BANK_SIZE  ( 1024       )
+   )
    sp_ram_bank_i
    (
-    .clk     ( clk                     ),
+    .clk_i   ( clk                     ),
     .rstn_i  ( rstn_i                  ),
     .en_i    ( en_i                    ),
     .addr_i  ( addr_i                  ),

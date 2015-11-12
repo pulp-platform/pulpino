@@ -80,7 +80,7 @@ module shka65_1024x32x1
 
 	// memcuts
 
-    SHKA65_8192X8X4CM8
+    SHKA65_1024X8X4CM8
     cut
     (
     	.DO   ( Q	 			 ),
