@@ -16,11 +16,11 @@ module core_region
     input logic clk,
     input logic rst_n,
 
-    input  logic  testmode_i,
-    input logic fetch_enable_i,
-    input [31:0] irq_i,
-    output core_busy_o,
-    input clock_gating_i,
+    input  logic        testmode_i,
+    input  logic        fetch_enable_i,
+    input  logic [31:0] irq_i,
+    output logic        core_busy_o,
+    input  logic        clock_gating_i,
 
     AXI_BUS.Master core_master,
     AXI_BUS.Master dbg_master,
