@@ -15,7 +15,6 @@ set cmd "vsim -quiet $TB \
   -L axi_spi_slave_lib \
   -L axi_slice_lib \
   -L axi_slice_dc_lib \
-  -L scm_lib \
   -L fll_lib \
   -L adv_dbg_if_lib \
   -L axi_mem_if_DP_lib \

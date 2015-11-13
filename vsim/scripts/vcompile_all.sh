@@ -29,7 +29,6 @@ else
   source ${IPS_PATH}/scripts/vcompile_or10n.sh        || exit 1
 endif
 
-source ${IPS_PATH}/scripts/vcompile_scm.sh            || exit 1
 source ${IPS_PATH}/scripts/vcompile_fll_umc65.sh      || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_node.sh       || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi2apb.sh        || exit 1
