@@ -40,10 +40,6 @@ module ram_mux
   always_comb
   begin
     ram_en_o    = 1'b0;
-    ram_addr_o  = port0_addr_i;
-    ram_wdata_o = port0_wdata_i;
-    ram_we_o    = port0_we_i;
-    ram_be_o    = port0_be_i;
 
     port0_gnt_o = 1'b0;
     port1_gnt_o = 1'b0;
@@ -52,22 +48,19 @@ module ram_mux
     if(port0_req_i)
     begin
       ram_en_o      = 1'b1;
-      ram_addr_o    = port0_addr_i;
-      ram_wdata_o   = port0_wdata_i;
-      ram_we_o      = port0_we_i;
-      ram_be_o      = port0_be_i;
       port0_gnt_o   = 1'b1;
     end
     else if(port1_req_i)
     begin
       ram_en_o      = 1'b1;
-      ram_addr_o    = port1_addr_i;
-      ram_wdata_o   = port1_wdata_i;
-      ram_we_o      = port1_we_i;
-      ram_be_o      = port1_be_i;
       port1_gnt_o   = 1'b1;
     end
   end
+
+  assign ram_addr_o  = port0_req_i ? port0_addr_i  : port1_addr_i;
+  assign ram_wdata_o = port0_req_i ? port0_wdata_i : port1_wdata_i;
+  assign ram_we_o    = port0_req_i ? port0_we_i    : port1_we_i;
+  assign ram_be_o    = port0_req_i ? port0_be_i    : port1_be_i;
 
   assign port0_rdata_o = ram_rdata_i;
   assign port1_rdata_o = ram_rdata_i;

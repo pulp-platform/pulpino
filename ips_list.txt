@@ -10,29 +10,29 @@
 #  work, make sure to checkout a branch.
 #
 
-ips/adv_dbg_if           				5bcdbcb987c6cd89cb99032dfed549d85946b786
+ips/adv_dbg_if                          5bcdbcb987c6cd89cb99032dfed549d85946b786
 
-ips/apb_peripherals/apb_gpio 			7f3519c2f08f6db40766e7e70d87eba68600809a
-ips/apb_peripherals/apb_spi_master 		78ba5c32501df6c55fd2fc3e68aa11bf4426e137
-ips/apb_peripherals/apb_uart 			370cef8639ceea20412cf6e253f3634dc08ba79a
-ips/apb_peripherals/apb_event_unit 		master
-ips/apb_peripherals/apb_i2c 			58bcb35fbde1cd06f8789b895bdd559bd96aa8be
-ips/apb_peripherals/apb_timer			master
-ips/apb_peripherals/apb_pulpino			master
-ips/apb_internals/apb_fll_if			9463c71351f671c262295d0d9785a4db2a0c39ee
+ips/apb_peripherals/apb_gpio            7f3519c2f08f6db40766e7e70d87eba68600809a
+ips/apb_peripherals/apb_spi_master      78ba5c32501df6c55fd2fc3e68aa11bf4426e137
+ips/apb_peripherals/apb_uart            370cef8639ceea20412cf6e253f3634dc08ba79a
+ips/apb_peripherals/apb_event_unit      master
+ips/apb_peripherals/apb_i2c             58bcb35fbde1cd06f8789b895bdd559bd96aa8be
+ips/apb_peripherals/apb_timer           master
+ips/apb_peripherals/apb_pulpino         master
+ips/apb_internals/apb_fll_if            9463c71351f671c262295d0d9785a4db2a0c39ee
 
 
-ips/axi/axi2apb          				1bceea6032ad163bf90baf91d4622fc250629999
-ips/axi/axi_mem_if_DP    				6c2667b6476cbeac499eca71fe5b99471fc14673
-ips/axi/axi_node         				fe326f3bf7ff1a760887aa6ac1de5b427d50ed59
-ips/axi/axi_slice        				9e5a77c163013c1ff6fbdeb7a25a7307fcf4c404
-ips/axi/axi_slice_dc     				de6589d0c05890e91c0785942c206d4797482de3
-ips/axi/axi_spi_slave    				6097127b1c22d53bebb86a3768be15aeef22ce7a
-ips/axi/axi_spi_master   				5c07aa27ebce0c70f6893812d334cf7fc091fed3
-ips/common_cells         				f406b779278ffc3c3b7affbe8ed32e8b957459f1
-ips/scm                  				80e7fe078b3fd1d312a7dafdfc3827d0219a197d
-ips/or10n                				3635652cd562401c383af6dec2eda7dcfbb69247
-ips/riscv                				b1862dd33a07f56e75b9c47926ade18d48c6dc23
-ips/fll 								832d04d1cbdf66d4cdbf9ff17f7c238788ac632c
+ips/axi/axi2apb                         1bceea6032ad163bf90baf91d4622fc250629999
+ips/axi/axi_mem_if_DP                   6c2667b6476cbeac499eca71fe5b99471fc14673
+ips/axi/axi_node                        fe326f3bf7ff1a760887aa6ac1de5b427d50ed59
+ips/axi/axi_slice                       9e5a77c163013c1ff6fbdeb7a25a7307fcf4c404
+ips/axi/axi_slice_dc                    de6589d0c05890e91c0785942c206d4797482de3
+ips/axi/axi_spi_slave                   6097127b1c22d53bebb86a3768be15aeef22ce7a
+ips/axi/axi_spi_master                  5c07aa27ebce0c70f6893812d334cf7fc091fed3
+ips/scm                                 80e7fe078b3fd1d312a7dafdfc3827d0219a197d
+ips/or10n                               3635652cd562401c383af6dec2eda7dcfbb69247
+ips/riscv                               b1862dd33a07f56e75b9c47926ade18d48c6dc23
+ips/fll                                 832d04d1cbdf66d4cdbf9ff17f7c238788ac632c
+
 # chip
-imperio                  				master
+imperio                                 master
