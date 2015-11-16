@@ -39,24 +39,17 @@ module ram_mux
   // RAM mux for data port of core and AXI interface
   always_comb
   begin
-    ram_en_o    = 1'b0;
-
     port0_gnt_o = 1'b0;
     port1_gnt_o = 1'b0;
 
     // port0 has priority
     if(port0_req_i)
-    begin
-      ram_en_o      = 1'b1;
       port0_gnt_o   = 1'b1;
-    end
     else if(port1_req_i)
-    begin
-      ram_en_o      = 1'b1;
       port1_gnt_o   = 1'b1;
-    end
   end
 
+  assign ram_en_o    = port0_req_i | port1_req_i;
   assign ram_addr_o  = port0_req_i ? port0_addr_i  : port1_addr_i;
   assign ram_wdata_o = port0_req_i ? port0_wdata_i : port1_wdata_i;
   assign ram_we_o    = port0_req_i ? port0_we_i    : port1_we_i;
