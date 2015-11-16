@@ -1,6 +1,7 @@
 
 `include "config.sv"
-`define CLK_SEMIPERIOD   15.25us  // 32.786 kHz
+`define REF_CLK_PERIOD   (2*15.25us)  // 32.786 kHz
+`define CLK_PERIOD       20.00ns      // 50 MHz
 
 module tb;
   timeunit      1ns;
@@ -9,7 +10,8 @@ module tb;
   parameter  LOAD_L2       = "PRELOAD";   // valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
   parameter  SPI           = "SINGLE";    // valid values are "SINGLE", "QUAD"
   parameter  ENABLE_VPI    = 0;
-  parameter  BAUDRATE      = 3125000;
+  parameter  BAUDRATE      = 1562500;
+  parameter  CLK_USE_FLL   = 0;  // 0 or 1
 
   logic s_clk   = 1'b0;
   logic s_rst_n = 1'b0;
@@ -142,12 +144,23 @@ module tb;
     .tdo_o   ( tdo   )
   );
 
-  initial
-  begin
-    #(`CLK_SEMIPERIOD);
-    s_clk = 1'b1;
-    forever s_clk = #(`CLK_SEMIPERIOD) ~s_clk;
-  end
+  generate
+    if (CLK_USE_FLL) begin
+      initial
+      begin
+        #(`REF_CLK_PERIOD/2);
+        s_clk = 1'b1;
+        forever s_clk = #(`REF_CLK_PERIOD/2) ~s_clk;
+      end
+    end else begin
+      initial
+      begin
+        #(`CLK_PERIOD);
+        s_clk = 1'b1;
+        forever s_clk = #(`CLK_PERIOD) ~s_clk;
+      end
+    end
+  endgenerate
 
   logic use_qspi;
 
