@@ -35,7 +35,6 @@ module sp_ram_wrap
   // words
 
 `elsif ASIC
-
    // RAM bypass logic
    logic [31:0] ram_out_int;
    // assign rdata_o = (bypass_en_i) ? wdata_i : ram_out_int;

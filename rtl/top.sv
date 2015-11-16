@@ -14,7 +14,6 @@ module pulpino_top
     input logic rst_n,
 
     input  logic             clk_sel_i,
-    input  logic             scan_en_i,
     input  logic             testmode_i,
     input  logic             fetch_enable_i,
 
@@ -124,7 +123,6 @@ module pulpino_top
 
       .clk_sel_i    ( clk_sel_i        ),
       .testmode_i   ( testmode_i       ),
-      .scan_en_i    ( scan_en_i        ),
       .scan_i       (                  ),
       .scan_o       (                  ),
 
@@ -139,6 +137,7 @@ module pulpino_top
 
       .clk_o        ( clk_int          ),
       .rstn_o       ( rstn_int         )
+
     );
 
   //----------------------------------------------------------------------------//

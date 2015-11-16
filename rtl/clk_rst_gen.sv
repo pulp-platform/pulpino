@@ -9,7 +9,6 @@ module clk_rst_gen
     input  logic                      scan_i,
     output logic                      scan_o,
 
-
     input  logic                      fll_req_i,
     input  logic                      fll_wrn_i,
     input  logic                [1:0] fll_add_i,
@@ -20,7 +19,6 @@ module clk_rst_gen
 
     output logic                      clk_o,
     output logic                      rstn_o
-
 );
 
   logic clk_fll_int;
