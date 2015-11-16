@@ -81,7 +81,7 @@ module peripherals
     input  logic              fll1_lock_i,
 
     output logic [31:0] [5:0] pad_cfg_o,
-    output logic       [31:0] pad_mux_o  
+    output logic       [31:0] pad_mux_o
   );
 
   localparam APB_ADDR_WIDTH  = 12;
@@ -118,10 +118,10 @@ module peripherals
   )
   axi_spi_slave_i
   (
-      .clk_i      ( clk_i            ),
+      .clk_i      ( clk_i          ),
       .rst_ni     ( rst_n          ),
 
-      .test_mode  ( testmode_i ),
+      .test_mode  ( testmode_i     ),
 
       .axi_master ( axi_spi_master ),
 
@@ -155,7 +155,7 @@ module peripherals
   )
   axi2apb_i
   (
-      .clk_i     ( clk_i       ),
+      .clk_i     ( clk_i     ),
       .rst_ni    ( rst_n     ),
 
       .axi_slave ( slave     ),
@@ -178,8 +178,8 @@ module peripherals
 
   apb_uart i_apb_uart
   (
-      .CLK    ( clk_i ),
-      .RSTN   ( rst_n ),
+      .CLK      ( clk_i        ),
+      .RSTN     ( rst_n        ),
 
       .PSEL     ( s_psel[0]    ),
       .PENABLE  ( s_penable    ),
@@ -398,14 +398,14 @@ module peripherals
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
-  /// APB Slave 7: FLL Ctrl                                      ///
+  /// APB Slave 7: PULPino control                               ///
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
 
     apb_pulpino apb_pulpino_i
     (
           .HCLK        ( clk_i        ),
-          .HRESETn     ( rst_n       ),
+          .HRESETn     ( rst_n        ),
 
           .PADDR       ( s_paddr      ),
           .PWDATA      ( s_pwdata     ),

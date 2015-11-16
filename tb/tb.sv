@@ -83,7 +83,7 @@ module tb;
     .clk   ( s_clk   ),
     .rst_n ( s_rst_n ),
 
-    .clk_sel_i      (1'b1),
+    .clk_sel_i      (1'b0),
     .scan_en_i      (1'b0),
     .testmode_i     (1'b0),
     .fetch_enable_i ( fetch_enable ),

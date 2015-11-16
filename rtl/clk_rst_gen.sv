@@ -1,13 +1,13 @@
 module clk_rst_gen
 (
-	input  logic 	            	  clk_i,
-    input  logic  					  rstn_i,
+    input  logic                      clk_i,
+    input  logic                      rstn_i,
 
-    input  logic 					  clk_sel_i,
-    input  logic 					  testmode_i,
-    input  logic  					  scan_en_i,
-    input  logic  					  scan_i,
-    output logic 					  scan_o,
+    input  logic                      clk_sel_i,
+    input  logic                      testmode_i,
+    input  logic                      scan_en_i,
+    input  logic                      scan_i,
+    output logic                      scan_o,
 
 
     input  logic                      fll_req_i,
@@ -18,8 +18,8 @@ module clk_rst_gen
     output logic               [31:0] fll_r_data_o,
     output logic                      fll_lock_o,
 
-    output logic 					  clk_o,
-    output logic 					  rstn_o
+    output logic                      clk_o,
+    output logic                      rstn_o
 
 );
 
@@ -29,8 +29,8 @@ module clk_rst_gen
   cluster_clock_mux2
   clk_mux_i
   (
-      .clk_sel_i ( clk_sel_i  	 ),
-      .clk0_i    ( clk_i 	     ),
+      .clk_sel_i ( clk_sel_i     ),
+      .clk0_i    ( clk_i         ),
       .clk1_i    ( clk_fll_int   ),
       .clk_o     ( clk_int       )
   );
@@ -42,16 +42,16 @@ module clk_rst_gen
   umcL65_LL_FLL
   fll_i
   (
-    .FLLCLK     ( clk_fll_int        		),
+    .FLLCLK     ( clk_fll_int       ),
     .FLLOE      ( 1'b1              ),
     .REFCLK     ( clk_i             ),
-    .LOCK       ( fll_lock_o       	),
-    .CFGREQ     ( fll_req_i      	),
+    .LOCK       ( fll_lock_o        ),
+    .CFGREQ     ( fll_req_i         ),
     .CFGACK     ( fll_ack_o         ),
     .CFGAD      ( fll_add_i         ),
     .CFGD       ( fll_data_i        ),
     .CFGQ       ( fll_r_data_o      ),
-    .CFGWEB     ( fll_wrn_i   		),
+    .CFGWEB     ( fll_wrn_i         ),
     .RSTB       ( rstn_i            ),
     .PWDB       ( 1'b1              ),
     .TM         ( testmode_i        ),
@@ -73,8 +73,8 @@ module clk_rst_gen
       .test_mode_i         ( testmode_i      ),
 
       // OUTPUT RESET
-      .rst_no              ( rstn_o 		 ),
-      .init_no             ( 				 )
+      .rst_no              ( rstn_o          ),
+      .init_no             (                 )
   );
 
 

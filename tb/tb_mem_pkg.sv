@@ -35,9 +35,9 @@
           data = data_mem[(data_idx * bank_size) + addr];
 
           tb.top_i.core_region_i.data_mem.sp_ram_bank_i.sram_bank_gen[data_idx].bank.mem_bank_i.cut.Memory_byte0[addr][ 7: 0] = data[ 7: 0];
-          tb.top_i.core_region_i.data_mem.sp_ram_bank_i.sram_bank_gen[data_idx].bank.mem_bank_i.cut.Memory_byte0[addr][15: 8] = data[15: 8];
-          tb.top_i.core_region_i.data_mem.sp_ram_bank_i.sram_bank_gen[data_idx].bank.mem_bank_i.cut.Memory_byte0[addr][23:16] = data[23:16];
-          tb.top_i.core_region_i.data_mem.sp_ram_bank_i.sram_bank_gen[data_idx].bank.mem_bank_i.cut.Memory_byte0[addr][31:24] = data[31:24];
+          tb.top_i.core_region_i.data_mem.sp_ram_bank_i.sram_bank_gen[data_idx].bank.mem_bank_i.cut.Memory_byte1[addr][ 7: 0] = data[15: 8];
+          tb.top_i.core_region_i.data_mem.sp_ram_bank_i.sram_bank_gen[data_idx].bank.mem_bank_i.cut.Memory_byte2[addr][ 7: 0] = data[23:16];
+          tb.top_i.core_region_i.data_mem.sp_ram_bank_i.sram_bank_gen[data_idx].bank.mem_bank_i.cut.Memory_byte3[addr][ 7: 0] = data[31:24];
         end
 
         $display("[TB] Data Memory Preload Done for bank %d", data_idx);
@@ -60,12 +60,12 @@
         @ (event_mem_load);
 
         for(addr = 0; addr < bank_size; addr++) begin
-          data = data_mem[(instr_idx * bank_size) + addr];
+          data = instr_mem[(instr_idx * bank_size) + addr];
 
           tb.top_i.core_region_i.instr_mem.sp_ram_wrap_i.sp_ram_bank_i.sram_bank_gen[instr_idx].bank.mem_bank_i.cut.Memory_byte0[addr][ 7: 0] = data[ 7: 0];
-          tb.top_i.core_region_i.instr_mem.sp_ram_wrap_i.sp_ram_bank_i.sram_bank_gen[instr_idx].bank.mem_bank_i.cut.Memory_byte0[addr][15: 8] = data[15: 8];
-          tb.top_i.core_region_i.instr_mem.sp_ram_wrap_i.sp_ram_bank_i.sram_bank_gen[instr_idx].bank.mem_bank_i.cut.Memory_byte0[addr][23:16] = data[23:16];
-          tb.top_i.core_region_i.instr_mem.sp_ram_wrap_i.sp_ram_bank_i.sram_bank_gen[instr_idx].bank.mem_bank_i.cut.Memory_byte0[addr][31:24] = data[31:24];
+          tb.top_i.core_region_i.instr_mem.sp_ram_wrap_i.sp_ram_bank_i.sram_bank_gen[instr_idx].bank.mem_bank_i.cut.Memory_byte1[addr][ 7: 0] = data[15: 8];
+          tb.top_i.core_region_i.instr_mem.sp_ram_wrap_i.sp_ram_bank_i.sram_bank_gen[instr_idx].bank.mem_bank_i.cut.Memory_byte2[addr][ 7: 0] = data[23:16];
+          tb.top_i.core_region_i.instr_mem.sp_ram_wrap_i.sp_ram_bank_i.sram_bank_gen[instr_idx].bank.mem_bank_i.cut.Memory_byte3[addr][ 7: 0] = data[31:24];
         end
 
         $display("[TB] Instr Memory Preload Done for bank %d", instr_idx);
