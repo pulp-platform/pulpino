@@ -2,8 +2,8 @@
 
 module sp_ram_wrap
   #(
-    parameter ADDR_WIDTH = 17,
-    parameter NUM_WORDS  = 32768
+    parameter RAM_SIZE   = 32768, // in words
+    parameter ADDR_WIDTH = $clog2(RAM_SIZE)
   )(
     // Clock and Reset
     input  logic clk,
@@ -30,20 +30,21 @@ module sp_ram_wrap
     .douta  ( rdata_o            ),
     .wea    ( be_i & {4{we_i}}   )
   );
-`elsif SYNTHESIS
+
+  // TODO: we should kill synthesis when the ram size is larger than 32768
+  // words
+
+`elsif ASIC
 
    // RAM bypass logic
    logic [31:0] ram_out_int;
-
-   assign rdata_o = (bypass_en_i) ? wdata_i : ram_out_int;   
-   
+   // assign rdata_o = (bypass_en_i) ? wdata_i : ram_out_int;
+   assign rdata_o = ram_out_int;
 
    sp_ram_bank
    #(
-    .ADDR_WIDTH ( ADDR_WIDTH ),
-    .NUM_WORDS  ( NUM_WORDS  ),
-    .NUM_BANKS  ( 8          ),
-    .BANK_SIZE  ( 1024       )
+    .NUM_BANKS  ( RAM_SIZE/1024 ),
+    .BANK_SIZE  ( 1024          )
    )
    sp_ram_bank_i
    (
@@ -61,8 +62,8 @@ module sp_ram_wrap
   sp_ram
   #(
     .ADDR_WIDTH ( ADDR_WIDTH ),
-    .NUM_WORDS  ( NUM_WORDS  )
-    )
+    .NUM_WORDS  ( RAM_SIZE   )
+  )
   sp_ram_i
   (
     .clk     ( clk       ),

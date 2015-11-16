@@ -1,7 +1,11 @@
 
+`include "config.sv"
 `define CLK_SEMIPERIOD   15.25us  // 32.786 kHz
 
 module tb;
+  timeunit      1ns;
+  timeprecision 1ps;
+
   parameter  LOAD_L2       = "PRELOAD";   // valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
   parameter  SPI           = "SINGLE";    // valid values are "SINGLE", "QUAD"
   parameter  ENABLE_VPI    = 0;
@@ -154,11 +158,11 @@ module tb;
     s_rst_n      = 1'b0;
     fetch_enable = 1'b0;
 
-    #25000;
+    #10ns;
 
     s_rst_n = 1'b1;
 
-    #10000;
+    #10ns;
 
     if (use_qspi)
       spi_enable_qpi();
@@ -166,8 +170,7 @@ module tb;
     if (LOAD_L2 == "PRELOAD")
     begin
       // preload memories
-      $readmemh("slm_files/l2_stim.slm",    top_i.core_region_i.instr_mem.sp_ram_wrap_i.sp_ram_i.mem);
-      $readmemh("slm_files/tcdm_bank0.slm", top_i.core_region_i.data_mem.sp_ram_i.mem);
+      mem_preload();
     end
     else if (LOAD_L2 == "SPI")
     begin
@@ -191,5 +194,6 @@ module tb;
 
   // TODO: this is hack, do it properly!
   `include "tb_spi_pkg.sv"
+  `include "tb_mem_pkg.sv"
 
 endmodule

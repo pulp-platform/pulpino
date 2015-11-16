@@ -5,7 +5,15 @@
 
 //`define PULP_FPGA_EMUL
 
+// always define ASIC when we do a synthesis run
+`ifndef PULP_FPGA_EMUL
+`ifdef SYNTHESIS
+`define ASIC
+`endif
+`endif
 
+// TODO: this should not be in here! Put this into the vsim compile scripts
+`define ASIC
 
 
 

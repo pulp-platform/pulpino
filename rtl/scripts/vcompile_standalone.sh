@@ -43,6 +43,7 @@ vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include $CORE_DEFINES $
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/boot_rom_wrap.sv      || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/instr_ram_wrap.sv     || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/sp_ram_wrap.sv        || exit 1
+vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/sp_ram_bank.sv        || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/core2axi.sv           || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/ram_mux.sv            || exit 1
 vlog -quiet -sv -work standalone_lib +incdir+${RTL_PATH}/include ${RTL_PATH}/axi_node_intf_wrap.sv || exit 1

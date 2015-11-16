@@ -29,7 +29,7 @@ else
   source ${IPS_PATH}/scripts/vcompile_or10n.sh        || exit 1
 endif
 
-source ${IPS_PATH}/scripts/vcompile_fll_umc65.sh      || exit 1
+# IP blocks
 source ${IPS_PATH}/scripts/vcompile_axi_node.sh       || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi2apb.sh        || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_uart.sh       || exit 1
@@ -46,8 +46,11 @@ source ${IPS_PATH}/scripts/vcompile_axi_slice.sh      || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_slice_dc.sh   || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_mem_if_DP.sh  || exit 1
 
+# ASIC specific
+source ${IPS_PATH}/scripts/vcompile_fll_umc65.sh      || exit 1
+source ./scripts/vcompile_imperio.sh                  || exit 1
+
 source ./scripts/vcompile_tb.sh                       || exit 1
-source ./scripts/vcompile_stdcells.sh                 || exit 1
 
 echo ""
 echo "${Green}--> PULPino platform compilation complete! ${NC}"

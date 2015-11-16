@@ -13,8 +13,8 @@ module core_region
   )
 (
     // Clock and Reset
-    input logic clk,
-    input logic rst_n,
+    input logic         clk,
+    input logic         rst_n,
 
     input  logic        testmode_i,
     input  logic        fetch_enable_i,
@@ -22,17 +22,17 @@ module core_region
     output logic        core_busy_o,
     input  logic        clock_gating_i,
 
-    AXI_BUS.Master core_master,
-    AXI_BUS.Master dbg_master,
-    AXI_BUS.Slave  data_slave,
-    AXI_BUS.Slave  instr_slave,
+    AXI_BUS.Master      core_master,
+    AXI_BUS.Master      dbg_master,
+    AXI_BUS.Slave       data_slave,
+    AXI_BUS.Slave       instr_slave,
 
     // JTAG signals
-    input  logic tck_i,
-    input  logic trstn_i,
-    input  logic tms_i,
-    input  logic tdi_i,
-    output logic tdo_o
+    input  logic        tck_i,
+    input  logic        trstn_i,
+    input  logic        tms_i,
+    input  logic        tdi_i,
+    output logic        tdo_o
   );
 
   // signals from/to core
@@ -97,7 +97,7 @@ module core_region
 
 
 
-  enum logic [0:0] { AXI, RAM } CS, NS;
+  enum logic [0:0] { AXI, RAM } lsu_resp_CS, lsu_resp_NS;
 
   // signals to/from core2axi
   logic         core_axi_req;
@@ -136,10 +136,10 @@ module core_region
   //----------------------------------------------------------------------------//
   cluster_clock_gating core_clock_gate
   (
-    .clk_o(clk_core_int),
-    .en_i(clock_gating_i),
-    .test_en_i(1'b0),
-    .clk_i(clk)
+    .clk_o     ( clk_core_int   ),
+    .en_i      ( clock_gating_i ),
+    .test_en_i ( 1'b0           ),
+    .clk_i     ( clk            )
   );
 
 
@@ -244,7 +244,7 @@ module core_region
 
   core2axi
   #(
-    .AXI_ADDR_WIDTH ( 32 )
+    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH )
   )
   core2axi_i
   (
@@ -290,70 +290,49 @@ module core_region
   //----------------------------------------------------------------------------//
   // DEMUX
   //----------------------------------------------------------------------------//
-  assign is_axi_addr   = (core_lsu_addr[31:20] != 12'h001);
-  assign core_data_req = (~is_axi_addr) & core_lsu_req;
-  assign core_axi_req  =   is_axi_addr  & core_lsu_req;
+  assign is_axi_addr     = (core_lsu_addr[31:20] != 12'h001);
+  assign core_data_req   = (~is_axi_addr) & core_lsu_req;
+  assign core_axi_req    =   is_axi_addr  & core_lsu_req;
 
   assign core_data_addr  = core_lsu_addr;
   assign core_data_we    = core_lsu_we;
   assign core_data_be    = core_lsu_be;
   assign core_data_wdata = core_lsu_wdata;
 
-  assign core_axi_addr  = core_lsu_addr;
-  assign core_axi_we    = core_lsu_we;
-  assign core_axi_be    = core_lsu_be;
-  assign core_axi_wdata = core_lsu_wdata;
+  assign core_axi_addr   = core_lsu_addr;
+  assign core_axi_we     = core_lsu_we;
+  assign core_axi_be     = core_lsu_be;
+  assign core_axi_wdata  = core_lsu_wdata;
 
   always_ff @(posedge clk, negedge rst_n)
   begin
     if (rst_n == 1'b0)
-    begin
-      CS <= RAM;
-    end
+      lsu_resp_CS <= RAM;
     else
-    begin
-      CS <= NS;
-    end
+      lsu_resp_CS <= lsu_resp_NS;
   end
 
   // figure out where the next response will be coming from
   always_comb
   begin
-    NS = CS;
+    lsu_resp_NS = lsu_resp_CS;
     core_lsu_gnt = 1'b0;
 
     if (core_axi_req)
     begin
       core_lsu_gnt = core_axi_gnt;
-      NS = AXI;
+      lsu_resp_NS = AXI;
     end
     else if (core_data_req)
     begin
       core_lsu_gnt = core_data_gnt;
-      NS = RAM;
+      lsu_resp_NS = RAM;
     end
   end
 
   // route response back to LSU
-  always_comb
-  begin
-    core_lsu_rdata  = 'h0;
-    core_lsu_rvalid = 1'b0;
-
-    case (CS)
-      AXI:
-      begin
-        core_lsu_rdata  = core_axi_rdata;
-        core_lsu_rvalid = core_axi_rvalid;
-      end
-
-      RAM:
-      begin
-        core_lsu_rdata  = core_data_rdata;
-        core_lsu_rvalid = core_data_rvalid;
-      end
-    endcase
-  end
+  assign core_lsu_rdata  = (lsu_resp_CS == AXI) ? core_axi_rdata : core_data_rdata;
+  assign core_lsu_rvalid = core_axi_rvalid | core_data_rvalid;
 
 
 
@@ -363,8 +342,7 @@ module core_region
 
   instr_ram_wrap
   #(
-    .ADDR_WIDTH ( `INSTR_RAM_ADDR_WIDTH  ),
-    .NUM_WORDS  ( `NUM_WORD          )
+    .RAM_SIZE  ( `NUM_WORD          )
   )
   instr_mem
   (
@@ -445,8 +423,7 @@ module core_region
   //----------------------------------------------------------------------------//
   sp_ram_wrap
   #(
-    .ADDR_WIDTH ( `RAM_ADDR_WIDTH    ),
-    .NUM_WORDS  ( `NUM_WORD          )
+    .RAM_SIZE ( `NUM_WORD )
   )
   data_mem
   (
