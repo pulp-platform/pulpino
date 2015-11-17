@@ -13,10 +13,10 @@ module tb;
   parameter  BAUDRATE      = 1562500;
   parameter  CLK_USE_FLL   = 0;  // 0 or 1
 
-  logic s_clk   = 1'b0;
-  logic s_rst_n = 1'b0;
+  logic         s_clk   = 1'b0;
+  logic         s_rst_n = 1'b0;
 
-  logic fetch_enable = 1'b0;
+  logic         fetch_enable = 1'b0;
 
   logic [1:0]   padmode_spi_master;
   logic         spi_sck   = 1'b0;
@@ -31,18 +31,18 @@ module tb;
   logic         spi_sdi2;
   logic         spi_sdi3;
 
-  logic uart_tx;
-  logic uart_rx;
+  logic         uart_tx;
+  logic         uart_rx;
 
-  logic [31:0] gpio_out;
+  logic [31:0]  gpio_out;
 
-  logic tck;
-  logic trstn;
-  logic tms;
-  logic tdi;
-  logic tdo;
+  logic         tck   = 1'b0;
+  logic         trstn = 1'b0;
+  logic         tms   = 1'b0;
+  logic         tdi   = 1'b0;
+  logic         tdo;
 
-  logic [31:0] recv_data;
+  logic [31:0]  recv_data;
 
 
   generate if(ENABLE_VPI == 1)
@@ -51,17 +51,17 @@ module tb;
     jtag_dpi
     #(
       .TIMEOUT_COUNT ( 6'd10 )
-      )
+    )
     i_jtag
     (
-      .clk_i    ( s_clk           ),
-      .enable_i ( s_rst_n         ),
+      .clk_i    ( s_clk   ),
+      .enable_i ( s_rst_n ),
 
-      .tms_o    ( tms    ),
-      .tck_o    ( tck    ),
-      .trst_o   ( trstn  ),
-      .tdi_o    ( tdi    ),
-      .tdo_i    ( tdo    )
+      .tms_o    ( tms     ),
+      .tck_o    ( tck     ),
+      .trst_o   ( trstn   ),
+      .tdi_o    ( tdi     ),
+      .tdo_i    ( tdo     )
      );
   end
   endgenerate
