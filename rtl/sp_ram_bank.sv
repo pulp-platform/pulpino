@@ -76,7 +76,9 @@ module sp_ram_bank
         default:
         begin
           `ifndef SYNTHESIS
-          $error("INVALID BANK SIZE FOUND");
+          initial begin
+            $error("INVALID BANK SIZE FOUND: %d", BANK_SIZE);
+          end
           `endif
         end
       endcase
