@@ -82,66 +82,65 @@ module tb;
 
   pulpino_top top_i
   (
-    .clk   ( s_clk   ),
-    .rst_n ( s_rst_n ),
+    .clk               ( s_clk        ),
+    .rst_n             ( s_rst_n      ),
 
-    .clk_sel_i      (1'b0),
-    .scan_en_i      (1'b0),
-    .testmode_i     (1'b0),
-    .fetch_enable_i ( fetch_enable ),
+    .clk_sel_i         ( 1'b0         ),
+    .testmode_i        ( 1'b0         ),
+    .fetch_enable_i    ( fetch_enable ),
 
-    .spi_clk_i  ( spi_sck  ),
-    .spi_cs_i   ( spi_csn  ),
-    .spi_mode_o ( spi_mode ),
-    .spi_sdo0_o ( spi_sdi0 ),
-    .spi_sdo1_o ( spi_sdi1 ),
-    .spi_sdo2_o ( spi_sdi2 ),
-    .spi_sdo3_o ( spi_sdi3 ),
-    .spi_sdi0_i ( spi_sdo0 ),
-    .spi_sdi1_i ( spi_sdo1 ),
-    .spi_sdi2_i ( spi_sdo2 ),
-    .spi_sdi3_i ( spi_sdo3 ),
+    .spi_clk_i         ( spi_sck      ),
+    .spi_cs_i          ( spi_csn      ),
+    .spi_mode_o        ( spi_mode     ),
+    .spi_sdo0_o        ( spi_sdi0     ),
+    .spi_sdo1_o        ( spi_sdi1     ),
+    .spi_sdo2_o        ( spi_sdi2     ),
+    .spi_sdo3_o        ( spi_sdi3     ),
+    .spi_sdi0_i        ( spi_sdo0     ),
+    .spi_sdi1_i        ( spi_sdo1     ),
+    .spi_sdi2_i        ( spi_sdo2     ),
+    .spi_sdi3_i        ( spi_sdo3     ),
 
-    .spi_master_clk_o   ( ),
-    .spi_master_csn0_o  (  ),
-    .spi_master_csn1_o  (  ),
-    .spi_master_csn2_o  (  ),
-    .spi_master_csn3_o  (  ),
-    .spi_master_mode_o  ( ),
-    .spi_master_sdo0_o  ( ),
-    .spi_master_sdo1_o  ( ),
-    .spi_master_sdo2_o  ( ),
-    .spi_master_sdo3_o  ( ),
-    .spi_master_sdi0_i  ( ),
-    .spi_master_sdi1_i  ( ),
-    .spi_master_sdi2_i  ( ),
-    .spi_master_sdi3_i  ( ),
+    .spi_master_clk_o  (              ),
+    .spi_master_csn0_o (              ),
+    .spi_master_csn1_o (              ),
+    .spi_master_csn2_o (              ),
+    .spi_master_csn3_o (              ),
+    .spi_master_mode_o (              ),
+    .spi_master_sdo0_o (              ),
+    .spi_master_sdo1_o (              ),
+    .spi_master_sdo2_o (              ),
+    .spi_master_sdo3_o (              ),
+    .spi_master_sdi0_i (              ),
+    .spi_master_sdi1_i (              ),
+    .spi_master_sdi2_i (              ),
+    .spi_master_sdi3_i (              ),
 
-    .scl_pad_i    (   ),
-    .scl_pad_o    (   ),
-    .scl_padoen_o (   ),
-    .sda_pad_i    (   ),
-    .sda_pad_o    (   ),
-    .sda_padoen_o (   ),
+    .scl_pad_i         (              ),
+    .scl_pad_o         (              ),
+    .scl_padoen_o      (              ),
+    .sda_pad_i         (              ),
+    .sda_pad_o         (              ),
+    .sda_padoen_o      (              ),
 
 
-    .uart_tx   ( uart_rx  ),
-    .uart_rx   ( uart_rx  ),
-    .uart_rts  (          ),
-    .uart_dtr  (          ),
-    .uart_cts  ( 1'b0     ),
-    .uart_dsr  (          ),
+    .uart_tx           ( uart_rx      ),
+    .uart_rx           ( uart_rx      ),
+    .uart_rts          (              ),
+    .uart_dtr          (              ),
+    .uart_cts          ( 1'b0         ),
+    .uart_dsr          (              ),
 
-    .gpio_in     ( ),
-    .gpio_out    ( gpio_out ),
-    .gpio_dir    ( ),
-    .gpio_padcfg ( ),
+    .gpio_in           (              ),
+    .gpio_out          ( gpio_out     ),
+    .gpio_dir          (              ),
+    .gpio_padcfg       (              ),
 
-    .tck_i   ( tck   ),
-    .trstn_i ( trstn ),
-    .tms_i   ( tms   ),
-    .tdi_i   ( tdi   ),
-    .tdo_o   ( tdo   )
+    .tck_i             ( tck          ),
+    .trstn_i           ( trstn        ),
+    .tms_i             ( tms          ),
+    .tdi_i             ( tdi          ),
+    .tdo_o             ( tdo          )
   );
 
   generate
@@ -187,8 +186,6 @@ module tb;
     end
     else if (LOAD_L2 == "SPI")
     begin
-      $readmemh("./slm_files/spi_stim.txt", stimuli);  // read in the stimuli vectors  == address_value
-
       spi_load(use_qspi);
       spi_check(use_qspi);
     end

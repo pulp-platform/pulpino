@@ -127,6 +127,8 @@
   task spi_load;
     input  use_qspi;
     begin
+      $readmemh("./slm_files/spi_stim.txt", stimuli);  // read in the stimuli vectors  == address_value
+
       spi_addr        = stimuli[num_stim][63:32]; // assign address
       spi_data        = stimuli[num_stim][31:0];  // assign data
 
