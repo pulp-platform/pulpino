@@ -36,7 +36,7 @@ cmake-3.3.0 "$SW_DIR" \
 
 # Add -G "Ninja" to the cmake call above to use ninja instead of make
 # compile RTL
-ninja vcompile
+ninja vcompile || exit 1
 
 # compile SW
-ninja
+ninja || exit 1
