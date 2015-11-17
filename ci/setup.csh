@@ -12,7 +12,9 @@ set SIZE=`which riscv32-unknown-elf-size`
 set RISCV=1
 set RVC=0
 
-set VSIM=`which vsim`
+if (! ($?VSIM) ) then
+  set VSIM=`which vsim`
+endif
 
 set GIT_DIR=../../
 set SIM_DIR="$GIT_DIR/vsim"
