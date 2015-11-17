@@ -154,8 +154,10 @@ module core_region
     )
     RISCV_CORE
     (
-      .clk             (  clk_core_int     ),
-      .rst_n           (  rst_n            ),
+      .clk             ( clk_core_int      ),
+      .rst_n           ( rst_n             ),
+
+      .test_en_i       ( 1'b0              ),
 
       .boot_addr_i     ( 32'h0000_0000     ),
       .core_id_i       ( 5'h0              ),
@@ -175,6 +177,7 @@ module core_region
       .data_rdata_i    ( core_lsu_rdata    ),
       .data_gnt_i      ( core_lsu_gnt      ),
       .data_rvalid_i   ( core_lsu_rvalid   ),
+      .data_err_i      ( 1'b0              ),
 
       .irq_i           ( irq_i             ),
 
