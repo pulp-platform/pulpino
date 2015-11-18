@@ -27,8 +27,8 @@ ips/axi/axi_mem_if_DP                   6c2667b6476cbeac499eca71fe5b99471fc14673
 ips/axi/axi_node                        fe326f3bf7ff1a760887aa6ac1de5b427d50ed59
 ips/axi/axi_slice                       9e5a77c163013c1ff6fbdeb7a25a7307fcf4c404
 ips/axi/axi_slice_dc                    de6589d0c05890e91c0785942c206d4797482de3
-ips/axi/axi_spi_slave                   6097127b1c22d53bebb86a3768be15aeef22ce7a
-ips/axi/axi_spi_master                  5c07aa27ebce0c70f6893812d334cf7fc091fed3
+ips/axi/axi_spi_slave                   a58ddee4c8da07049e8444f1d82c9382c29232e5
+ips/axi/axi_spi_master                  1550eb8d765f229798d72c3971a33349e6f37598
 ips/or10n                               3635652cd562401c383af6dec2eda7dcfbb69247
 ips/riscv                               exc_ctrl
 ips/fll                                 832d04d1cbdf66d4cdbf9ff17f7c238788ac632c
