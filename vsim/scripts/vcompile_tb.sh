@@ -2,7 +2,7 @@
 source scripts/colors.sh
 
 
-echo "${Green} -> Compiling PULP Testbench..."
+echo "${Green} -> Compiling PULPino Testbench..."
 
 echo "${Green}Compiling component:   ${Brown} work.tb ${NC}"
 echo "${Green}library: work ${NC}"

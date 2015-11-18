@@ -21,6 +21,8 @@ module riscv_register_file
     // Clock and Reset
     input  logic         clk,
     input  logic         rst_n,
+    
+    input  logic                   test_en_i,
        
     //Read port R1
     input  logic [ADDR_WIDTH-1:0]  raddr_a_i,

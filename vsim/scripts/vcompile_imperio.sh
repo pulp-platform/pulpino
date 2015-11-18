@@ -23,7 +23,9 @@ vlog -work imperio_lib -quiet -sv ../imperio/sourcecode/imperio.sv   || exit 1
 vlog -work imperio_lib -quiet -sv ../imperio/sourcecode/memwrap.sv   || exit 1
 
 vlog -work imperio_lib -quiet +define+FUNCTIONAL /usr/pack/umc-65-kgf/umc/ll/uk65lscllmvbbl/b03/verilog/uk65lscllmvbbl_sdf30.v        || exit 1
+vlog -work imperio_lib -quiet +define+functional   /usr/pack/umc-65-kgf/umc/ll/u065gioll25mvir/b04/verilog/u065gioll25mvir.v          || exit 1
 vlog -work imperio_lib -quiet +delay_mode_zero   /usr/pack/umc-65-kgf/faraday/ll/memaker/201301.1.1/verilog.dz/SHKA65_1024X8X4CM8.v   || exit 1
+
 
 echo "${Cyan}--> Imperio components compilation complete! ${NC}"
 
