@@ -253,7 +253,9 @@ module pulpino_top
     .fll1_wdata_o    ( cfgd_fll_int      ),
     .fll1_ack_i      ( cfgack_fll_int    ),
     .fll1_rdata_i    ( cfgq_fll_int      ),
-    .fll1_lock_i     ( lock_fll_int      )
+    .fll1_lock_i     ( lock_fll_int      ),
+    .pad_cfg_o       ( pad_cfg_o         ),
+    .pad_mux_o       ( pad_mux_o         )
   );
 
 
