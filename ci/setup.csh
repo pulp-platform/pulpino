@@ -21,6 +21,9 @@ set SIM_DIR="$GIT_DIR/vsim"
 set SW_DIR="$GIT_DIR/sw"
 
 mkdir -p ./sw/build
+mkdir -p ./sw/build-rvc
+# mkdir -p ./sw/build-imperio
+
 cd sw/build
 
 cmake-3.3.0 "$SW_DIR" \
@@ -36,9 +39,34 @@ cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_SIZE="$SIZE" \
     -G "Ninja"
 
-# Add -G "Ninja" to the cmake call above to use ninja instead of make
 # compile RTL
 ninja vcompile || exit 1
 
 # compile SW
 ninja || exit 1
+
+cd ../..
+
+set RVC=1
+cd sw/build-rvc
+
+cmake-3.3.0 "$SW_DIR" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DPULP_MODELSIM_DIRECTORY="$SIM_DIR" \
+    -DVSIM="$VSIM" \
+    -DCMAKE_C_COMPILER="$COMPILER" \
+    -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
+    -DRISCV=$RISCV \
+    -DRVC=$RVC \
+    -DCMAKE_OBJCOPY="$OBJCOPY" \
+    -DCMAKE_OBJDUMP="$OBJDUMP" \
+    -DCMAKE_SIZE="$SIZE" \
+    -G "Ninja"
+
+# compile RTL
+ninja vcompile || exit 1
+
+# compile SW
+ninja || exit 1
+
+# TODO: do that same for imperio

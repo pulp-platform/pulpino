@@ -8,9 +8,19 @@ before_script:
 riscv_tests:
   stage: test
   script:
-    - ./ci/riscv-tests.csh
+    - ./ci/rtl-riscv.csh
 
 sequential_tests:
   stage: test
   script:
-    - ./ci/rtl-sequential_tests.csh
+    - ./ci/rtl-sequential.csh
+
+riscv_tests_rvc:
+  stage: test
+  script:
+    - ./ci/rtl-riscv-rvc.csh
+
+sequential_tests_rvc:
+  stage: test
+  script:
+    - ./ci/rtl-sequential-rvc.csh
