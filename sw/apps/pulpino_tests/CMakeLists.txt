@@ -1,7 +1,7 @@
 #include_directories(../or10n_tests/includes)
 
 #add_subdirectory(testTimer)
-
+add_subdirectory(testInterrupt)
 #add_subdirectory(testSTDIO)
 #add_subdirectory(testSPIM)
 #add_subdirectory(testPipeStage)

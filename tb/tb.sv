@@ -128,7 +128,7 @@ module tb;
     .uart_rx           ( uart_rx      ),
     .uart_rts          (              ),
     .uart_dtr          (              ),
-    .uart_cts          ( 1'b0         ),
+    .uart_cts          ( 1'b1         ),
     .uart_dsr          (              ),
 
     .gpio_in           (              ),

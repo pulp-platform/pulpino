@@ -67,8 +67,10 @@
 
 
 // ISRS
-#define TIMER_A_OVERFLOW 		0x1e
-#define TIMER_A_OUTPUT_CMP 		0x1f
+#define TIMER_A_OVERFLOW        0x1C
+#define TIMER_A_OUTPUT_CMP      0x1D
+#define TIMER_B_OVERFLOW 		0x1E
+#define TIMER_B_OUTPUT_CMP 		0x1F
 
 
 #endif

@@ -53,6 +53,12 @@ void uart_send(const char* str, unsigned int len) {
   uart_unlock();
 }
 
+char uart_getchar() {
+  while((*((volatile int*)UART_REG_LSR) & 0x1) != 0x1);
+
+  return *(volatile int*)UART_REG_RBR;
+}
+
 void uart_sendchar(const char c) {
   // wait until there is space in the fifo
   while( (*(volatile unsigned int*)(UART_REG_LSR) & 0x20) == 0);

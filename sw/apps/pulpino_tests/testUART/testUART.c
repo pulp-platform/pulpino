@@ -30,14 +30,14 @@ void check_uart(testresult_t *result, void (*start)(), void (*stop)()) {
     uart_wait_tx_done();
     uart_send("01234567", 8);
 
-    // for (i = 0; i < 8; i++) {
-    //   c = uart_getchar();
+    for (i = 0; i < 8; i++) {
+      c = uart_getchar();
 
-    //   if (c != '0' + i) {
-    //     result->errors++;
-    //     printf("Wrong character received: %c\n", c);
-    //   }
-    // }
+      if (c != '0' + i) {
+        result->errors++;
+        printf("Wrong character received: %c\n", c);
+      }
+    }
   }
   
 }

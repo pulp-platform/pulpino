@@ -24,6 +24,8 @@ void uart_set_cfg(int parity, uint16_t clk_counter);
 void uart_send(const char* str, unsigned int len);
 void uart_sendchar(const char c);
 
+char uart_getchar();
+
 void uart_wait_tx_done(void);
 
 

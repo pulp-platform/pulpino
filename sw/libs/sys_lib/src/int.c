@@ -13,12 +13,15 @@
 /* Interrupt handlers table */
 struct ihnd int_handlers[MAX_INT_HANDLERS];
 
+void handler_stub(void) {
+  printf("Stub called\n");
+}
 
 /* Initialize routine */
 void int_init(void)
 {
   for(int i = 0; i < MAX_INT_HANDLERS; i++) {
-    int_handlers[i].handler = 0;
+    int_handlers[i].handler = (void *) handler_stub;
     int_handlers[i].arg = 0;
   }
 }
@@ -39,41 +42,24 @@ int int_add(unsigned long irq, void (* handler)(void *), void *arg)
 __attribute__((weak))
 void int_main(void) {
   // select correct interrupt
-  // read status register to get pending interrupt - therefore acknowledging the interrupt
-  // execute ISR. Offset by -1 since the addressing in the register starts with 1..32
-
-  /* unsigned long irq = 0; //IAR;
-  if (int_handlers[irq].handler != 0)
-    int_handlers[irq].handler(int_handlers[irq].arg); */
+  // read cause register to get pending interrupt
+  // execute ISR.
 
   int mcause;
   csrr(mcause, mcause);
 
-  ICP = mcause;
-  printf("In ISR. cause = %d\n", mcause);
+  // clear pending register
+  
+
+  printf("In ISR. cause = %u\n", mcause & 0x1F);
 
   if (mcause & (1 << 31)) {
     // interrupt handler called because of external IRQ
-    int_handlers[mcause & 0x1f].handler(int_handlers[mcause & 0x1f].arg);
+     int_handlers[(mcause & 0x1F)].handler(int_handlers[(mcause & 0x1F)].arg);
   }
 
   printf("Leaving ISR.\n");
-}
-
-/**
- * \brief Timer compare interrupt service routine.
- * \param void
- * \return void
- *
- * Interrupt service routine triggered when
- * 32 bit mtimecmp and mtime match. Only triggered
- * when interrupts are enabled and mtimecmp is not 0x00.
- *
- * Can be redefined by user software.
- */
-__attribute__((weak))
-void int_time_cmp(void) {
-
+  ICP = (1 << mcause);
 }
 
 /**
