@@ -30,7 +30,7 @@ ips/axi/axi_slice_dc                    de6589d0c05890e91c0785942c206d4797482de3
 ips/axi/axi_spi_slave                   a58ddee4c8da07049e8444f1d82c9382c29232e5
 ips/axi/axi_spi_master                  1550eb8d765f229798d72c3971a33349e6f37598
 ips/or10n                               3635652cd562401c383af6dec2eda7dcfbb69247
-ips/riscv                               exc_ctrl
+ips/riscv                               master
 ips/fll                                 832d04d1cbdf66d4cdbf9ff17f7c238788ac632c
 
 # chip
