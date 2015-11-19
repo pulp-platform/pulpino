@@ -2,10 +2,8 @@ stages:
   - build
   - test
 
-build:
-  stage: build
-  script:
-    - ./ci/build.csh
+before_script:
+  - ./ci/setup.csh
 
 riscv_tests:
   stage: test
