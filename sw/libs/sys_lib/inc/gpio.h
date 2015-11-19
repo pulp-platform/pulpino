@@ -19,8 +19,7 @@
 #define GPIO_REG_PADCFG6              ( GPIO_BASE_ADDR + 0x38 )
 #define GPIO_REG_PADCFG7              ( GPIO_BASE_ADDR + 0x3C )
 
-#define SOC_CTRL_PADFUN0              ( CLK_DIV_ADDR + 0x00 )
-#define SOC_CTRL_PADFUN1              ( CLK_DIV_ADDR + 0x04 )
+#define SOC_CTRL_PADFUN0              ( SOC_CTRL_BASE_ADDR + 0x00 )
 
 #define PIN_SSPI_SIO0 0
 #define PIN_SSPI_SIO1 1
@@ -37,6 +36,18 @@
 #define PIN_MSPI_CSN2 12
 #define PIN_MSPI_CSN3 13
 #define PIN_MSPI_SCK  14
+
+// #define PIN_SSPI_CSN  4
+// #define PIN_SSPI_SIO0 5
+// #define PIN_SSPI_SIO1 6
+// #define PIN_SSPI_SIO2 7
+// #define PIN_SSPI_SIO3 8
+
+// #define PIN_MSPI_SIO3 13
+// #define PIN_MSPI_SIO2 14
+// #define PIN_MSPI_SIO1 15
+// #define PIN_MSPI_SIO0 16
+// #define PIN_MSPI_CSN0 17
 
 #define FUNC_SPI  0
 #define FUNC_GPIO 1
