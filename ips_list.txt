@@ -22,7 +22,7 @@ ips/apb_peripherals/apb_pulpino         master
 ips/apb_internals/apb_fll_if            9463c71351f671c262295d0d9785a4db2a0c39ee
 
 
-ips/axi/axi2apb                         1bceea6032ad163bf90baf91d4622fc250629999
+ips/axi/axi2apb                         8eb87763415c999c5f46f9b0c817e5dc2575f037
 ips/axi/axi_mem_if_DP                   94e1843ea49e138c23bf4d70680ff8490bb84e36
 ips/axi/axi_node                        fe326f3bf7ff1a760887aa6ac1de5b427d50ed59
 ips/axi/axi_slice                       9e5a77c163013c1ff6fbdeb7a25a7307fcf4c404
