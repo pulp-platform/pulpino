@@ -213,7 +213,7 @@ module core_region
       .instr_addr_o    ( core_instr_addr   ),
       .instr_req_o     ( core_instr_req    ),
       .instr_rdata_i   ( core_instr_rdata  ),
-      .instr_grant_i   ( core_instr_gnt    ),
+      .instr_gnt_i     ( core_instr_gnt    ),
       .instr_rvalid_i  ( core_instr_rvalid ),
 
       .data_addr_o     ( core_lsu_addr     ),
@@ -223,7 +223,7 @@ module core_region
       .data_be_o       ( core_lsu_be       ),
       .data_rdata_i    ( core_lsu_rdata    ),
       .data_gnt_i      ( core_lsu_gnt      ),
-      .data_r_valid_i  ( core_lsu_rvalid   ),
+      .data_rvalid_i   ( core_lsu_rvalid   ),
 
       .irq_i           ( (|irq_i)          ),
       .irq_nm_i        ( 1'b0              ),
