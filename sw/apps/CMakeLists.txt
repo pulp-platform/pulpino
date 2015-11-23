@@ -140,4 +140,4 @@ if(${RISCV})
 endif()
 
 add_subdirectory(sequential_tests)
-add_subdirectory(pulpino_tests)
+add_subdirectory(imperio_tests)

@@ -1,1 +1,0 @@
-add_application(interrupt_test main.c)

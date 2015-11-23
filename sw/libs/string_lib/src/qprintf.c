@@ -220,21 +220,11 @@ int printf(const char *format, ...)
   int pc;
   va_list va;
 
-#ifdef PRINTF_USE_UART
-  // acquire lock
-  uart_lock();
-#endif
-
   va_start(va, format);
 
   pc = qprint(0, format, va);
 
   va_end(va);
-
-#ifdef PRINTF_USE_UART
-  // release lock
-  uart_unlock();
-#endif
 
   return pc;
 }

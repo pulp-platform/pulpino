@@ -22,7 +22,8 @@ set SW_DIR="$GIT_DIR/sw"
 
 mkdir -p ./sw/build
 mkdir -p ./sw/build-rvc
-# mkdir -p ./sw/build-imperio
+mkdir -p ./sw/build-imperio
+mkdir -p ./sw/build-imperio-rvc
 
 cd sw/build
 
@@ -37,6 +38,7 @@ cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
     -DCMAKE_OBJDUMP="$OBJDUMP" \
     -DCMAKE_SIZE="$SIZE" \
+    -DARG_TB="run.tcl" \
     -G "Ninja"
 
 # compile RTL
@@ -61,6 +63,7 @@ cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
     -DCMAKE_OBJDUMP="$OBJDUMP" \
     -DCMAKE_SIZE="$SIZE" \
+    -DARG_TB="run.tcl" \
     -G "Ninja"
 
 # compile RTL
@@ -69,4 +72,60 @@ ninja vcompile || exit 1
 # compile SW
 ninja || exit 1
 
-# TODO: do that same for imperio
+#############################################
+#                                           #
+#  Imperio Tests                            #
+#                                           #
+#############################################
+
+cd ../..
+
+set RVC=0
+cd sw/build-imperio
+
+cmake-3.3.0 "$SW_DIR" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DPULP_MODELSIM_DIRECTORY="$SIM_DIR" \
+    -DVSIM="$VSIM" \
+    -DCMAKE_C_COMPILER="$COMPILER" \
+    -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
+    -DRISCV=$RISCV \
+    -DRVC=$RVC \
+    -DCMAKE_OBJCOPY="$OBJCOPY" \
+    -DCMAKE_OBJDUMP="$OBJDUMP" \
+    -DCMAKE_SIZE="$SIZE" \
+    -DARG_TB="run_imperio.tcl" \
+    -G "Ninja"
+
+# compile RTL
+ninja vcompile || exit 1
+
+# compile SW
+ninja || exit 1
+
+cd ../..
+
+set RVC=1
+cd sw/build-imperio-rvc
+
+cmake-3.3.0 "$SW_DIR" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DPULP_MODELSIM_DIRECTORY="$SIM_DIR" \
+    -DVSIM="$VSIM" \
+    -DCMAKE_C_COMPILER="$COMPILER" \
+    -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
+    -DRISCV=$RISCV \
+    -DRVC=$RVC \
+    -DCMAKE_OBJCOPY="$OBJCOPY" \
+    -DCMAKE_OBJDUMP="$OBJDUMP" \
+    -DCMAKE_SIZE="$SIZE" \
+    -DARG_TB="run_imperio.tcl" \
+    -G "Ninja"
+
+# compile RTL
+ninja vcompile || exit 1
+
+# compile SW
+ninja || exit 1
+
+# TODO: Add SPI, JTAG

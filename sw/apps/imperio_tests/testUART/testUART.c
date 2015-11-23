@@ -30,7 +30,7 @@ void check_uart(testresult_t *result, void (*start)(), void (*stop)()) {
     for (j = 0; j < 10; j++) {
       uart_wait_tx_done();
       uart_send("01234567", 8);
-
+      
       for (i = 0; i < 8; i++) {
         c = uart_getchar();
 

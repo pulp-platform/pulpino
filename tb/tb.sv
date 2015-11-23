@@ -1,7 +1,8 @@
 
 `include "config.sv"
-`define REF_CLK_PERIOD   (2*15.25us)  // 32.786 kHz
-`define CLK_PERIOD       20.00ns      // 50 MHz
+
+`define REF_CLK_PERIOD   (2*15.25us)  // 32.786 kHz --> FLL reset value --> 50 MHz
+`define CLK_PERIOD       20.00ns      // 25 MHz
 
 module tb;
   timeunit      1ns;
@@ -10,7 +11,7 @@ module tb;
   parameter  LOAD_L2       = "PRELOAD";   // valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
   parameter  SPI           = "SINGLE";    // valid values are "SINGLE", "QUAD"
   parameter  ENABLE_VPI    = 0;
-  parameter  BAUDRATE      = 1562500;
+  parameter  BAUDRATE      = 781250; // 1562500
   parameter  CLK_USE_FLL   = 0;  // 0 or 1
 
   logic         s_clk   = 1'b0;
@@ -35,7 +36,7 @@ module tb;
   logic         uart_rx;
   logic         s_uart_dtr;
   logic         s_uart_rts;
-  
+
   logic [31:0]  gpio_out;
 
   logic         tck   = 1'b0;
@@ -68,7 +69,7 @@ module tb;
   end
   endgenerate
 
-
+  // use 8N1
   uart_tb_rx
   #(
     .BAUD_RATE(BAUDRATE),

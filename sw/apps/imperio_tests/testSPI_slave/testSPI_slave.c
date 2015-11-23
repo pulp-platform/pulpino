@@ -75,145 +75,6 @@
 // #define PRINT_CHECKSUMS_OUTPUT
 // #define PRINT_CHECKSUMS_TCDM
 
-#if 0 //def SINGLE_BUFFER
-
-
-/* TCDM Input and Output memory buffers */
-__attribute__ ((section(".heapsram"))) unsigned char tcdm_mem_in[N_CORES][DMA_SIZE];
-__attribute__ ((section(".heapsram"))) unsigned char tcdm_mem_out[N_CORES][DMA_SIZE];
-
-
-void core_computation(int coreID) {
-
-    int i ;
-
-    for (i=0; i<DMA_SIZE; i++) {
-        tcdm_mem_out[coreID][i] = tcdm_mem_in[coreID][i] ^ 0xFF ;
-    }
-
-}
-
-
-int main() {
-
-    int i;
-    int coreID = get_core_id();
-    checksums[coreID] = 0 ;
-
-    if (coreID == 0)
-        uart_set_cfg(0, 26) ;
-    BARRIER         0
-    if(coreID == 0) {
-
-        /* Pin 16th INPUT  - Host writes
-         * Pin 17th OUTPUT - PULP writes
-         * NOTE: GPIO pin 5 already occupied, thus pin 16 -> pad 17 and pin 17 -> pad 18 */
-        *(volatile unsigned int*)(GPIO_PADDIR)      = 0x20000;     // 17th pin as output all the others as input
-        *(volatile unsigned int*)(GPIO_PADOUT)      = 0x00000;     //
-        *(volatile unsigned int*)(SOC_CTRL_PADFUN0) = 0x60000;     // sets pin uart_cts as gpio
-        *(volatile unsigned int*)(GPIO_INTEN)       = 0x2000;      //
-
-        /* Interrupt Type 01 : raise */
-        *(volatile unsigned int*)(GPIO_INTTYPE0)    = 0x0 ;
-        *(volatile unsigned int*)(GPIO_INTTYPE1)    = 0x10000 ;
-
-        /* first event sent to the host to start writing in l2 */
-        *(volatile unsigned int*)(GPIO_PADOUT)      = 0x20000 ;
-        *(volatile unsigned int*)(GPIO_PADOUT)      = 0x0 ;
-    }
-
-    unsigned char *data_in  = (unsigned char *) IN_EXT_DATA_ADDR  + coreID*DMA_SIZE ;
-    unsigned char *data_out = (unsigned char *) OUT_EXT_DATA_ADDR + coreID*DMA_SIZE ;
-
-    synch_barrier();
-
-    for (i=0; i<N_ITER; i++) {
-
-        /* Wait the event from the Master to start DMA transfers from L2 to TCDM */
-        clear_evnt_buff_low(0x200) ;
-        set_evnt_mask_low(coreID, 0x200) ;        // event bit 9 0x200 events_ids.h
-        wait_event() ;
-        /* reset the interrupt signal just reading */
-        int dummy_var = *(volatile unsigned int*) GPIO_INTSTATUS ;
-
-        /* ======= DMA INPUT Copy ====== */
-        set_tcdm_addr((int)(tcdm_mem_in[coreID])) ;
-        set_ext_addr((int)(data_in)) ;
-        push_cmd(LD256) ;
-        dma_barrier() ;
-        /* ============================= */
-
-        core_computation(coreID) ;
-
-        /* ====== DMA OUTPUT Copy ====== */
-        set_tcdm_addr((int)(tcdm_mem_out[coreID])) ;
-        set_ext_addr((int)(data_out)) ;
-        push_cmd(ST256) ;
-        dma_barrier() ;
-        /* ============================= */
-
-        /* ==== Checksum computation ==== */
-        {
-            int j ;
-            unsigned int checksum = 0 ;
-            for (j=0; j<DMA_SIZE; j++)
-                checksum += tcdm_mem_out[coreID][j] ;
-            checksums[coreID] += checksum ;
-        }
-        /* ============================= */
-
-        synch_barrier();
-
-        if(coreID == 0) {
-            /* Send the event to the Master to start another burst */
-            *(volatile unsigned int*)(GPIO_PADOUT)      = 0x1000 ;
-            *(volatile unsigned int*)(GPIO_PADOUT)      = 0x0 ;
-        }
-    }
-
-    switch (coreID) {
-        case 0 :
-            if (checksums[coreID] != CHECKSUM_CORE0*N_ITER)
-                printf("CORE: %d ERROR\t[%d %d]\n", coreID, CHECKSUM_CORE0*N_ITER, checksums[coreID], 0) ;
-            else
-                printf("CORE: %d OK\t\t[%d %d]\n", coreID, CHECKSUM_CORE0*N_ITER, checksums[coreID], 0) ;
-            break ;
-        case 1 :
-            if (checksums[coreID] != CHECKSUM_CORE1*N_ITER)
-                printf("CORE: %d ERROR\t[%d %d]\n", coreID, CHECKSUM_CORE1*N_ITER, checksums[coreID], 0) ;
-            else
-                printf("CORE: %d OK\t\t[%d %d]\n", coreID, CHECKSUM_CORE1*N_ITER, checksums[coreID], 0) ;
-            break ;
-        case 2 :
-            if (checksums[coreID] != CHECKSUM_CORE2*N_ITER)
-                printf("CORE: %d ERROR\t[%d %d]\n", coreID, CHECKSUM_CORE2*N_ITER, checksums[coreID], 0) ;
-            else
-                printf("CORE: %d OK\t\t[%d %d]\n", coreID, CHECKSUM_CORE2*N_ITER, checksums[coreID], 0) ;
-            break ;
-        case 3 :
-            if (checksums[coreID] != CHECKSUM_CORE3*N_ITER)
-                printf("CORE: %d ERROR\t[%d %d]\n", coreID, CHECKSUM_CORE3*N_ITER, checksums[coreID], 0) ;
-            else
-                printf("CORE: %d OK\t\t[%d %d]\n", coreID, CHECKSUM_CORE3*N_ITER, checksums[coreID], 0) ;
-            break ;
-        default :
-            printf("WRONG CORE ID: %d\n", coreID, 0, 0, 0) ;
-            break ;
-    }
-
-    uart_wait_tx_done() ;
-
-    synch_barrier();
-
-    if(coreID == 0) {
-      eoc(0);
-    }
-
-    return 0;
-}
-
-#else
-
 __attribute__ ((section(".heapsram"))) unsigned int checksums_tcdmin[N_CORES];
 __attribute__ ((section(".heapsram"))) unsigned int checksums_l2in  [N_CORES];
 __attribute__ ((section(".heapsram"))) unsigned int checksums_tcdm  [N_CORES];
@@ -269,7 +130,7 @@ void conv16_unrolled_ptr_5x5_four_coarse(int16_t *__restrict__ W, int16_t *__res
    int16_t *y_ptr = y + a*oh*ow;
    int16_t *x_base = x + b*h*w + (fh-1)*w + (fw-1);
    int16_t *W_base = &W[((a*nif)+b)*fh*fw];
-   
+
    for (i=0; i<oh; i++) {
       for (j=myid; j<ow; j+=N_CORES) {
 
@@ -319,8 +180,6 @@ void conv16_unrolled_ptr_5x5_four_coarse(int16_t *__restrict__ W, int16_t *__res
    }
 }
 
-#endif
-
 void core_computation(int coreID, unsigned char *buffer_in, unsigned char *buffer_out) {
 
     int i, j;
@@ -346,11 +205,11 @@ void core_computation(int coreID, unsigned char *buffer_in, unsigned char *buffe
 #else /* not USE_HWCE */
 #ifdef USE_CONV16_GOLD
        if(get_core_id() == 0) {
-           conv16_gold(weights, (short *) buffer_in, (short *) buffer_out, 32, 16, 5, 5, 1, 0, 0); 
+           conv16_gold(weights, (short *) buffer_in, (short *) buffer_out, 32, 16, 5, 5, 1, 0, 0);
        }
 #else /* not USE_CONV16_GOLD */
-       conv16_unrolled_ptr_5x5_four_coarse(weights, (short *) buffer_in, (short *) buffer_out, 32, 16, 5, 5, 1, 0, 0); 
-#endif /* USE_CONV16_GOLD */ 
+       conv16_unrolled_ptr_5x5_four_coarse(weights, (short *) buffer_in, (short *) buffer_out, 32, 16, 5, 5, 1, 0, 0);
+#endif /* USE_CONV16_GOLD */
 #endif /* USE_HWCE */
     }
 #endif /* CONV_COMPUTE */
@@ -575,43 +434,12 @@ int main() {
 
     }
 
-//    switch (coreID) {
-//        case 0 :
-//            if (checksums[coreID] != CHECKSUM_CORE0*N_ITER)
-//                printf("CORE: %d ERROR\t[%d %d]\n", coreID, CHECKSUM_CORE0*N_ITER, checksums[coreID], 0) ;
-//            else
-//                printf("CORE: %d OK\t\t[%d %d]\n", coreID, CHECKSUM_CORE0*N_ITER, checksums[coreID], 0) ;
-//            break ;
-//        case 1 :
-//            if (checksums[coreID] != CHECKSUM_CORE1*N_ITER)
-//                printf("CORE: %d ERROR\t[%d %d]\n", coreID, CHECKSUM_CORE1*N_ITER, checksums[coreID], 0) ;
-//            else
-//                printf("CORE: %d OK\t\t[%d %d]\n", coreID, CHECKSUM_CORE1*N_ITER, checksums[coreID], 0) ;
-//            break ;
-//        case 2 :
-//            if (checksums[coreID] != CHECKSUM_CORE2*N_ITER)
-//                printf("CORE: %d ERROR\t[%d %d]\n", coreID, CHECKSUM_CORE2*N_ITER, checksums[coreID], 0) ;
-//            else
-//                printf("CORE: %d OK\t\t[%d %d]\n", coreID, CHECKSUM_CORE2*N_ITER, checksums[coreID], 0) ;
-//            break ;
-//        case 3 :
-//            if (checksums[coreID] != CHECKSUM_CORE3*N_ITER)
-//                printf("CORE: %d ERROR\t[%d %d]\n", coreID, CHECKSUM_CORE3*N_ITER, checksums[coreID], 0) ;
-//            else
-//                printf("CORE: %d OK\t\t[%d %d]\n", coreID, CHECKSUM_CORE3*N_ITER, checksums[coreID], 0) ;
-//            break ;
-//        default :
-//            printf("WRONG CORE ID: %d\n", coreID, 0, 0, 0) ;
-//            break ;
-//    }
-
-//    uart_wait_tx_done() ;
 
     set_evnt_mask_low(coreID, 0x001) ;        // set event mask listening for bit 0 = 0x001 = BARRIER in events_ids.h
     synch_barrier();
 
 #ifdef CHECKSUM_L2
-       
+
     // L2 checksum computation
     if (ptr_out == data_out[0])
         ptr_out = data_out[1] ;
@@ -619,7 +447,7 @@ int main() {
         ptr_out = data_out[0] ;
 
     int j ;
-    unsigned int checksum = 0 ; 
+    unsigned int checksum = 0 ;
     for (j=0; j<DMA_SIZE; j++) {
         checksum += ptr_out[coreID*DMA_SIZE + j] ;
     }

@@ -5,22 +5,58 @@ stages:
 before_script:
   - ./ci/setup.csh
 
-riscv_tests:
+rtl_riscv:
   stage: test
   script:
     - ./ci/rtl-riscv.csh
 
-sequential_tests:
+rtl_sequential:
   stage: test
   script:
     - ./ci/rtl-sequential.csh
 
-riscv_tests_rvc:
+rtl_riscv_rvc:
   stage: test
   script:
     - ./ci/rtl-riscv-rvc.csh
 
-sequential_tests_rvc:
+rtl_sequential_rvc:
   stage: test
   script:
     - ./ci/rtl-sequential-rvc.csh
+
+#############################################
+#                                           #
+#  Imperio Tests                            #
+#                                           #
+#############################################
+
+imperio_riscv:
+  stage: test
+  script:
+    - ./ci/imperio-riscv.csh
+
+imperio_sequential:
+  stage: test
+  script:
+    - ./ci/imperio-sequential.csh
+
+imperio_riscv_rvc:
+  stage: test
+  script:
+    - ./ci/imperio-riscv-rvc.csh
+
+imperio_sequential_rvc:
+  stage: test
+  script:
+    - ./ci/imperio-sequential-rvc.csh
+
+imperio:
+  stage: test
+  script:
+    - ./ci/imperio.csh
+
+imperio_rvc:
+  stage: test
+  script:
+    - ./ci/imperio-rvc.csh
