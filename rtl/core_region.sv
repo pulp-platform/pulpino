@@ -200,7 +200,7 @@ module core_region
     #(
       .N_EXT_PERF_COUNTERS ( 0 )
     )
-    or10n_core
+    OR10N_CORE
     (
       // Clock and Reset
       .clk             ( clk_core_int      ),
