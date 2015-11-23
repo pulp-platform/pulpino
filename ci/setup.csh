@@ -10,7 +10,9 @@ set TARGET_C_FLAGS="-m32 -O3"
 set COMPILER="riscv32-unknown-elf-gcc"
 set SIZE=`which riscv32-unknown-elf-size`
 set RISCV=1
+
 set RVC=0
+set TB="run.tcl"
 
 if (! ($?VSIM) ) then
   set VSIM=`which vsim`
@@ -25,7 +27,7 @@ mkdir -p ./sw/build-rvc
 mkdir -p ./sw/build-imperio
 mkdir -p ./sw/build-imperio-rvc
 
-cd sw/build
+cd ./sw/build
 
 cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_BUILD_TYPE=Release \
@@ -38,7 +40,7 @@ cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
     -DCMAKE_OBJDUMP="$OBJDUMP" \
     -DCMAKE_SIZE="$SIZE" \
-    -DARG_TB="run.tcl" \
+    -DARG_TB="$TB" \
     -G "Ninja"
 
 # compile RTL
@@ -47,10 +49,10 @@ ninja vcompile || exit 1
 # compile SW
 ninja || exit 1
 
-cd ../..
+cd ../../
 
 set RVC=1
-cd sw/build-rvc
+cd ./sw/build-rvc
 
 cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_BUILD_TYPE=Release \
@@ -63,11 +65,8 @@ cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
     -DCMAKE_OBJDUMP="$OBJDUMP" \
     -DCMAKE_SIZE="$SIZE" \
-    -DARG_TB="run.tcl" \
+    -DARG_TB="$TB" \
     -G "Ninja"
-
-# compile RTL
-ninja vcompile || exit 1
 
 # compile SW
 ninja || exit 1
@@ -77,11 +76,11 @@ ninja || exit 1
 #  Imperio Tests                            #
 #                                           #
 #############################################
-
-cd ../..
-
+set TB="run_imperio.tcl"
 set RVC=0
-cd sw/build-imperio
+
+cd ../../
+cd ./sw/build-imperio
 
 cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_BUILD_TYPE=Release \
@@ -94,19 +93,17 @@ cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
     -DCMAKE_OBJDUMP="$OBJDUMP" \
     -DCMAKE_SIZE="$SIZE" \
-    -DARG_TB="run_imperio.tcl" \
+    -DARG_TB="$TB" \
     -G "Ninja"
 
-# compile RTL
-ninja vcompile || exit 1
 
 # compile SW
 ninja || exit 1
-
-cd ../..
 
 set RVC=1
-cd sw/build-imperio-rvc
+
+cd ../../
+cd ./sw/build-imperio-rvc
 
 cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_BUILD_TYPE=Release \
@@ -119,13 +116,13 @@ cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
     -DCMAKE_OBJDUMP="$OBJDUMP" \
     -DCMAKE_SIZE="$SIZE" \
-    -DARG_TB="run_imperio.tcl" \
+    -DARG_TB="$TB" \
     -G "Ninja"
 
-# compile RTL
-ninja vcompile || exit 1
 
 # compile SW
 ninja || exit 1
+
+cd ../../
 
 # TODO: Add SPI, JTAG

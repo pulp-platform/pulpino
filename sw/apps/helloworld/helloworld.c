@@ -5,7 +5,7 @@
 
 int main()
 {
-  uart_set_cfg(0, 0);
+  uart_set_cfg(0, 2);
 
   uart_send("Hello!\n", 7);
 
