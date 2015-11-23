@@ -50,6 +50,7 @@ source ${IPS_PATH}/scripts/vcompile_axi_mem_if_DP.sh  || exit 1
 source ${IPS_PATH}/scripts/vcompile_fll_umc65.sh      || exit 1
 source ./scripts/vcompile_imperio.sh                  || exit 1
 source ./scripts/vcompile_imperio_tb.sh               || exit 1
+source ./scripts/vcompile_models.sh                   || exit 1
 
 source ./scripts/vcompile_tb.sh                       || exit 1
 

@@ -33,7 +33,9 @@ module tb;
 
   logic         uart_tx;
   logic         uart_rx;
-
+  logic         s_uart_dtr;
+  logic         s_uart_rts;
+  
   logic [31:0]  gpio_out;
 
   logic         tck   = 1'b0;
@@ -126,10 +128,10 @@ module tb;
 
     .uart_tx           ( uart_rx      ),
     .uart_rx           ( uart_rx      ),
-    .uart_rts          (              ),
-    .uart_dtr          (              ),
-    .uart_cts          ( 1'b1         ),
-    .uart_dsr          (              ),
+    .uart_rts          ( s_uart_rts   ),
+    .uart_dtr          ( s_uart_dtr   ),
+    .uart_cts          ( 1'b0         ),
+    .uart_dsr          ( 1'b0         ),
 
     .gpio_in           (              ),
     .gpio_out          ( gpio_out     ),
