@@ -225,7 +225,7 @@ module core_region
       .data_gnt_i      ( core_lsu_gnt      ),
       .data_r_valid_i  ( core_lsu_rvalid   ),
 
-      .irq_i           ( irq_i             ),
+      .irq_i           ( (|irq_i)          ),
       .irq_nm_i        ( 1'b0              ),
 
       .dbginf_stall_i  ( dbginf_stall[0]   ),
