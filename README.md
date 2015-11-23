@@ -1,4 +1,6 @@
-# PULPino
+<img src="doc/datasheet/figures/pulpino_logo_inline1.png" width="400px" />
+
+# Introduction
 
 PULPino is an open-source microcontroller like system, based on a small 32-bit
 RISC-V core that was developed at ETH Zurich. The core has an IPC close to 1, full
