@@ -20,12 +20,12 @@ int main() {
   for (int i = 0; i < NUM_ITER; ++i) {
     test_clear();
 
-    //reset_timer();
-    //start_timer();
+    reset_timer();
+    start_timer();
 
     test_run(i);
 
-    //stop_timer();
+    stop_timer();
 
     samples[i] = get_time();
   }
