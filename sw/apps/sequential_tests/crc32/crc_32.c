@@ -107,24 +107,20 @@ testcase_t testcases[] = {
 
 int main()
 {
-
   run_suite(testcases);
-
-  eoc(0);
-
   return 0;
 }
-  
+
 void check_crc32(testresult_t *result, void (*start)(), void (*stop)()) {
   // initialize jrand
   next = 1;
 
   int n;
   DWORD output;
-  
+
   // initialize crc tab
   initialize_crc_tab();
-  
+
   DWORD check_output = 469871797;
 
   start();
@@ -134,7 +130,7 @@ void check_crc32(testresult_t *result, void (*start)(), void (*stop)()) {
   }
 
   stop();
-  
+
   if (output != check_output){
     result->errors++;
     printf("Error:\nExpected result: %d does not match actual results: %d\n",check_output,output,0,0);

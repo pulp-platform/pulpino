@@ -21,9 +21,6 @@ int num_cores = 1;
 int main()
 {
   run_suite(testcases);
-
-  eoc(0);
-
   return 0;
 }
 
