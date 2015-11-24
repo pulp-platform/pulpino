@@ -1,6 +1,6 @@
 #include "utils.h"
 #include "string_lib.h"
-#include "bar.h"
+#include "bench.h"
 
 #define NR_PLATES 12
 
@@ -19,7 +19,7 @@ int main()
   int error = 0;
 
 
-  printf("Start towerofhanoi\n",0,0,0,0);
+  printf("Start towerofhanoi\n");
 
   for (j=0; j<2; j++) {
     for (i=0;i<NR_PLATES;i++){
@@ -30,19 +30,18 @@ int main()
 
     computeGold(NR_PLATES, A, B, C);
   }
-  
+
   for (i=0;i<NR_PLATES;i++) {
     if (B[i] != i) {
-      printf("expected: %d, actual: %d\n",i,B[i],0,0);
+      printf("expected: %d, actual: %d\n",i,B[i]);
       error = error + 1;
     }
   }
-  
+
 
   print_summary(error);
-  
 
-  eoc(0);
+  return 0;
 }
 
 void computeGold(int n, char* A, char* B, char* C)
@@ -63,5 +62,4 @@ void ToH(int n, char* A, char* B, char* C)
     A[n] = 0;
     ToH(n-1,C,B,A);
   }
- 
 }

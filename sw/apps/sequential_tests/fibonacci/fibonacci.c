@@ -47,7 +47,7 @@ void check_matrix_add(testresult_t *result, void (*start)(), void (*stop)())
 
   if (coreid == 0){
 
-    printf("Start fibonacci\n",0,0,0,0);
+    printf("Start fibonacci\n");
 
     for (j=0; j<2; j++) {
       fib(array, n);
@@ -55,7 +55,7 @@ void check_matrix_add(testresult_t *result, void (*start)(), void (*stop)())
 
     for (i=0;i<n;i++) {
       if (RESULT_FIB[i] != array[i]) {
-        printf("expected: %d, actual: %d\n",RESULT_FIB[i],array[i],0,0);
+        printf("expected: %d, actual: %d\n",RESULT_FIB[i],array[i]);
         result->errors++;
       }
     }

@@ -164,20 +164,20 @@ static void check_image(pixel *restrict output, pixel *restrict golden) {
       errors++;
 
   if (errors == 0)
-    printf("OOOOOOK!!!!!!\n", 0, 0, 0, 0);
+    printf("OOOOOOK!!!!!!\n");
   else
-    printf("ERROR!!!! %d\n", errors, 0, 0, 0);
+    printf("ERROR!!!! %d\n", errors);
 }
 
 static void print_image(pixel *restrict test) {
   for (unsigned y = 0; y < IMG_HEIGHT; y++) {
     for (unsigned x = 0; x < IMG_WIDTH; x++)
-      printf("%3x", (unsigned char) test[IMG_WIDTH * y + x], 0, 0, 0);
+      printf("%3x", (unsigned char) test[IMG_WIDTH * y + x]);
 
-    printf("\n", 0, 0, 0, 0);
+    printf("\n");
   }
 
-  printf("\n", 0, 0, 0, 0);
+  printf("\n");
 }
 
 __attribute__((section(".heapl2ram"))) pixel sobel1_l2[9] = {1,2,1,0,0,0,-1,-2,-1};
@@ -194,7 +194,7 @@ int main(int argc, char *argv[]) {
   int time = 0;
   int max_pixel = 0;
 
-  printf("Initializing Motion Detection Application Data Structures... \n", 0, 0, 0, 0);
+  printf("Initializing Motion Detection Application Data Structures... \n");
 
   // INITIALIZING SOBEL VECTORS
   for (unsigned i = 0; i < 9; i++) {
@@ -229,7 +229,7 @@ int main(int argc, char *argv[]) {
   print_image((pixel*) image_original);
 #endif
 
-  printf("Starting Motion Detection Application \n", 0, 0, 0, 0);
+  printf("Starting Motion Detection Application \n");
 
 #ifdef PROFILING
   reset_timer();
@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef DEBUG
-  printf("Sub image \n", 0, 0, 0, 0);
+  printf("Sub image \n");
 #endif
 
   sub_image((pixel*) image_test, (pixel*) image_back);
@@ -247,29 +247,29 @@ int main(int argc, char *argv[]) {
 
 #ifdef DEBUG
   print_image((pixel*) image_test);
-  printf("Max pixel: %x \n", max_pixel, 0, 0, 0);
-  printf("Binarization \n", 0, 0, 0, 0);
+  printf("Max pixel: %x \n", max_pixel);
+  printf("Binarization \n");
 #endif
 
   binarisation((pixel*) image_test, (int) max_pixel * 3 / 10, 1, 0);
 
 #ifdef DEBUG
   print_image((pixel*) image_test);
-  printf("Erosion \n", 0, 0, 0, 0);
+  printf("Erosion \n");
 #endif
 
   erosion((pixel*) image_test, (pixel*) image_back);
 
 #ifdef DEBUG
   print_image((pixel*) image_back);
-  printf("Dilatation \n", 0, 0, 0, 0);
+  printf("Dilatation \n");
 #endif
 
   dilatation((pixel*) image_back, (pixel*) image_test_out);
 
 #ifdef DEBUG
   print_image((pixel*) image_test_out);
-  printf("Sobel Convolution \n", 0, 0, 0, 0);
+  printf("Sobel Convolution \n");
 #endif
 
   convolution_rect((pixel*) image_test_out, sobel1, (pixel*) image_test);
@@ -283,7 +283,7 @@ int main(int argc, char *argv[]) {
 
 #ifdef DEBUG
   print_image((pixel*) image_test);
-  printf("Final Multiplication \n", 0, 0, 0, 0);
+  printf("Final Multiplication \n");
 #endif
 
   multiply((pixel*) image_test, (pixel*) image_original);
@@ -292,14 +292,14 @@ int main(int argc, char *argv[]) {
   stop_timer();
   time = get_time();
 
-  printf("Time: %d cycles\n", time, 0, 0, 0);
+  printf("Time: %d cycles\n", time);
 #endif
 
 #ifdef CHECK
   check_image((pixel*) image_test, (pixel*) Y_golden);
 #endif
 
-  printf("Motion Detection Application Complete!!!\n", 0, 0, 0, 0);
+  printf("Motion Detection Application Complete!!!\n");
 
-  eoc(0);
+  return 0;
 }

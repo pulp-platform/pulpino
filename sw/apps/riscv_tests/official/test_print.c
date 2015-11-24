@@ -5,7 +5,7 @@
 unsigned int g_errors = 0;
 
 void print_okay(const int testnr, const char *testsuite) {
-  printf("Test suite OK: \n", testsuite);
+  printf("Test suite OK: %s\n", testsuite);
 }
 
 void print_fail(const int testnr, const char *testsuite) {

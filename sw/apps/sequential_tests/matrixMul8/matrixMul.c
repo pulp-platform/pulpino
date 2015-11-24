@@ -22,8 +22,6 @@ int main()
 {
   run_suite(testcases);
 
-  eoc(0);
-
   return 0;
 }
 
@@ -32,21 +30,16 @@ unsigned int matrix_check();
 
 void check_matrix_mul(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i, j, k;
-  unsigned int chunk;
   unsigned int lb, ub;
 
 
-  // number of rows each core has to multiply
-  chunk = SIZE / num_cores;
   // lower bound
   lb = 0;
   // upper bound
-  ub = lb + chunk;
+  ub = lb + SIZE;
 
 
-    matrix_init();
-
-
+  matrix_init();
 
 
   // start benchmark
@@ -63,30 +56,23 @@ void check_matrix_mul(testresult_t *result, void (*start)(), void (*stop)()) {
   }
 
 
-
   stop();
 
   result->errors = matrix_check();
-
 }
 
 void check_matrix_mul_transpose(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i, j, k;
-  unsigned int chunk;
   unsigned int lb, ub;
 
 
-  // number of rows each core has to multiply
-  chunk = SIZE / num_cores;
   // lower bound
   lb = 0;
   // upper bound
-  ub = lb + chunk;
+  ub = lb + SIZE;
 
   matrix_init();
 
-
-  if(num_cores != 1) synch_barrier();
 
   // start benchmark
   start();
@@ -97,8 +83,6 @@ void check_matrix_mul_transpose(testresult_t *result, void (*start)(), void (*st
       g_mB_tmp[i][j] = g_mB[j][i];
     }
   }
-
-  if(num_cores != 1) synch_barrier();
 
   for(i = lb; i < ub; i++) {
     for(j = 0; j < SIZE; j++) {
@@ -139,7 +123,7 @@ unsigned int matrix_check() {
   for(i = 0; i < SIZE; i++) {
     for(j = 0; j < SIZE; j++) {
       if(g_mC[i][j] != m_exp[i * SIZE + j]) {
-        printf("At index %d, %d\n", i, j, 0, 0);
+        printf("At index %d, %d\n", i, j);
         errors++;
       }
     }

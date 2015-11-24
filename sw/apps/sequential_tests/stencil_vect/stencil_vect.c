@@ -28,8 +28,6 @@ testcase_t testcases[] = {
 int main()
 {
   run_suite(testcases);
-  
-  eoc(0);
 
   return 0;
 }
@@ -38,7 +36,7 @@ void check_stencil(testresult_t *result, void (*start)(), void (*stop)())
 {
   int i,j,k;
 
-  printf("Start stencil\n",0,0,0,0);
+  printf("Start stencil\n");
 
   for (i=4;i<N+4;i++) {
     for (k=4;k<M+4;k++)
@@ -82,29 +80,29 @@ void check_stencil(testresult_t *result, void (*start)(), void (*stop)())
     }
 
   // check test 0
-  printf("\nchecksum0 = %d\n",check_sum0,0,0,0);
+  printf("\nchecksum0 = %d\n",check_sum0);
   if (check_sum0 == CHKSUM) {
     if (time0 < 6000)
-      printf("Part Vect OOOOOOK!!!!!! Time: %d\n",time0,0,0,0);
+      printf("Part Vect OOOOOOK!!!!!! Time: %d\n",time0);
     else
-      printf("Part Vect OOOOOOK!!!!!! But time=%d exceeded maximum of 6000 cycles\n",time0,0,0,0);
+      printf("Part Vect OOOOOOK!!!!!! But time=%d exceeded maximum of 6000 cycles\n",time0);
   }
   else {
     result->errors++;
-    printf("Part Vect NOT OK!!!!! Time: %d\n",time0,0,0,0);
+    printf("Part Vect NOT OK!!!!! Time: %d\n",time0);
   }
 
   // check test 1
-  printf("\nchecksum1 = %d\n",check_sum1,0,0,0);
+  printf("\nchecksum1 = %d\n",check_sum1);
   if (check_sum0 == CHKSUM) {
     if (time0 < 6000)
-      printf("Full Vect OOOOOOK!!!!!! Time: %d\n",time0,0,0,0);
+      printf("Full Vect OOOOOOK!!!!!! Time: %d\n",time0);
     else
-      printf("Full Vect OOOOOOK!!!!!! But time=%d exceeded maximum of 6000 cycles\n",time0,0,0,0);
+      printf("Full Vect OOOOOOK!!!!!! But time=%d exceeded maximum of 6000 cycles\n",time0);
   }
   else {
     result->errors++;
-    printf("Full Vect NOT OK!!!!! Time: %d\n",time0,0,0,0);
+    printf("Full Vect NOT OK!!!!! Time: %d\n",time0);
   }
 
 }

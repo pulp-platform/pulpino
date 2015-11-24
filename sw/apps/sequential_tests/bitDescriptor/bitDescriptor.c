@@ -87,13 +87,13 @@ void Process(testresult_t *result, char *Mess, unsigned int *Descr, int Descr_Si
   int Count_Regular;
 
   Count = 0;
-  printf("\n==========Process %s Starting==============\n", Mess, 0, 0, 0);
+  printf("\n==========Process %s Starting==============\n", Mess);
   reset_timer();
   start_timer();
   Process_Descriptor(Descr, Descr_Size, signal);
   stop_timer();
-  printf("Nr. cycles: %d\n", get_time(), 0, 0, 0);
-  printf("Regular:  %s -> %d actions triggered\n", Mess, Count, 0, 0);
+  printf("Nr. cycles: %d\n", get_time());
+  printf("Regular:  %s -> %d actions triggered\n", Mess, Count);
   Count_Regular = Count;
 
 #ifndef __riscv__
@@ -102,8 +102,8 @@ void Process(testresult_t *result, char *Mess, unsigned int *Descr, int Descr_Si
   start_timer();
   Process_Descriptor_Bis(Descr, Descr_Size, signal);
   stop_timer();
-  printf("Nr. cycles: %d\n", get_time(), 0, 0, 0);
-  printf("Optimized:%s -> %d actions triggered\n", Mess, Count, 0, 0);
+  printf("Nr. cycles: %d\n", get_time());
+  printf("Optimized:%s -> %d actions triggered\n", Mess, Count);
 
   if(Count != Count_Regular) {
     result->errors += 1;
@@ -143,6 +143,5 @@ void check_bit(testresult_t *result, void (*start)(), void (*stop)()) {
   Process(result, "75% 1, 25% 0", Descr8, Descr_Size);
   Process(result, "Random", Descr3, Descr_Size);
 
-  printf("#Errors: %d\n", g_errors, 0, 0, 0);
-
+  printf("#Errors: %d\n", g_errors);
 }

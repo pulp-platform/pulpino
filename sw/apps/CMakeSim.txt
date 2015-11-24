@@ -69,7 +69,7 @@ macro(add_sim_targets NAME)
   ##############################################################################
 
   # run in modelsim with GUI
-  add_custom_target(${NAME}_vsim
+  add_custom_target(${NAME}.vsim
     COMMAND ${CMAKE_COMMAND} -E remove stdout/*
     COMMAND ${CMAKE_COMMAND} -E remove FS/*
     COMMAND tcsh -c "${SETENV} ${VSIM} -64 -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>\\;'"
@@ -79,7 +79,7 @@ macro(add_sim_targets NAME)
     ${USES_TERMINAL})
 
   # run in modelsim in batch mode, output is only generated after simulation terminates
-  add_custom_target(${NAME}_vsim_batch
+  add_custom_target(${NAME}.vsimc
     COMMAND ${CMAKE_COMMAND} -E remove stdout/*
     COMMAND ${CMAKE_COMMAND} -E remove FS/*
     COMMAND tcsh -c "${SETENV} ${VSIM} -64 -c -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>\\; run -a\\; exit\\;' > vsim.log"
@@ -89,7 +89,7 @@ macro(add_sim_targets NAME)
     COMMENT "Running ${NAME} in ModelSim")
 
   # run in modelsim with GUI
-  add_custom_target(${NAME}_vsim_boot
+  add_custom_target(${NAME}.vsim_boot
     COMMAND ${CMAKE_COMMAND} -E remove stdout/*
     COMMAND ${CMAKE_COMMAND} -E remove FS/*
     COMMAND ${VSIM} -64 -do 'source tcl_files/run_boot.tcl \\;'
@@ -98,7 +98,7 @@ macro(add_sim_targets NAME)
     COMMENT "Running ${NAME} in ModelSim")
 
   # testing targets
-  add_test(NAME ${NAME}_test
+  add_test(NAME ${NAME}.test
     COMMAND ${UTILS_DIR}/run-and-check.py ${VSIM} $<TARGET_PROPERTY:${NAME}.elf,TB> 0
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
 

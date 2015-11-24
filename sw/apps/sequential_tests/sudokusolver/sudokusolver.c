@@ -1,6 +1,6 @@
 #include "utils.h"
 #include "string_lib.h"
-#include "bar.h"
+#include "bench.h"
 
 #include "sudokusolver.h"
 
@@ -21,7 +21,7 @@ int main()
 
 
 
-    printf("Start sudokusolver\n",0,0,0,0);
+    printf("Start sudokusolver\n");
 
     // store sudoku to solve in grid_init
     for (i=0;i<9;i++){
@@ -57,19 +57,19 @@ int main()
 
       // start solver
       sudokusolver(grid_solved, solved);
-      //printf("Iteration %d completed\n",k,0,0,0);
+      //printf("Iteration %d completed\n",k);
     }
 
     // print solution
-    printf("Solution:\n",0,0,0,0);
+    printf("Solution:\n");
 
     for (i=0;i<9;i++){
-      printf("\n",0,0,0,0);
+      printf("\n");
       for (j=0;j<9;j++){
-        printf("%d ",grid_solved[i*SUDOKUSIZE+j],0,0,0);
+        printf("%d ",grid_solved[i*SUDOKUSIZE+j]);
       }
     }
-    printf("\n",0,0,0,0);
+    printf("\n");
 
     // check result!
     for (i=0;i<SUDOKUSIZE;i++) { 
