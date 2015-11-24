@@ -141,3 +141,7 @@ endif()
 
 add_subdirectory(sequential_tests)
 add_subdirectory(imperio_tests)
+
+if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/scratch/")
+  add_subdirectory(scratch)
+endif()
