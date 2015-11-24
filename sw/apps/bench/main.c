@@ -1,5 +1,4 @@
-#include "bar.h"
-#include "string_lib.h"
+#include <stdio.h>
 #include "timer.h"
 #include "utils.h"
 
@@ -14,39 +13,31 @@ extern void test_run(int);
 extern int test_check();
 
 int main() {
-  int cid = get_core_id();
 
-  synch_barrier();
+  test_setup();
+  perf_start();
 
-  if (cid == 0) {
-    test_setup();
-    perf_start();
+  for (int i = 0; i < NUM_ITER; ++i) {
+    test_clear();
 
-    for (int i = 0; i < NUM_ITER; ++i) {
-      test_clear();
+    //reset_timer();
+    //start_timer();
 
-      //reset_timer();
-      //start_timer();
+    test_run(i);
 
-      test_run(i);
+    //stop_timer();
 
-      //stop_timer();
-
-      samples[i] = get_time();
-    }
-
-    perf_stop();
-    int check = test_check();
-
-    printf("Correct: %d\n", check);
-    for (int i = 0; i < NUM_ITER; ++i)
-      printf("TS[%d]: %d\n", i, samples[i]);
-
-    perf_print_all();
+    samples[i] = get_time();
   }
 
-  synch_barrier();
-  eoc(0);
+  perf_stop();
+  int check = test_check();
+
+  printf("Correct: %d\n", check);
+  for (int i = 0; i < NUM_ITER; ++i)
+    printf("TS[%d]: %d\n", i, samples[i]);
+
+  perf_print_all();
 
   return 0;
 }

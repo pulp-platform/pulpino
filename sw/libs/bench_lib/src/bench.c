@@ -3,15 +3,15 @@
 #include "spr-defs.h"
 
 void bench_timer_start(void) {
-  //start_core_timer(get_core_id());
+  start_timer();
 }
 
 void bench_timer_stop(void) {
-  //stop_core_timer(get_core_id());
+  stop_timer();
 }
 
 void bench_timer_reset(void) {
-  //reset_core_timer(get_core_id());
+  reset_timer();
 }
 
 void print_result(testcase_t *test, testresult_t *result)
@@ -42,7 +42,6 @@ void print_summary(unsigned int errors)
     printf("FAIL\n");
     printf("NOT OK!!!!!\n");   // TODO: remove this one
   }
-  uart_wait_tx_done();
 }
 
 void run_benchmark(testcase_t *test, testresult_t *result)
@@ -53,7 +52,7 @@ void run_benchmark(testcase_t *test, testresult_t *result)
 
   test->test(result, bench_timer_start, bench_timer_stop);
 
-  result->time = 0; //get_core_time(get_core_id());
+  result->time = get_time();
 }
 
 void run_suite(testcase_t *tests)
@@ -61,9 +60,6 @@ void run_suite(testcase_t *tests)
   // figure out how many tests should be run
   size_t num = 0;
   while(tests[num].name != 0) num++;
-
-  // setup uart
-  //uart_set_cfg(0, 26);
 
   unsigned int errors = 0;
   size_t i;
@@ -78,10 +74,6 @@ void run_suite(testcase_t *tests)
   }
 
   print_summary(errors);
-
-  // wait for UART transmit to be done, this ensures that the output of the
-  // test is actually captured by the testbench before we terminate
-  uart_wait_tx_done();
 }
 
 void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, uint32_t expected)

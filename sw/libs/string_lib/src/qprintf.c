@@ -37,13 +37,7 @@ static unsigned remu10(unsigned n) {
 
 int putchar(int s)
 {
-#ifdef PRINTF_USE_UART
   uart_sendchar(s);
-#else
-  volatile int* stdout;
-  stdout = (volatile int*)(STDOUT_BASE_ADDR) + 8*get_core_id();
-  *(volatile int*)(stdout) = s;
-#endif
 
   return s;
 }

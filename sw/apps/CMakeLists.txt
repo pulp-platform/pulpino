@@ -38,7 +38,7 @@ macro(add_application NAME SOURCE_FILES)
   endif()
 
   # link libraries
-  target_link_libraries(${NAME}.elf bench string_uart sys_chip ${ARG_LIBS})
+  target_link_libraries(${NAME}.elf ${ARG_LIBS} bench string sys)
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
@@ -130,7 +130,7 @@ add_subdirectory(helloworld)
 add_subdirectory(freertos)
 
 # add_subdirectory(debug)
-# add_subdirectory(bench)
+add_subdirectory(bench)
 
 # RISCV only tests
 if(${RISCV})

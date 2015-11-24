@@ -24,5 +24,3 @@ include_directories(inc/)
 include_directories(../string_lib/inc)
 
 add_library(sys STATIC ${SOURCES} ${HEADERS})
-add_library(sys_chip STATIC ${SOURCES} ${HEADERS})
-set_target_properties(sys_chip PROPERTIES COMPILE_FLAGS "-DCHIP_USED")
