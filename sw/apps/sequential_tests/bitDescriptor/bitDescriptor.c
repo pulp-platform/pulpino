@@ -4,8 +4,6 @@
 #include "bar.h"
 #include "bench.h"
 
-unsigned int g_errors = 0;
-
 __attribute__ ((section(".heapsram"))) static unsigned int _Bit_Mask[] =
 {
         0x1<<0, 0x1<<1, 0x1<<2, 0x1<<3, 0x1<<4, 0x1<<5, 0x1<<6, 0x1<<7,
@@ -31,7 +29,7 @@ __attribute__ ((section(".heapsram"))) static unsigned int _Mask[32];
 void Process_Descriptor(unsigned int *Descr, int Size, void action(int index))
 
 {
-  int i, j;
+  unsigned int i, j;
   for (i=0; i<Size/(sizeof(unsigned int)*8); i++) {
     unsigned int D = Descr[i];
     for (j= 0; j<32; j++) {
@@ -121,10 +119,6 @@ testcase_t testcases[] = {
 int main()
 {
   run_suite(testcases);
-
-  eoc(0);
-
-
   return 0;
 }
 
@@ -143,5 +137,4 @@ void check_bit(testresult_t *result, void (*start)(), void (*stop)()) {
   Process(result, "75% 1, 25% 0", Descr8, Descr_Size);
   Process(result, "Random", Descr3, Descr_Size);
 
-  printf("#Errors: %d\n", g_errors);
 }

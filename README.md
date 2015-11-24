@@ -96,12 +96,12 @@ specified when configuring cmake.
 
 To run a simulation in the modelsim GUI use
 
-    make helloworld_vsim
+    make helloworld.vsim
 
 
 To run simulations in the modelsim console use
 
-    make helloworld_vsim_batch
+    make helloworld.vsimc
 
 This will output a summary at the end of the simulation.
 This is intended for batch processing of a large number of tests.

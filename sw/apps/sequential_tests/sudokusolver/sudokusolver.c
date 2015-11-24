@@ -1,38 +1,39 @@
-#include "utils.h"
-#include "string_lib.h"
-#include "bench.h"
+#include <utils.h>
+#include <string_lib.h>
+#include <bench.h>
 
 #include "sudokusolver.h"
 
-__attribute__ ((section(".heapsram"))) int grid_init[SUDOKUSIZE*SUDOKUSIZE];
-__attribute__ ((section(".heapsram"))) int grid_solved[SUDOKUSIZE*SUDOKUSIZE];
-__attribute__ ((section(".heapsram"))) int solved[1];
+int grid_init[SUDOKUSIZE*SUDOKUSIZE];
+int grid_solved[SUDOKUSIZE*SUDOKUSIZE];
+int solved[1];
 
 int safe(int*, int, int, int);
 void solve(int*, int, int, int*);
 void sudokusolver(int*, int*);
 
+void check(testresult_t *result, void (*start)(), void (*stop)());
+
+testcase_t testcases[] = {
+  { .name = "sudokusolver",   .test = check       },
+  {0, 0}
+};
 
 int main()
 {
+  run_suite(testcases);
+  return 0;
+}
 
-  int i,j,k;
-  int error = 0;
-
-
-
+void check(testresult_t *result, void (*start)(), void (*stop)()) {
     printf("Start sudokusolver\n");
 
     // store sudoku to solve in grid_init
-    for (i=0;i<9;i++){
-      for (j=0;j<9;j++){
+    for (int i=0;i<9;i++){
+      for (int j=0;j<9;j++){
         grid_init[i*SUDOKUSIZE+j] = 0;
       }
     }
-    /* grid_init[0*SUDOKUSIZE+7] = 1; grid_init[0*SUDOKUSIZE+8] = 2; grid_init[1*SUDOKUSIZE+0] = 4; grid_init[1*SUDOKUSIZE+4] = 9; grid_init[2*SUDOKUSIZE+7] = 5; */
-    /* grid_init[3*SUDOKUSIZE+1] = 7; grid_init[3*SUDOKUSIZE+3] = 2; grid_init[4*SUDOKUSIZE+0] = 6; grid_init[4*SUDOKUSIZE+6] = 4; grid_init[5*SUDOKUSIZE+3] = 1; */
-    /* grid_init[5*SUDOKUSIZE+5] = 8; grid_init[6*SUDOKUSIZE+1] = 1; grid_init[6*SUDOKUSIZE+2] = 8; grid_init[7*SUDOKUSIZE+4] = 3; grid_init[7*SUDOKUSIZE+6] = 7; */
-    /* grid_init[8*SUDOKUSIZE+0] = 5; grid_init[8*SUDOKUSIZE+2] = 2; */
 
     grid_init[0*SUDOKUSIZE+1] = 9; grid_init[0*SUDOKUSIZE+2] = 3; grid_init[0*SUDOKUSIZE+3] = 1; grid_init[0*SUDOKUSIZE+5] = 5; grid_init[0*SUDOKUSIZE+6] = 6; grid_init[0*SUDOKUSIZE+7] = 4;
     grid_init[1*SUDOKUSIZE+0] = 7; grid_init[1*SUDOKUSIZE+8] = 5;
@@ -45,11 +46,11 @@ int main()
     grid_init[8*SUDOKUSIZE+1] = 4; grid_init[8*SUDOKUSIZE+2] = 7; grid_init[8*SUDOKUSIZE+3] = 3; grid_init[8*SUDOKUSIZE+5] = 2; grid_init[8*SUDOKUSIZE+6] = 8; grid_init[8*SUDOKUSIZE+7] = 5;
 
     // loop two times. (cold/hot IC)
-    for (k=0;k<2;k++) {
+    for (int k=0;k<2;k++) {
 
       // reset result grid_solved and solved
-      for (i=0;i<9;i++){
-        for (j=0;j<9;j++){
+      for (int i=0;i<9;i++){
+        for (int j=0;j<9;j++){
           grid_solved[i*SUDOKUSIZE+j] = grid_init[i*SUDOKUSIZE+j];
         }
       }
@@ -63,27 +64,25 @@ int main()
     // print solution
     printf("Solution:\n");
 
-    for (i=0;i<9;i++){
+    for (int i=0;i<9;i++){
       printf("\n");
-      for (j=0;j<9;j++){
+      for (int j=0;j<9;j++){
         printf("%d ",grid_solved[i*SUDOKUSIZE+j]);
       }
     }
     printf("\n");
 
     // check result!
-    for (i=0;i<SUDOKUSIZE;i++) { 
-      for (k=0;k<SUDOKUSIZE;k++) {
+    for (int i=0;i<SUDOKUSIZE;i++) {
+      for (int k=0;k<SUDOKUSIZE;k++) {
         if (SUDOKUSOLVED[i*SUDOKUSIZE+k] != grid_solved[i*SUDOKUSIZE+k]) {
-          error = error + 1;
+          result->errors++;
           printf("Error occurred at i=%d k=%d; Computed result %d does not match expected result %d\n",i,k,grid_solved[i*SUDOKUSIZE+k],SUDOKUSOLVED[i*SUDOKUSIZE+k]);
         }
       }
     }
-  
-  print_summary(error);
-  eoc(0);
 }
+
 
 // start solver. (this function is used for profiling)
 void sudokusolver(int* grid_solved, int* solved)

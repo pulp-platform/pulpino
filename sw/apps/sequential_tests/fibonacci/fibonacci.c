@@ -13,55 +13,39 @@ const int RESULT_FIB[N] = {0, 1, 1, 2, 3, 5, 8, 13, 21, 34};
 //#define N 25
 //const int RESULT_FIB[N] = {0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610, 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368};
 
-void check_matrix_add(testresult_t *result, void (*start)(), void (*stop)());
+void check(testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
-  { .name = "matrix_add",   .test = check_matrix_add       },
+  { .name = "fibonacci",   .test = check       },
   {0, 0}
 };
 
 int main()
 {
   run_suite(testcases);
-
-
-  eoc(0);
-
-
   return 0;
 }
 
 int recFib(int);
 void fib(int*, int);
+int array[N];
 
-__attribute__ ((section(".heapsram"))) int array[N];
-
-void check_matrix_add(testresult_t *result, void (*start)(), void (*stop)())
-{
+void check(testresult_t *result, void (*start)(), void (*stop)()) {
   int i=0,j, c;
   int n=N;
-  int coreid;
+  printf("Start fibonacci\n");
 
+  for (j=0; j<2; j++) {
+    fib(array, n);
+  }
 
-  coreid = get_core_id();
-
-  if (coreid == 0){
-
-    printf("Start fibonacci\n");
-
-    for (j=0; j<2; j++) {
-      fib(array, n);
-    }
-
-    for (i=0;i<n;i++) {
-      if (RESULT_FIB[i] != array[i]) {
-        printf("expected: %d, actual: %d\n",RESULT_FIB[i],array[i]);
-        result->errors++;
-      }
+  for (i=0;i<n;i++) {
+    if (RESULT_FIB[i] != array[i]) {
+      printf("expected: %d, actual: %d\n",RESULT_FIB[i],array[i]);
+      result->errors++;
     }
   }
 
-  synch_barrier();
 }
 
 int recFib(int n)
