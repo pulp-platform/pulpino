@@ -15,7 +15,7 @@
 #define I2C_CTR_INTEN     0x40
 #define I2C_CTR_EN_INTEN  0xC0
 
-#include <pulp.h>
+#include <pulpino.h>
 
 #define I2C_REG_PRE             ( I2C_BASE_ADDR + 0x00 )
 #define I2C_REG_CTR             ( I2C_BASE_ADDR + 0x04 )
@@ -29,6 +29,7 @@
 #define I2C_STATUS_AL    0x20
 #define I2C_STATUS_TIP   0x02
 #define I2C_STATUS_IF    0x01
+
 void i2c_setup(int prescaler,int enable);
 void i2c_send_data(int value);
 void i2c_send_command(int value);

@@ -6,6 +6,7 @@ set(SOURCES
     src/timer.c
     src/uart.c
     src/utils.c
+    src/i2c.c
     )
 
 set(HEADERS
@@ -18,6 +19,7 @@ set(HEADERS
     inc/timer.h
     inc/uart.h
     inc/utils.h
+    inc/i2c.h
     )
 
 include_directories(inc/)

@@ -15,7 +15,7 @@ def write_arr(f, name, arr):
 f = open('parMatrixMul8_stimuli.h', 'w')
 
 
-SIZE = 32 
+SIZE = 32
 RANGE = 4
 
 m_a   = []
@@ -47,8 +47,8 @@ write_arr(f, 'm_exp', m_exp)
 f.write('#define SIZE %d\n' % SIZE)
 
 
-f.write('__attribute__ ((section(".heapsram"))) char g_mA[SIZE][SIZE];\n')
-f.write('__attribute__ ((section(".heapsram"))) char g_mB[SIZE][SIZE];\n')
-f.write('__attribute__ ((section(".heapsram"))) char g_mC[SIZE][SIZE];\n')
-f.write('__attribute__ ((section(".heapsram"))) char g_mB_tmp[SIZE][SIZE];\n')
+f.write('char g_mA[SIZE][SIZE];\n')
+f.write('char g_mB[SIZE][SIZE];\n')
+f.write('char g_mC[SIZE][SIZE];\n')
+f.write('char g_mB_tmp[SIZE][SIZE];\n')
 
