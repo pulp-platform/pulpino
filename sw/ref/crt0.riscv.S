@@ -3,30 +3,6 @@
 #define EXCEPTION_STACK_SIZE 72
 
 
-/* =================================================== [ exceptions ] === */
-  .section .vectors, "ax"
-
-  // external interrupts are handled by the same callback
-  // until compiler supports IRQ routines
-  .org 0x00
-  .rept 31
-  nop
-  .endr
-  jal x0, interrupt_handler
-
-  // reset vector
-  .org 0x80
-  jal x0, reset_handler
-
-  // illegal instruction exception
-  .org 0x84
-  jal x0, illegal_insn_handler
-
-  // ecall handler
-  .org 0x88
-  jal x0, 0
-
-
 /* ========================================================= [ entry ] === */
   .section .text
 
@@ -163,3 +139,30 @@ end_except:
   lw  x1, 0x44(x2)
   addi x2, x2, EXCEPTION_STACK_SIZE
   eret
+
+
+/* =================================================== [ exceptions ] === */
+/* This section has to be down here, since we have to disable rvc for it  */
+
+  .section .vectors, "ax"
+  .option norvc;
+
+  // external interrupts are handled by the same callback
+  // until compiler supports IRQ routines
+  .org 0x00
+  .rept 31
+  nop
+  .endr
+  jal x0, interrupt_handler
+
+  // reset vector
+  .org 0x80
+  jal x0, reset_handler
+
+  // illegal instruction exception
+  .org 0x84
+  jal x0, illegal_insn_handler
+
+  // ecall handler
+  .org 0x88
+  jal x0, illegal_insn_handler
