@@ -1,6 +1,8 @@
 #ifndef _I2C_H_
 #define _I2C_H_
 
+#include <pulpino.h>
+
 #define I2C_START       0x80
 #define I2C_STOP        0x40
 #define I2C_READ        0x20
@@ -11,11 +13,9 @@
 #define I2C_START_WRITE 0x90
 #define I2C_STOP_WRITE  0x50
 
-#define I2C_CTR_EN        0x80
-#define I2C_CTR_INTEN     0x40
-#define I2C_CTR_EN_INTEN  0xC0
-
-#include <pulpino.h>
+#define I2C_CTR_EN        0x80 // enable only
+#define I2C_CTR_INTEN     0x40 // interupt enable only
+#define I2C_CTR_EN_INTEN  0xC0 // enable i2c and interrupts
 
 #define I2C_REG_PRE             ( I2C_BASE_ADDR + 0x00 )
 #define I2C_REG_CTR             ( I2C_BASE_ADDR + 0x04 )
