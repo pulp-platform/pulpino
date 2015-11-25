@@ -80,7 +80,7 @@ void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, u
 {
   if(actual != expected) {
     result->errors += 1;
-    printf("%s: Actual %X, expected %X\n", fail_msg, actual, expected);
+    printf("%s: Actual %X, expected %X\n", fail_msg, (unsigned int) actual, (unsigned int) expected);
   }
 }
 

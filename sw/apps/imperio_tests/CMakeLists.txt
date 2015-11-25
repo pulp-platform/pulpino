@@ -4,9 +4,9 @@
 add_subdirectory(testInterrupt)
 add_subdirectory(testUART)
 add_subdirectory(testI2C)
+add_subdirectory(testSPIMaster)
 
 #add_subdirectory(testSTDIO)
-#add_subdirectory(testSPIM)
 #add_subdirectory(testPipeStage)
 #add_subdirectory(testL2)
 #add_subdirectory(testGPIO)

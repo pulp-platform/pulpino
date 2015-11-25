@@ -1,7 +1,7 @@
 /**
  * @file
  * @brief Register mapping for PULPino peripherals.
- * 
+ *
  * Contains event register mappings for the PULPino SOC as
  * well as some general definitions for the overall system.
  *
