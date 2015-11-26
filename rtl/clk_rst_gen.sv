@@ -4,6 +4,7 @@ module clk_rst_gen
     input  logic                      rstn_i,
 
     input  logic                      clk_sel_i,
+    input  logic                      clk_standalone_i,
     input  logic                      testmode_i,
     input  logic                      scan_en_i,
     input  logic                      scan_i,
@@ -52,7 +53,7 @@ module clk_rst_gen
     .CFGWEB     ( fll_wrn_i         ),
     .RSTB       ( rstn_i            ),
     .PWDB       ( 1'b1              ),
-    .STAB       ( 1'b0              ),
+    .STAB       ( clk_standalone_i  ),
     .TM         ( testmode_i        ),
     .TE         ( scan_en_i         ),
     .TD         ( scan_i            ),

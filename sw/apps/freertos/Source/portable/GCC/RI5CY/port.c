@@ -69,10 +69,10 @@
 
 
 #include <stdlib.h>
-#include "int.h"
-#include "utils.h"
-#include "timer.h"
-#include "event.h"
+#include <int.h>
+#include <utils.h>
+#include <timer.h>
+#include <event.h>
 
 #include "FreeRTOS.h"
 #include "task.h"
@@ -81,104 +81,104 @@
  * Implementation of functions defined in portable.h for the RI5CY port.
  *----------------------------------------------------------*/
 
-/* 
+/*
  * Macro to save the general purpose registers and the exception program counter (mepc),
- * and than save the stack pointer into the TCB.  
- * 
- * The first thing we do is disable interrupts.  This is to guard our stack against 
- * having a context switch interrupt after we have already pushed the registers onto the stack - 
- * causing the 31 (32 register + mepc - x0 - x2) registers to be on the stack twice. 
- *  
+ * and than save the stack pointer into the TCB.
+ *
+ * The first thing we do is disable interrupts.  This is to guard our stack against
+ * having a context switch interrupt after we have already pushed the registers onto the stack -
+ * causing the 31 (32 register + mepc - x0 - x2) registers to be on the stack twice.
+ *
  * Then we load the stack pointer of the current task and push all registers to the stack.
  * The last thing we do is to adjust the stack poitner (sp) to accomodate for the memory
  * we used.
  *
  * The interrupts will have been disabled during the call to portSAVE_CONTEXT()
- * so we need not worry about reading/writing to the stack pointer. 
+ * so we need not worry about reading/writing to the stack pointer.
  */
 
-#define portSAVE_CONTEXT() 												\
- 	 int_disable();														\
-	 asm volatile (	"lw   sp,   pxCurrentTCB					\n\t" 	\
-	 				"lw   sp,   (sp)							\n\t" 	\
-	 				"sw   x1,   0x04(x2)						\n\t"	\
-	 				"sw   x3,   0x08(x2)						\n\t"	\
-					"sw   x4,   0x0c(x2)						\n\t"	\
-					"sw   x5,   0x10(x2)						\n\t"	\
-					"sw   x6,   0x14(x2)						\n\t"	\
-					"sw   x7,   0x18(x2)						\n\t"	\
-					"sw   x8,   0x1C(x2)						\n\t"	\
-					"sw   x9,   0x20(x2)						\n\t"	\
-					"sw   x10,  0x24(x2)						\n\t"	\
-					"sw   x11,  0x28(x2)						\n\t"	\
-					"sw   x12,  0x2c(x2)						\n\t"	\
-					"sw   x13,  0x30(x2)						\n\t"	\
-					"sw   x14,  0x34(x2)						\n\t"	\
-					"sw   x15,  0x38(x2)						\n\t"	\
-					"sw   x16,  0x3C(x2)						\n\t"	\
-					"sw   x17,  0x40(x2)						\n\t"	\
-					"sw   x18,  0x44(x2)						\n\t"	\
-					"sw   x19,  0x48(x2)						\n\t"	\
-					"sw   x20,  0x4C(x2)						\n\t"	\
-					"sw   x21,  0x50(x2)						\n\t"	\
-					"sw   x22,  0x54(x2)						\n\t"	\
-					"sw   x23,  0x58(x2)						\n\t"	\
-					"sw   x24,  0x5c(x2)						\n\t"	\
-					"sw   x25,  0x60(x2)						\n\t"	\
-					"sw   x26,  0x64(x2)						\n\t"	\
-					"sw   x27,  0x68(x2)						\n\t"	\
-					"sw   x28,  0x6c(x2)						\n\t"	\
-					"sw   x29,  0x70(x2)						\n\t"	\
-					"sw   x30,  0x74(x2)						\n\t"	\
-					"sw   x31,  0x78(x2)						\n\t"	\
-					"csrr t0,   mepc							\n\t"	\
-					"sw   t0,   0x00(x2)						\n\t"	\
-					"addi sp,   sp, -0x80						\n\t"	\
-					"sw   sp,   (sp)							\n\t"	\
-				);														\
-/* 
+#define portSAVE_CONTEXT()                                            \
+     int_disable();                                                   \
+     asm volatile ( "addi sp,   sp, -0x80                       \n\t" \
+                    "sw   x1,   0x04(sp)						\n\t" \
+                    "sw   x3,   0x08(sp)						\n\t" \
+                    "sw   x4,   0x0c(sp)						\n\t" \
+                    "sw   x5,   0x10(sp)						\n\t" \
+                    "sw   x6,   0x14(sp)						\n\t" \
+                    "sw   x7,   0x18(sp)						\n\t" \
+                    "sw   x8,   0x1C(sp)						\n\t" \
+                    "sw   x9,   0x20(sp)						\n\t" \
+                    "sw   x10,  0x24(sp)						\n\t" \
+                    "sw   x11,  0x28(sp)						\n\t" \
+                    "sw   x12,  0x2c(sp)						\n\t" \
+                    "sw   x13,  0x30(sp)						\n\t" \
+                    "sw   x14,  0x34(sp)						\n\t" \
+                    "sw   x15,  0x38(sp)						\n\t" \
+                    "sw   x16,  0x3C(sp)						\n\t" \
+                    "sw   x17,  0x40(sp)						\n\t" \
+                    "sw   x18,  0x44(sp)						\n\t" \
+                    "sw   x19,  0x48(sp)						\n\t" \
+                    "sw   x20,  0x4C(sp)						\n\t" \
+                    "sw   x21,  0x50(sp)						\n\t" \
+                    "sw   x22,  0x54(sp)						\n\t" \
+                    "sw   x23,  0x58(sp)						\n\t" \
+                    "sw   x24,  0x5c(sp)						\n\t" \
+                    "sw   x25,  0x60(sp)						\n\t" \
+                    "sw   x26,  0x64(sp)						\n\t" \
+                    "sw   x27,  0x68(sp)						\n\t" \
+                    "sw   x28,  0x6c(sp)						\n\t" \
+                    "sw   x29,  0x70(sp)						\n\t" \
+                    "sw   x30,  0x74(sp)						\n\t" \
+                    "sw   x31,  0x78(sp)						\n\t" \
+                    "csrr t0,   mepc							\n\t" \
+                    "sw   t0,   0x00(sp)						\n\t" \
+                    "lw   t0,   pxCurrentTCB                    \n\t" \
+                    "sw   sp,   (t0)                            \n\t" \
+                );                                                    \
+
+
+/*
  * Opposite to portSAVE_CONTEXT().  Interrupts will have been disabled during
- * the context save so we can write to the stack pointer. 
+ * the context save so we can write to the stack pointer.
  */
-#define portRESTORE_CONTEXT()											\
-	asm volatile (	"lw   sp,   pxCurrentTCB					\n\t"   \
-					"lw	  sp, 	(sp)	 						\n\t"	\
-					"lw   t0,   0x00(sp)						\n\t"	\
-					"csrw mepc, t0								\n\t"	\
-					"lw   x1,   0x04(sp)						\n\t"	\
-					"lw   x3,   0x08(sp)						\n\t"	\
-					"lw   x4,   0x0c(sp)						\n\t"	\
-					"lw   x5,   0x10(sp)						\n\t"	\
-					"lw   x6,   0x14(sp)						\n\t"	\
-					"lw   x7,   0x18(sp)						\n\t"	\
-					"lw   x8,   0x1c(sp)						\n\t"	\
-					"lw   x9,   0x20(sp)						\n\t"	\
-					"lw   x10,  0x24(sp)						\n\t"	\
-					"lw   x11,  0x28(sp)						\n\t"	\
-					"lw   x12,  0x2c(sp)						\n\t"	\
-					"lw   x13,  0x30(sp)						\n\t"	\
-					"lw   x14,  0x34(sp)						\n\t"	\
-					"lw   x15,  0x38(sp)						\n\t"	\
-					"lw   x16,  0x3c(sp)						\n\t"	\
-					"lw   x17,  0x40(sp)						\n\t"	\
-					"lw   x18,  0x44(sp)						\n\t"	\
-					"lw   x19,  0x48(sp)						\n\t"	\
-					"lw   x20,  0x4C(sp)						\n\t"	\
-					"lw   x21,  0x50(sp)						\n\t"	\
-					"lw   x22,  0x54(sp)						\n\t"	\
-					"lw   x23,  0x58(sp)						\n\t"	\
-					"lw   x24,  0x5C(sp)						\n\t"	\
-					"lw   x25,  0x60(sp)						\n\t"	\
-					"lw   x26,  0x64(sp)						\n\t"	\
-					"lw   x27,  0x68(sp)						\n\t"	\
-					"lw   x28,  0x6C(sp)						\n\t"	\
-					"lw   x29,  0x70(sp)						\n\t"	\
-					"lw   x30,  0x74(sp)						\n\t"	\
-					"lw   x31,  0x78(sp)						\n\t"	\
-					"addi sp,   sp,				0x80			\n\t"	\
-					"sw   sp, 	(sp)							\n\t"	\
-				);										    			\
-				int_enable(); 											\
+#define portRESTORE_CONTEXT()                                         \
+    asm volatile (  "lw   sp,   pxCurrentTCB					\n\t" \
+                    "lw	  sp, 	(sp)	 						\n\t" \
+                    "lw   t0,   0x00(sp)						\n\t" \
+                    "csrw mepc, t0								\n\t" \
+                    "lw   x1,   0x04(sp)						\n\t" \
+                    "lw   x3,   0x08(sp)						\n\t" \
+                    "lw   x4,   0x0c(sp)						\n\t" \
+                    "lw   x5,   0x10(sp)						\n\t" \
+                    "lw   x6,   0x14(sp)						\n\t" \
+                    "lw   x7,   0x18(sp)						\n\t" \
+                    "lw   x8,   0x1c(sp)						\n\t" \
+                    "lw   x9,   0x20(sp)						\n\t" \
+                    "lw   x10,  0x24(sp)						\n\t" \
+                    "lw   x11,  0x28(sp)						\n\t" \
+                    "lw   x12,  0x2c(sp)						\n\t" \
+                    "lw   x13,  0x30(sp)						\n\t" \
+                    "lw   x14,  0x34(sp)						\n\t" \
+                    "lw   x15,  0x38(sp)						\n\t" \
+                    "lw   x16,  0x3c(sp)						\n\t" \
+                    "lw   x17,  0x40(sp)						\n\t" \
+                    "lw   x18,  0x44(sp)						\n\t" \
+                    "lw   x19,  0x48(sp)						\n\t" \
+                    "lw   x20,  0x4C(sp)						\n\t" \
+                    "lw   x21,  0x50(sp)						\n\t" \
+                    "lw   x22,  0x54(sp)						\n\t" \
+                    "lw   x23,  0x58(sp)						\n\t" \
+                    "lw   x24,  0x5C(sp)						\n\t" \
+                    "lw   x25,  0x60(sp)						\n\t" \
+                    "lw   x26,  0x64(sp)						\n\t" \
+                    "lw   x27,  0x68(sp)						\n\t" \
+                    "lw   x28,  0x6C(sp)						\n\t" \
+                    "lw   x29,  0x70(sp)						\n\t" \
+                    "lw   x30,  0x74(sp)						\n\t" \
+                    "lw   x31,  0x78(sp)						\n\t" \
+                    "addi sp,   sp,             0x80            \n\t" \
+                );                                                    \
+                int_enable();                                         \
 
 /*-----------------------------------------------------------*/
 
@@ -188,31 +188,32 @@
 static void prvSetupTimerInterrupt( void );
 
 
-/* 
- * See header file for description. 
+/*
+ * See header file for description.
  */
 StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t pxCode, void *pvParameters )
 {
-	int usAddress = ( int ) pxCode;
-	
-	/* End of stack marker. Usefull for debugging - unncecessary for deployment */
+    int usAddress = ( int ) pxCode;
+
+    /* End of stack marker. Usefull for debugging - unncecessary for deployment */
     *pxTopOfStack = ( StackType_t ) 0xdeadbeef;
     pxTopOfStack--;
 
-	/* reg x31 -> x2 */
+    /* reg x31 -> x2 */
     pxTopOfStack -= 30;
 
     /* return address: x1*/
-    *pxTopOfStack = ( StackType_t ) pxCode; 
+    *pxTopOfStack = ( StackType_t ) pxCode;
     pxTopOfStack--;
 
     /* zero register not pushed to stack - zero anyway */
 
-	/* mepc */
-	/* put the start of the code in the mepc register in order to account for a context switch where the task gets switch in and has never run before */
-	*pxTopOfStack = ( StackType_t ) pxCode; 
-    
-	return pxTopOfStack;
+    /* mepc */
+    /* put the start of the code in the mepc register in order to account for a context switch where the task gets
+       switch in and has never run before */
+    *pxTopOfStack = ( StackType_t ) pxCode;
+
+    return pxTopOfStack;
 }
 /*-----------------------------------------------------------*/
 
@@ -221,30 +222,28 @@ BaseType_t xPortStartScheduler( void )
     // Configure ISRs
     int_init();
     int_add(TIMER_A_OUTPUT_CMP, (void *) int_time_cmp, 0);
-    int_enable();	
 
     // enable timer interrupt
-    IER = 0xC0000000; // enable all timer interrupts
+    IER = 0xF0000000;
 
-	/* Setup the hardware to generate the tick. */
-	prvSetupTimerInterrupt();
+    /* Setup the hardware to generate the tick. */
+    prvSetupTimerInterrupt();
 
-	/* Restore the context of the first task that is going to run. */
-	portRESTORE_CONTEXT();
+    /* Restore the context of the first task that is going to run. */
+    portRESTORE_CONTEXT();
 
-	/* Simulate a function call end as generated by the compiler.  We will now
-	jump to the start of the task the context of which we have just restored. */
-	asm volatile ( "ret" );
+    /* Simulate a function call end as generated by the compiler.  We will now
+    jump to the start of the task the context of which we have just restored. */
+    asm volatile ( "ret" );
 
-	/* Should not get here. */
-	return pdTRUE;
+    /* Should not get here. */
+    return pdTRUE;
 }
 /*-----------------------------------------------------------*/
 
 void vPortEndScheduler( void )
 {
-	/* It is unlikely that the AVR port will get stopped.  If required simply
-	disable the tick interrupt here. */
+    int_disable();
 }
 /*-----------------------------------------------------------*/
 
@@ -253,22 +252,22 @@ void vPortEndScheduler( void )
  * can use a naked attribute.
  */
 void vPortYield( void );
-void vPortYield( void ) 
+void vPortYield( void )
 {
-	// next time the stored task will resume from here
-	portSAVE_CONTEXT(); 
-	vTaskSwitchContext();
-	portRESTORE_CONTEXT();
-	/* called in a non interrupt context only - this function
-	 accounts for manual context switches */
-	asm volatile ( "ret" ); /* restore from restored context return register
-							  we need this manual return since GCC would return to the task
-							  it thinks it just left (where it knows where it stored the return address). */
+    // next time the stored task will resume from here
+    portSAVE_CONTEXT();
+    vTaskSwitchContext();
+    portRESTORE_CONTEXT();
+    /* called in a non interrupt context only - this function
+     accounts for manual context switches */
+    asm volatile ( "ret" ); /* restore from restored context return register
+                              we need this manual return since GCC would return to the task
+                              it thinks it just left (where it knows where it stored the return address). */
 }
 /*-----------------------------------------------------------*/
 
 /*
- * Context switch function used by the tick.  This must be identical to 
+ * Context switch function used by the tick.  This must be identical to
  * vPortYield() from the call to vTaskSwitchContext() onwards.  The only
  * difference from vPortYield() is the tick count is incremented as the
  * call comes from the tick ISR - this function is called inside a ISR only
@@ -277,12 +276,12 @@ void vPortYield( void )
 void vPortYieldFromTick( void );
 void vPortYieldFromTick( void )
 {
-	portSAVE_CONTEXT();
-	if( xTaskIncrementTick() != pdFALSE )
-	{
-		vTaskSwitchContext();
-	}
-	portRESTORE_CONTEXT();
+    portSAVE_CONTEXT();
+    if ( xTaskIncrementTick() != pdFALSE )
+    {
+        vTaskSwitchContext();
+    }
+    portRESTORE_CONTEXT();
 }
 /*-----------------------------------------------------------*/
 
@@ -291,49 +290,47 @@ void vPortYieldFromTick( void )
  */
 static void prvSetupTimerInterrupt( void )
 {
-	
-
     unsigned int CompareMatch;
-	
-	CompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
-	
-	/* Setup Timer A */
-  	TOCRA = CompareMatch;
-  	//TPRA = 0x0f; // set prescaler
+
+    CompareMatch = configCPU_CLOCK_HZ / configTICK_RATE_HZ;
+
+    /* Setup Timer A */
+    TOCRA = CompareMatch;
+    TPRA  = 0x7; /* Timer A - enable interrupts, start timer */
 
 }
 /*-----------------------------------------------------------*/
 
 #if configUSE_PREEMPTION == 1
 
-	/*
-	 * Tick ISR for preemptive scheduler.  We can use a naked attribute as
-	 * the context is saved at the start of vPortYieldFromTick().  The tick
-	 * count is incremented after the context is saved.
-	 */
-	void int_time_cmp(void)
-	{
-		/* interrupts are disabled until eret */
-		vPortYieldFromTick();
-		/* we do need this since the return from interrupt is not handled
-		   in the cr0 runtime - because the call to the timer ISR is naked */
+/*
+ * Tick ISR for preemptive scheduler.  We can use a naked attribute as
+ * the context is saved at the start of vPortYieldFromTick().  The tick
+ * count is incremented after the context is saved.
+ */
+void int_time_cmp(void)
+{
+    /* interrupts are disabled until eret */
+    vPortYieldFromTick();
+    /* we do need this since the return from interrupt is not handled
+       in the crt0 runtime - because the call to the timer ISR is naked */
 
-		/* return address is restored from stack to the empc register */
-		asm volatile ( "eret" );
-	}
+    /* return address is restored from stack to the empc register */
+    // asm volatile ( "eret" );
+}
 #else
-	/*
-	 * Tick ISR for the cooperative scheduler.  All this does is increment the
-	 * tick count.  We don't need to switch context, this can only be done by
-	 * manual calls to taskYIELD();
-	 */
-	void int_time_cmp(void)
-	{
-		xTaskIncrementTick();
-		/* return address is restored from stack to the empc register */
-		asm volatile ( "eret" );
-	}
+/*
+ * Tick ISR for the cooperative scheduler.  All this does is increment the
+ * tick count.  We don't need to switch context, this can only be done by
+ * manual calls to taskYIELD();
+ */
+void int_time_cmp(void)
+{
+    xTaskIncrementTick();
+    /* return address is restored from stack to the empc register */
+    // asm volatile ( "eret" );
+}
 #endif
 
 
-	
+

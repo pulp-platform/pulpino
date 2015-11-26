@@ -6,11 +6,11 @@
 #define DELAY_LOOP 1000
 #define TRUE 1
 void task1 (void *pvParameters) {
-	
+
 	while(TRUE) {
-	
-		printf("task1");
-		
+
+		printf("Task 1\n");
+
 		for(int i = 0; i < DELAY_LOOP; i++)
 			portNOP();
 	}
@@ -20,11 +20,11 @@ void task1 (void *pvParameters) {
 }
 
 void task2 (void *pvParameters) {
-	
+
 	while(TRUE) {
-	
-		printf("task2");
-		
+
+		printf("Task 2\n");
+
 		for(int i = 0; i < DELAY_LOOP; i++)
 			portNOP();
 	}
@@ -35,9 +35,9 @@ void task2 (void *pvParameters) {
 
 int main( void )
 {
-	
+
 	xTaskCreate(task1, "Task 1", 100, NULL, 1, NULL);
- 	xTaskCreate(task2, "Task 2", 100, NULL, 1, NULL);
+ 	//xTaskCreate(task2, "Task 2", 100, NULL, 1, NULL);
 	vTaskStartScheduler();
 
 	return 0;

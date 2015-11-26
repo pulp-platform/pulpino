@@ -14,6 +14,7 @@ module pulpino_top
     input logic rst_n,
 
     input  logic             clk_sel_i,
+    input  logic             clk_standalone_i,
     input  logic             testmode_i,
     input  logic             fetch_enable_i,
 
@@ -118,25 +119,26 @@ module pulpino_top
   clk_rst_gen
   clk_rst_gen_i
   (
-      .clk_i        ( clk              ),
-      .rstn_i       ( rst_n            ),
+      .clk_i            ( clk              ),
+      .rstn_i           ( rst_n            ),
 
-      .clk_sel_i    ( clk_sel_i        ),
-      .testmode_i   ( testmode_i       ),
-      .scan_i       (                  ),
-      .scan_o       (                  ),
+      .clk_sel_i        ( clk_sel_i        ),
+      .clk_standalone_i ( clk_standalone_i     ),
+      .testmode_i       ( testmode_i       ),
+      .scan_i           (                  ),
+      .scan_o           (                  ),
 
 
-      .fll_req_i    ( cfgreq_fll_int   ),
-      .fll_wrn_i    ( cfgweb_n_fll_int ),
-      .fll_add_i    ( cfgad_fll_int    ),
-      .fll_data_i   ( cfgd_fll_int     ),
-      .fll_ack_o    ( cfgack_fll_int   ),
-      .fll_r_data_o ( cfgq_fll_int     ),
-      .fll_lock_o   ( lock_fll_int     ),
+      .fll_req_i        ( cfgreq_fll_int   ),
+      .fll_wrn_i        ( cfgweb_n_fll_int ),
+      .fll_add_i        ( cfgad_fll_int    ),
+      .fll_data_i       ( cfgd_fll_int     ),
+      .fll_ack_o        ( cfgack_fll_int   ),
+      .fll_r_data_o     ( cfgq_fll_int     ),
+      .fll_lock_o       ( lock_fll_int     ),
 
-      .clk_o        ( clk_int          ),
-      .rstn_o       ( rstn_int         )
+      .clk_o            ( clk_int          ),
+      .rstn_o           ( rstn_int         )
 
     );
 

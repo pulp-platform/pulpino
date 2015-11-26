@@ -620,6 +620,8 @@ StackType_t *pxTopOfStack;
 		/* Setup the newly allocated TCB with the initial state of the task. */
 		prvInitialiseTCBVariables( pxNewTCB, pcName, uxPriority, xRegions, usStackDepth );
 
+        printf("Top of Task %s Stack%X\n",pcName, (unsigned int) pxTopOfStack);
+
 		/* Initialize the TCB stack to look as if the task was already running,
 		but had been interrupted by the scheduler.  The return address is set
 		to the start of the task function. Once the stack has been initialised
@@ -4080,7 +4082,7 @@ TickType_t uxReturn;
 					#endif /* INCLUDE_vTaskSuspend */
 
 					traceTASK_NOTIFY_WAIT_BLOCK();
-					
+
 					/* All ports are written to allow a yield in a critical
 					section (some will yield immediately, others wait until the
 					critical section exits) - but it is not something that
@@ -4102,7 +4104,7 @@ TickType_t uxReturn;
 		taskENTER_CRITICAL();
 		{
 			traceTASK_NOTIFY_WAIT();
-			
+
 			if( pulNotificationValue != NULL )
 			{
 				/* Output the current notification value, which may or may not
@@ -4317,7 +4319,7 @@ TickType_t uxReturn;
 			}
 
 			traceTASK_NOTIFY_FROM_ISR();
-			
+
 			/* If the task is in the blocked state specifically to wait for a
 			notification then unblock it now. */
 			if( eOriginalNotifyState == eWaitingNotification )
@@ -4398,7 +4400,7 @@ TickType_t uxReturn;
 			/* 'Giving' is equivalent to incrementing a count in a counting
 			semaphore. */
 			( pxTCB->ulNotifiedValue )++;
-			
+
 			traceTASK_NOTIFY_GIVE_FROM_ISR();
 
 			/* If the task is in the blocked state specifically to wait for a
