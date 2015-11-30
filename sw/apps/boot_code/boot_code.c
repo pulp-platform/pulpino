@@ -5,7 +5,7 @@
 #include <gpio.h>
 #include <uart.h>
 #include <utils.h>
-
+#include <pulpino.h>
 
 const char g_numbers[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
@@ -28,152 +28,115 @@ void jump_and_start(volatile int *ptr)
 
 int main()
 {
-  volatile int * ptr;
-  volatile int i;
-  int addr;
-  int rd_id[2];
-  int err=0;
+  /* sets direction for SPI master pins with only one CS */
+  spi_setup_master(1);
 
-  int *l2_ptr;
-  int *tcdm_ptr;
-  int header_ptr[8];
-  int l2_size;
-  int tcdm_size;
-  int l2_blocks;
-  int tcdm_blocks;
-  int l2_start;
-  int tcdm_start;
+  /* divide sys clock by 4 */
+  *(volatile int*) (SPI_REG_CLKDIV) = 0x4;
 
+  /* wait some time to have proper power up of external flash */
+  for (int i = 0; i < 1000; i++) __asm__ volatile ("nop\n");
 
-  if(get_core_id() == 0) {
+  uart_send("Loading from SPI\n", 17);
 
-    spi_setup_master(1); //sets direction for SPI master pins with only one CS
-
-    *(volatile int*) (SPI_REG_CLKDIV) = 0x4;//divide sys clock by 4
-
-    // setup UART
-    uart_set_cfg(0, 26);
-
-    for (i=0; i<1000; i++); //wait some time to have proper power up of external flash
-
-    uart_send("Loading from SPI\n", 17);
-
-    //reads flash ID
-    spi_setup_cmd_addr(0x9F, 8, 0, 0);
-    spi_set_datalen(64);
-    spi_setup_dummy(0,0);
-    spi_start_transaction(SPI_CMD_RD, SPI_CSN0);
-    spi_read_fifo(rd_id, 64);
+  int vendor_id[2];
+  //reads flash ID
+  spi_setup_cmd_addr(0x9F, 8, 0, 0);
+  spi_set_datalen(64);
+  spi_setup_dummy(0, 0);
+  spi_start_transaction(SPI_CMD_RD, SPI_CSN0);
+  spi_read_fifo(vendor_id, 64);
 
 
-    // id should be 0x0102194D
-    if (((rd_id[0] >> 24) & 0xFF) == 0x01) { // is vendor spansion?
-      if ( (((rd_id[0] >> 8) & 0xFFFF) == 0x0219) || (((rd_id[0] >> 8) & 0xFFFF) == 0x2018) ) { // check flash model is 128MB or 256MB 1.8V
-        //sends write enable command
-        spi_setup_cmd_addr(0x06, 8, 0, 0);
-        spi_set_datalen(0);
-        spi_start_transaction(SPI_CMD_WR,SPI_CSN0);
-        while ((spi_get_status() & 0xFFFF) != 1);
+  // id should be 0x0102194D
+  if (((vendor_id[0] >> 24) & 0xFF) == 0x01) { // is vendor spansion?
+    if ( (((vendor_id[0] >> 8) & 0xFFFF) == 0x0219) || (((vendor_id[0] >> 8) & 0xFFFF) == 0x2018) ) { // check flash model is 128MB or 256MB 1.8V
 
-        //enables QPI
-        spi_setup_cmd_addr(0x71, 8, 0x80000348, 32); // cmd 0x71 write any register
-        spi_set_datalen(0);
-        spi_start_transaction(SPI_CMD_WR,SPI_CSN0);
-        while ((spi_get_status() & 0xFFFF) != 1);
+      // sends write enable command
+      spi_setup_cmd_addr(0x06, 8, 0, 0);
+      spi_set_datalen(0);
+      spi_start_transaction(SPI_CMD_WR, SPI_CSN0);
+      while ((spi_get_status() & 0xFFFF) != 1);
+
+      // Enables QPI
+      spi_setup_cmd_addr(0x71, 8, 0x80000348, 32); // cmd 0x71 write any register
+      spi_set_datalen(0);
+      spi_start_transaction(SPI_CMD_WR, SPI_CSN0);
+      while ((spi_get_status() & 0xFFFF) != 1);
+
+      int header_ptr[8];
+      int addr = 0;
+      // read header
+      spi_setup_dummy(8, 0);
+
+      spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); // cmd 0xEB fast read, needs 8 dummy cycles
+      spi_set_datalen(8 * 32);
+      spi_start_transaction(SPI_CMD_QRD, SPI_CSN0);
+      spi_read_fifo(header_ptr, 8 * 32);
 
 
-        addr = 0;
-        // read header
-        spi_setup_dummy(8,0);
+      int data_start = header_ptr[0];
+      int *data = (int *) header_ptr[1];
+      int data_size = header_ptr[2];
+      int data_blocks = header_ptr[3];
 
+      int instr_start = header_ptr[4];
+      int *instr = (int *) header_ptr[5];
+      int instr_size =  header_ptr[6];
+      int instr_blocks = header_ptr[7];
+
+      // Instruction RAM
+      uart_send("Copying Instructions\n", 22);
+      addr = data_start;
+      spi_setup_dummy(8, 0);
+      for (int i = 0; i < instr_blocks; i++) { //reads 16 4KB blocks
         spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); // cmd 0xEB fast read, needs 8 dummy cycles
-        spi_set_datalen(8*32);
-        spi_start_transaction(SPI_CMD_QRD,SPI_CSN0);
-        spi_read_fifo(header_ptr, 8*32);
+        spi_set_datalen(32768);
+        spi_start_transaction(SPI_CMD_QRD, SPI_CSN0);
+        spi_read_fifo(instr, 32768);
 
-        l2_start = header_ptr[0];
-        l2_ptr = (int *) header_ptr[1];
-        l2_size = header_ptr[2];
-        l2_blocks = header_ptr[3];
+        instr = instr + 0x400;  // new address = old address + 1024 words
+        addr   = addr   + 0x1000; // new address = old address + 4KB
 
-        tcdm_start = header_ptr[4];
-        tcdm_ptr = (int *) header_ptr[5];
-        tcdm_size =  header_ptr[6];
-        tcdm_blocks = header_ptr[7];
+        uart_send("Block ", 6);
+        uart_send(&g_numbers[i], 1);
+        uart_send(" done\n", 6);
+        // waiting for uart to be done
+        uart_wait_tx_done();
+      }
 
-        // read clock divider values for uart etc.
+      while ((spi_get_status() & 0xFFFF) != 1);
 
-        /* // read TCDM */
-        uart_send("Copy TCDM\n", 10);
-        addr = tcdm_start;
-        spi_setup_dummy(8,0);
-        for (i=0;i<tcdm_blocks;i++) { //reads 16 4KB blocks
-          spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); // cmd 0xEB fast read, needs 8 dummy cycles
-          spi_set_datalen(32768);
-          spi_start_transaction(SPI_CMD_QRD,SPI_CSN0);
-          spi_read_fifo(tcdm_ptr, 32768);
+      // Read Data RAM
+      uart_send("Copying Data\n", 14);
+      addr = data_start;
+      spi_setup_dummy(8, 0);
+      for (int i = 0; i < data_blocks; i++) { //reads 16 4KB blocks
+        spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); // cmd 0xEB fast read, needs 8 dummy cycles
+        spi_set_datalen(32768);
+        spi_start_transaction(SPI_CMD_QRD, SPI_CSN0);
+        spi_read_fifo(data, 32768);
 
-          tcdm_ptr = tcdm_ptr + 0x400;  // new address = old address + 1024 words
-          addr   = addr   + 0x1000; // new address = old address + 4KB
+        data = data + 0x400;  // new address = old address + 1024 words
+        addr   = addr   + 0x1000; // new address = old address + 4KB
 
-          uart_send("Block ", 6);
-          uart_send(&g_numbers[i], 1);
-          uart_send(" done\n", 6);
-          // waiting for uart to be done
-          while( (*(volatile int*)(UART_REG_LSR) & (0x01 << 6)) == 0x00);
-        }
-
-        while ((spi_get_status() & 0xFFFF) != 1);
-
-        // read L2
-        uart_send("Copy L2\n", 8);
-        addr = l2_start;
-        spi_setup_dummy(8,0);
-        for (i=0;i<l2_blocks;i++) { //reads 16 4KB blocks
-          spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); // cmd 0xEB fast read, needs 8 dummy cycles
-          spi_set_datalen(32768);
-          spi_start_transaction(SPI_CMD_QRD,SPI_CSN0);
-          spi_read_fifo(l2_ptr, 32768);
-
-          l2_ptr = l2_ptr + 0x400;  // new address = old address + 1024 words
-          addr   = addr   + 0x1000; // new address = old address + 4KB
-
-          uart_send("Block ", 6);
-          uart_send(&g_numbers[i], 1);
-          uart_send(" done\n", 6);
-          // waiting for uart to be done
-          while( (*(volatile int*)(UART_REG_LSR) & (0x01 << 6)) == 0x00);
-        }
-      } else {
-        err++;
+        uart_send("Block ", 6);
+        uart_send(&g_numbers[i], 1);
+        uart_send(" done\n", 6);
+        // waiting for uart to be done
+        uart_wait_tx_done();
       }
     } else {
-      err++;
+      uart_send("ERROR: Spansion SPI flash not found\n", 36);
     }
-
-    if(err != 0) {
-      uart_send("ERROR: Spansion SPI flash not found\n",36);
-    }
-
-    uart_send("Done, disable and flush I$, jumping to L2\n",42);
-
-    uart_wait_tx_done();
-
-    //jump to program start address (L2 base address)
-    //jump_and_start((volatile int *)(L2_MEM_BASE_ADDR));
+  } else {
+      uart_send("ERROR: Spansion SPI flash not found\n", 36);
   }
-}
 
+  uart_send("Done, disable and flush I$, jumping to L2\n", 42);
 
-// overwrite interrupt, exception handlers etc.
-
-void default_exception_handler_c() {
-  uart_send("exception!\n",11);
   uart_wait_tx_done();
-}
 
-void int_main() {
-  uart_send("interrupt!\n",11);
-  uart_wait_tx_done();
+  //jump to program start address (L2 base address)
+  jump_and_start((volatile int *)(ISNTR_RAM_BASE_ADDR));
 }
-

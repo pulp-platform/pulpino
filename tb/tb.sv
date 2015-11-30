@@ -8,12 +8,13 @@ module tb;
   timeunit      1ns;
   timeprecision 1ps;
 
-  parameter  LOAD_L2       = "PRELOAD";   // valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
-  parameter  SPI           = "SINGLE";    // valid values are "SINGLE", "QUAD"
+  // +MEMLOAD= valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
+  parameter  SPI           = "QUAD";    // valid values are "SINGLE", "QUAD"
   parameter  ENABLE_VPI    = 0;
   parameter  BAUDRATE      = 781250; // 1562500
   parameter  CLK_USE_FLL   = 0;  // 0 or 1
 
+  string        memload;
   logic         s_clk   = 1'b0;
   logic         s_rst_n = 1'b0;
 
@@ -168,6 +169,12 @@ module tb;
 
   initial
   begin
+
+    if(!$value$plusargs("MEMLOAD=%s", memload))
+      memload = "PRELOAD";
+
+    $display("Using MEMLOAD method: %s", memload);
+
     use_qspi = SPI == "QUAD" ? 1'b1 : 1'b0;
 
     s_rst_n      = 1'b0;
@@ -179,16 +186,16 @@ module tb;
 
     #10ns;
 
-    if (use_qspi)
-      spi_enable_qpi();
-
-    if (LOAD_L2 == "PRELOAD")
+    if (memload == "PRELOAD")
     begin
       // preload memories
       mem_preload();
     end
-    else if (LOAD_L2 == "SPI")
+    else if (memload == "SPI")
     begin
+      if (use_qspi)
+        spi_enable_qpi();
+
       spi_load(use_qspi);
       spi_check(use_qspi);
     end

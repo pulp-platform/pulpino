@@ -89,7 +89,7 @@ macro(add_sim_targets NAME)
     COMMENT "Running ${NAME} in ModelSim")
 
   # run in modelsim with GUI
-  add_custom_target(${NAME}.vsim_boot
+  add_custom_target(${NAME}.vsim.boot
     COMMAND ${CMAKE_COMMAND} -E remove stdout/*
     COMMAND ${CMAKE_COMMAND} -E remove FS/*
     COMMAND ${VSIM} -64 -do 'source tcl_files/run_boot.tcl \\;'

@@ -76,6 +76,9 @@ macro(add_boot_code NAME SOURCE_FILES)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "" ${ARGN})
   set(SUBDIR ${ARG_SUBDIR})
 
+  # OVERWRITE linker file for boot code!
+  set(CMAKE_EXE_LINKER_FLAGS "${BOOT_LINKER_FLAGS}")
+
   include_directories(
     ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
   )
@@ -93,7 +96,7 @@ macro(add_boot_code NAME SOURCE_FILES)
   endif()
 
   # link libraries
-  target_link_libraries(${NAME}.elf sys_chip)
+  target_link_libraries(${NAME}.elf sys)
 
 
   # this specifies the testbench to use for simulation
@@ -124,7 +127,7 @@ endmacro()
 
 # add_subdirectory(spi_regression)
 
-# add_subdirectory(boot_code)
+add_subdirectory(boot_code)
 
 add_subdirectory(helloworld)
 add_subdirectory(freertos)

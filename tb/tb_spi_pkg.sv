@@ -229,7 +229,7 @@
     input    [7:0] reg_val;
     begin
       spi_csn  = 1'b0;
-      #100; 
+      #100;
       if (use_qspi)
       begin
         for (int i = 2; i > 0; i--)

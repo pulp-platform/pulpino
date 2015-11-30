@@ -33,6 +33,7 @@ set cmd "vsim -quiet $TB \
   +nowarnTSCALE \
   +nowarnTFMPC \
   -t ps \
+  +MEMLOAD=$MEMLOAD \
   -voptargs=\"+acc -suppress 2103\" \
   $VSIM_FLAGS"
 

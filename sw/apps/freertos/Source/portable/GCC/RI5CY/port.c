@@ -260,7 +260,8 @@ void vPortYield( void )
     portRESTORE_CONTEXT();
     /* called in a non interrupt context only - this function
      accounts for manual context switches */
-    asm volatile ( "ret" ); /* restore from restored context return register
+    // asm volatile ( "ret" );
+    /* restore from restored context return register
                               we need this manual return since GCC would return to the task
                               it thinks it just left (where it knows where it stored the return address). */
 }
@@ -296,7 +297,7 @@ static void prvSetupTimerInterrupt( void )
 
     /* Setup Timer A */
     TOCRA = CompareMatch;
-    TPRA  = 0x7; /* Timer A - enable interrupts, start timer */
+    TPRA  = 0x27; /* Timer A - enable interrupts, start timer */
 
 }
 /*-----------------------------------------------------------*/

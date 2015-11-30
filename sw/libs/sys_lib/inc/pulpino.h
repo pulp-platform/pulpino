@@ -35,7 +35,13 @@
 #define FILE_CMD_BASE_ADDR            ( STDOUT_BASE_ADDR + 0x2000 )
 #define STREAM_BASE_ADDR              ( STDOUT_BASE_ADDR + 0x3000 )
 
+/* Instruction RAM */
+#define ISNTR_RAM_BASE_ADDR           ( 0x80       )
+
 /* ROM */
-#define ROM_BASE_ADDR                 ( PULP_BASE_ADDR + 0xA000000 )
+#define ROM_BASE_ADDR                 ( 0x8000     )
+
+/* Data RAM */
+#define DATA_RAM_BASE_ADDR            ( 0x00100000 )
 
 #endif

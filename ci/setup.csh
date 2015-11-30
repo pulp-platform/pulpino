@@ -26,6 +26,8 @@ mkdir -p ./sw/build
 mkdir -p ./sw/build-rvc
 mkdir -p ./sw/build-imperio
 mkdir -p ./sw/build-imperio-rvc
+mkdir -p ./sw/build-imperio-rvc-spi
+mkdir -p ./sw/build-imperio-spi
 
 cd ./sw/build
 
@@ -125,4 +127,59 @@ ninja || exit 1
 
 cd ../../
 
-# TODO: Add SPI, JTAG
+#############################################
+#                                           #
+#  Imperio SPI                              #
+#                                           #
+#############################################
+
+set TB="run_imperio_spi.tcl"
+set RVC=0
+
+cd ../../
+cd ./sw/build-imperio-spi
+
+cmake-3.3.0 "$SW_DIR" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DPULP_MODELSIM_DIRECTORY="$SIM_DIR" \
+    -DVSIM="$VSIM" \
+    -DCMAKE_C_COMPILER="$COMPILER" \
+    -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
+    -DRISCV=$RISCV \
+    -DRVC=$RVC \
+    -DCMAKE_OBJCOPY="$OBJCOPY" \
+    -DCMAKE_OBJDUMP="$OBJDUMP" \
+    -DCMAKE_SIZE="$SIZE" \
+    -DARG_TB="$TB" \
+    -G "Ninja"
+
+
+# compile SW
+ninja || exit 1
+
+set RVC=1
+
+cd ../../
+cd ./sw/build-imperio-rvc-spi
+
+cmake-3.3.0 "$SW_DIR" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DPULP_MODELSIM_DIRECTORY="$SIM_DIR" \
+    -DVSIM="$VSIM" \
+    -DCMAKE_C_COMPILER="$COMPILER" \
+    -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
+    -DRISCV=$RISCV \
+    -DRVC=$RVC \
+    -DCMAKE_OBJCOPY="$OBJCOPY" \
+    -DCMAKE_OBJDUMP="$OBJDUMP" \
+    -DCMAKE_SIZE="$SIZE" \
+    -DARG_TB="$TB" \
+    -G "Ninja"
+
+
+# compile SW
+ninja || exit 1
+
+cd ../../
+
+# TODO: JTAG

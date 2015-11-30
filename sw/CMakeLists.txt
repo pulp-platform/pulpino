@@ -28,14 +28,16 @@ if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
 
   if(${RVC})
     message("NOTE: Using compressed instructions")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -mtune=pulp3 -mrvc -march=RV32IC -Wa,-march=RV32IMC")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -mrvc -march=RV32IC -Wa,-march=RV32IMC")
   else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -mtune=pulp3 -march=RV32I -Wa,-march=RV32IM")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=RV32I -Wa,-march=RV32IM")
   endif()
 
   set(CMAKE_OBJDUMP_FLAGS -d)
 
-  set(LDSCRIPT "link.riscv.ld")
+  set(LDSCRIPT      "link.riscv.ld")
+  set(LDSCRIPT_BOOT "link.boot.ld" )
+
 elseif(CMAKE_C_COMPILER MATCHES "or1k(.*)")
   set(RISCV 0)
   message("NOTE: Detected or1k compiler, using OR1K setup")
@@ -52,7 +54,8 @@ elseif(CMAKE_C_COMPILER MATCHES "or1k(.*)")
   set(CMAKE_OBJDUMP_FLAGS -d)
   endif()
 
-  set(LDSCRIPT "link.or1k.ld")
+  set(LDSCRIPT      "link.or1k.ld")
+  set(LDSCRIPT_BOOT "link.boot.ld")
 endif()
 
 
@@ -60,6 +63,7 @@ set(PULP_PC_ANALYZE "pulp-pc-analyze" CACHE PATH "path to pulp pc analyze binary
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -fdata-sections -ffunction-sections -fdiagnostics-color=always")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT} -nostartfiles -Wl,--gc-sections")
+set(BOOT_LINKER_FLAGS      "-L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT_BOOT} -nostartfiles -Wl,--gc-sections")
 
 set(CMAKE_ASM_COMPILER "${CMAKE_C_COMPILER}")
 set(CMAKE_ASM_FLAGS    "${CMAKE_C_FLAGS}")
@@ -75,12 +79,13 @@ else()
   set(crt0      "ref/crt0.or1k.S")
 endif()
 
+set(crt0_boot   "ref/crt0.boot.S")
 
 include_directories(libs/sys_lib/inc)
 set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
 add_library(crt0 OBJECT ${crt0})
 
-add_library(crt0_boot OBJECT ${crt0})
+add_library(crt0_boot OBJECT ${crt0_boot})
 set_target_properties(crt0_boot PROPERTIES COMPILE_FLAGS "-DBOOT")
 
 
