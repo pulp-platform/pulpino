@@ -26,8 +26,8 @@ mkdir -p ./sw/build
 mkdir -p ./sw/build-rvc
 mkdir -p ./sw/build-imperio
 mkdir -p ./sw/build-imperio-rvc
-mkdir -p ./sw/build-imperio-rvc-spi
 mkdir -p ./sw/build-imperio-spi
+mkdir -p ./sw/build-imperio-rvc-spi
 
 cd ./sw/build
 
