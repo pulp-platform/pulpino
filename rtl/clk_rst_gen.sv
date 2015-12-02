@@ -52,7 +52,7 @@ module clk_rst_gen
     .CFGQ       ( fll_r_data_o      ),
     .CFGWEB     ( fll_wrn_i         ),
     .RSTB       ( rstn_i            ),
-    .PWDB       ( 1'b1              ),
+    .PWDB       ( clk_sel_i         ),
     .STAB       ( clk_standalone_i  ),
     .TM         ( testmode_i        ),
     .TE         ( scan_en_i         ),
