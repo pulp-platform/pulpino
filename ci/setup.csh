@@ -1,6 +1,6 @@
 #!/bin/tcsh
 
-setenv PATH /usr/scratch/badile-j68-1/msc15f8/custom-riscv-gcc/env-stable/bin:$PATH
+setenv PATH /usr/scratch2/larain/jenkins/artefacts/riscv_gcc/1.2.4/bin:$PATH
 
 ./update-ips.py
 
