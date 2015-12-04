@@ -49,7 +49,7 @@ module instr_ram_wrap
   boot_rom_wrap_i
   (
     .clk     ( clk                         ),
-
+    .rstn_i  ( rst_n                       ),
     .en_i    ( en_i & is_boot              ),
     .addr_i  ( addr_i[`ROM_ADDR_WIDTH-1:0] ),
     .rdata_o ( rdata_boot                  )

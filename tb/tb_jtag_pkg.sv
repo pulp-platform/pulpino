@@ -1,119 +1,123 @@
-`define JTAG_SOC_INSTR_WIDTH         4
 `define JTAG_CLUSTER_INSTR_WIDTH     4
 
-`define JTAG_SOC_AXIREG              4'b0100
-`define JTAG_SOC_BYPASS      4'b1111
+`define JTAG_CLUSTER_IDCODE          4'b0010
+`define JTAG_CLUSTER_SAMPLE_PRELOAD  4'b0001
+`define JTAG_CLUSTER_EXTEST          4'b0000
+`define JTAG_CLUSTER_DEBUG           4'b1000
+`define JTAG_CLUSTER_MBIST           4'b1001
+`define JTAG_CLUSTER_BYPASS          4'b1111
 
-`define JTAG_INSTR_WIDTH  (`JTAG_SOC_INSTR_WIDTH + `JTAG_CLUSTER_INSTR_WIDTH)
+`define JTAG_INSTR_WIDTH  (`JTAG_CLUSTER_INSTR_WIDTH)
 
-task jtag_wait_halfperiod(input int cycles);
-   #(50000*cycles);
-endtask
+interface jtag_i;
+   logic tck   = 1'b0;
+   logic trstn = 1'b0;
+   logic tms   = 1'b0;
+   logic tdi   = 1'b0;
+   logic tdo;
+endinterface
 
-task jtag_clock(input int cycles);
-   for(int i=0; i<cycles; i=i+1) begin
-      tb.tck <= 1'b0;
-      jtag_wait_halfperiod(1);
-      tb.tck <= 1'b1;
-      jtag_wait_halfperiod(1);
-      tb.tck <= 1'b0;
-   end
-endtask
+class JTAG_reg #(int unsigned size = 32);
 
-task jtag_reset();
-   tb.tms   <= 1'b0;
-   tb.tck   <= 1'b0;
-   tb.trstn <= 1'b0;
-   tb.tdi    <= 1'b0;
-   jtag_wait_halfperiod(2);
-   tb.trstn <= 1'b1;
-endtask
+   virtual jtag_i jtag_if;
+   logic [`JTAG_INSTR_WIDTH-1:0] instr;
 
-task jtag_softreset();
-   tb.tms   <= 1'b1;
-   tb.trstn <= 1'b1;
-   tb.tdi    <= 1'b0;
-   jtag_clock(5); //enter RST
-   tb.tms   <= 1'b0;
-   jtag_clock(1); // back to IDLE
+   function new (virtual jtag_i j, logic [`JTAG_INSTR_WIDTH-1:0] i = 'h0);
+      jtag_if = j;
+      instr = i;
+   endfunction
 
-endtask
+   task jtag_softreset();
+      jtag_if.tms   <= 1'b1;
+      jtag_if.trstn <= 1'b1;
+      jtag_if.tdi    <= 1'b0;
+      this.jtag_clock(5); //enter RST
+      jtag_if.tms   <= 1'b0;
+      this.jtag_clock(1); // back to IDLE
+   endtask
 
-class JTAG_reg #(int unsigned size = 32, logic [`JTAG_INSTR_WIDTH-1:0] instr = 'h0);
+   task jtag_reset();
+      jtag_if.tms   <= 1'b0;
+      jtag_if.tck   <= 1'b0;
+      jtag_if.trstn <= 1'b0;
+      jtag_if.tdi   <= 1'b0;
+      this.jtag_wait_halfperiod(2);
+      jtag_if.trstn <= 1'b1;
+   endtask
 
    task idle();
-      tb.trstn <= 1'b1;
+      jtag_if.trstn <= 1'b1;
       // from SHIFT_DR to RUN_TEST : tms sequence 10
-      tb.tms   <= 1'b1;
-      tb.tdi    <= 1'b0;
-      jtag_clock(1);
-      tb.tms   <= 1'b0;
-      jtag_clock(1);
+      jtag_if.tms   <= 1'b1;
+      jtag_if.tdi    <= 1'b0;
+      this.jtag_clock(1);
+      jtag_if.tms   <= 1'b0;
+      this.jtag_clock(1);
    endtask
 
    task update_and_goto_shift();
-      tb.trstn <= 1'b1;
+      jtag_if.trstn <= 1'b1;
       // from SHIFT_DR to RUN_TEST : tms sequence 110
-      tb.tms   <= 1'b1;
-      tb.tdi    <= 1'b0;
-      jtag_clock(1);
-      tb.tms   <= 1'b1;
-      jtag_clock(1);
-      tb.tms   <= 1'b0;
-      jtag_clock(1);
-      jtag_clock(1);
+      jtag_if.tms   <= 1'b1;
+      jtag_if.tdi    <= 1'b0;
+      this.jtag_clock(1);
+      jtag_if.tms   <= 1'b1;
+      this.jtag_clock(1);
+      jtag_if.tms   <= 1'b0;
+      this.jtag_clock(1);
+      this.jtag_clock(1);
    endtask
 
    task jtag_goto_SHIFT_IR();
-      tb.trstn <= 1'b1;
-      tb.tdi    <= 1'b0;
+      jtag_if.trstn <= 1'b1;
+      jtag_if.tdi    <= 1'b0;
       // from IDLE to SHIFT_IR : tms sequence 1100
-      tb.tms   <= 1'b1;
-      jtag_clock(2);
-      tb.tms   <= 1'b0;
-      jtag_clock(2);
+      jtag_if.tms   <= 1'b1;
+      this.jtag_clock(2);
+      jtag_if.tms   <= 1'b0;
+      this.jtag_clock(2);
    endtask
 
    task jtag_goto_SHIFT_DR();
-      tb.trstn <= 1'b1;
-      tb.tdi    <= 1'b0;
+      jtag_if.trstn <= 1'b1;
+      jtag_if.tdi    <= 1'b0;
       // from IDLE to SHIFT_IR : tms sequence 100
-      tb.tms   <= 1'b1;
-      jtag_clock(1);
-      tb.tms   <= 1'b0;
-      jtag_clock(2);
+      jtag_if.tms   <= 1'b1;
+      this.jtag_clock(1);
+      jtag_if.tms   <= 1'b0;
+      this.jtag_clock(2);
    endtask
 
    task jtag_shift_SHIFT_IR();
-      tb.trstn <= 1'b1;
-      tb.tms   <= 1'b0;
+      jtag_if.trstn <= 1'b1;
+      jtag_if.tms   <= 1'b0;
       for(int i=0; i < `JTAG_INSTR_WIDTH; i=i+1) begin
          if (i == `JTAG_INSTR_WIDTH-1)
-              tb.tms   <= 1'b1;
-         tb.tdi <= instr[i];
-         jtag_clock(1);
+              jtag_if.tms   <= 1'b1;
+         jtag_if.tdi <= instr[i];
+         this.jtag_clock(1);
       end
    endtask
 
-      task jtag_shift_NBITS_SHIFT_DR(input int unsigned numbits, input logic[size-1:0] datain,output logic[size-1:0] dataout);
-      tb.trstn <= 1'b1;
-      tb.tms   <= 1'b0;
+   task jtag_shift_NBITS_SHIFT_DR(input int unsigned numbits, input logic[size-1:0] datain,output logic[size-1:0] dataout);
+      jtag_if.trstn <= 1'b1;
+      jtag_if.tms   <= 1'b0;
       for(int i=0; i<numbits; i=i+1) begin
          if (i == (numbits-1))
-            tb.tms   <= 1'b1;
-         tb.tdi = datain[i];
-         jtag_clock(1);
-         dataout[i] = tb.tdo;
+            jtag_if.tms   <= 1'b1;
+         jtag_if.tdi = datain[i];
+         this.jtag_clock(1);
+         dataout[i] = jtag_if.tdo;
       end
    endtask
 
    task shift_nbits_noex(input int unsigned numbits, input logic[size-1:0] datain,output logic[size-1:0] dataout);
-      tb.trstn <= 1'b1;
-      tb.tms   <= 1'b0;
+      jtag_if.trstn <= 1'b1;
+      jtag_if.tms   <= 1'b0;
       for(int i=0; i<numbits; i=i+1) begin
-         tb.tdi = datain[i];
-         jtag_clock(1);
-         dataout[i] = tb.tdo;
+         jtag_if.tdi = datain[i];
+         this.jtag_clock(1);
+         dataout[i] = jtag_if.tdo;
       end
    endtask
 
@@ -135,6 +139,20 @@ class JTAG_reg #(int unsigned size = 32, logic [`JTAG_INSTR_WIDTH-1:0] instr = '
       this.jtag_goto_SHIFT_DR();
       this.jtag_shift_NBITS_SHIFT_DR(size,datain,dataout);
       this.idle();
+   endtask
+
+   local task jtag_clock(input int cycles);
+      for(int i=0; i<cycles; i=i+1) begin
+         jtag_if.tck <= 1'b0;
+         this.jtag_wait_halfperiod(1);
+         jtag_if.tck <= 1'b1;
+         this.jtag_wait_halfperiod(1);
+         jtag_if.tck <= 1'b0;
+      end
+   endtask
+
+   local task jtag_wait_halfperiod(input int cycles);
+      #(50000*cycles);
    endtask
 
 endclass
@@ -164,11 +182,23 @@ endclass
 
 class adv_dbg_if_t;
 
-   JTAG_reg #(.size(256), .instr({`JTAG_SOC_AXIREG, `JTAG_SOC_BYPASS})) jtag_cluster_dbg;
+   JTAG_reg #(.size(256)) jtag_cluster_dbg;
+   virtual jtag_i jtag_if;
+
+   function new (virtual jtag_i j);
+      jtag_if = j;
+      jtag_cluster_dbg = new(jtag_if, `JTAG_CLUSTER_DEBUG);
+   endfunction
+
+   task jtag_reset();
+      jtag_cluster_dbg.jtag_reset();
+   endtask
+
+   task jtag_softreset();
+      jtag_cluster_dbg.jtag_softreset();
+   endtask;
 
    task init();
-      jtag_cluster_dbg = new;
-      jtag_cluster_dbg.idle();
       jtag_cluster_dbg.setIR();
    endtask
 
@@ -176,7 +206,7 @@ class adv_dbg_if_t;
       // TO BE CHECKED
       logic [255:0] dataout;
       jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_AXI4_MODULE}, dataout);
+      jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_AXI4_MODULE, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
 //      jtag_cluster_dbg.shift_nbits(54,{1'b0, `ADV_DBG_AXI4_NOP, 32'b0, 0}, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
@@ -185,71 +215,44 @@ class adv_dbg_if_t;
    endtask
 
    task axi4_write8(input logic[31:0] addr, input int nwords, input logic [255:0][7:0] data);
-      logic [255:0] dataout;
-      jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_AXI4_MODULE}, dataout);
-      jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(54,{1'b0, `ADV_DBG_AXI4_WRITE8, addr, nwords[15:0]}, dataout);
-      jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits_noex(9, {data[0], 1'b1}, dataout);
-      for(int i=1; i<nwords; i++)
-         jtag_cluster_dbg.shift_nbits_noex(8, data[i], dataout);
-      jtag_cluster_dbg.shift_nbits(34, {2'b0, 32'h11111111}, dataout); // for now we completely ignore CRC
-      jtag_cluster_dbg.idle();
-      $display("[adv_dbg_if] AXI4 WRITE8 burst @%h for %d bytes.", addr, nwords);
+      this.axi_write(`ADV_DBG_AXI4_WRITE8, addr, nwords, data);
    endtask
 
    task axi4_write16(input logic[31:0] addr, input int nwords, input logic [255:0][15:0] data);
-      logic [255:0] dataout;
-      jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_AXI4_MODULE}, dataout);
-      jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(54,{1'b0, `ADV_DBG_AXI4_WRITE16, addr, nwords[15:0]}, dataout);
-      jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits_noex(17, {data[0], 1'b1}, dataout);
-      for(int i=1; i<nwords; i++)
-         jtag_cluster_dbg.shift_nbits_noex(16, data[i], dataout);
-      jtag_cluster_dbg.shift_nbits(34, {2'b0, 32'h11111111}, dataout); // for now we completely ignore CRC
-      jtag_cluster_dbg.idle();
-      $display("[adv_dbg_if] AXI4 WRITE16 burst @%h for %d bytes.", addr, nwords*2);
+      this.axi_write(`ADV_DBG_AXI4_WRITE16, addr, nwords, data);
    endtask
 
    task axi4_write32(input logic[31:0] addr, input int nwords, input logic [255:0][31:0] data);
-      logic [255:0] dataout;
-      jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_AXI4_MODULE}, dataout);
-      jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(54,{1'b0, `ADV_DBG_AXI4_WRITE32, addr, nwords[15:0]}, dataout);
-      jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits_noex(33, {data[0], 1'b1}, dataout);
-      for(int i=1; i<nwords; i++)
-         jtag_cluster_dbg.shift_nbits_noex(32, data[i], dataout);
-      jtag_cluster_dbg.shift_nbits(34, {2'b0, 32'h11111111}, dataout); // for now we completely ignore CRC
-      jtag_cluster_dbg.idle();
-      $display("[adv_dbg_if] AXI4 WRITE32 burst @%h for %d bytes.", addr, nwords*4);
+      this.axi_write(`ADV_DBG_AXI4_WRITE32, addr, nwords, data);
    endtask
 
    task axi4_write64(input logic[31:0] addr, input int nwords, input logic [255:0][63:0] data);
+      this.axi_write(`ADV_DBG_AXI4_WRITE64, addr, nwords, data);
+   endtask
+
+   local task axi_write(input [4:0] write_size, input logic[31:0] addr, input int nwords, input logic [255:0][31:0] data);
       logic [255:0] dataout;
+      int bit_size = (write_size == `ADV_DBG_AXI4_WRITE8) ? 8 : (write_size == `ADV_DBG_AXI4_WRITE16) ? 16 : (write_size == `ADV_DBG_AXI4_WRITE32) ? 32 : 64;
+
       jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_AXI4_MODULE}, dataout);
+      jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_AXI4_MODULE, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(54,{1'b0, `ADV_DBG_AXI4_WRITE64, addr, nwords[15:0]}, dataout);
+      jtag_cluster_dbg.shift_nbits(53,{write_size, addr, nwords[15:0]}, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits_noex(65, {data[0], 1'b1}, dataout);
+      jtag_cluster_dbg.shift_nbits_noex(bit_size + 1, {data[0], 1'b1}, dataout);
       for(int i=1; i<nwords; i++)
-         jtag_cluster_dbg.shift_nbits_noex(64, data[i], dataout);
+         jtag_cluster_dbg.shift_nbits_noex(bit_size, data[i], dataout);
       jtag_cluster_dbg.shift_nbits(34, {2'b0, 32'h11111111}, dataout); // for now we completely ignore CRC
       jtag_cluster_dbg.idle();
-      $display("[adv_dbg_if] AXI4 WRITE64 burst @%h for %d bytes.", addr, nwords*8);
+      $display("[adv_dbg_if] AXI4 WRITE%d burst @%h for %d bytes.", bit_size, addr, nwords*4);
    endtask
 
    task axi4_read8(input logic[31:0] addr, input int nwords, output logic [255:0][7:0] data);
       logic [255:0] dataout;
       jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_AXI4_MODULE}, dataout);
+      jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_AXI4_MODULE, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(54,{1'b0, `ADV_DBG_AXI4_READ8, addr, nwords[15:0]}, dataout);
+      jtag_cluster_dbg.shift_nbits(53, {`ADV_DBG_AXI4_READ8, addr, nwords[15:0]}, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
       while(1) // wait for a '1' from the AXI module
       begin
@@ -270,9 +273,9 @@ class adv_dbg_if_t;
    task axi4_read16(input logic[31:0] addr, input int nwords, output logic [255:0][15:0] data);
       logic [255:0] dataout;
       jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_AXI4_MODULE}, dataout);
+      jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_AXI4_MODULE, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(54,{1'b0, `ADV_DBG_AXI4_READ16, addr, nwords[15:0]}, dataout);
+      jtag_cluster_dbg.shift_nbits(53, {`ADV_DBG_AXI4_READ16, addr, nwords[15:0]}, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
       while(1) // wait for a '1' from the AXI module
       begin
@@ -293,9 +296,9 @@ class adv_dbg_if_t;
    task axi4_read32(input logic[31:0] addr, input int nwords, output logic [255:0][31:0] data);
       logic [255:0] dataout;
       jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_AXI4_MODULE}, dataout);
+      jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_AXI4_MODULE, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(54,{1'b0, `ADV_DBG_AXI4_READ32, addr, nwords[15:0]}, dataout);
+      jtag_cluster_dbg.shift_nbits(53, {`ADV_DBG_AXI4_READ32, addr, nwords[15:0]}, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
       while(1) // wait for a '1' from the AXI module
       begin
@@ -316,9 +319,9 @@ class adv_dbg_if_t;
    task axi4_read64(input logic[31:0] addr, input int nwords, output logic [255:0][63:0] data);
       logic [255:0] dataout;
       jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_AXI4_MODULE}, dataout);
+      jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_AXI4_MODULE, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(54,{1'b0, `ADV_DBG_AXI4_READ64, addr, nwords[15:0]}, dataout);
+      jtag_cluster_dbg.shift_nbits(53, {`ADV_DBG_AXI4_READ64, addr, nwords[15:0]}, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
       while(1) // wait for a '1' from the AXI module
       begin
@@ -339,9 +342,9 @@ class adv_dbg_if_t;
    task cpu_write(input logic [3:0] cpu_id, input logic[31:0] addr, input int nwords, input logic [255:0][31:0] data);
       logic [255:0] dataout;
       jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_CPU_MODULE}, dataout);
+      jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_CPU_MODULE, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(58,{1'b0, `ADV_DBG_CPU_WRITE, cpu_id, addr, nwords[15:0]}, dataout);
+      jtag_cluster_dbg.shift_nbits(57, {`ADV_DBG_CPU_WRITE, cpu_id, addr, nwords[15:0]}, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
       jtag_cluster_dbg.shift_nbits_noex(33, {data[0], 1'b1}, dataout);
       for(int i=1; i<nwords; i++)
@@ -354,9 +357,9 @@ class adv_dbg_if_t;
    task cpu_read(input logic [3:0] cpu_id, input logic[31:0] addr, input int nwords, output logic [255:0][31:0] data);
       logic [255:0] dataout;
       jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_CPU_MODULE}, dataout);
+      jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_CPU_MODULE, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(58,{1'b0, `ADV_DBG_CPU_READ, cpu_id, addr, nwords[15:0]}, dataout);
+      jtag_cluster_dbg.shift_nbits(57, {`ADV_DBG_CPU_READ, cpu_id, addr, nwords[15:0]}, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
       while(1) // wait for a '1' from the OR1K module
       begin
@@ -379,9 +382,9 @@ class adv_dbg_if_t;
       while(1)
       begin
         jtag_cluster_dbg.start_shift();
-        jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_CPU_MODULE}, dataout);
+        jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_CPU_MODULE, dataout);
         jtag_cluster_dbg.update_and_goto_shift();
-        jtag_cluster_dbg.shift_nbits(9,{1'b0, `ADV_DBG_CPU_NOP, `ADV_DBG_CPU_REG_STATUS, 2'b0}, dataout);
+        jtag_cluster_dbg.shift_nbits(8, {`ADV_DBG_CPU_NOP, `ADV_DBG_CPU_REG_STATUS, 2'b0}, dataout);
         jtag_cluster_dbg.idle();
 
         if(dataout[0] == 1'b1) break;
@@ -391,9 +394,9 @@ class adv_dbg_if_t;
    task cpu_stall(input logic [3:0] cpu_mask);
       logic [255:0] dataout;
       jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_CPU_MODULE}, dataout);
+      jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_CPU_MODULE, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(13,{1'b0, 1'b0, `ADV_DBG_CPU_WREG, `ADV_DBG_CPU_REG_STATUS, cpu_mask}, dataout);
+      jtag_cluster_dbg.shift_nbits(11, {1'b0, `ADV_DBG_CPU_WREG, `ADV_DBG_CPU_REG_STATUS, cpu_mask}, dataout);
       jtag_cluster_dbg.idle();
       $display("[adv_dbg_if] CPU STALL command.");
    endtask
@@ -401,25 +404,23 @@ class adv_dbg_if_t;
    task cpu_reset();
       logic [255:0] dataout;
       jtag_cluster_dbg.start_shift();
-      jtag_cluster_dbg.shift_nbits(7, {1'b0, `ADV_DBG_CPU_MODULE}, dataout);
+      jtag_cluster_dbg.shift_nbits(6, `ADV_DBG_CPU_MODULE, dataout);
       jtag_cluster_dbg.update_and_goto_shift();
-      jtag_cluster_dbg.shift_nbits(13,{1'b0, 1'b0, `ADV_DBG_CPU_WREG, `ADV_DBG_CPU_REG_STATUS, 4'b0000}, dataout);
+      jtag_cluster_dbg.shift_nbits(12, {1'b0, `ADV_DBG_CPU_WREG, `ADV_DBG_CPU_REG_STATUS, 4'b0000}, dataout);
       jtag_cluster_dbg.idle();
       $display("[adv_dbg_if] CPU RESET command.");
    endtask
 
    task cpu_read_gpr(input logic [3:0] cpu_id, input logic [4:0] addr, output logic [31:0] data);
      logic [255:0][31:0] tmp;
-     adv_dbg_if.cpu_read(cpu_id, {16'b0, 6'b1, 5'b0, addr}, 1, tmp);
+     this.cpu_read(cpu_id, {16'b0, 6'b1, 5'b0, addr}, 1, tmp);
      data = tmp[0];
    endtask
 
    task cpu_write_gpr(input logic [3:0] cpu_id, input logic [4:0] addr, input logic [31:0] data);
      logic [255:0][31:0] tmp;
      tmp[0] = data;
-     adv_dbg_if.cpu_write(cpu_id, {16'b0, 6'b1, 5'b0, addr}, 1, tmp);
+     this.cpu_write(cpu_id, {16'b0, 6'b1, 5'b0, addr}, 1, tmp);
    endtask
 
 endclass
-
-adv_dbg_if_t adv_dbg_if = new;

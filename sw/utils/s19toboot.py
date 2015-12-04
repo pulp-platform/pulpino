@@ -38,9 +38,9 @@ if(len(sys.argv) < 2):
     quit()
 
 
-rom_size      = 512 # in double words (64 bit)
-rom_start     = 0x1A000000
-rom_end       = rom_start + rom_size * 8 - 1
+rom_size      = 700 # in words (32 bit)
+rom_start     = 0x00008000
+rom_end       = rom_start + rom_size * 4 - 1
 
 
 ###############################################################################
@@ -64,8 +64,6 @@ def s19_parse(filename, s19_dict):
 
         data = line[-6:-4] # extract data byte
         str_addr = line[4:-6]
-
-        print data
 
         addr = int("0x%s" % str_addr, 0)
 
@@ -133,12 +131,12 @@ module boot_code
     input  logic        RSTN,
 
     input  logic        CSN,
-    input  logic [8:0]  A,
-    output logic [63:0] Q
+    input  logic [%d:0]  A,
+    output logic [31:0] Q
   );
 
-  const logic [63:0] mem[0:%d] = {
-""" % (rom_size-1));
+  const logic [32:0] mem[0:%d] = {
+""" % (math.log(rom_size, 2), (rom_size-1)))
 
 ###############################################################################
 # write the stimuli
@@ -151,12 +149,7 @@ for addr in sorted(slm_dict.keys()):
         rom_base = addr - rom_start
         rom_addr = (rom_base >> 1)
 
-        if((addr%2) == 0):
-            data_even = data
-        else:
-            data_odd  = data
-            rom_file.write("%s%s\n" % (data_odd, data_even))
-            vlog_file.write("    64'h%s%s,\n" % (data_odd, data_even))
+        vlog_file.write("    32'h%s,\n" % (data))
 
 # remove ,\n
 vlog_file.seek(-2, os.SEEK_END)

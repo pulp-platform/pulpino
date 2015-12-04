@@ -124,7 +124,18 @@ working version of gdb for the ISA you want to debug.
 
 TODO: more information required
 
+## Utilities
 
+We additionally provide some utilitiy targets that are supposed to make development for
+PULPino easier.
+
+For disassembling a program call
+
+    make helloworld.read
+
+To regenerate the bootcode and copy it to the `rtl/` folder use
+
+    make boot_code.boot.install
 
 ## FPGA
 

@@ -9,7 +9,7 @@
   .section .vectors, "ax"
 
   // reset vector
-  .org 0x80
+  .org 0x00
   jal x0, reset_handler
 
 /* ========================================================= [ entry ] === */
@@ -69,7 +69,6 @@ zero_loop_end:
 
 
 main_entry:
-
   /* jump to main program entry point (argc = argv = 0) */
   addi x10, x0, 0
   addi x11, x0, 0

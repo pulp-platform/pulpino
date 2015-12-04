@@ -93,7 +93,7 @@ module pulpino_top
   logic [31:0] cfgq_fll_int;
   logic        cfgweb_n_fll_int;
   logic        rstn_int;
-
+  logic [31:0] boot_addr_int;
 
   AXI_BUS
   #(
@@ -163,6 +163,7 @@ module pulpino_top
     .irq_i          ( irq_to_core_int   ),
     .core_busy_o    ( core_busy_int     ),
     .clock_gating_i ( clk_gate_core_int ),
+    .boot_addr_i    ( boot_addr_int     ),
 
     .core_master    ( masters[0]        ),
     .dbg_master     ( masters[1]        ),
@@ -257,7 +258,8 @@ module pulpino_top
     .fll1_rdata_i    ( cfgq_fll_int      ),
     .fll1_lock_i     ( lock_fll_int      ),
     .pad_cfg_o       ( pad_cfg_o         ),
-    .pad_mux_o       ( pad_mux_o         )
+    .pad_mux_o       ( pad_mux_o         ),
+    .boot_addr_o     ( boot_addr_int     )
   );
 
 

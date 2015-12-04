@@ -6,10 +6,10 @@
  *
  * parity       Enable/disable parity mode
  * clk_counter  Clock counter value that is used to derive the UART clock.
- *              It has to be in the range of 2..2^16.
+ *              It has to be in the range of 1..2^16.
  *              There is a prescaler in place that already divides the SoC
  *              clock by 16.  Since this is a counter, a value of 2 means that
- *              the SoC clock divided by 16*3 = 48 is used. A value of 31 would mean
+ *              the SoC clock divided by 16*2 = 32 is used. A value of 31 would mean
  *              that we use the SoC clock divided by 16*32 = 512.
  */
 void uart_set_cfg(int parity, uint16_t clk_counter) {
@@ -26,15 +26,12 @@ void uart_set_cfg(int parity, uint16_t clk_counter) {
 
 void uart_send(const char* str, unsigned int len) {
   unsigned int i;
-  
-  unsigned int core_id = get_core_id();
 
   while(len > 0) {
-    // wait until there is space in the fifo
-    while( (*(volatile unsigned int*)(UART_REG_LSR) & 0x20) == 0);
-
     // process this in batches of 16 bytes to actually use the FIFO in the UART
     for(i = 0; (i < UART_FIFO_DEPTH) && (len > 0); i++) {
+      // wait until there is space in the fifo
+      while( (*(volatile unsigned int*)(UART_REG_LSR) & 0x20) == 0);
       // load FIFO
       *(volatile unsigned int*)(UART_REG_THR) = *str++;
 

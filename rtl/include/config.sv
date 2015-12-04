@@ -15,8 +15,6 @@
 // TODO: this should not be in here! Put this into the vsim compile scripts
 `define ASIC
 
-
-
 // Width of byte enable for a given data width
 `define EVAL_BE_WIDTH(DATAWIDTH) (DATAWIDTH/8)
 
@@ -29,6 +27,7 @@
 
 `define INSTR_RAM_ADDR_WIDTH  14
 
-`define ROM_ADDR_WIDTH      8
+`define ROM_ADDR_WIDTH      10
+`define ROM_START_ADDR      32'h8000
 
 `endif

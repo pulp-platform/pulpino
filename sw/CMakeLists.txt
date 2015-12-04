@@ -68,7 +68,7 @@ set(BOOT_LINKER_FLAGS      "-L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT_BOOT}
 set(CMAKE_ASM_COMPILER "${CMAKE_C_COMPILER}")
 set(CMAKE_ASM_FLAGS    "${CMAKE_C_FLAGS}")
 
-set(PULP_MODELSIM_DIRECTORY "" CACHE PATH "Path to the ModelSim Pulp build")
+set(PULP_MODELSIM_DIRECTORY "" CACHE PATH "Path to the ModelSim PULPino build")
 set(VSIM "vsim" CACHE FILEPATH "Path to the vsim executable")
 
 ################################################################################

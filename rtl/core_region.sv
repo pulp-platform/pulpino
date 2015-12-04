@@ -21,6 +21,7 @@ module core_region
     input  logic [31:0] irq_i,
     output logic        core_busy_o,
     input  logic        clock_gating_i,
+    input  logic [31:0] boot_addr_i,
 
     AXI_BUS.Master      core_master,
     AXI_BUS.Master      dbg_master,
@@ -159,7 +160,7 @@ module core_region
 
       .test_en_i       ( 1'b0              ),
 
-      .boot_addr_i     ( 32'h0000_0000     ),
+      .boot_addr_i     ( boot_addr_i       ),
       .core_id_i       ( 5'h0              ),
       .cluster_id_i    ( 5'h0              ),
 

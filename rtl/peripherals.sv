@@ -1,5 +1,6 @@
 
 `include "axi_bus.sv"
+`include "config.sv"
 
 module peripherals
   #(
@@ -7,7 +8,8 @@ module peripherals
     parameter AXI_DATA_WIDTH       = 64,
     parameter AXI_USER_WIDTH       = 6,
     parameter AXI_SLAVE_ID_WIDTH   = 6,
-    parameter AXI_MASTER_ID_WIDTH  = 6
+    parameter AXI_MASTER_ID_WIDTH  = 6,
+    parameter ROM_START_ADDR       = 32'h8000
   )
   (
     // Clock and Reset
@@ -81,7 +83,8 @@ module peripherals
     input  logic              fll1_lock_i,
 
     output logic [31:0] [5:0] pad_cfg_o,
-    output logic       [31:0] pad_mux_o
+    output logic       [31:0] pad_mux_o,
+    output logic       [31:0] boot_addr_o
   );
 
   localparam APB_ADDR_WIDTH  = 12;
@@ -100,6 +103,7 @@ module peripherals
   logic [1:0]   s_spim_event;
   logic [3:0]   timer_irq;
   logic s_uart_event;
+  logic i2c_event;
   logic s_power_event;
   logic s_gpio_event;
 
@@ -111,31 +115,31 @@ module peripherals
 
   axi_spi_slave_wrap
   #(
-      .AXI_ADDRESS_WIDTH  ( AXI_ADDR_WIDTH       ),
-      .AXI_DATA_WIDTH     ( AXI_DATA_WIDTH       ),
-      .AXI_USER_WIDTH     ( AXI_USER_WIDTH       ),
-      .AXI_ID_WIDTH       ( AXI_MASTER_ID_WIDTH  )
+    .AXI_ADDRESS_WIDTH  ( AXI_ADDR_WIDTH       ),
+    .AXI_DATA_WIDTH     ( AXI_DATA_WIDTH       ),
+    .AXI_USER_WIDTH     ( AXI_USER_WIDTH       ),
+    .AXI_ID_WIDTH       ( AXI_MASTER_ID_WIDTH  )
   )
   axi_spi_slave_i
   (
-      .clk_i      ( clk_i          ),
-      .rst_ni     ( rst_n          ),
+    .clk_i      ( clk_i          ),
+    .rst_ni     ( rst_n          ),
 
-      .test_mode  ( testmode_i     ),
+    .test_mode  ( testmode_i     ),
 
-      .axi_master ( axi_spi_master ),
+    .axi_master ( axi_spi_master ),
 
-      .spi_clk    ( spi_clk_i      ),
-      .spi_cs     ( spi_cs_i       ),
-      .spi_mode   ( spi_mode_o     ),
-      .spi_sdo0   ( spi_sdo0_o     ),
-      .spi_sdo1   ( spi_sdo1_o     ),
-      .spi_sdo2   ( spi_sdo2_o     ),
-      .spi_sdo3   ( spi_sdo3_o     ),
-      .spi_sdi0   ( spi_sdi0_i     ),
-      .spi_sdi1   ( spi_sdi1_i     ),
-      .spi_sdi2   ( spi_sdi2_i     ),
-      .spi_sdi3   ( spi_sdi3_i     )
+    .spi_clk    ( spi_clk_i      ),
+    .spi_cs     ( spi_cs_i       ),
+    .spi_mode   ( spi_mode_o     ),
+    .spi_sdo0   ( spi_sdo0_o     ),
+    .spi_sdo1   ( spi_sdo1_o     ),
+    .spi_sdo2   ( spi_sdo2_o     ),
+    .spi_sdo3   ( spi_sdo3_o     ),
+    .spi_sdi0   ( spi_sdi0_i     ),
+    .spi_sdi1   ( spi_sdi1_i     ),
+    .spi_sdi2   ( spi_sdi2_i     ),
+    .spi_sdi3   ( spi_sdi3_i     )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -155,19 +159,19 @@ module peripherals
   )
   axi2apb_i
   (
-      .clk_i     ( clk_i     ),
-      .rst_ni    ( rst_n     ),
+    .clk_i     ( clk_i     ),
+    .rst_ni    ( rst_n     ),
 
-      .axi_slave ( slave     ),
+    .axi_slave ( slave     ),
 
-      .penable   ( s_penable ),
-      .pwrite    ( s_pwrite  ),
-      .paddr     ( s_paddr   ),
-      .psel      ( s_psel    ),
-      .pwdata    ( s_pwdata  ),
-      .prdata    ( s_prdata  ),
-      .pready    ( s_pready  ),
-      .pslverr   ( s_pslverr )
+    .penable   ( s_penable ),
+    .pwrite    ( s_pwrite  ),
+    .paddr     ( s_paddr   ),
+    .psel      ( s_psel    ),
+    .pwdata    ( s_pwdata  ),
+    .prdata    ( s_prdata  ),
+    .pready    ( s_pready  ),
+    .pslverr   ( s_pslverr )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -178,30 +182,30 @@ module peripherals
 
   apb_uart i_apb_uart
   (
-      .CLK      ( clk_i        ),
-      .RSTN     ( rst_n        ),
+    .CLK      ( clk_i        ),
+    .RSTN     ( rst_n        ),
 
-      .PSEL     ( s_psel[0]    ),
-      .PENABLE  ( s_penable    ),
-      .PWRITE   ( s_pwrite     ),
-      .PADDR    ( s_paddr[4:2] ),
-      .PWDATA   ( s_pwdata     ),
-      .PRDATA   ( s_prdata[0]  ),
-      .PREADY   ( s_pready[0]  ),
-      .PSLVERR  ( s_pslverr[0] ),
+    .PSEL     ( s_psel[0]    ),
+    .PENABLE  ( s_penable    ),
+    .PWRITE   ( s_pwrite     ),
+    .PADDR    ( s_paddr[4:2] ),
+    .PWDATA   ( s_pwdata     ),
+    .PRDATA   ( s_prdata[0]  ),
+    .PREADY   ( s_pready[0]  ),
+    .PSLVERR  ( s_pslverr[0] ),
 
-      .INT      ( s_uart_event ),   //Interrupt output
+    .INT      ( s_uart_event ),   //Interrupt output
 
-      .OUT1N    (),                    //Output 1
-      .OUT2N    (),                    //Output 2
-      .RTSN     ( uart_rts    ),       //RTS output
-      .DTRN     ( uart_dtr    ),       //DTR output
-      .CTSN     ( uart_cts    ),       //CTS input
-      .DSRN     ( uart_dsr    ),       //DSR input
-      .DCDN     ( 1'b1        ),       //DCD input
-      .RIN      ( 1'b1        ),       //RI input
-      .SIN      ( uart_rx     ),
-      .SOUT     ( uart_tx     )
+    .OUT1N    (),                    //Output 1
+    .OUT2N    (),                    //Output 2
+    .RTSN     ( uart_rts    ),       //RTS output
+    .DTRN     ( uart_dtr    ),       //DTR output
+    .CTSN     ( uart_cts    ),       //CTS input
+    .DSRN     ( uart_dsr    ),       //DSR input
+    .DCDN     ( 1'b1        ),       //DCD input
+    .RIN      ( 1'b1        ),       //RI input
+    .SIN      ( uart_rx     ),
+    .SOUT     ( uart_tx     )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -212,24 +216,24 @@ module peripherals
 
   apb_gpio apb_gpio_i
   (
-      .HCLK       ( clk_i ),
-      .HRESETn    ( rst_n ),
+    .HCLK       ( clk_i ),
+    .HRESETn    ( rst_n ),
 
-      .PADDR      ( s_paddr      ),
-      .PWDATA     ( s_pwdata     ),
-      .PWRITE     ( s_pwrite     ),
-      .PSEL       ( s_psel[1]    ),
-      .PENABLE    ( s_penable    ),
-      .PRDATA     ( s_prdata[1]  ),
-      .PREADY     ( s_pready[1]  ),
-      .PSLVERR    ( s_pslverr[1] ),
+    .PADDR      ( s_paddr      ),
+    .PWDATA     ( s_pwdata     ),
+    .PWRITE     ( s_pwrite     ),
+    .PSEL       ( s_psel[1]    ),
+    .PENABLE    ( s_penable    ),
+    .PRDATA     ( s_prdata[1]  ),
+    .PREADY     ( s_pready[1]  ),
+    .PSLVERR    ( s_pslverr[1] ),
 
-      .gpio_in      ( gpio_in       ),
-      .gpio_out     ( gpio_out      ),
-      .gpio_dir     ( gpio_dir      ),
-      .gpio_padcfg  ( gpio_padcfg   ),
-      .power_event  ( s_power_event ),
-      .interrupt    ( s_gpio_event  )
+    .gpio_in      ( gpio_in       ),
+    .gpio_out     ( gpio_out      ),
+    .gpio_dir     ( gpio_dir      ),
+    .gpio_padcfg  ( gpio_padcfg   ),
+    .power_event  ( s_power_event ),
+    .interrupt    ( s_gpio_event  )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -244,34 +248,34 @@ module peripherals
   )
   apb_spi_master_i
   (
-      .HCLK         ( clk_i ),
-      .HRESETn      ( rst_n ),
+    .HCLK         ( clk_i ),
+    .HRESETn      ( rst_n ),
 
-      .PADDR        ( s_paddr      ),
-      .PWDATA       ( s_pwdata     ),
-      .PWRITE       ( s_pwrite     ),
-      .PSEL         ( s_psel[2]    ),
-      .PENABLE      ( s_penable    ),
-      .PRDATA       ( s_prdata[2]  ),
-      .PREADY       ( s_pready[2]  ),
-      .PSLVERR      ( s_pslverr[2] ),
+    .PADDR        ( s_paddr      ),
+    .PWDATA       ( s_pwdata     ),
+    .PWRITE       ( s_pwrite     ),
+    .PSEL         ( s_psel[2]    ),
+    .PENABLE      ( s_penable    ),
+    .PRDATA       ( s_prdata[2]  ),
+    .PREADY       ( s_pready[2]  ),
+    .PSLVERR      ( s_pslverr[2] ),
 
-      .events_o     ( s_spim_event ),
+    .events_o     ( s_spim_event ),
 
-      .spi_clk      ( spi_master_clk  ),
-      .spi_csn0     ( spi_master_csn0 ),
-      .spi_csn1     ( spi_master_csn1 ),
-      .spi_csn2     ( spi_master_csn2 ),
-      .spi_csn3     ( spi_master_csn3 ),
-      .spi_mode     ( spi_master_mode ),
-      .spi_sdo0     ( spi_master_sdo0 ),
-      .spi_sdo1     ( spi_master_sdo1 ),
-      .spi_sdo2     ( spi_master_sdo2 ),
-      .spi_sdo3     ( spi_master_sdo3 ),
-      .spi_sdi0     ( spi_master_sdi0 ),
-      .spi_sdi1     ( spi_master_sdi1 ),
-      .spi_sdi2     ( spi_master_sdi2 ),
-      .spi_sdi3     ( spi_master_sdi3 )
+    .spi_clk      ( spi_master_clk  ),
+    .spi_csn0     ( spi_master_csn0 ),
+    .spi_csn1     ( spi_master_csn1 ),
+    .spi_csn2     ( spi_master_csn2 ),
+    .spi_csn3     ( spi_master_csn3 ),
+    .spi_mode     ( spi_master_mode ),
+    .spi_sdo0     ( spi_master_sdo0 ),
+    .spi_sdo1     ( spi_master_sdo1 ),
+    .spi_sdo2     ( spi_master_sdo2 ),
+    .spi_sdo3     ( spi_master_sdo3 ),
+    .spi_sdi0     ( spi_master_sdi0 ),
+    .spi_sdi1     ( spi_master_sdi1 ),
+    .spi_sdi2     ( spi_master_sdi2 ),
+    .spi_sdi3     ( spi_master_sdi3 )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -283,19 +287,19 @@ module peripherals
   apb_timer
   apb_timer_i
   (
-      .HCLK      ( clk_i          ),
-      .HRESETn     ( rst_n        ),
+    .HCLK       ( clk_i        ),
+    .HRESETn    ( rst_n        ),
 
-      .PADDR      ( s_paddr      ),
-      .PWDATA     ( s_pwdata     ),
-      .PWRITE     ( s_pwrite     ),
-      .PSEL       ( s_psel[3]    ),
-      .PENABLE    ( s_penable    ),
-      .PRDATA     ( s_prdata[3]  ),
-      .PREADY     ( s_pready[3]  ),
-      .PSLVERR    ( s_pslverr[3] ),
+    .PADDR      ( s_paddr      ),
+    .PWDATA     ( s_pwdata     ),
+    .PWRITE     ( s_pwrite     ),
+    .PSEL       ( s_psel[3]    ),
+    .PENABLE    ( s_penable    ),
+    .PRDATA     ( s_prdata[3]  ),
+    .PREADY     ( s_pready[3]  ),
+    .PSLVERR    ( s_pslverr[3] ),
 
-      .irq_o      ( timer_irq    )
+    .irq_o      ( timer_irq    )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -307,26 +311,26 @@ module peripherals
   apb_event_unit
   apb_event_unit_i
   (
-      .HCLK             ( clk_i ),
-      .HRESETn          ( rst_n ),
+    .HCLK             ( clk_i ),
+    .HRESETn          ( rst_n ),
 
-      .PADDR            ( s_paddr      ),
-      .PWDATA           ( s_pwdata     ),
-      .PWRITE           ( s_pwrite     ),
-      .PSEL             ( s_psel[4]    ),
-      .PENABLE          ( s_penable    ),
-      .PRDATA           ( s_prdata[4]  ),
-      .PREADY           ( s_pready[4]  ),
-      .PSLVERR          ( s_pslverr[4] ),
+    .PADDR            ( s_paddr      ),
+    .PWDATA           ( s_pwdata     ),
+    .PWRITE           ( s_pwrite     ),
+    .PSEL             ( s_psel[4]    ),
+    .PENABLE          ( s_penable    ),
+    .PRDATA           ( s_prdata[4]  ),
+    .PREADY           ( s_pready[4]  ),
+    .PSLVERR          ( s_pslverr[4] ),
 
-      .irq_i            ( {timer_irq, 28'b0} ),
-      .event_i          ( {timer_irq, 28'b0} ),
-      .irq_o            ( irq_o              ),
+    .irq_i            ( {timer_irq, s_spim_event, s_gpio_event, s_uart_event, i2c_event, 23'b0} ),
+    .event_i          ( {timer_irq, s_spim_event, s_gpio_event, s_uart_event, i2c_event, 23'b0} ),
+    .irq_o            ( irq_o              ),
 
-      .fetch_enable_i   ( fetch_enable_i     ),
-      .fetch_enable_o   ( fetch_enable_o     ),
-      .clk_gate_core_o  ( clk_gate_core_o    ),
-      .core_busy_i      ( core_busy_i        )
+    .fetch_enable_i   ( fetch_enable_i     ),
+    .fetch_enable_o   ( fetch_enable_o     ),
+    .clk_gate_core_o  ( clk_gate_core_o    ),
+    .core_busy_i      ( core_busy_i        )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -338,24 +342,24 @@ module peripherals
   apb_i2c
   apb_i2c_i
   (
-      .HCLK         ( clk_i           ),
-      .HRESETn      ( rst_n         ),
+    .HCLK         ( clk_i         ),
+    .HRESETn      ( rst_n         ),
 
-      .PADDR        ( s_paddr       ),
-      .PWDATA       ( s_pwdata      ),
-      .PWRITE       ( s_pwrite      ),
-      .PSEL         ( s_psel[5]     ),
-      .PENABLE      ( s_penable     ),
-      .PRDATA       ( s_prdata[5]   ),
-      .PREADY       ( s_pready[5]   ),
-      .PSLVERR      ( s_pslverr[5]  ),
-      .interrupt_o  (               ),
-      .scl_pad_i    ( scl_pad_i     ),
-      .scl_pad_o    ( scl_pad_o     ),
-      .scl_padoen_o ( scl_padoen_o  ),
-      .sda_pad_i    ( sda_pad_i     ),
-      .sda_pad_o    ( sda_pad_o     ),
-      .sda_padoen_o ( sda_padoen_o  )
+    .PADDR        ( s_paddr       ),
+    .PWDATA       ( s_pwdata      ),
+    .PWRITE       ( s_pwrite      ),
+    .PSEL         ( s_psel[5]     ),
+    .PENABLE      ( s_penable     ),
+    .PRDATA       ( s_prdata[5]   ),
+    .PREADY       ( s_pready[5]   ),
+    .PSLVERR      ( s_pslverr[5]  ),
+    .interrupt_o  ( i2c_event     ),
+    .scl_pad_i    ( scl_pad_i     ),
+    .scl_pad_o    ( scl_pad_o     ),
+    .scl_padoen_o ( scl_padoen_o  ),
+    .sda_pad_i    ( sda_pad_i     ),
+    .sda_pad_o    ( sda_pad_o     ),
+    .sda_padoen_o ( sda_padoen_o  )
   );
 
 
@@ -367,33 +371,33 @@ module peripherals
 
     apb_fll_if apb_fll_if_i
     (
-          .HCLK        ( clk_i        ),
-          .HRESETn     ( rst_n       ),
+      .HCLK        ( clk_i        ),
+      .HRESETn     ( rst_n        ),
 
-          .PADDR       ( s_paddr      ),
-          .PWDATA      ( s_pwdata     ),
-          .PWRITE      ( s_pwrite     ),
-          .PSEL        ( s_psel[6]    ),
-          .PENABLE     ( s_penable    ),
-          .PRDATA      ( s_prdata[6]  ),
-          .PREADY      ( s_pready[6]  ),
-          .PSLVERR     ( s_pslverr[6] ),
+      .PADDR       ( s_paddr      ),
+      .PWDATA      ( s_pwdata     ),
+      .PWRITE      ( s_pwrite     ),
+      .PSEL        ( s_psel[6]    ),
+      .PENABLE     ( s_penable    ),
+      .PRDATA      ( s_prdata[6]  ),
+      .PREADY      ( s_pready[6]  ),
+      .PSLVERR     ( s_pslverr[6] ),
 
-          .fll1_req    ( fll1_req_o   ),
-          .fll1_wrn    ( fll1_wrn_o   ),
-          .fll1_add    ( fll1_add_o   ),
-          .fll1_data   ( fll1_wdata_o ),
-          .fll1_ack    ( fll1_ack_i   ),
-          .fll1_r_data ( fll1_rdata_i ),
-          .fll1_lock   ( fll1_lock_i  ),
+      .fll1_req    ( fll1_req_o   ),
+      .fll1_wrn    ( fll1_wrn_o   ),
+      .fll1_add    ( fll1_add_o   ),
+      .fll1_data   ( fll1_wdata_o ),
+      .fll1_ack    ( fll1_ack_i   ),
+      .fll1_r_data ( fll1_rdata_i ),
+      .fll1_lock   ( fll1_lock_i  ),
 
-          .fll2_req    (              ),
-          .fll2_wrn    (              ),
-          .fll2_add    (              ),
-          .fll2_data   (              ),
-          .fll2_ack    (              ),
-          .fll2_r_data ( 'b0          ),
-          .fll2_lock   ( 1'b0         )
+      .fll2_req    (              ),
+      .fll2_wrn    (              ),
+      .fll2_add    (              ),
+      .fll2_data   (              ),
+      .fll2_ack    (              ),
+      .fll2_r_data ( 'b0          ),
+      .fll2_lock   ( 1'b0         )
       );
 
   //////////////////////////////////////////////////////////////////
@@ -402,21 +406,26 @@ module peripherals
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
 
-    apb_pulpino apb_pulpino_i
+    apb_pulpino
+    #(
+      .BOOT_ADDR ( ROM_START_ADDR )
+    )
+    apb_pulpino_i
     (
-          .HCLK        ( clk_i        ),
-          .HRESETn     ( rst_n        ),
+      .HCLK        ( clk_i        ),
+      .HRESETn     ( rst_n        ),
 
-          .PADDR       ( s_paddr      ),
-          .PWDATA      ( s_pwdata     ),
-          .PWRITE      ( s_pwrite     ),
-          .PSEL        ( s_psel[7]    ),
-          .PENABLE     ( s_penable    ),
-          .PRDATA      ( s_prdata[7]  ),
-          .PREADY      ( s_pready[7]  ),
-          .PSLVERR     ( s_pslverr[7] ),
+      .PADDR       ( s_paddr      ),
+      .PWDATA      ( s_pwdata     ),
+      .PWRITE      ( s_pwrite     ),
+      .PSEL        ( s_psel[7]    ),
+      .PENABLE     ( s_penable    ),
+      .PRDATA      ( s_prdata[7]  ),
+      .PREADY      ( s_pready[7]  ),
+      .PSLVERR     ( s_pslverr[7] ),
 
-          .pad_cfg_o    ( pad_cfg_o   ),
-          .pad_mux_o    ( pad_mux_o   )
-      );
+      .pad_cfg_o   ( pad_cfg_o   ),
+      .pad_mux_o   ( pad_mux_o   ),
+      .boot_addr_o ( boot_addr_o  )
+    );
 endmodule

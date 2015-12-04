@@ -1,6 +1,6 @@
 
 `include "config.sv"
-
+`include "tb_jtag_pkg.sv"
 `define REF_CLK_PERIOD   (2*15.25us)  // 32.786 kHz --> FLL reset value --> 50 MHz
 `define CLK_PERIOD       20.00ns      // 25 MHz
 
@@ -40,14 +40,11 @@ module tb;
 
   logic [31:0]  gpio_out;
 
-  logic         tck   = 1'b0;
-  logic         trstn = 1'b0;
-  logic         tms   = 1'b0;
-  logic         tdi   = 1'b0;
-  logic         tdo;
-
   logic [31:0]  recv_data;
 
+  jtag_i jtag_if();
+
+  adv_dbg_if_t adv_dbg_if = new(jtag_if);
 
   generate if(ENABLE_VPI == 1)
   begin
@@ -61,11 +58,11 @@ module tb;
       .clk_i    ( s_clk   ),
       .enable_i ( s_rst_n ),
 
-      .tms_o    ( tms     ),
-      .tck_o    ( tck     ),
-      .trst_o   ( trstn   ),
-      .tdi_o    ( tdi     ),
-      .tdo_i    ( tdo     )
+      .tms_o    ( jtag_if.tms     ),
+      .tck_o    ( jtag_if.tck     ),
+      .trst_o   ( jtag_if.trstn   ),
+      .tdi_o    ( jtag_if.tdi     ),
+      .tdo_i    ( jtag_if.tdo     )
      );
   end
   endgenerate
@@ -140,11 +137,11 @@ module tb;
     .gpio_dir          (              ),
     .gpio_padcfg       (              ),
 
-    .tck_i             ( tck          ),
-    .trstn_i           ( trstn        ),
-    .tms_i             ( tms          ),
-    .tdi_i             ( tdi          ),
-    .tdo_o             ( tdo          )
+    .tck_i             ( jtag_if.tck     ),
+    .trstn_i           ( jtag_if.trstn   ),
+    .tms_i             ( jtag_if.tms     ),
+    .tdi_i             ( jtag_if.tdi     ),
+    .tdo_o             ( jtag_if.tdo     )
   );
 
   generate
@@ -180,11 +177,17 @@ module tb;
     s_rst_n      = 1'b0;
     fetch_enable = 1'b0;
 
-    #10ns;
+    #500ns;
 
     s_rst_n = 1'b1;
 
-    #10ns;
+    #500ns;
+
+    /* Configure JTAG and set boot address */
+    adv_dbg_if.jtag_reset();
+    adv_dbg_if.jtag_softreset();
+    adv_dbg_if.init();
+    adv_dbg_if.axi4_write32(32'h1A10_7008, 1, 32'h0000_0000);
 
     if (memload == "PRELOAD")
     begin

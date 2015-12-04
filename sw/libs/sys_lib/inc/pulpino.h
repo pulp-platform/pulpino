@@ -36,7 +36,7 @@
 #define STREAM_BASE_ADDR              ( STDOUT_BASE_ADDR + 0x3000 )
 
 /* Instruction RAM */
-#define ISNTR_RAM_BASE_ADDR           ( 0x80       )
+#define INSTR_RAM_BASE_ADDR           ( 0x80       )
 
 /* ROM */
 #define ROM_BASE_ADDR                 ( 0x8000     )
