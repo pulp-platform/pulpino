@@ -105,7 +105,12 @@ add_custom_target(vcompile
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
-add_custom_target(vcompile_core
+add_custom_target(vcompile.ps
+  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./scripts/vcompile_ps.sh"
+  WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
+  ${USES_TERMINAL})
+
+add_custom_target(vcompile.core
   COMMAND tcsh ./scripts/vcompile_riscv.sh
   COMMAND tcsh ./scripts/vcompile_or10n.sh
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}

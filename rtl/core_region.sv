@@ -139,7 +139,7 @@ module core_region
   (
     .clk_o     ( clk_core_int   ),
     .en_i      ( clock_gating_i ),
-    .test_en_i ( 1'b0           ),
+    .test_en_i ( testmode_i     ),
     .clk_i     ( clk            )
   );
 
@@ -158,7 +158,7 @@ module core_region
       .clk             ( clk_core_int      ),
       .rst_n           ( rst_n             ),
 
-      .test_en_i       ( 1'b0              ),
+      .test_en_i       ( testmode_i        ),
 
       .boot_addr_i     ( boot_addr_i       ),
       .core_id_i       ( 5'h0              ),

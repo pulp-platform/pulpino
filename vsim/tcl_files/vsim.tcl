@@ -28,12 +28,14 @@ set cmd "vsim -quiet $TB \
   -L apb_timer_lib \
   -L apb_i2c_lib \
   -L apb_spi_master_lib \
+  -L imperio_components_lib \
   -L standalone_lib \
   +nowarnTRAN \
   +nowarnTSCALE \
   +nowarnTFMPC \
   -t ps \
   +MEMLOAD=$MEMLOAD \
+  +define+rtlsim \
   -voptargs=\"+acc -suppress 2103\" \
   $VSIM_FLAGS"
 

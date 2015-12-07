@@ -17,6 +17,7 @@ module pulpino_top
     input  logic             clk_standalone_i,
     input  logic             testmode_i,
     input  logic             fetch_enable_i,
+    input  logic             scan_enable_i,
 
     //SPI Slave
     input  logic             spi_clk_i,
@@ -123,11 +124,11 @@ module pulpino_top
       .rstn_i           ( rst_n            ),
 
       .clk_sel_i        ( clk_sel_i        ),
-      .clk_standalone_i ( clk_standalone_i     ),
+      .clk_standalone_i ( clk_standalone_i ),
       .testmode_i       ( testmode_i       ),
       .scan_i           (                  ),
       .scan_o           (                  ),
-
+      .scan_en_i        ( scan_enable_i    ),
 
       .fll_req_i        ( cfgreq_fll_int   ),
       .fll_wrn_i        ( cfgweb_n_fll_int ),
