@@ -3,7 +3,7 @@
 #
 
 set cmd "vsim -quiet imperio_tb \
-  -L imperio_lib \
+  -L imperio_lib_ps \
   -L fll_lib \
   -L imperio_components_lib \
   +nowarnTRAN \

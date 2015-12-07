@@ -126,7 +126,7 @@ module pulpino_top
       .clk_sel_i        ( clk_sel_i        ),
       .clk_standalone_i ( clk_standalone_i ),
       .testmode_i       ( testmode_i       ),
-      .scan_i           (                  ),
+      .scan_i           ( 1'b0             ),
       .scan_o           (                  ),
       .scan_en_i        ( scan_enable_i    ),
 
