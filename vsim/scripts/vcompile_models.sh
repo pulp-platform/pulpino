@@ -1,7 +1,6 @@
 #!/bin/tcsh
 source scripts/colors.sh
 
-
 echo "${Green} -> Compiling Simulation Models..."
 echo "${Green}Compiling component:   ${Brown} work.models ${NC}"
 echo "${Green}library: work ${NC}"

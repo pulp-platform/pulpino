@@ -132,7 +132,7 @@
       spi_addr        = stimuli[num_stim][63:32]; // assign address
       spi_data        = stimuli[num_stim][31:0];  // assign data
 
-      $display("[SPI] Loading L2");
+      $display("[SPI] Loading Instruction RAM");
       spi_csn  = 1'b0;
       #100  spi_send_cmd_addr(use_qspi,8'h2,spi_addr);
 
@@ -146,6 +146,7 @@
         if (spi_addr != (spi_addr_old + 32'h4))
         begin
           $display("[SPI] Prev address %h current addr %h",spi_addr_old,spi_addr);
+          $display("[SPI] Loading Data RAM");
           #100 spi_csn  = 1'b1;
           #`DELAY_BETWEEN_SPI;
           spi_csn  = 1'b0;
@@ -172,7 +173,7 @@
       spi_addr        = stimuli[num_stim][63:32]; // assign address
       spi_data        = stimuli[num_stim][31:0];  // assign data
 
-      $display("[SPI] Checking L2");
+      $display("[SPI] Checking Instruction RAM");
       spi_csn  = 1'b0;
       #100  spi_send_cmd_addr(use_qspi,8'hB,spi_addr);
       spi_addr_old = spi_addr - 32'h4;
@@ -193,6 +194,7 @@
         if (spi_addr != (spi_addr_old + 32'h4))
         begin
           $display("[SPI] Prev address %h current addr %h",spi_addr_old,spi_addr);
+          $display("[SPI] Checking Data RAM");
           #100 spi_csn  = 1'b1;
           #`DELAY_BETWEEN_SPI;
           spi_csn  = 1'b0;

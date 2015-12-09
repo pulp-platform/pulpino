@@ -35,7 +35,6 @@ set cmd "vsim -quiet $TB \
   +nowarnTFMPC \
   -t ps \
   +MEMLOAD=$MEMLOAD \
-  +define+rtlsim \
   -voptargs=\"+acc -suppress 2103\" \
   $VSIM_FLAGS"
 

@@ -1,6 +1,6 @@
-
 `include "config.sv"
 `include "tb_jtag_pkg.sv"
+
 `define REF_CLK_PERIOD   (2*15.25us)  // 32.786 kHz --> FLL reset value --> 50 MHz
 `define CLK_PERIOD       20.00ns      // 25 MHz
 
@@ -183,11 +183,14 @@ module tb;
 
     #500ns;
 
-    /* Configure JTAG and set boot address */
-    adv_dbg_if.jtag_reset();
-    adv_dbg_if.jtag_softreset();
-    adv_dbg_if.init();
-    adv_dbg_if.axi4_write32(32'h1A10_7008, 1, 32'h0000_0000);
+    if (memload != "STANDALONE")
+    begin
+      /* Configure JTAG and set boot address */
+      adv_dbg_if.jtag_reset();
+      adv_dbg_if.jtag_softreset();
+      adv_dbg_if.init();
+      adv_dbg_if.axi4_write32(32'h1A10_7008, 1, 32'h0000_0000);
+    end
 
     if (memload == "PRELOAD")
     begin
@@ -203,6 +206,7 @@ module tb;
       spi_check(use_qspi);
     end
 
+    #200000
     fetch_enable = 1'b1;
 
     // end of computation
