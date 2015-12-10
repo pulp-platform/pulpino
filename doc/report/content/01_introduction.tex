@@ -15,11 +15,49 @@
 % context. Motivate the questions addressed in this work and summarize
 % your contributions. Related work should also be mentioned here,
 % especially if you do not have a separate chapter for it.
+\pulpino is a micro-controller like system based on IPs mostly taken from its bigger brother the \gls{pulp} project.
 
-\section{First Section}
+This project origins from the idea to open-source the PULP project. Since \gls{pulp} is a huge project \pulpino is
+the first effort in doing so. The direct relation to the \gls{pulp} project is even expressed in the name chosen for
+the project: In Italian, adding an "-ino" at the end of a word usually means that word corresponds to a smaller version.
 
+Apart from the open source release, having a smaller platform has some tremendous advantages for the \gls{pulp} project as
+well. The \pulpino platform easily allows us to evaluate new features without considering the overhead of the whole \gls{pulp}
+platform in the first place. This is true regarding simple RTL simulation as well as for Synthesis estimates.
 
-\section{Second Section}
+In addition to the opportunity stated above there is still the educational aspect of the project. Due to its simplicity
+it can be of great value for students who want to gather deep understanding of the basic building blocks of a
+micro-controller like system. This relates to the SoC architecture as well as the idea and construction of a RISC core.
+It is often useful for ones understanding of a concept to have the possibility to observe a working implementation.
+
+\section{General Overview}
+
+\pulpino pursues a simple Harvard architecture (e.g. it has physically separated instruction and data RAMs). At its heart it
+has a \gls{RISC} core operating. We currently support two different instruction sets (ISA) for two distinct cores. This can either be
+our OpenRISC core OR1ON or our RISC-V implementation RI5CY. The cores are pin compatible and can therefore be swapped at one's
+convenience.
+The core has debug support enabled through the Advanced Debug Unit (ADB) partially adapted from the OpenCores project. The debug
+unit provides outside world communication via standard JTAG TAP. The core region (including the core, the debug unit and the RAMs)
+is communicating over a standard \gls{AXI}.
+
+A dedicated AXI to APB bridge connects the internal AXI bus to the (slower) \gls{APB}. Both bus specifications are part of the
+\gls{AMBA} specification.
+
+\section{Document Structure}
+
+This document is separated into two different parts. Part I deals with the general concept behind \pulpino and
+everything that is needed to start developing programs and/or specialized IPs easily. It starts with an introduction to
+the build framework and on how to get everything up and running so that the reader can easily follow along.
+
+I then aim to give a more detailed description of the overall architecture, the different IP cores and their peculiarities.
+This section concludes in a explanation of the functional verification framework that is shipped alongside the \pulpino project.
+
+The second part contains ASIC (Imperio) specific information. It gives insight on the measures taken for the tape-out as
+well as chip related information and concludes with a chip data sheet. Since Imperio is the ASIC of \pulpino everything explained in the
+first part of the document is directly applicable to Imperio as well.
+
+In the appendix you can find a summary of details needed to start developing for \pulpino. This includes a register description and
+a API description amongst others and it is supposed to act as a quick reference card for application developer.
 
 
 %%% Local Variables:

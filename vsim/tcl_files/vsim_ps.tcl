@@ -2,7 +2,7 @@
 # e.g. it did not recognize the -pli ./something.so argument
 #
 
-set cmd "vsim -quiet imperio_tb \
+set cmd "vsim -quiet $TB \
   -L imperio_lib_ps \
   -L fll_lib \
   +nowarnTRAN \

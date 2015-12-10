@@ -1,8 +1,6 @@
 #!/bin/tcsh
 source scripts/colors.sh
 
-#!/bin/tcsh
-
 echo "${Green}--> Compiling imperio components... ${NC}"
 
 echo "${Green}Compiling component:   ${Brown} Imperio components ${NC}"
