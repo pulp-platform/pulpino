@@ -1,0 +1,83 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                                                                 %
+%%%%%     Make Glossaries                                             %
+%%%%%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Required to generate the index for the glossaries.
+\makeglossaries
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                                                                %
+%%%%%     Definitions of all glossary entries which will appear in   %
+%%%%%     the default (main) glossary.                               %
+%%%%%                                                                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newglossaryentry{monkey}{name=Monkey,description={Lorem ipsum dolor
+sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam
+voluptua. At vero eos et accusam et justo duo dolores et ea
+rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+ipsum dolor sit amet}}
+
+\newglossaryentry{apple}{name=Apple,description={Lorem ipsum dolor sit
+amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam
+voluptua. At vero eos et accusam et justo duo dolores et ea
+rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+ipsum dolor sit amet}}
+
+\newglossaryentry{guitar}{name=Guitar,description={Lorem ipsum dolor
+sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam
+voluptua. At vero eos et accusam et justo duo dolores et ea
+rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+ipsum dolor sit amet}}
+
+\newglossaryentry{candle}{name=Candle,description={Lorem ipsum dolor
+sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam
+voluptua. At vero eos et accusam et justo duo dolores et ea
+rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+ipsum dolor sit amet}}
+
+\newglossaryentry{snake}{name=Snake,description={Lorem ipsum dolor
+sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
+invidunt ut labore et dolore magna aliquyam erat, sed diam
+voluptua. At vero eos et accusam et justo duo dolores et ea
+rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+ipsum dolor sit amet}}
+
+
+% Add all glossary entries to the glossary, even if they have not been
+% referenced.
+\glsaddall[types={main}]
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                                                                %
+%%%%%     Definitions of all acronyms which will appear in the list  %
+%%%%%     of acronyms.                                               %
+%%%%%                                                                %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newacronym{iis}{IIS}{Integrated Systems Laboratory}
+\newacronym{asic}{ASIC}{Application-Specific Integrated Circuit}
+\newacronym{fpga}{FPGA}{Field Programmable Gate Array}
+\newacronym{led}{LED}{Light-Emitting Diode}
+\newacronym{nist}{NIST}{National Institute of Standards and
+Technology}
+\newacronym{aes}{AES}{Advanced Encryption Standard}
+\newacronym{ecc}{ECC}{Elliptic Curve Cryptography}
+\newacronym{ecdsa}{ECDSA}{Elliptic Curve Digital Signature Algorithm}
+\newacronym{des}{DES}{Data Encryption Standard}
+\newacronym{wysiwyg}{WYSIWYG}{What You See Is What You Get}
+\newacronym{pdf}{PDF}{Portable Document Format}
+\newacronym{eps}{EPS}{Encapsulated PostScript}
+\newacronym{dvi}{DVI}{Device Independent File Format }
+\newacronym{ic}{IC}{Integrated Circuit}
+
+% Add all acronyms to the list of acronyms even if they have not been
+% referenced.
+\glsaddall[types={\acronymtype}]

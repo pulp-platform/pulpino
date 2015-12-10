@@ -1,0 +1,80 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                                                                 %
+%%%%%     report.tex                                                  %
+%%%%%                                                                 %
+%%%%% Author:      Florian Zaruba                                     %
+%%%%% Created:     10.12.2015                                         %
+%%%%% Description: Report for PULPino and Imperio architecture        %
+%%%%%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\makeatletter
+\newgeometry{margin = \@titlepagemargin}
+\begin{titlepage}
+
+ % Remove the page number in the footer.
+ \thispagestyle{empty}
+
+ \begin{center}
+  \begin{minipage}[b]{0.45\linewidth}
+   \vspace{0pt}
+   \includegraphics[width=0.8\linewidth]{./figures/eth_logo}
+  \end{minipage}\hfill
+  \begin{minipage}{0.45\textwidth}
+%   \vspace{-1cm}\flushright{Institut f\"ur Integrierte Systeme\\Integrated Systems Laboratory}
+   \vspace{-0.55cm}\flushright{\fontfamily{let}\fontseries{b}\fontsize{\@xpt}{18}\selectfont Institut f\"ur Integrierte Systeme\\Integrated Systems Laboratory}
+  \end{minipage}
+
+  \vspace{0.1cm}
+
+  \hspace*{0.15cm}\rule{0.985\textwidth}{0.4pt}
+
+  \vspace{0.5cm}
+
+  {\Large\textsc{Department of Information Technology and \\Electrical Engineering}}
+
+  \vspace{0.2cm}
+
+  \show@semester
+
+  \vfill
+
+  \begin{spacing}{2.0}
+  {\Huge\textbf{\@title}}
+  \end{spacing}
+
+  \vspace{0.2cm}
+
+  \show@reporttype
+
+  \vfill
+
+  \ifx\@titlelogo\@empty
+   \relax
+  \else
+   \includegraphics[height = \@logoheight]{\@titlelogo}
+  \fi
+
+  \vfill
+
+  {\Large \@author}\\
+  {\@email}
+
+  \vfill
+
+  \@date
+
+  \vfill
+
+  \begin{tabular}{ll}
+   Supervisors: & \show@firstsup \\
+                & \show@secondsup \\
+   \rule{0pt}{3ex}Professor: & \show@professor \\
+  \end{tabular}
+
+ \end{center}
+\end{titlepage}
+\restoregeometry
+\makeatother

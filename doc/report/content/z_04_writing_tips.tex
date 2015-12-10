@@ -1,0 +1,83 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                                                                 %
+%%%%%     z_04_writing_tips.tex                                       %
+%%%%%                                                                 %
+%%%%% Author:      Michael Muehlberghuber (<mbgh@iis.ee.ethz.ch>      %
+%%%%% Created:     01.07.2012                                         %
+%%%%% Description: Some Writing-specific tips in general.             %
+%%%%%                                                                 %
+%%%%% History:                                                        %
+%%%%%%%%%%%%%%                                                        %
+%%%%%                                                                 %
+%%%%% 01-Jul-2012 (Michael Muehlberghuber - mbgh@iis.ee.ethz.ch):     %
+%%%%% *) Created initial version.                                     %
+%%%%%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{General Writing Guidelines}
+
+As soon as you get familiar with the syntax of \LaTeX{} (and I can
+promise you, you will get familiar with it quite quickly as soon as
+you start writing your reports with \LaTeX{}), some more general
+writing tips might become of interest for your. Therefore, I collected
+a few general writing guidlines in the following sections, some of
+them with regard to \LaTeX{}, some of them not.
+
+\paragraph{Placement of Floating Environments}
+Figures and tables are the two most prominent examples for floating
+environments. Although the figure examples presented in
+Section~\ref{sec:figures} use \texttt{[htbp]} to tell \LaTeX{} how to
+place them, you should normally only use the \texttt{h} parameter if
+you really require it. Since \LaTeX{} then at first tries to place the
+figure at the same position as its source code, this somehow
+contradicts with the actual purpose of the \texttt{figure}
+environment. So, in general, try to place floating environments using
+one of the following parameters:
+
+\begin{description}
+\item[t] Place the floating environment on \textbf{t}op of a page.
+\item[b] Place the floating environment on the \textbf{b}ottom of a
+  page.
+\item[p] Puts the floating environment on a single \textit{floating
+    \textbf{p}age} with other floating environments.
+\end{description}
+
+
+\paragraph{Positioning of Figure and Table Captions}
+Captions of figures are, in general, placed below the actual figure,
+whereas captions of tables should be placed on top of
+them. Section~\ref{sec:figures} and \ref{sec:tables} contain some
+examples for figures and tables, including correct placement of
+captions.
+
+
+\paragraph{Avoid Unneccessary \LaTeX{} Packages}
+Although there are so many ``cool'' \LaTeX{} packages available
+everywhere on the Internet, try to use only those, which you really
+require. The main problem with loading too many, more or less unknown,
+packages is that some of them might redefine some commands, etc.,
+which are used by another package which asumes that command to be the
+original one. Keeping track of these changes and the relations between
+different packages, is quite annoying and takes quite a lot of
+time. Hence, keep your preamble simple with regard to packages.
+
+
+\paragraph{Make Use of Vector Drawings}
+Since \LaTeX{} handles vector drawings pretty good and their
+scalability allows you to print them in any resolution, prefer them
+compared to their pixel counterparts and use them whenever possible.
+
+% \paragraph{Equations Within the ``Text-Flow''}
+
+% \paragraph{Punctuation within Captions}
+% \begin{itemize}
+%  \item No second fullstop when ending sentences with abbreviations like
+%  etc.
+% \end{itemize}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../report_template"
+%%% End:

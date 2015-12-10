@@ -1,0 +1,254 @@
+%!PS-Adobe-3.0 EPSF-3.0
+%%BoundingBox: 69 73 512 506
+%%HiResBoundingBox: 69.000000 73.000000 512.000000 506.000000
+%%Creator: io2ps
+%%DocumentNeededResources: font Helvetica 
+%%EndComments
+% EPSF created by ps2eps 1.61
+%%BeginProlog
+save
+countdictstack
+mark
+newpath
+/showpage {} def
+/setpagedevice {pop} def
+%%EndProlog
+%%Page 1 1
+%
+%  PostScript prolog for output from xcircuit
+%  Version: 3.1
+%
+%  Electrical circuit (and otherwise general) drawing program
+%
+%  Written by Tim Edwards 8/5/93--1/5/04  (tim@bach.ece.jhu.edu)
+%  The Johns Hopkins University
+%
+%
+% supporting definitions --- these are the primary xcircuit types.
+/topmat matrix currentmatrix def
+/pspc 0 def
+/cf0 { scalefont setfont } bind def
+/Kn { dup kY add /kY exch def rmoveto } bind def
+/cf { dup type /realtype ne {1.0} if exch findfont exch kY 0 eq
+	{ 40 mul dup /fscale0 exch def cf0 /xfont0 currentfont def}
+	{fscale0 mul fscale mul cf0} ifelse } def
+/label { gsave translate 0 0 moveto dup scale neg /rotval exch def
+	/just exch def just 384 and 0 gt {/mshow {pop} def} {/mshow {show}
+	def} ifelse just 16 and 0 gt {gsave rotval rotate 0 1 dtransform
+	gsave pagemat setmatrix idtransform exch grestore 1 0 dtransform
+	gsave pagemat setmatrix idtransform exch grestore dup abs 1e-9 lt
+	{pop mul 0 gt} {3 1 roll pop pop 0 lt} ifelse grestore {-1 /rotval
+	rotval neg def /just just dup 3 and 1 ne {3 xor} if def} {1} ifelse
+	exch -1e-9 lt {-1 /rotval rotval neg def /just just dup 12 and
+	4 ne {12 xor} if def} {1} ifelse scale } if /showflag 0 def
+	/fspc pspc def /Bline 0 def /Tabs 0 array def /fscale 1.0 def
+	/kY 0 def gsave dup 1 add copy 0 exch 1 0 dtransform exch atan rotate
+	{exch dup type /stringtype eq {true charpath flattenpath} {dup type
+	/arraytype eq {exec} {12 string cvs true charpath flattenpath} ifelse}
+	ifelse} repeat pop pathbbox grestore 3 -1 roll pop 3 1 roll just
+	1 and 0 gt {just 2 and 0 gt {exch pop neg fspc sub} {exch sub 0.5
+	mul neg} ifelse} {pop neg fspc add} ifelse exch Bline exch just 4
+	and 0 gt {just 8 and 0 gt {exch pop neg fspc sub} {add 0.5 mul neg}
+	ifelse} {pop neg fspc add} ifelse rotval rotate Kn currentpoint
+	translate /showflag 1 def /Bline 0 def /Tabs 0 array def /fscale
+	1.0 def /kY 0 def {dup type /stringtype eq {mshow} {dup type
+	/arraytype eq {exec} {12 string cvs mshow} ifelse} ifelse} repeat
+	grestore } def
+/scb { setrgbcolor } bind def  /sce { defColor aload pop scb } bind def
+/cRedef {/defColor currentcolor 3 array astore def} def
+/setstyles {
+  currentlinewidth mul setlinewidth /style exch def
+  style 1 and 0 gt not {closepath} if
+  style 2 and 0 gt {currentlinewidth 4 mul dup 2 array astore 0 setdash} if
+  style 4 and 0 gt {0.5 currentlinewidth 4 mul 2 array astore 0 setdash} if
+  gsave style 16 and 0 gt { style 224 and -5 bitshift style 256 and 0 gt {
+  7 exch sub 8 div dup 1 exch sub currentrgbcolor 3 array astore
+  {3 copy mul add 4 1 roll pop} forall pop pop setrgbcolor eofill}
+  {dup 7 lt {gar exch get ppaint} {pop eofill} ifelse} ifelse}
+  {style 256 and 0 gt {1 setgray eofill} if} ifelse grestore style 8 and 0 gt 
+  style 512 eq or {newpath} {stroke} ifelse grestore} def     
+/polygon { gsave /num exch def moveto num 1 sub {lineto} repeat setstyles } def
+/bop	 { 1 setlinecap 0 setlinejoin 6 setmiterlimit 0 0 0 scb cRedef } def
+/setpagemat {/pagemat matrix currentmatrix def} def
+/inchscale  {setpagemat 0.375 mul dup scale} def
+% XCircuit output starts here.
+/pgsave save def bop
+0.7500 inchscale
+2.6000 setlinewidth 1067 1099 translate
+1 1.00 -544 368 -544 -576 448 -576 448 416 -496 416 5 polygon
+1 1.00 -544 368 -496 416 2 polygon
+(1) {/Helvetica cf} 2 29 270 0.66 -496 336 label
+1 1.00 -544 -512 -512 -512 -512 -480 -544 -480 4 polygon
+(15) {/Helvetica cf} 2 17 0 0.66 -464 -528 label
+1 1.00 -480 -576 -480 -544 -448 -544 -448 -576 4 polygon
+(29) {/Helvetica cf} 2 29 90 0.66 400 -496 label
+1 1.00 448 -512 416 -512 416 -480 448 -480 4 polygon
+(43) {/Helvetica cf} 2 21 0 0.66 368 368 label
+1 1.00 -480 416 -480 384 -448 384 -448 416 4 polygon
+(2) {/Helvetica cf} 2 29 270 0.66 -496 272 label
+1 1.00 -544 -448 -512 -448 -512 -416 -544 -416 4 polygon
+(16) {/Helvetica cf} 2 17 0 0.66 -400 -528 label
+1 1.00 -416 -576 -416 -544 -384 -544 -384 -576 4 polygon
+(30) {/Helvetica cf} 2 29 90 0.66 400 -432 label
+1 1.00 448 -448 416 -448 416 -416 448 -416 4 polygon
+(44) {/Helvetica cf} 2 21 0 0.66 304 368 label
+1 1.00 -416 416 -416 384 -384 384 -384 416 4 polygon
+(3) {/Helvetica cf} 2 29 270 0.66 -496 208 label
+1 1.00 -544 -384 -512 -384 -512 -352 -544 -352 4 polygon
+(17) {/Helvetica cf} 2 17 0 0.66 -336 -528 label
+1 1.00 -352 -576 -352 -544 -320 -544 -320 -576 4 polygon
+(31) {/Helvetica cf} 2 29 90 0.66 400 -368 label
+1 1.00 448 -384 416 -384 416 -352 448 -352 4 polygon
+(45) {/Helvetica cf} 2 21 0 0.66 240 368 label
+1 1.00 -352 416 -352 384 -320 384 -320 416 4 polygon
+(4) {/Helvetica cf} 2 29 270 0.66 -496 144 label
+1 1.00 -544 -320 -512 -320 -512 -288 -544 -288 4 polygon
+(18) {/Helvetica cf} 2 17 0 0.66 -272 -528 label
+1 1.00 -288 -576 -288 -544 -256 -544 -256 -576 4 polygon
+(32) {/Helvetica cf} 2 29 90 0.66 400 -304 label
+1 1.00 448 -320 416 -320 416 -288 448 -288 4 polygon
+(46) {/Helvetica cf} 2 21 0 0.66 176 368 label
+1 1.00 -288 416 -288 384 -256 384 -256 416 4 polygon
+(5) {/Helvetica cf} 2 29 270 0.66 -496 80 label
+1 1.00 -544 -256 -512 -256 -512 -224 -544 -224 4 polygon
+(19) {/Helvetica cf} 2 17 0 0.66 -208 -528 label
+1 1.00 -224 -576 -224 -544 -192 -544 -192 -576 4 polygon
+(33) {/Helvetica cf} 2 29 90 0.66 400 -240 label
+1 1.00 448 -256 416 -256 416 -224 448 -224 4 polygon
+(47) {/Helvetica cf} 2 21 0 0.66 112 368 label
+1 1.00 -224 416 -224 384 -192 384 -192 416 4 polygon
+(6) {/Helvetica cf} 2 29 270 0.66 -496 16 label
+1 1.00 -544 -192 -512 -192 -512 -160 -544 -160 4 polygon
+(20) {/Helvetica cf} 2 17 0 0.66 -144 -528 label
+1 1.00 -160 -576 -160 -544 -128 -544 -128 -576 4 polygon
+(34) {/Helvetica cf} 2 29 90 0.66 400 -176 label
+1 1.00 448 -192 416 -192 416 -160 448 -160 4 polygon
+(48) {/Helvetica cf} 2 21 0 0.66 48 368 label
+1 1.00 -160 416 -160 384 -128 384 -128 416 4 polygon
+(7) {/Helvetica cf} 2 29 270 0.66 -496 -48 label
+1 1.00 -544 -128 -512 -128 -512 -96 -544 -96 4 polygon
+(21) {/Helvetica cf} 2 17 0 0.66 -80 -528 label
+1 1.00 -96 -576 -96 -544 -64 -544 -64 -576 4 polygon
+(35) {/Helvetica cf} 2 29 90 0.66 400 -112 label
+1 1.00 448 -128 416 -128 416 -96 448 -96 4 polygon
+(49) {/Helvetica cf} 2 21 0 0.66 -16 368 label
+1 1.00 -96 416 -96 384 -64 384 -64 416 4 polygon
+(8) {/Helvetica cf} 2 29 270 0.66 -496 -112 label
+1 1.00 -544 -64 -512 -64 -512 -32 -544 -32 4 polygon
+(22) {/Helvetica cf} 2 17 0 0.66 -16 -528 label
+1 1.00 -32 -576 -32 -544 0 -544 0 -576 4 polygon
+(36) {/Helvetica cf} 2 29 90 0.66 400 -48 label
+1 1.00 448 -64 416 -64 416 -32 448 -32 4 polygon
+(50) {/Helvetica cf} 2 21 0 0.66 -80 368 label
+1 1.00 -32 416 -32 384 0 384 0 416 4 polygon
+(9) {/Helvetica cf} 2 29 270 0.66 -496 -176 label
+1 1.00 -544 0 -512 0 -512 32 -544 32 4 polygon
+(23) {/Helvetica cf} 2 17 0 0.66 48 -528 label
+1 1.00 32 -576 32 -544 64 -544 64 -576 4 polygon
+(37) {/Helvetica cf} 2 29 90 0.66 400 16 label
+1 1.00 448 0 416 0 416 32 448 32 4 polygon
+(51) {/Helvetica cf} 2 21 0 0.66 -144 368 label
+1 1.00 32 416 32 384 64 384 64 416 4 polygon
+(10) {/Helvetica cf} 2 29 270 0.66 -496 -240 label
+1 1.00 -544 64 -512 64 -512 96 -544 96 4 polygon
+(24) {/Helvetica cf} 2 17 0 0.66 112 -528 label
+1 1.00 96 -576 96 -544 128 -544 128 -576 4 polygon
+(38) {/Helvetica cf} 2 29 90 0.66 400 80 label
+1 1.00 448 64 416 64 416 96 448 96 4 polygon
+(52) {/Helvetica cf} 2 21 0 0.66 -208 368 label
+1 1.00 96 416 96 384 128 384 128 416 4 polygon
+(11) {/Helvetica cf} 2 29 270 0.66 -496 -304 label
+1 1.00 -544 128 -512 128 -512 160 -544 160 4 polygon
+(25) {/Helvetica cf} 2 17 0 0.66 176 -528 label
+1 1.00 160 -576 160 -544 192 -544 192 -576 4 polygon
+(39) {/Helvetica cf} 2 29 90 0.66 400 144 label
+1 1.00 448 128 416 128 416 160 448 160 4 polygon
+(53) {/Helvetica cf} 2 21 0 0.66 -272 368 label
+1 1.00 160 416 160 384 192 384 192 416 4 polygon
+(12) {/Helvetica cf} 2 29 270 0.66 -496 -368 label
+1 1.00 -544 192 -512 192 -512 224 -544 224 4 polygon
+(26) {/Helvetica cf} 2 17 0 0.66 240 -528 label
+1 1.00 224 -576 224 -544 256 -544 256 -576 4 polygon
+(40) {/Helvetica cf} 2 29 90 0.66 400 208 label
+1 1.00 448 192 416 192 416 224 448 224 4 polygon
+(54) {/Helvetica cf} 2 21 0 0.66 -336 368 label
+1 1.00 224 416 224 384 256 384 256 416 4 polygon
+(13) {/Helvetica cf} 2 29 270 0.66 -496 -432 label
+1 1.00 -544 256 -512 256 -512 288 -544 288 4 polygon
+(27) {/Helvetica cf} 2 17 0 0.66 304 -528 label
+1 1.00 288 -576 288 -544 320 -544 320 -576 4 polygon
+(41) {/Helvetica cf} 2 29 90 0.66 400 272 label
+1 1.00 448 256 416 256 416 288 448 288 4 polygon
+(55) {/Helvetica cf} 2 21 0 0.66 -400 368 label
+1 1.00 288 416 288 384 320 384 320 416 4 polygon
+(14) {/Helvetica cf} 2 29 270 0.66 -496 -496 label
+1 1.00 -544 320 -512 320 -512 352 -544 352 4 polygon
+(28) {/Helvetica cf} 2 17 0 0.66 368 -528 label
+1 1.00 352 -576 352 -544 384 -544 384 -576 4 polygon
+(42) {/Helvetica cf} 2 29 90 0.66 400 336 label
+1 1.00 448 320 416 320 416 352 448 352 4 polygon
+(56) {/Helvetica cf} 2 21 0 0.66 -464 368 label
+1 1.00 352 416 352 384 384 384 384 416 4 polygon
+(NOT_BONDED) {/Helvetica cf} 2 23 0 0.75 -560 336 label
+(pad_MsgDataxDI_7) {/Helvetica cf} 2 23 0 0.75 -560 272 label
+(pad_MsgDataxDI_6) {/Helvetica cf} 2 23 0 0.75 -560 208 label
+(pad_MsgDataxDI_5) {/Helvetica cf} 2 23 0 0.75 -560 144 label
+(pad_MsgDataxDI_4) {/Helvetica cf} 2 23 0 0.75 -560 80 label
+(pad_MsgDataxDI_3) {/Helvetica cf} 2 23 0 0.75 -560 16 label
+(pad_gnd_c1) {/Helvetica cf} 2 23 0 0.75 -560 -48 label
+(pad_vcc_c1) {/Helvetica cf} 2 23 0 0.75 -560 -112 label
+(pad_MsgDataxDI_2) {/Helvetica cf} 2 23 0 0.75 -560 -176 label
+(pad_MsgDataxDI_1) {/Helvetica cf} 2 23 0 0.75 -560 -240 label
+(pad_MsgDataxDI_0) {/Helvetica cf} 2 23 0 0.75 -560 -304 label
+(pad_MsgEndxSI) {/Helvetica cf} 2 23 0 0.75 -560 -368 label
+(pad_ControlxTI_0) {/Helvetica cf} 2 23 0 0.75 -560 -432 label
+(NOT_BONDED) {/Helvetica cf} 2 23 0 0.75 -560 -496 label
+(pad_vcc_p1) {/Helvetica cf} 2 23 270 0.75 -464 -592 label
+(pad_MsgReqxSI) {/Helvetica cf} 2 23 270 0.75 -400 -592 label
+(pad_MsgAckxSO) {/Helvetica cf} 2 23 270 0.75 -336 -592 label
+(pad_ScanEnxTI) {/Helvetica cf} 2 23 270 0.75 -272 -592 label
+(pad_SelfRunEnxSI) {/Helvetica cf} 2 23 270 0.75 -208 -592 label
+(pad_OutMutexSI) {/Helvetica cf} 2 23 270 0.75 -144 -592 label
+(NOT_BONDED) {/Helvetica cf} 2 23 270 0.75 -80 -592 label
+(NOT_BONDED) {/Helvetica cf} 2 23 270 0.75 -16 -592 label
+(pad_FnSelxSI_0) {/Helvetica cf} 2 23 270 0.75 48 -592 label
+(pad_FnSelxSI_1) {/Helvetica cf} 2 23 270 0.75 112 -592 label
+(pad_FnSelxSI_2) {/Helvetica cf} 2 23 270 0.75 176 -592 label
+(pad_ControlxTI_1) {/Helvetica cf} 2 23 270 0.75 240 -592 label
+(pad_ControlxTI_2) {/Helvetica cf} 2 23 270 0.75 304 -592 label
+(pad_gnd_p1) {/Helvetica cf} 2 23 270 0.75 368 -592 label
+(NOT_BONDED) {/Helvetica cf} 2 20 0 0.75 464 -496 label
+(pad_ControlxTI_3) {/Helvetica cf} 2 20 0 0.75 464 -432 label
+(pad_HashEndxSO) {/Helvetica cf} 2 20 0 0.75 464 -368 label
+(pad_HashDataxDO_0) {/Helvetica cf} 2 20 0 0.75 464 -304 label
+(pad_HashDataxDO_1) {/Helvetica cf} 2 20 0 0.75 464 -240 label
+(pad_HashDataxDO_2) {/Helvetica cf} 2 20 0 0.75 464 -176 label
+(pad_gnd_c2) {/Helvetica cf} 2 20 0 0.75 464 -112 label
+(pad_vcc_c2) {/Helvetica cf} 2 20 0 0.75 464 -48 label
+(pad_HashDataxDO_3) {/Helvetica cf} 2 20 0 0.75 464 16 label
+(pad_HashDataxDO_4) {/Helvetica cf} 2 20 0 0.75 464 80 label
+(pad_HashDataxDO_5) {/Helvetica cf} 2 20 0 0.75 464 144 label
+(pad_HashDataxDO_6) {/Helvetica cf} 2 20 0 0.75 464 208 label
+(pad_HashDataxDO_7) {/Helvetica cf} 2 20 0 0.75 464 272 label
+(NOT_BONDED) {/Helvetica cf} 2 20 0 0.75 464 336 label
+(pad_vcc_p2) {/Helvetica cf} 2 20 270 0.75 368 432 label
+(pad_HashReqxSO) {/Helvetica cf} 2 20 270 0.75 304 432 label
+(pad_HashAckxSI) {/Helvetica cf} 2 20 270 0.75 240 432 label
+(pad_ObservexTO_5) {/Helvetica cf} 2 20 270 0.75 176 432 label
+(pad_ResetxRBI) {/Helvetica cf} 2 20 270 0.75 112 432 label
+(pad_ClkxCI) {/Helvetica cf} 2 20 270 0.75 48 432 label
+(NOT_BONDED) {/Helvetica cf} 2 20 270 0.75 -16 432 label
+(NOT_BONDED) {/Helvetica cf} 2 20 270 0.75 -80 432 label
+(pad_ObservexTO_4) {/Helvetica cf} 2 20 270 0.75 -144 432 label
+(pad_ObservexTO_3) {/Helvetica cf} 2 20 270 0.75 -208 432 label
+(pad_ObservexTO_2) {/Helvetica cf} 2 20 270 0.75 -272 432 label
+(pad_ObservexTO_1) {/Helvetica cf} 2 20 270 0.75 -336 432 label
+(pad_ObservexTO_0) {/Helvetica cf} 2 20 270 0.75 -400 432 label
+(pad_gnd_p2) {/Helvetica cf} 2 20 270 0.75 -464 432 label
+pgsave restore showpage
+%%Trailer
+cleartomark
+countdictstack
+exch sub { end } repeat
+restore
+%%EOF
