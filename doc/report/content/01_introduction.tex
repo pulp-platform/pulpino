@@ -19,7 +19,7 @@
 
 This project origins from the idea to open-source the PULP project. Since \gls{pulp} is a huge project \pulpino is
 the first effort in doing so. The direct relation to the \gls{pulp} project is even expressed in the name chosen for
-the project: In Italian, adding an "-ino" at the end of a word usually means that word corresponds to a smaller version.
+the project: In Italian, adding an "-ino" at the end of a word usually means that word corresponds to a minimalized version.
 
 Apart from the open source release, having a smaller platform has some tremendous advantages for the \gls{pulp} project as
 well. The \pulpino platform easily allows us to evaluate new features without considering the overhead of the whole \gls{pulp}
@@ -32,10 +32,11 @@ It is often useful for ones understanding of a concept to have the possibility t
 
 \section{General Overview}
 
-\pulpino pursues a simple Harvard architecture (e.g. it has physically separated instruction and data RAMs). At its heart it
+\pulpino implements a simple Harvard architecture (e.g. it has physically separated instruction and data RAMs). At its heart it
 has a \gls{RISC} core operating. We currently support two different instruction sets (ISA) for two distinct cores. This can either be
 our OpenRISC core OR1ON or our RISC-V implementation RI5CY. The cores are pin compatible and can therefore be swapped at one's
-convenience.
+convenience. Both cores process with a four stage in-order pipeline.
+
 The core has debug support enabled through the Advanced Debug Unit (ADB) partially adapted from the OpenCores project. The debug
 unit provides outside world communication via standard JTAG TAP. The core region (including the core, the debug unit and the RAMs)
 is communicating over a standard \gls{AXI}.
