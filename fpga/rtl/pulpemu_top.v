@@ -287,39 +287,61 @@ module pulpemu_top(
 
   // PULPino SoC
   pulpino pulpino_wrap_i (
-    .clk            ( s_clk_pulpino       ),
-    .rst_n          ( s_rstn_pulpino      ),
+    .clk               ( s_clk_pulpino  ),
+    .rst_n             ( s_rstn_pulpino ),
 
-    .fetch_enable_i ( fetch_en            ),
+    .fetch_enable_i    ( fetch_en       ),
 
-    .tck_i      ( tck_i               ),
-    .trstn_i    ( trst_ni             ),
-    .tms_i      ( tms_i               ),
-    .tdi_i      ( td_i                ),
-    .tdo_o      ( td_o                ),
+    .tck_i             ( tck_i          ),
+    .trstn_i           ( trst_ni        ),
+    .tms_i             ( tms_i          ),
+    .tdi_i             ( td_i           ),
+    .tdo_o             ( td_o           ),
 
-    .spi_clk_i  ( spi_sck             ),
-    .spi_cs_i   ( spi_cs              ),
-    .spi_mode_o (                     ),
-    .spi_sdi0_i ( spi_mosi            ),
-    .spi_sdi1_i ( 1'b0                ),
-    .spi_sdi2_i ( 1'b0                ),
-    .spi_sdi3_i ( 1'b0                ),
-    .spi_sdo0_o ( spi_miso            ),
-    .spi_sdo1_o (                     ),
-    .spi_sdo2_o (                     ),
-    .spi_sdo3_o (                     ),
+    .spi_clk_i         ( spi_sck        ),
+    .spi_cs_i          ( spi_cs         ),
+    .spi_mode_o        (                ),
+    .spi_sdi0_i        ( spi_mosi       ),
+    .spi_sdi1_i        ( 1'b0           ),
+    .spi_sdi2_i        ( 1'b0           ),
+    .spi_sdi3_i        ( 1'b0           ),
+    .spi_sdo0_o        ( spi_miso       ),
+    .spi_sdo1_o        (                ),
+    .spi_sdo2_o        (                ),
+    .spi_sdo3_o        (                ),
 
-    .gpio_in    ( gpio_in             ),
-    .gpio_out   ( gpio_out            ),
-    .gpio_dir   ( gpio_dir            ),
+    .spi_master_clk_o  (                ),
+    .spi_master_csn0_o (                ),
+    .spi_master_csn1_o (                ),
+    .spi_master_csn2_o (                ),
+    .spi_master_csn3_o (                ),
+    .spi_master_mode_o (                ),
+    .spi_master_sdi0_i ( 1'b0           ),
+    .spi_master_sdi1_i ( 1'b0           ),
+    .spi_master_sdi2_i ( 1'b0           ),
+    .spi_master_sdi3_i ( 1'b0           ),
+    .spi_master_sdo0_o (                ),
+    .spi_master_sdo1_o (                ),
+    .spi_master_sdo2_o (                ),
+    .spi_master_sdo3_o (                ),
 
-    .uart_tx    ( uart_tx             ), // output
-    .uart_rx    ( uart_rx             ), // input
-    .uart_rts   (                     ), // output
-    .uart_dtr   (                     ), // output
-    .uart_cts   ( 1'b0                ), // input
-    .uart_dsr   ( 1'b0                )  // input
+    .scl_i             (                ),
+    .scl_o             (                ),
+    .scl_oen_o         (                ),
+    .sda_i             (                ),
+    .sda_o             (                ),
+    .sda_oen_o         (                ),
+
+    .gpio_in           ( gpio_in        ),
+    .gpio_out          ( gpio_out       ),
+    .gpio_dir          ( gpio_dir       ),
+
+    .uart_tx           ( uart_tx        ), // output
+    .uart_rx           ( uart_rx        ), // input
+    .uart_rts          (                ), // output
+    .uart_dtr          (                ), // output
+    .uart_cts          ( 1'b0           ), // input
+    .uart_dsr          ( 1'b0           )  // input
   );
 
 endmodule

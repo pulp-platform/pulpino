@@ -142,6 +142,50 @@ fail:
   return retval;
 }
 
+int set_boot_addr(uint32_t boot_addr) {
+  int fd;
+  char wr_buf[9];
+  int retval = 0;
+
+  const uint32_t reg_addr = 0x1A107008;
+
+  wr_buf[0] = 0x02; // write command
+  wr_buf[1] = reg_addr >> 24;
+  wr_buf[2] = reg_addr >> 16;
+  wr_buf[3] = reg_addr >> 8;
+  wr_buf[4] = reg_addr;
+  // address
+  wr_buf[5] = boot_addr >> 24;
+  wr_buf[6] = boot_addr >> 16;
+  wr_buf[7] = boot_addr >> 8;
+  wr_buf[8] = boot_addr;
+
+  // open spidev
+  fd = open(SPIDEV, O_RDWR);
+  if (fd <= 0) {
+    perror("Device not found\n");
+
+    retval = -1;
+    goto fail;
+  }
+
+  // write to spidev
+  if (write(fd, wr_buf, 9) != 9) {
+    perror("Write Error");
+
+    retval = -1;
+    goto fail;
+  }
+
+  close(fd);
+
+fail:
+  // close spidev
+  close(fd);
+
+  return retval;
+}
+
 int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
   int fd;
   char* wr_buf;
@@ -241,7 +285,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
   }
 
   for(i = 0; i < in_size; i++) {
-    if (in_buf[i] != rd_buf[i + 13]) {
+    if (in_buf[i] != rd_buf[i + 9]) {
       printf("Read check failed at idx %d: Expected %02X, got %02X\n", i, in_buf[i], rd_buf[i + 13]);
     }
   }
@@ -309,6 +353,8 @@ int main(int argc, char **argv)
   printf("Device has been reset\n");
 
   process_file(buffer, size);
+
+  set_boot_addr(0x00000000);
 
   printf("Starting device\n");
   pulp_ctrl(1, 0);

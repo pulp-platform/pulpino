@@ -23,7 +23,7 @@ set_property board $::env(XILINX_BOARD) [current_project]
 if { $core == "RI5CY" } {
   set_property include_dirs { \
     ../../ips/riscv/include \
-    ../../ips/apb_peripherals/apb_event_unit/include \
+    ../../ips/apb/apb_event_unit/include \
     ../../rtl/include \
   } [current_fileset]
 }
@@ -31,7 +31,7 @@ if { $core == "RI5CY" } {
 if { $core == "OR10N" } {
   set_property include_dirs { \
     ../../ips/or10n/include \
-    ../../ips/apb_peripherals/apb_event_unit/include \
+    ../../ips/apb/apb_event_unit/include \
     ../../rtl/include \
   } [current_fileset]
 }
@@ -42,8 +42,7 @@ source ../common/messages.tcl
 source tcl/src_files.tcl
 
 # add memory cuts
-add_files -norecurse $FPGA_IPS/xilinx_mem_32768x32_dp/ip/xilinx_mem_32768x32_dp.dcp
-add_files -norecurse $FPGA_IPS/xilinx_mem_32768x32/ip/xilinx_mem_32768x32.dcp
+add_files -norecurse $FPGA_IPS/xilinx_mem_8192x32/ip/xilinx_mem_8192x32.dcp
 
 # add axi_mem_if_DP
 add_files -norecurse -scan_for_includes $SRC_AXI_MEM_IF_DP
@@ -54,8 +53,20 @@ add_files -norecurse -scan_for_includes $SRC_AXI_SLAVE
 # add apb_event_unit
 add_files -norecurse -scan_for_includes $SRC_APB_EVENT_UNIT
 
+# add apb_timer_unit
+add_files -norecurse -scan_for_includes $SRC_APB_TIMER_UNIT
+
 # add apb_spim
 add_files -norecurse -scan_for_includes $SRC_APB_SPIM
+
+# add apb_i2c
+add_files -norecurse -scan_for_includes $SRC_APB_I2C
+
+# add apb_fll_if
+add_files -norecurse -scan_for_includes $SRC_APB_FLL_IF
+
+# add apb_pulpino
+add_files -norecurse -scan_for_includes $SRC_APB_PULPINO
 
 # add apb_gpio
 add_files -norecurse -scan_for_includes $SRC_APB_GPIO
@@ -88,8 +99,8 @@ if { $core == "RI5CY" } {
 # add adv_dbg_if
 add_files -norecurse -scan_for_includes $SRC_ADV_DEBUG_IF
 
-# add common cells
-add_files -norecurse $SRC_COMMONCELLS
+# add components
+add_files -norecurse $SRC_COMPONENTS
 
 # add pulpino
 add_files -norecurse $SRC_PULPINO

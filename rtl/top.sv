@@ -1,3 +1,12 @@
+// Copyright 2015 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
 
 `include "axi_bus.sv"
 
@@ -10,43 +19,43 @@
 module pulpino_top
   (
     // Clock and Reset
-    input logic clk,
-    input logic rst_n,
+    input logic               clk,
+    input logic               rst_n,
 
-    input  logic             clk_sel_i,
-    input  logic             clk_standalone_i,
-    input  logic             testmode_i,
-    input  logic             fetch_enable_i,
-    input  logic             scan_enable_i,
+    input  logic              clk_sel_i,
+    input  logic              clk_standalone_i,
+    input  logic              testmode_i,
+    input  logic              fetch_enable_i,
+    input  logic              scan_enable_i,
 
     //SPI Slave
-    input  logic             spi_clk_i,
-    input  logic             spi_cs_i,
-    output logic [1:0]       spi_mode_o,
-    output logic             spi_sdo0_o,
-    output logic             spi_sdo1_o,
-    output logic             spi_sdo2_o,
-    output logic             spi_sdo3_o,
-    input  logic             spi_sdi0_i,
-    input  logic             spi_sdi1_i,
-    input  logic             spi_sdi2_i,
-    input  logic             spi_sdi3_i,
+    input  logic              spi_clk_i,
+    input  logic              spi_cs_i,
+    output logic [1:0]        spi_mode_o,
+    output logic              spi_sdo0_o,
+    output logic              spi_sdo1_o,
+    output logic              spi_sdo2_o,
+    output logic              spi_sdo3_o,
+    input  logic              spi_sdi0_i,
+    input  logic              spi_sdi1_i,
+    input  logic              spi_sdi2_i,
+    input  logic              spi_sdi3_i,
 
     //SPI Master
-    output logic             spi_master_clk_o,
-    output logic             spi_master_csn0_o,
-    output logic             spi_master_csn1_o,
-    output logic             spi_master_csn2_o,
-    output logic             spi_master_csn3_o,
-    output logic [1:0]       spi_master_mode_o,
-    output logic             spi_master_sdo0_o,
-    output logic             spi_master_sdo1_o,
-    output logic             spi_master_sdo2_o,
-    output logic             spi_master_sdo3_o,
-    input  logic             spi_master_sdi0_i,
-    input  logic             spi_master_sdi1_i,
-    input  logic             spi_master_sdi2_i,
-    input  logic             spi_master_sdi3_i,
+    output logic              spi_master_clk_o,
+    output logic              spi_master_csn0_o,
+    output logic              spi_master_csn1_o,
+    output logic              spi_master_csn2_o,
+    output logic              spi_master_csn3_o,
+    output logic [1:0]        spi_master_mode_o,
+    output logic              spi_master_sdo0_o,
+    output logic              spi_master_sdo1_o,
+    output logic              spi_master_sdo2_o,
+    output logic              spi_master_sdo3_o,
+    input  logic              spi_master_sdi0_i,
+    input  logic              spi_master_sdi1_i,
+    input  logic              spi_master_sdi2_i,
+    input  logic              spi_master_sdi3_i,
 
     input  logic              scl_pad_i,
     output logic              scl_pad_o,
@@ -68,11 +77,11 @@ module pulpino_top
     output logic [31:0] [5:0] gpio_padcfg,
 
     // JTAG signals
-    input  logic tck_i,
-    input  logic trstn_i,
-    input  logic tms_i,
-    input  logic tdi_i,
-    output logic tdo_o,
+    input  logic              tck_i,
+    input  logic              trstn_i,
+    input  logic              tms_i,
+    input  logic              tdi_i,
+    output logic              tdo_o,
 
     // PULPino specific pad config
     output logic [31:0] [5:0] pad_cfg_o,
@@ -279,11 +288,12 @@ module pulpino_top
   )
   axi_interconnect_i
   (
-    .clk     ( clk_int  ),
-    .rst_n   ( rstn_int ),
+    .clk       ( clk_int    ),
+    .rst_n     ( rstn_int   ),
+    .test_en_i ( testmode_i ),
 
-    .master  ( slaves   ),
-    .slave   ( masters  ),
+    .master    ( slaves     ),
+    .slave     ( masters    ),
 
     .start_addr_i ( { 32'h1A10_0000, 32'h0010_0000, 32'h0000_0000 } ),
     .end_addr_i   ( { 32'h1A11_FFFF, 32'h001F_FFFF, 32'h000F_FFFF } )

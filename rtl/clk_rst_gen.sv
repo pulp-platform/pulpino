@@ -38,6 +38,7 @@ module clk_rst_gen
   // FLL
   //----------------------------------------------------------------------------//
 
+`ifndef PULP_FPGA_EMUL
   umcL65_LL_FLL
   fll_i
   (
@@ -59,6 +60,12 @@ module clk_rst_gen
     .TD         ( scan_i            ),
     .TQ         ( scan_o            )
   );
+`else
+  assign fll_ack_o    = fll_req_i;
+  assign fll_r_data_o = 1'b0;
+  assign fll_lock_o   = 1'b0;
+  assign scan_o       = 1'b0;
+`endif
 
   //----------------------------------------------------------------------------//
   // Reset synchronizer

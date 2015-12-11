@@ -1,3 +1,13 @@
+// Copyright 2015 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
 `include "config.sv"
 
 module sp_ram_wrap
@@ -18,7 +28,7 @@ module sp_ram_wrap
   );
 
 `ifdef PULP_FPGA_EMUL
-  xilinx_mem_32768x32
+  xilinx_mem_8192x32
   sp_ram_i
   (
     .clka   ( clk                ),
@@ -31,8 +41,8 @@ module sp_ram_wrap
     .wea    ( be_i & {4{we_i}}   )
   );
 
-  // TODO: we should kill synthesis when the ram size is larger than 32768
-  // words
+  // TODO: we should kill synthesis when the ram size is larger than what we
+  // have here
 
 `elsif ASIC
    // RAM bypass logic

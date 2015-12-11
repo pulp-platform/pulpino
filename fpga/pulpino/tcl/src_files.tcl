@@ -25,43 +25,66 @@ set SRC_AXI_SLAVE "
    $IPS/axi/axi_spi_slave/spi_slave_tx.sv \
 "
 
+# apb_fll_if
+set SRC_APB_FLL_IF "
+   $IPS/apb/apb_fll_if/apb_fll_if.sv \
+"
+
+# apb_pulpino
+set SRC_APB_PULPINO "
+   $IPS/apb/apb_pulpino/apb_pulpino.sv \
+"
+
 # apb_event_unit
 set SRC_APB_EVENT_UNIT "
-   $IPS/apb_peripherals/apb_event_unit/apb_event_unit.sv \
-   $IPS/apb_peripherals/apb_event_unit/core_distributor.sv \
-   $IPS/apb_peripherals/apb_event_unit/core_if.sv \
+   $IPS/apb/apb_event_unit/apb_event_unit.sv \
+   $IPS/apb/apb_event_unit/generic_service_unit.sv \
+   $IPS/apb/apb_event_unit/sleep_unit.sv \
+"
+
+# apb_timer_unit
+set SRC_APB_TIMER_UNIT "
+   $IPS/apb/apb_timer/apb_timer.sv \
+   $IPS/apb/apb_timer/timer.sv \
 "
 
 # apb_spi_master
 set SRC_APB_SPIM "
-   $IPS/apb_peripherals/apb_spi_master/apb_spi_master.sv \
-   $IPS/apb_peripherals/apb_spi_master/spi_master_apb_if.sv \
-   $IPS/apb_peripherals/apb_spi_master/spi_master_clkgen.sv \
-   $IPS/apb_peripherals/apb_spi_master/spi_master_controller.sv \
-   $IPS/apb_peripherals/apb_spi_master/spi_master_fifo.sv \
-   $IPS/apb_peripherals/apb_spi_master/spi_master_rx.sv \
-   $IPS/apb_peripherals/apb_spi_master/spi_master_tx.sv \
+   $IPS/apb/apb_spi_master/apb_spi_master.sv \
+   $IPS/apb/apb_spi_master/spi_master_apb_if.sv \
+   $IPS/apb/apb_spi_master/spi_master_clkgen.sv \
+   $IPS/apb/apb_spi_master/spi_master_controller.sv \
+   $IPS/apb/apb_spi_master/spi_master_fifo.sv \
+   $IPS/apb/apb_spi_master/spi_master_rx.sv \
+   $IPS/apb/apb_spi_master/spi_master_tx.sv \
 "
 
 # apb_gpio
 set SRC_APB_GPIO "
-   $IPS/apb_peripherals/apb_gpio/apb_gpio.sv
+   $IPS/apb/apb_gpio/apb_gpio.sv
+"
+
+# apb_i2c
+set SRC_APB_I2C "
+   $IPS/apb/apb_i2c/apb_i2c.sv              \
+   $IPS/apb/apb_i2c/i2c_master_bit_ctrl.sv  \
+   $IPS/apb/apb_i2c/i2c_master_byte_ctrl.sv \
 "
 
 # apb_uart
 set SRC_APB_UART "
-   $IPS/apb_peripherals/apb_uart/apb_uart.vhd \
-   $IPS/apb_peripherals/apb_uart/slib_clock_div.vhd \
-   $IPS/apb_peripherals/apb_uart/slib_counter.vhd \
-   $IPS/apb_peripherals/apb_uart/slib_edge_detect.vhd \
-   $IPS/apb_peripherals/apb_uart/slib_fifo.vhd \
-   $IPS/apb_peripherals/apb_uart/slib_input_filter.vhd \
-   $IPS/apb_peripherals/apb_uart/slib_input_sync.vhd \
-   $IPS/apb_peripherals/apb_uart/slib_mv_filter.vhd \
-   $IPS/apb_peripherals/apb_uart/uart_baudgen.vhd \
-   $IPS/apb_peripherals/apb_uart/uart_interrupt.vhd \
-   $IPS/apb_peripherals/apb_uart/uart_receiver.vhd \
-   $IPS/apb_peripherals/apb_uart/uart_transmitter.vhd \
+   $IPS/apb/apb_uart/apb_uart.vhd \
+   $IPS/apb/apb_uart/slib_clock_div.vhd \
+   $IPS/apb/apb_uart/slib_counter.vhd \
+   $IPS/apb/apb_uart/slib_edge_detect.vhd \
+   $IPS/apb/apb_uart/slib_fifo.vhd \
+   $IPS/apb/apb_uart/slib_input_filter.vhd \
+   $IPS/apb/apb_uart/slib_input_sync.vhd \
+   $IPS/apb/apb_uart/slib_mv_filter.vhd \
+   $IPS/apb/apb_uart/uart_baudgen.vhd \
+   $IPS/apb/apb_uart/uart_interrupt.vhd \
+   $IPS/apb/apb_uart/uart_receiver.vhd \
+   $IPS/apb/apb_uart/uart_transmitter.vhd \
 "
 
 # axi_slice_dc
@@ -123,26 +146,17 @@ set SRC_AXI_NODE "
    $IPS/axi/axi_node/axi_address_decoder_DW.sv \
    $IPS/axi/axi_node/axi_AR_allocator.sv \
    $IPS/axi/axi_node/axi_ArbitrationTree.sv \
-   $IPS/axi/axi_node/axi_ar_buffer.sv \
    $IPS/axi/axi_node/axi_AW_allocator.sv \
-   $IPS/axi/axi_node/axi_aw_buffer.sv \
-   $IPS/axi/axi_node/axi_b_buffer.sv \
    $IPS/axi/axi_node/axi_BR_allocator.sv \
-   $IPS/axi/axi_node/axi_buffer.sv \
    $IPS/axi/axi_node/axi_BW_allocator.sv \
    $IPS/axi/axi_node/axi_DW_allocator.sv \
    $IPS/axi/axi_node/axi_FanInPrimitive_Req.sv \
    $IPS/axi/axi_node/axi_multiplexer.sv \
    $IPS/axi/axi_node/axi_node.sv \
-   $IPS/axi/axi_node/axi_node_wrap_2x2.v \
-   $IPS/axi/axi_node/axi_onehot_to_bin.sv \
-   $IPS/axi/axi_node/axi_r_buffer.sv \
    $IPS/axi/axi_node/axi_regs_top.sv \
    $IPS/axi/axi_node/axi_request_block.sv \
    $IPS/axi/axi_node/axi_response_block.sv \
    $IPS/axi/axi_node/axi_RR_Flag_Req.sv \
-   $IPS/axi/axi_node/axi_w_buffer.sv \
-   $IPS/axi/axi_node/GENERIC_FIFO.sv \
 "
 
 # timer unit
@@ -187,40 +201,38 @@ set SRC_RI5CY "
    $IPS/riscv/load_store_unit.sv \
    $IPS/riscv/mult.sv \
    $IPS/riscv/riscv_core.sv \
-   $FPGA_RTL/riscv_register_file.sv \
+   $IPS/riscv/register_file_ff.sv \
 "
 
-# common cells
-set SRC_COMMONCELLS " \
-   $IPS/common_cells/cluster_clock_buffer.sv \
-   $IPS/common_cells/cluster_clock_gating.sv \
-   $IPS/common_cells/cluster_clock_inverter.sv \
-   $IPS/common_cells/cluster_clock_mux2.sv \
-   $IPS/common_cells/cluster_clock_xor2.sv \
-   $IPS/common_cells/cluster_level_shifter_in.sv \
-   $IPS/common_cells/cluster_level_shifter_out.sv \
-   $IPS/common_cells/rstgen.sv \
-   $IPS/common_cells/edge_propagator_rx.sv \
-   $IPS/common_cells/pulp_clock_inverter.sv \
-   $IPS/common_cells/pulp_clock_mux2.sv \
-   $IPS/common_cells/pulp_sync_wedge.sv \
+# components
+set SRC_COMPONENTS " \
+   $RTL/components/cluster_clock_gating.sv \
+   $RTL/components/cluster_clock_inverter.sv \
+   $RTL/components/cluster_clock_mux2.sv \
+   $RTL/components/rstgen.sv \
+   $RTL/components/pulp_clock_inverter.sv \
+   $RTL/components/pulp_clock_mux2.sv \
+   $RTL/components/generic_fifo.sv \
+   $RTL/components/sp_ram.sv \
 "
 
 # pulpino
 set SRC_PULPINO " \
    $RTL/axi2apb_wrap.sv \
    $RTL/axi_node_intf_wrap.sv \
+   $RTL/axi_spi_slave_wrap.sv \
+   $RTL/axi_slice_wrap.sv \
+   $RTL/axi_mem_if_SP_wrap.sv \
    $RTL/core2axi.sv \
    $RTL/core_region.sv \
    $RTL/instr_ram_wrap.sv \
-   $RTL/boot_rom_wrap.sv \
    $RTL/sp_ram_wrap.sv \
+   $RTL/boot_code.sv \
+   $RTL/boot_rom_wrap.sv \
    $RTL/peripherals.sv \
    $RTL/ram_mux.sv \
-   $RTL/timer_unit.sv \
-   $RTL/axi_spi_slave_wrap.sv \
-   $RTL/axi_mem_if_SP_wrap.sv \
    $RTL/top.sv \
+   $RTL/clk_rst_gen.sv \
    $FPGA_RTL/pulpino_wrap.v \
 "
 

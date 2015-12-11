@@ -3,7 +3,7 @@ all: ips pulpino pulpemu sw
 
 
 .PHONY: ips
-ips: clk mem mem_dp
+ips: clk mem
 
 
 .PHONY: clk
@@ -14,10 +14,10 @@ ips/xilinx_clock_manager/ip/xilinx_clock_manager.dcp:
 
 
 .PHONY: mem
-mem: ips/xilinx_mem_32768x32/ip/xilinx_mem_32768x32.dcp
+mem: ips/xilinx_mem_8192x32/ip/xilinx_mem_8192x32.dcp
 
-ips/xilinx_mem_32768x32/ip/xilinx_mem_32768x32.dcp:
-	make -C ips/xilinx_mem_32768x32/ clean all
+ips/xilinx_mem_8192x32/ip/xilinx_mem_8192x32.dcp:
+	make -C ips/xilinx_mem_8192x32/ clean all
 
 
 .PHONY: mem_dp
