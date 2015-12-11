@@ -18,38 +18,46 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\chapter{The Template Directory Structure}
+\chapter{\pulpino environment}
 
-This \LaTeX{} framework suitable for creating reports spreads over
-various directories and files. In order to give you a short overview
-of this structure, the respective directories and the contained files
-are described in the following:
 
 \begin{flushleft}
 \dirtree{%
 .1 /.
   .2 README \DTcomment{README file with a quick start guide.}.
-  .2 Makefile \DTcomment{Makefile with some \LaTeX{} related build targets.}.
-  .2 report\_template.tex \DTcomment{The main \LaTeX{} file of the report document, which further loads other (content) files.}.
-  .2 bib \DTcomment{Contains bibliography related files.}.
-    .3 main.bib \DTcomment{Bibliography file.}.
-  .2 content \DTcomment{Contains the actual source files of your report.}.
-    .3 *$.$tex \DTcomment{Here, multiple content files are provided.}.
-  .2 figures \DTcomment{Contains the images which are loaded during your report.}.
+  .2 ips\_list.txt \DTcomment{Listing of all ip cores that are used by the project}.
+  .2 update-ips.py \DTcomment{This script reads the ip\_list.txt and pulls all ips from the GIT server}.
+  .2 ci \DTcomment{Folder containing scripts used by continuous integration}.
+    .3 setup.csh \DTcomment{Setup scripts that initialize the CI environment}.
+    .3 *.csh \DTcomment{Runs the corresponding tests}.
+  .2 doc \DTcomment{Contains the actual source files of your report.}.
+    .3 datasheet \DTcomment{\pulpino }.
+    .3 api \DTcomment{Driver api description}.
+    .3 report \DTcomment{Contains this report}.
+  .2 fpga \DTcomment{Contains the images which are loaded during your report.}.
     .3 eth\_logo.* \DTcomment{ETH logo in \gls{eps} and \gls{pdf} format.}.
     .3 titlepage\_logo.* \DTcomment{Titlepage logo in \gls{eps} and \gls{pdf} format.}.
     .3 asic\_pinout.* \DTcomment{Sample pinout of an \gls{asic} in \gls{eps} and \gls{pdf} format.}.
-  .2 figures\_raw \DTcomment{Contains the raw sources of your figures.}.
+  .2 ips\_raw \DTcomment{Contains the raw sources of your figures.}.
     .3 titlepage\_logo.obj \DTcomment{Tgif titlepage logo source.}.
-  .2 glossaries \DTcomment{Contains glossaries.}.
+  .2 rtl \DTcomment{Contains glossaries.}.
     .3 glossaries.tex \DTcomment{The glossaries file containing both the entries of the list of acronym entries and the entries of the main glossary.}.
-  .2 preamble \DTcomment{Contains preamble information of the document.}.
+  .2 sw \DTcomment{Contains preamble information of the document.}.
+    .3 preamble.tex \DTcomment{Preamble of the report document.}.
+  .2 tb \DTcomment{Contains preamble information of the document.}.
+    .3 preamble.tex \DTcomment{Preamble of the report document.}.
+  .2 vsim \DTcomment{Contains preamble information of the document.}.
     .3 preamble.tex \DTcomment{Preamble of the report document.}.
 }
 \end{flushleft}
 
+\begin{shellenv}
+pdflatex-2011 report_template.tex
+\end{shellenv}
 
-%%% Local Variables: 
+
+
+%%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../report_template"
-%%% End: 
+%%% End:

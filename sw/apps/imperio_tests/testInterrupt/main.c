@@ -6,11 +6,15 @@
 #include "timer.h"
 #include "int.h"
 #include "bench.h"
-
+#include "gpio.h"
 
 volatile int timer_triggered = 0;
 
 void timer_overflow_isr(void) {
+  if (timer_triggered == 1) {
+    set_gpio_pin_direction(0, DIR_OUT);
+    set_gpio_pin_value(0, 1);
+  }
   timer_triggered++;
 }
 
@@ -33,7 +37,7 @@ int main() {
   TOCRA = 0x80;
   TPRA  = 0x3F; // set prescaler, enable interrupts and start timer.
 
-  while(timer_triggered < 5)
+  while (timer_triggered < 5)
     sleep();
 
   int_disable();

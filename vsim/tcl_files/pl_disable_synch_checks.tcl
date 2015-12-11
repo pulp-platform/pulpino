@@ -11,3 +11,4 @@ proc disable_tchecks { path } {
 }
 
 disable_tchecks /imperio_tb/top_i/pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_syncro/*
+disable_tchecks /imperio_tb/top_i/pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_dcfifo_tx/u_din/full/*

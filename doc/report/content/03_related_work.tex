@@ -11,30 +11,4 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\chapter{Related Work}
 
-At the moment one can see a landsliding transition happening in the open-source hardware community. This began with the 
-effort of the OpenRISC project in (?) which was the first open-source release of a micro-controller like architecture. 
-At the moment this is currently climaxing with Berkely's RISCV project. 
-
-\section{OpenRISC}
-
-
-\section{RISC-V}
-
-RISC-V is a project initiated by the electrical engineering department of University of California Berkely (UCB). It aims
-to create an open and freely available Instruction Set Architecture (ISA) standard. The design of the ISA aims satisfy a very broad 
-field of application purposes. Ranging from small scale micro-controllers to full-blown out-of-order many core architectures.
-
-Specifically interesting in relation to the present work is their Z-scale implementation. It features a 32-bit 3-stage single-issue in-order 
-pipeline with support for the RV32IM ISA (integer base arithmetics and multiplication) and M/U privilege modes. Communication with
-the memories takes place over a 32bit AHB-lite bus.
-
-Currently UCB provides to versions of the z-scale core. One is written in their own hardware description language (HDL) called chisel 
-while the other implementation is conducted entirely in Verilog. Both are distributed under a 3-clause BSD license.
-
-The emerging ecosystem that comes along with the growing popularity of the RISC-V ISA comes in handy for the \pulpino project as well. 
-The various virtual platforms provided by UCB can emulate code that will natively run on \pulpino. In addition it provides us with 
-compilers that at least support the official RISC-V ISA.
-
-\section{lowRISC}

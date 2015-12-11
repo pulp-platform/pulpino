@@ -4,6 +4,7 @@
 #include "bar.h"
 #include "timer.h"
 #include "string_lib.h"
+#include "gpio.h"
 
 #include "parMatrixMul8_stimuli.h"
 
@@ -30,6 +31,9 @@ void check_matrix_mul(testresult_t *result, void (*start)(), void (*stop)()) {
   // start benchmark
   start();
 
+  set_gpio_pin_direction(0, DIR_OUT);
+  set_gpio_pin_value(0, 1);
+
   for (int i = 0; i < SIZE; i++) {
     for (int j = 0; j < SIZE; j++) {
       g_mC[i][j] = 0;
@@ -41,6 +45,7 @@ void check_matrix_mul(testresult_t *result, void (*start)(), void (*stop)()) {
   }
 
 
+  set_gpio_pin_value(0, 0);
   stop();
 
   result->errors = matrix_check();
