@@ -26,9 +26,9 @@ vmap ${IP}_lib ${MSIM_LIBS_PATH}/${IP}_lib
 echo "${Green}Compiling component:   ${Brown} apb_i2c ${NC}"
 echo "${Red}"
 
-vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb_peripherals/${IP} -sv ${IPS_PATH}/apb_peripherals/apb_i2c/apb_i2c.sv || exit 1
-vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb_peripherals/${IP} -sv ${IPS_PATH}/apb_peripherals/apb_i2c/i2c_master_bit_ctrl.sv || exit 1
-vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb_peripherals/${IP} -sv ${IPS_PATH}/apb_peripherals/apb_i2c/i2c_master_byte_ctrl.sv || exit 1
+vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb/${IP} -sv ${IPS_PATH}/apb/apb_i2c/apb_i2c.sv || exit 1
+vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb/${IP} -sv ${IPS_PATH}/apb/apb_i2c/i2c_master_bit_ctrl.sv || exit 1
+vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb/${IP} -sv ${IPS_PATH}/apb/apb_i2c/i2c_master_byte_ctrl.sv || exit 1
 
 echo "${Cyan}--> APB I2C compilation complete! ${NC}"
 

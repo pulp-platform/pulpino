@@ -121,21 +121,20 @@ macro(add_boot_code NAME SOURCE_FILES)
 
   # generate verilog and cde files
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot/)
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot/boot_code.cde
+  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot/boot_code.sv
     COMMAND ${UTILS_DIR}/s19toboot.py ../${NAME}.s19
     #COMMAND cp boot_code.cde ${PULP_MODELSIM_DIRECTORY}/boot/
 
     WORKING_DIRECTORY ./${SUBDIR}/boot/
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
 
-  add_custom_target(${NAME}.boot ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot/boot_code.cde)
-
-  add_custom_target(${NAME}.boot.install ALL
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot/boot_code.cde
-    COMMAND cp boot/boot_code.sv ../../../../rtl/
+  add_custom_target(${NAME}.boot.install
+    COMMAND cp boot/boot_code.sv ${PULP_MODELSIM_DIRECTORY}/../rtl/
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot/boot_code.sv
     COMMENT STATUS "Copying boot code..."
     )
+
+
   # add everything needed for simulation
   add_sim_targets(${NAME})
 

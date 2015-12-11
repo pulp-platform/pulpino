@@ -24,7 +24,7 @@ vmap apb_fll_if_lib ${MSIM_LIBS_PATH}/apb_fll_if_lib
 echo "${Green}Compiling component:   ${Brown} apb_fll_if ${NC}"
 echo "${Red}"
 
-vlog -work apb_fll_if_lib -quiet -sv ${IPS_PATH}/apb_internals/apb_fll_if/apb_fll_if.sv    || exit 1
+vlog -work apb_fll_if_lib -quiet -sv ${IPS_PATH}/apb/apb_fll_if/apb_fll_if.sv    || exit 1
 
 echo "${Cyan}--> APB fll interface compilation complete! ${NC}"
 

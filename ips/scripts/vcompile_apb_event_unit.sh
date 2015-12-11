@@ -26,9 +26,9 @@ vmap ${IP}_lib ${MSIM_LIBS_PATH}/${IP}_lib
 echo "${Green}Compiling component:   ${Brown} apb_event_unit ${NC}"
 echo "${Red}"
 
-vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb_peripherals/${IP}/include -sv ${IPS_PATH}/apb_peripherals/apb_event_unit/apb_event_unit.sv    		|| exit 1
-vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb_peripherals/${IP}/include -sv ${IPS_PATH}/apb_peripherals/apb_event_unit/generic_service_unit.sv    || exit 1
-vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb_peripherals/${IP}/include -sv ${IPS_PATH}/apb_peripherals/apb_event_unit/sleep_unit.sv    || exit 1
+vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb/${IP}/include -sv ${IPS_PATH}/apb/apb_event_unit/apb_event_unit.sv          || exit 1
+vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb/${IP}/include -sv ${IPS_PATH}/apb/apb_event_unit/generic_service_unit.sv    || exit 1
+vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb/${IP}/include -sv ${IPS_PATH}/apb/apb_event_unit/sleep_unit.sv              || exit 1
 
 echo "${Cyan}--> APB EVENT UNIT compilation complete! ${NC}"
 

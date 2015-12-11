@@ -12,14 +12,14 @@
 
 ips/adv_dbg_if                          5bcdbcb987c6cd89cb99032dfed549d85946b786
 
-ips/apb_peripherals/apb_gpio            7f3519c2f08f6db40766e7e70d87eba68600809a
-ips/apb_peripherals/apb_spi_master      78ba5c32501df6c55fd2fc3e68aa11bf4426e137
-ips/apb_peripherals/apb_uart            370cef8639ceea20412cf6e253f3634dc08ba79a
-ips/apb_peripherals/apb_event_unit      master
-ips/apb_peripherals/apb_i2c             58bcb35fbde1cd06f8789b895bdd559bd96aa8be
-ips/apb_peripherals/apb_timer           master
-ips/apb_peripherals/apb_pulpino         master
-ips/apb_internals/apb_fll_if            9463c71351f671c262295d0d9785a4db2a0c39ee
+ips/apb/apb_gpio                        7f3519c2f08f6db40766e7e70d87eba68600809a
+ips/apb/apb_spi_master                  78ba5c32501df6c55fd2fc3e68aa11bf4426e137
+ips/apb/apb_uart                        370cef8639ceea20412cf6e253f3634dc08ba79a
+ips/apb/apb_event_unit                  master
+ips/apb/apb_i2c                         58bcb35fbde1cd06f8789b895bdd559bd96aa8be
+ips/apb/apb_timer                       master
+ips/apb/apb_pulpino                     master
+ips/apb/apb_fll_if                      9463c71351f671c262295d0d9785a4db2a0c39ee
 
 
 ips/axi/axi2apb                         8eb87763415c999c5f46f9b0c817e5dc2575f037

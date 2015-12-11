@@ -26,7 +26,7 @@ vmap ${IP}_lib ${MSIM_LIBS_PATH}/${IP}_lib
 echo "${Green}Compiling component:   ${Brown} apb_pulpino ${NC}"
 echo "${Red}"
 
-vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb_peripherals/${IP}/include -sv ${IPS_PATH}/apb_peripherals/${IP}/apb_pulpino.sv || exit 1
+vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb/${IP}/include -sv ${IPS_PATH}/apb/${IP}/apb_pulpino.sv || exit 1
 
 
 echo "${Cyan}--> APB pulpino compilation complete! ${NC}"
