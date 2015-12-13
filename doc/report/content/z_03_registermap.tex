@@ -1,0 +1,144 @@
+%!TEX root = ../report.tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%                                                                 %
+%%%%%     z_03_registermap.tex                                        %
+%%%%%                                                                 %
+%%%%% Author:      Florian Zaruba                                     %
+%%%%% Created:     12.12.2015                                         %
+%%%%% Description: Detail listing of registers available for          %
+%%%%%              programming                                        %
+%%%%%                                                                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\chapter{Memory and Register Map}
+
+The following section is an ehaustive listing of all registers available in the current implementation. All registers are read/write except for those where it is explicetly stated otherwise. 
+
+This sections begins with an overview of the system's memory map and concludes with the register listing. It is ment to be some sort of reference card for the application developer. For any descirption about highlevel functionality please refer to the section describing the architecture.
+
+% RISCV core?? registers?
+
+\section{Memory Map}
+
+\begin{bytefield}{24}
+\begin{rightwordgroup}{instruction memory}
+\memsection{0x0000 0000}{0x0008 0000}{7}{32 kByte RAM}
+\end{rightwordgroup}\\
+\begin{rightwordgroup}{Boot ROM (r/o)}
+\memsection{0x0000 8000}{0x0008 8000}{3}{512 Byte ROM}
+\end{rightwordgroup}\\
+\memsection{}{}{3}{} \\
+\begin{rightwordgroup}{data memory}
+\memsection{0x0010 0000}{0x0010 8000}{7}{32 kByte RAM}
+\end{rightwordgroup}\\
+\memsection{}{}{3}{} \\
+\begin{rightwordgroup}{peripherals}
+\memsection{0x1A10 0000}{}{2}{UART} \\
+\memsection{0x1A10 1000}{}{2}{GPIO} \\
+\memsection{0x1A10 2000}{}{2}{SPI Master} \\
+\memsection{0x1A10 3000}{}{2}{Timer} \\
+\memsection{0x1A10 4000}{}{2}{Event/Interrupt Unit} \\
+\memsection{0x1A10 5000}{}{2}{I2C} \\
+\memsection{0x1A10 6000}{}{2}{FLL} \\
+\memsection{0x1A10 7000}{}{2}{SoC Control}
+\end{rightwordgroup}
+\\
+\end{bytefield}
+
+\section{Register Map}
+
+  % TODO: 
+  \subsection{UART}
+
+  \subsection{GPIO}
+
+  \subsection{SPI Master}
+
+  \subsection{Timer}
+
+  \subsection{Event/Interrupt Unit}
+
+  \subsection{I2C}
+
+  \subsection{FLL}
+
+  \subsection{SoC Control}
+
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,0} \\
+  \begin{rightwordgroup}{IER}
+    \bitbox{32}{Interrupt enable register}
+  \end{rightwordgroup}\\
+  \begin{rightwordgroup}{IPR}
+    \bitbox{32}{Interrupt pending register}
+  \end{rightwordgroup}\\
+  \begin{rightwordgroup}{ISPR}
+    \bitbox{32}{Interrupt set pending register}
+  \end{rightwordgroup}\\
+  \begin{rightwordgroup}{ICPR}
+    \bitbox{32}{Interrupt clear pending register}
+  \end{rightwordgroup}\\
+  \end{bytefield} 
+
+  \begin{itemize}
+    \item 
+  \end{itemize}
+
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,0} \\
+  \begin{rightwordgroup}{EER}
+    \bitbox{32}{Event enable register}
+  \end{rightwordgroup}\\
+  \begin{rightwordgroup}{EPR}
+    \bitbox{32}{Event pending register}
+  \end{rightwordgroup}\\
+  \begin{rightwordgroup}{ESPR}
+    \bitbox{32}{Event set pending register}
+  \end{rightwordgroup}\\
+  \begin{rightwordgroup}{ECPR}
+    \bitbox{32}{Event clear pending register}
+  \end{rightwordgroup}\\
+  \end{bytefield} 
+
+  \begin{itemize}
+    \item 
+  \end{itemize}
+
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,0} \\
+  \begin{rightwordgroup}{SCR}
+    \bitbox{31}{unused}
+    \bitbox{1}{\rotatebox{90}{\tiny SE}}
+  \end{rightwordgroup}\\
+  \begin{rightwordgroup}{SSR}
+    \bitbox{31}{unused}
+    \bitbox{1}{\rotatebox{90}{\tiny SS}}
+  \end{rightwordgroup}
+  \end{bytefield} 
+
+  \begin{itemize}
+    \item 
+  \end{itemize}
+
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{TIRx}
+    \bitbox{32}{Timercount}
+  \end{rightwordgroup} \\
+  \begin{rightwordgroup}{TCRx}
+    \bitbox{26}{unused}
+    \bitbox{3}{\tiny TPRE}
+    \bitbox{1}{\rotatebox{90}{\tiny TOCI}}
+    \bitbox{1}{\rotatebox{90}{\tiny TOI}}
+    \bitbox{1}{\rotatebox{90}{\tiny TIE}}
+  \end{rightwordgroup}\\
+    \begin{rightwordgroup}{TOCRx}
+      \bitbox{32}{Timer output compare value}
+    \end{rightwordgroup}
+  \end{bytefield} 
+
+  \begin{itemize}
+    \item 
+  \end{itemize}

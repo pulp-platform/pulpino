@@ -91,7 +91,7 @@ help:
 	@echo
 
 %.pdf: %.tex $(CONTENT_SRC)
-	pdflatex-$(PDFLATEX_VER) $(MAIN_SRC).tex
+	pdflatex $(MAIN_SRC).tex
 
 figures: tgif_figures
 

@@ -1,3 +1,4 @@
+%!TEX root = ../report.tex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%                                                                 %
@@ -46,7 +47,7 @@ Regardless of the scheduling scheme it is crucial for the OS to be able to track
 
 \begin{itemize}
     \item Running: When a task is actually utilizing the processor it is said to be in the running state.
-    \item Ready: A task is said to be ready if it is not utilizing the core at the moment (it is not in the running state) but is ready to run as soon as the OS decides to swap it in.
+    \item Ready: A task is said to be ready if it is not utilizing the core at the moment (it is not in the running state) but is ready to run as soon as the OS decides to switch it in.
     \item Blocked: A process is blocked if it currently waiting for a temporal (e.g.: a timed delay) or an external event (e.g.: release of a shared resource).
     \item Suspended: A task is suspended if it has been told so through an explicit function call to \verb+vTaskSuspend()+.
 \end{itemize}
@@ -66,8 +67,9 @@ In the preemptive case the OS needs a way to preempt a currently running task. I
 
 \subsection{Directory structure}
 
-Since freeRTOS aims high portability the directory structure directly reflects this property. Everything that is architectural specific resides in the \verb+portable+ folder. This begins with basic configuration macros and continues with implementation of the actual context switch in \verb+port.c+.
+Since freeRTOS aims high portability, the directory structure directly reflects this property. Everything that is architectural specific resides in the \verb+portable+ folder. This begins with basic configuration macros and continues with implementation of the actual context switch in \verb+port.c+.
 
+\begin{minipage}{\linewidth}
 \begin{flushleft}
 \dirtree{%
 .1 /.
@@ -87,19 +89,35 @@ Since freeRTOS aims high portability the directory structure directly reflects t
   .2 timers.c \DTcomment{Software timers.}.
 }
 \end{flushleft}
-
+\end{minipage}
 \subsection{Portable layer}
 
-The portable layers purpose is to abstract all device specific information for the OS. In particular this means implementation of the actual context switch, interrupt service routines (ISRs) that trigger the context switch and stack initialization for task creation. All device specific codes resides here.
+The portable layers purpose is to abstract all device specific information to the OS. In particular this means implementation of the actual context switch, interrupt service routines (ISRs) that trigger the context switch and stack initialization for task creation. All device specific codes resides here.
 
 \subsection{Context Switch}
 
-Context switches can occur in two different settings depending on the scheduling algorithm in use according to that there are differences in the program control flow. Albeit the main idea of the context switch stays the same.
+\begin{figure}[t]
+ \centering
+ \includegraphics[width=\linewidth]{./figures/freertos_memorymap}
+ %https://www.rapitasystems.com/blog/cooperative-and-preemptive-scheduling-algorithms
+ \caption{FreeRTOS memory management and stack content of a switched out task (Task 2)}
+ \label{fig:memory_management}
+\end{figure}
 
-Each task in freeRTOS manages its own stack and heap. The task's memory region is allocated when the tasks gets registered for the first time and reside entirely in the heap regardless of the global linker settings. In order for FreeRTOS to manage the task's memories it stores task related information in its own task structure called Task Control Block (TCB). The TCB has the following structure:
+Context switches can occur in two different settings depending on the scheduling algorithm in use. According to that, there are differences in the program control flow. Nevertheless the main idea of the context switch stays the same.
+
+Each task in freeRTOS manages its own stack (figure~\ref{fig:memory_management}). The task's memory region is allocated when the tasks gets registered for the first time and reside entirely in the heap regardless of the global linker settings. In order for FreeRTOS to manage the task's memories it stores task related information in its own task structure called Task Control Block (TCB). The TCB has essentially the following structure:
+
+\begin{figure}[t]
+ \centering
+ \includegraphics[width=\linewidth]{./figures/freertos_context_switch}
+ %https://www.rapitasystems.com/blog/cooperative-and-preemptive-scheduling-algorithms
+ \caption{FreeRTOS context switch}
+ \label{fig:context_switch}
+\end{figure}
 
 %memory layout
-
+\begin{minipage}{\linewidth}
 \begin{lstlisting}[language=C,emph={xListItem,portSTACK_TYPE}]
 typedef struct tskTaskControlBlock
 {
@@ -111,12 +129,14 @@ typedef struct tskTaskControlBlock
   ...
 } tskTCB;
 \end{lstlisting}
+\end{minipage}
 
-The \verb+pxTopOfStack+ variable points to the last element put on the stack of the task and must be the first element of the TCB structure. \verb+pxStack+ on the contrary points to the stack's base.
 
-If a task is switched out its current state is going to be saved into memory. For the RISC-V RV32I this implies at least all general purpose registers and the MEPC register that has the program counter stored from which the interrupt service unit may return to. It does so by calling the \verb+portSAVE_CONTEXT()+ macro defined in \verb+port.c+. This macro allocates some space on the stack and stores every register in a predefined order, starting with the MEPC. Finally it updates the \verb+pxCurrenTCB+ pointer that points to the TCB of the task switch out and updates stack pointer. The stack pointer is therefore saved implicitly in the TCB.
+The \verb+pxTopOfStack+ variable points to the last element put on the stack of the task and must be the first element of the TCB structure. \verb+pxStack+ on the contrary points to the stack's base address.
 
-The OS then figures out the next task that is going to run (based on the principles mentioned before) and afterwards calls the \verb+portRESTORE_CONTEXT()+ macro. This essentially performs the same function as the save routine but in reverse order, e.g. it loads the stack pointer of the task that is going to be switched in from the pxCurrentTCB and restores all registers from memory in the same order as they have been saved.
+If a task is switched out its current state is going to be saved into memory. For the RISC-V RV32I this implies at least all general purpose registers and the MEPC register that has the program counter stored from which the interrupt service unit may return to. It does so by calling the \verb+portSAVE_CONTEXT()+ macro defined in \verb+port.c+. This macro allocates some space on the stack and stores every register in a predefined order, starting with the MEPC. Finally it updates the \verb+pxCurrenTCB+ pointer that points to the TCB of the task switch out and updates the stack pointer. The stack pointer is therefore saved implicitly in the TCB.
+
+The OS then figures out which task that is going to run next (based on the principles mentioned beforehand) and afterwards calls the \verb+portRESTORE_CONTEXT()+ macro. This essentially performs the same function as the save routine but in reverse order, e.g. it loads the stack pointer of the task that is going to be switched in from the pxCurrentTCB and restores all registers from memory in the same order as they have been saved.
 
 % picture
 

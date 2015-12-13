@@ -1,4 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%!TEX root = ../report.tex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%                                                                 %
 %%%%%     <file_name>.tex                                             %
@@ -15,10 +16,9 @@
 % context. Motivate the questions addressed in this work and summarize
 % your contributions. Related work should also be mentioned here,
 % especially if you do not have a separate chapter for it.
-\pulpino is a 32-bit micro-controller like system based on IPs mostly taken from its bigger brother the \gls{pulp} project.
+\pulpino is a open-source 32-bit micro-controller like system based on IPs mostly taken from its bigger brother the \gls{pulp} project. It is a single core system built for the OpenRISC and RISC-V cores developed here at IIS. \pulpino uses two seperate single-port data and instruction RAMs and also includes a boot ROM that contains a boot loader which retrieves data and instructions from an external SPI flash during startup. \pulpino is entirely open source and licensed under Solderpad Hardware License.
 
-This project origins from the idea to open-source the PULP project. Since \gls{pulp} is a huge project \pulpino is
-the first effort in doing so. The direct relation to the \gls{pulp} project is even expressed in the name chosen for the project: In Italian, adding an "-ino" at the end of a word usually means that word corresponds to a minimized version. It has been always one of the projects main aims to provide a simple and easy to use computing platform with extensive possibilities to communicate with the outside world.
+In fact this project mostly origins from the idea to open-source the \gls{pulp} project. Since PULP is a huge project \pulpino is the first effort in doing so. The direct relation to the \gls{pulp} project is even expressed in the name chosen for the project: In Italian, adding an "-ino" at the end of a word usually means that word corresponds to a minimized version. It has been always one of the projects main aims to provide a simple and easy to use computing platform with extensive possibilities to communicate with the outside world.
 
 Apart from the open source release, having a smaller platform has some tremendous advantages for the \gls{pulp} project as well. The \pulpino platform easily allows us to evaluate new features without considering the overhead of the whole \gls{pulp}
 platform in the first place. This is true regarding simple RTL simulation as well as for Synthesis estimates.
@@ -27,14 +27,12 @@ In addition to the opportunity stated above there is still the educational aspec
 
 Last but not least, we hope that the open sourcing of \pulpino helps the open source hardware community to gather more momentum in the development of software tools necessary to simulate, synthesize and manufacturing open ASIC designs.
 
-
+\pulpino is mainly targeted at RTL simulation and ASIC's, although there is also an FPGA version available.
 \section{General Overview}
 
-\pulpino provides you with a 32-bit Harvard architecture (e.g. it has physically and logically separated instruction and data RAMs). At its heart it has a \gls{RISC} core operating. We currently support two different instruction sets (ISA) for two distinct cores. This can either be our OpenRISC core OR1ON or our RISC-V implementation RI5CY. The cores are pin compatible and can therefore be swapped at one's convenience. Both cores process with a four stage in-order pipeline.
+\pulpino provides you with a 32-bit Harvard architecture (e.g. it has physically and logically separated instruction and data RAMs). At its heart it has a \gls{RISC} core operating. We currently support two different instruction sets (ISAs) for two distinct cores. This can either be our OpenRISC core OR1ON or our RISC-V implementation RI5CY. The cores are pin compatible and can therefore be swapped at one's convenience. Both cores process instructions within a four stage in-order pipeline.
 
-The core has debug support enabled through the Advanced Debug Unit (ADB) partially adapted from the OpenCores project. The debug unit provides outside world communication via a standardized JTAG TAP. The core region (including the core, the debug unit and the RAMs)
-is communicating over a standard \gls{AXI}.
-A dedicated AXI to APB bridge connects the internal AXI bus to the (slower) \gls{APB}. Both bus specifications are part of the\gls{AMBA} specification.
+The core has debug support enabled through the Advanced Debug Unit (ADB) partially adapted from the OpenCores project. The debug unit provides outside world communication via a standardized JTAG TAP. The core region (including the core, the debug unit and the RAMs) is communicating over a standard \gls{AXI}. A dedicated AXI to APB bridge connects the internal AXI bus to the (slower) \gls{APB}. Both bus specifications are part of the\gls{AMBA} specification.
 
 \section{Document Structure}
 

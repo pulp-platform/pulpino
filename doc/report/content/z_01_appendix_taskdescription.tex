@@ -1,3 +1,4 @@
+%!TEX root = ../report.tex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%                                                                 %
@@ -11,27 +12,20 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Task Description}
-\includepdf[pages=-, turn=false, scale=0.9]{task/TaskDescription.pdf}
+\begin{figure}[h!]
+  \centering \includegraphics[width=0.55\textwidth]{task/TaskDescription.pdf}
+ \end{figure}
 
+\includepdf[pages={2-}, pagecommand={\thispagestyle{headings}}, turn=false, scale=0.9]{task/TaskDescription.pdf}
 
 \chapter{Declaration of Originality}\label{chap:originality}
-Include the declaration of authorship with the \shell{\textbackslash
-  includepdf} command (sign it and scan it). For more information
-about plagiarism, please visit
-\url{https://www.ethz.ch/students/en/studies/performance-assessments/plagiarism.html}
-
-\begin{itemize}
-\item \textbf{English version:}
-  \url{https://www.ethz.ch/content/dam/ethz/main/education/rechtliches-abschluesse/leistungskontrollen/declaration-originality.pdf}
-\item \textbf{German version:}
-  \url{https://www.ethz.ch/content/dam/ethz/main/education/rechtliches-abschluesse/leistungskontrollen/plagiat-eigenstaendigkeitserklaerung.pdf}
-\end{itemize}
-
 % include the signed declaration of authorship!
+
+
 \includepdf[pages=-, turn=false, scale=0.9]{./figures/declaration_of_originality}
+%\includepdf[pages={2-}, pagecommand={\thispagestyle{headings}}, turn=false, scale=0.9]{content/task.pdf} % 
 
-
-\chapter{File Structure}
+\section{File Structure}
 Describe how the project directories/files are organized, e.g.:
 
 \begin{flushleft}
@@ -48,83 +42,19 @@ What needs to be done to run an RTL simulation (stimuli generation,
 compilation...)?
 
 
-\chapter{Datasets}
+\section{Datasets}
 If you have a data set comprising several test images, you could
 depict and describe them here. Use a simple naming scheme such that
 you can easily refer to certain elements of this data set in the text.
 
 
-\chapter{More Evaluation Results}
+\section{More Evaluation Results}
 If you conducted an extensive evaluation you could move surplus
 graphs/results to the appendix.
 
 
-\chapter{Algorithms / Tables}
+\section{Algorithms / Tables}
 Large algorithm boxes and tables may clutter your chapters and impair
 the readability. If they are not very important, consider moving them
 to the appendix as well.
 
-
-\chapter{ASIC Datasheet ($<$Chipname$>$)}
-
-If you have designed an \gls{asic} during your work, you should
-include a datasheet for your chip into the report. As soon as you
-start testing your fabricated chip, you will be glad to have such a
-datasheet. An example structure of such a datasheet is given in the
-following. For more inspirations on what you may include in your
-datasheet, have a look at the datasheet of a commercial \gls{ic}.
-
-\minitoc
-
-\section{Features}
-\begin{itemize}
-\item Lorem ipsum dolor sit amet, ...
-\item Lorem ipsum dolor sit amet, ...
-\item Lorem ipsum dolor sit amet, ...
-\item Lorem ipsum dolor sit amet, ...
-\end{itemize}
-
-\section{Applications}
-\lipsum[2]
-
-\section{Description}
-\lipsum[2]
-
-\section{Packaging}
-\lipsum[2]
-
-\section{Bonding Diagram}
-\lipsum[2]
-
-\begin{figure}[htbp]
-  \centering \includegraphics[width=0.9\textwidth]{./figures/qfn56_180_std}
-  \caption{Bonding diagram.}
-\end{figure}
-
-\section{Pin Map}
-\lipsum[2]
-
-\begin{figure}[htbp]
-  \centering \includegraphics[width=1.0\textwidth]{./figures/asic_pinout}
-  \caption{$<$Chipname$>$ pinout.}
-\end{figure}
-
-\section{Pin Description}
-\lipsum[2]
-
-\section{Interface Description}
-\lipsum[2]
-
-\section{Register Map}
-\lipsum[2]
-
-\section{Operation Modes}
-\lipsum[2]
-
-\subsection{Functional Modes}
-\subsection{Test Modes}
-
-\section{Electrical Specifications}
-\lipsum[2]
-\subsection{Recommended Operating Regions}
-\subsection{Absolute Maximum Ratings}
