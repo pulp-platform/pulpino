@@ -2,9 +2,15 @@
 #source tcl/false_paths.tcl
 
 # clocks
-create_clock -period 20.000 -name clk        -waveform { 0.0 10.0 } [get_nets {pulpino_wrap_i/clk}]
-create_clock -period 20.000 -name spi_sck    -waveform { 0.0 10.0 } [get_nets {pulpino_wrap_i/spi_clk_i}]
-create_clock -period 20.000 -name tck        -waveform { 0.0 10.0 } [get_nets {pulpino_wrap_i/tck_i}]
+create_clock -period 12.000 -name clk      [get_nets {pulpino_wrap_i/clk}]
+create_clock -period 40.000 -name spi_sck  [get_nets {pulpino_wrap_i/spi_clk_i}]
+create_clock -period 40.000 -name tck      [get_nets {pulpino_wrap_i/tck_i}]
+
+# define false paths between all clocks
+set_clock_groups -asynchronous \
+                 -group { clk } \
+                 -group { spi_sck } \
+                 -group { tck }
 
 # ----------------------------------------------------------------------------
 # User LEDs - Bank 33
@@ -50,9 +56,9 @@ set_property IOSTANDARD LVCMOS18 [get_ports -of_objects [get_iobanks 35]];
 save_constraints
 
 # set for RuntimeOptimized implementation
-set_property "steps.opt_design.args.directive" "RuntimeOptimized"   [get_runs impl_1]
-set_property "steps.place_design.args.directive" "RuntimeOptimized" [get_runs impl_1]
-set_property "steps.route_design.args.directive" "RuntimeOptimized" [get_runs impl_1]
+# set_property "steps.opt_design.args.directive" "RuntimeOptimized"   [get_runs impl_1]
+# set_property "steps.place_design.args.directive" "RuntimeOptimized" [get_runs impl_1]
+# set_property "steps.route_design.args.directive" "RuntimeOptimized" [get_runs impl_1]
 
 launch_runs impl_1
 wait_on_run impl_1
@@ -69,7 +75,6 @@ write_sdf     -force -cell pulpino_wrap_i ../simu/pulpino_impl.sdf
 
 if { [info exists ::env(PROBES)] } {
    # create new design run for probes
-   #create_run impl_2 -flow {Vivado Implementation 2014}
    create_run impl_2 -parent_run synth_1 -flow {Vivado Implementation 2014}
    current_run [get_runs impl_2]
    set_property incremental_checkpoint pulpemu.runs/impl_1/pulpemu_top_routed.dcp [get_runs impl_2]
