@@ -14,6 +14,7 @@ clean:
 	rm -rf ${PROJECT}.srcs
 	rm -rf ${PROJECT}.sim
 	rm -rf ${PROJECT}.cache
+	rm -rf ${PROJECT}.ioplanning
 	rm -rf ${PROJECT}.hw
 	rm -rf component.xml
 	rm -rf vivado*
