@@ -6,6 +6,8 @@
 
 int main()
 {
+  // activate UART module
+  CGREG |= (1 << 0x01);
   uart_set_cfg(0, 1);
   set_gpio_pin_direction(0, DIR_OUT);
   set_gpio_pin_value(0, 1);
