@@ -10,26 +10,26 @@
 
 module clk_rst_gen
 (
-    input  logic                      clk_i,
-    input  logic                      rstn_i,
-
-    input  logic                      clk_sel_i,
-    input  logic                      clk_standalone_i,
-    input  logic                      testmode_i,
-    input  logic                      scan_en_i,
-    input  logic                      scan_i,
-    output logic                      scan_o,
-
-    input  logic                      fll_req_i,
-    input  logic                      fll_wrn_i,
-    input  logic                [1:0] fll_add_i,
-    input  logic               [31:0] fll_data_i,
-    output logic                      fll_ack_o,
-    output logic               [31:0] fll_r_data_o,
-    output logic                      fll_lock_o,
-
-    output logic                      clk_o,
-    output logic                      rstn_o
+    input  logic                            clk_i,
+    input  logic                            rstn_i,
+      
+    input  logic                            clk_sel_i,
+    input  logic                            clk_standalone_i,
+    input  logic                            testmode_i,
+    input  logic                            scan_en_i,
+    input  logic                            scan_i,
+    output logic                            scan_o,
+      
+    input  logic                            fll_req_i,
+    input  logic                            fll_wrn_i,
+    input  logic                [1:0]       fll_add_i,
+    input  logic               [31:0]       fll_data_i,
+    output logic                            fll_ack_o,
+    output logic               [31:0]       fll_r_data_o,
+    output logic                            fll_lock_o,
+      
+    output logic                            clk_o,
+    output logic                            rstn_o
 );
 
   logic clk_fll_int;

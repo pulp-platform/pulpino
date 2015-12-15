@@ -111,10 +111,31 @@ module peripherals
 
   logic [1:0]   s_spim_event;
   logic [3:0]   timer_irq;
+  logic [31:0]  peripheral_clock_gate_ctrl;
+  logic [APB_NUM_SLAVES - 1:0] clk_int;
   logic s_uart_event;
   logic i2c_event;
   logic s_power_event;
   logic s_gpio_event;
+
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// Peripheral Clock Gating                                    ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
+   
+  generate 
+     genvar i,
+       for (i = 0; i < APB_NUM_SLAVES; i = i + 1) begin
+        cluster_clock_gating core_clock_gate
+        (
+          .clk_o     ( clk_int[i]                    ),
+          .en_i      ( peripheral_clock_gate_ctrl[i] ),
+          .test_en_i ( testmode_i                    ),
+          .clk_i     ( clk_i                         )
+        );
+      end
+   endgenerate
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
@@ -131,7 +152,7 @@ module peripherals
   )
   axi_spi_slave_i
   (
-    .clk_i      ( clk_i          ),
+    .clk_i      ( clk_int[0]     ),
     .rst_ni     ( rst_n          ),
 
     .test_mode  ( testmode_i     ),
@@ -191,7 +212,7 @@ module peripherals
 
   apb_uart i_apb_uart
   (
-    .CLK      ( clk_i        ),
+    .CLK      ( clk_int[1]   ),
     .RSTN     ( rst_n        ),
 
     .PSEL     ( s_psel[0]    ),
@@ -225,8 +246,8 @@ module peripherals
 
   apb_gpio apb_gpio_i
   (
-    .HCLK       ( clk_i ),
-    .HRESETn    ( rst_n ),
+    .HCLK       ( clk_int[2]   ),
+    .HRESETn    ( rst_n        ),
 
     .PADDR      ( s_paddr      ),
     .PWDATA     ( s_pwdata     ),
@@ -257,8 +278,8 @@ module peripherals
   )
   apb_spi_master_i
   (
-    .HCLK         ( clk_i ),
-    .HRESETn      ( rst_n ),
+    .HCLK         ( clk_int[3]   ),
+    .HRESETn      ( rst_n        ),
 
     .PADDR        ( s_paddr      ),
     .PWDATA       ( s_pwdata     ),
@@ -296,7 +317,7 @@ module peripherals
   apb_timer
   apb_timer_i
   (
-    .HCLK       ( clk_i        ),
+    .HCLK       ( clk_int[4]   ),
     .HRESETn    ( rst_n        ),
 
     .PADDR      ( s_paddr      ),
@@ -320,8 +341,8 @@ module peripherals
   apb_event_unit
   apb_event_unit_i
   (
-    .HCLK             ( clk_i ),
-    .HRESETn          ( rst_n ),
+    .HCLK             ( clk_int[5]   ),
+    .HRESETn          ( rst_n        ),
 
     .PADDR            ( s_paddr      ),
     .PWDATA           ( s_pwdata     ),
@@ -351,7 +372,7 @@ module peripherals
   apb_i2c
   apb_i2c_i
   (
-    .HCLK         ( clk_i         ),
+    .HCLK         ( clk_int[6]    ),
     .HRESETn      ( rst_n         ),
 
     .PADDR        ( s_paddr       ),
@@ -380,7 +401,7 @@ module peripherals
 
     apb_fll_if apb_fll_if_i
     (
-      .HCLK        ( clk_i        ),
+      .HCLK        ( clk_int[7]   ),
       .HRESETn     ( rst_n        ),
 
       .PADDR       ( s_paddr      ),
@@ -433,8 +454,9 @@ module peripherals
       .PREADY      ( s_pready[7]  ),
       .PSLVERR     ( s_pslverr[7] ),
 
-      .pad_cfg_o   ( pad_cfg_o   ),
-      .pad_mux_o   ( pad_mux_o   ),
-      .boot_addr_o ( boot_addr_o  )
+      .pad_cfg_o   ( pad_cfg_o                  ),
+      .clk_gate_o  ( peripheral_clock_gate_ctrl ),
+      .pad_mux_o   ( pad_mux_o                  ),
+      .boot_addr_o ( boot_addr_o                )
     );
 endmodule
