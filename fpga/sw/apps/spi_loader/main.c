@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
+#include "spiloader.h"
+
 #define SPIDEV               "/dev/spidev32766.0"
 #define CLKING_AXI_ADDR      0x51010000
 #define PULP_CTRL_AXI_ADDR   0x51000000
@@ -70,6 +72,72 @@ int pulp_ctrl(int fetch_en, int reset) {
 
   *dir2  = 0x0; // configure as output
   *gpio2 = val;
+
+fail:
+  close(mem_fd);
+
+  if(ctrl_map != MAP_FAILED)
+    munmap(ctrl_map, MAP_SIZE);
+
+  return retval;
+}
+
+int wait_eoc(unsigned int timeout) {
+  char* ctrl_map = MAP_FAILED;
+  char* gpio_base;
+  int mem_fd;
+  int retval = 0;
+  struct timespec spec_start, spec_end, spec_diff;
+
+  if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
+    printf("can't open /dev/mem \n");
+
+    retval = -1;
+    goto fail;
+  }
+
+  ctrl_map = (char*)mmap(
+      NULL,
+      MAP_SIZE,
+      PROT_READ|PROT_WRITE,
+      MAP_SHARED,
+      mem_fd,
+      PULP_CTRL_AXI_ADDR & ~MAP_MASK
+      );
+
+
+  if (ctrl_map == MAP_FAILED) {
+    perror("mmap error\n");
+
+    retval = -1;
+    goto fail;
+  }
+
+  gpio_base = ctrl_map + (PULP_CTRL_AXI_ADDR & MAP_MASK);
+  volatile uint32_t* gpio = (volatile uint32_t*)(gpio_base + 0x0);
+  volatile uint32_t* dir  = (volatile uint32_t*)(gpio_base + 0x4);
+
+  // now we can actually write to the peripheral
+  *dir  = 0xFFFFFFFF; // configure as input
+  clock_gettime(CLOCK_REALTIME, &spec_start);
+  // now wait for timeout
+
+  while (1) {
+    clock_gettime(CLOCK_REALTIME, &spec_end);
+    spec_diff = timespec_sub(spec_end, spec_start);
+
+    if (*gpio == (0x1 << 8)) {
+      printf("EOC received!\n");
+      break;
+    }
+
+    if (spec_diff.tv_sec >= timeout) {
+      printf ("Timeout reached!\n");
+      break;
+    }
+  }
+
+  printf("Stopped after %d.%d\n", spec_diff.tv_sec, spec_diff.tv_nsec);
 
 fail:
   close(mem_fd);
@@ -309,16 +377,14 @@ int main(int argc, char **argv)
   char* buffer;
   unsigned int size;
   int i;
+  struct cmd_arguments_t arguments;
+
+  cmd_parsing(argc, argv, &arguments);
 
   clock_manager();
 
-  if (argc < 2) {
-    printf("Usage spiload <BINARY>\n");
-    return 1;
-  }
-
   // open binary and get data
-  fd = open(argv[1], O_RDWR);
+  fd = open(arguments.stim, O_RDWR);
   if (fd <= 0) {
     perror("File could not be opened\n");
     return 1;
@@ -354,13 +420,22 @@ int main(int argc, char **argv)
 
   process_file(buffer, size);
 
+  free(buffer);
+  close(fd);
+
+  // Start device and wait for timeout (if any)
   set_boot_addr(0x00000000);
 
   printf("Starting device\n");
   pulp_ctrl(1, 0);
 
-  free(buffer);
-  close(fd);
+  if (arguments.timeout > 0) {
+    printf("Waiting for EOC...\n");
+
+    console_thread_start();
+    wait_eoc(arguments.timeout);
+    console_thread_stop();
+  }
 
   return 0;
 }
