@@ -165,6 +165,14 @@ macro(add_sim_targets NAME)
     COMMENT "Running ${NAME} in ModelSim"
     ${USES_TERMINAL})
 
+  # run on FPGA
+  add_custom_target(${NAME}.fpga
+    COMMAND ${UTILS_DIR}/run-on-fpga.sh ${NAME}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt
+    COMMENT "Running ${NAME} on FPGA"
+    ${USES_TERMINAL})
+
   # testing targets
   add_test(NAME ${NAME}.test
     COMMAND ${UTILS_DIR}/run-and-check.py ${VSIM} $<TARGET_PROPERTY:${NAME}.elf,TB> 0
