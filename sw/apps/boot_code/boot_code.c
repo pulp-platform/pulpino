@@ -135,7 +135,7 @@ int main()
   //-----------------------------------------------------------
 
   //jump to program start address (instruction base address)
-  jump_and_start((volatile int *)(INSTR_RAM_BASE_ADDR));
+  jump_and_start((volatile int *)(INSTR_RAM_START_ADDR));
 }
 
 int check_spi_flash() {

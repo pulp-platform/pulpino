@@ -57,6 +57,9 @@ void run_benchmark(testcase_t *test, testresult_t *result)
 
 void run_suite(testcase_t *tests)
 {
+  // activate UART module
+  CGREG |= (1 << 0x01);
+
   // figure out how many tests should be run
   size_t num = 0;
   while(tests[num].name != 0) num++;
@@ -74,6 +77,9 @@ void run_suite(testcase_t *tests)
   }
 
   print_summary(errors);
+
+  // deactivate UART module
+  CGREG &= ~(1 << 0x01);
 }
 
 void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, uint32_t expected)
