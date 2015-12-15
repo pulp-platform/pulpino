@@ -49,16 +49,16 @@ void int_main(void) {
   csrr(mcause, mcause);
 
   // clear pending register
-  
 
-  printf("In ISR. cause = %u\n", mcause & 0x1F);
+
+  // printf("In ISR. cause = %u\n", mcause & 0x1F);
 
   if (mcause & (1 << 31)) {
     // interrupt handler called because of external IRQ
      int_handlers[(mcause & 0x1F)].handler(int_handlers[(mcause & 0x1F)].arg);
   }
 
-  printf("Leaving ISR.\n");
+  // printf("Leaving ISR.\n");
   ICP = (1 << mcause);
 }
 

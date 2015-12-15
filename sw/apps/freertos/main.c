@@ -12,7 +12,7 @@ void task1 (void *pvParameters) {
 
 		printf("Task 1\n");
 
-		taskYIELD();
+		//taskYIELD();
 
 		for(int i = 0; i < DELAY_LOOP; i++)
 			portNOP();
@@ -28,7 +28,7 @@ void task2 (void *pvParameters) {
 
 		printf("Task 2\n");
 
-		taskYIELD();
+		//taskYIELD();
 
 		for(int i = 0; i < DELAY_LOOP; i++)
 			portNOP();

@@ -21,7 +21,7 @@ void timer_overflow_isr(void) {
 
 int main() {
 
-  printf("Hello World!!!!!\n");
+  //printf("Hello World!!!!!\n");
   //asm volatile (".byte 0,0,0,0");
   //printf("Post ILLINSN\n");
 
@@ -40,6 +40,7 @@ int main() {
   while (timer_triggered < 5)
     sleep();
 
+  set_gpio_pin_value(0, 0);
   int_disable();
 
   print_summary(0);
