@@ -112,7 +112,7 @@ module peripherals
   logic [1:0]   s_spim_event;
   logic [3:0]   timer_irq;
   logic [31:0]  peripheral_clock_gate_ctrl;
-  logic [APB_NUM_SLAVES - 1:0] clk_int;
+  logic [31:0]  clk_int;
   logic s_uart_event;
   logic i2c_event;
   logic s_power_event;
@@ -125,7 +125,7 @@ module peripherals
   //////////////////////////////////////////////////////////////////
    
   generate 
-     genvar i,
+     genvar i;
        for (i = 0; i < APB_NUM_SLAVES; i = i + 1) begin
         cluster_clock_gating core_clock_gate
         (
