@@ -2,10 +2,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%                                                                 %
-%%%%%     <file_name>.tex                                             %
+%%%%%     06_implementation.tex                                       %
 %%%%%                                                                 %
-%%%%% Author:      <author>                                           %
-%%%%% Created:     <date>                                             %
+%%%%% Author:      Florian Zaruba                                     %
+%%%%% Created:     13.12.2015                                         %
 %%%%% Description: <description>                                      %
 %%%%%                                                                 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -14,13 +14,25 @@
 
 \chapter{Design Implementation and Results}
 
-This chapter is about the implemented functionality and ASIC key design data (Timing, Area and Power) and implementation decisions made.
+This chapter is about the implemented functionality and ASIC key design data (timing, area and power) and implementation decisions made.
 
-\section{Multiplexed Pads}
+\section{Implementation}
+
+\subsection{Multiplexed Pads}
 
 Since pads are often a quite limiting factor in the overall design it can be particularly useful to reuse them depending on the functionality required at a certain point in time.
 
 The pads should remain highly configurable. Therefore it was necessary to multiplex all inputs and outputs of every pad instance that should perform a secondary function (for example function as an UART or GPIO). Depending on a configuration register in the APB \pulpino Peripheral (\ref{subsec:pulpino_peripheral}) the pad should switch functionality. In addition all pads need to be in a fixed configuration when the chip is on the tester (testmode is enabled).
+
+The block diagram of the pad multiplexers is depicted in figure~\ref{fig:pad_muxes}. In order to not clutter the circuit diagram too much output enable, input, output and configuration multiplexers are drawn for different functionality of the circuit. In fact all pins that share functionality feature all multiplexers depicted.
+\begin{itemize}
+    \item \textbf{Output Enable (OE)}: For the pads primary function output is either tied to low or high depending on the main functionality. If the pad is configured as general purpose I/O it is connected to the configuration register of the APB GPIO module (see~\ref{subsec:gpio_peripheral}).
+    \item \textbf{Input}: If the pad serves double functionality, in terms of that its primary function serves as input, its input pin is multiplexed to the main entity. Depending on how the pad is currently configured the the non-active input is silenced.
+    \item \textbf{Output}: If the pad serves as an output in its primary function the output to the pad is selected in terms of its current configuration.
+    \item \textbf{Pad Config}: Pad configuration is a 6 bit wide bus that sets the pads configuration, depending on its current functionality, accordingly (like Schmitt Trigger, Drive Strength, etc.).
+\end{itemize}
+An exhaustive pad list along with reset configuration values is depicted in the chip's data-sheet (\ref{tab:pads})).
+
 
 \begin{figure}[tbh]
   \centering
@@ -29,20 +41,89 @@ The pads should remain highly configurable. Therefore it was necessary to multip
   \label{fig:pad_muxes}
 \end{figure}
 
+\subsection{Register file}
+% Latch based vs. register based register file
+
+\subsection{RAM banks}
+%relate to timing
+
+\section{Booting}
+
+Booting is an essential part of the ASIC implementation. Unless you are really accounting for loading program data into the microcontroller you are left with a worthless piece of silicon. The boot process on Imperio is achieved by a 2 kByte of boot ROM that has instructions that read a SPI Flash and load instructions and data into memories.
+
+The compiled program is stored in the SPI Flash. It starts at address zero with 32 bytes of meta data that tell the bootcode where the instruction section begins, how many bytes are used to encode each instruction, where it should start fetching and how may blocks of fixed length it has to expect. The same is done for the data.
+
+A special script takes care of preparing the flash content. This means calculating the headers and formatting the instructions.
+
+The core starts executing boot code unless otherwise explicitly told so by writing the start address registers in the \pulpino APB peripheral (see~\ref{subsec:pulpino_peripheral})). 
+
+The boot sequence starts by reading the vendor ID of the connected SPI Flash (we are only supporting a certain type of SPI Flash, where we definitely know all timing parameters). Next the SPI Master switches the communication to Quad SPI which is an extension to standard SPI but with 4 bidirectional data lanes. This has the advantage of providing a speedup of four times.
+
+Next, the processor reads the 32 byte of header information and starts by loading instruction data into its instruction RAM. Afterwards the same is done for the data section of the program. Finally it jumps to the base of the instruction RAM and starts executing the main program.
+
+During the boot process interrupts are disabled and all peripherals except the SPI Master are in reset configuration. For the full boot code refer to~\ref{sec:boot_code}.
+
+\label{sec:booting}
+
 
 \section{Verification}
 
-\subsection{Functional}
-% Do not forget to include information about how you managed to do the
-% functional verification (golden model, testbench,
-% etc.). Figure~\ref{fig:func_ver} illustrates an example setup.
+This section deals with functional and circuit level verification. In the functional section I will give detailed explanation on how \pulpino and Imperio are tested.
 
-% \begin{figure}[tb]
-%   \centering
-%   \includegraphics[width=\linewidth]{./figures/tb}
-%   \caption{Functional verification setup.}
-%   \label{fig:func_ver}
-% \end{figure}
+\subsection{Functional}
+
+For functional verification we mainly distinguish two test settings: \pulpino related functional verification and imperio related verification. One can see Imperio's test setting as superset of \pulpino's e.g. every test that can be run on \pulpino can also be conducted on Imperio but not vice-verse.
+
+\subsubsection{\pulpino testbench}
+
+\pulpino tests are performed in a platform setting. This means that the core gets instantiated in the target platform setting and is then tested exclusively in this environment. This provides the advantage of having a very generic test framework which allows us to test (high level) assembly and C code. We have a specialized test library in place that performs checks for errors and generates reports that are output over UART. Currently we are supporting two different kind of tests:
+\begin{enumerate}
+    \item \textbf{Sequential Tests:} Pure C code tests that perform common micro-benchmarks like sorting, matrix multiplication.
+    \item \textbf{RISC-V Tests:} Test that are exercising certain features of the core. This group also contains Berkely's official RISC-V tests that have been ported in the course of RI5CY's development. Additionally we are testing load/stores, control flow instructions and our instruction set extensions amongst others.
+\end{enumerate}
+
+The testbench is highly configurable through parameters that are set when the corresponding testbench script is invoked (see the \verb+vsim/scripts+ folder for a list of available configurations see~\ref{subsec:directory_structure}). I want to emphasize two particular configuration parameters namely clock select and memload. 
+
+The first one selects whether the core should be clocked by an external reference clock or by its internal FLL. In terms of RTL simulation this does not matter too much since we do not have any timing parameters that may prevent us to use higher clock speeds through the external clock generation. But it allows for functional verifying the FLL.
+
+The memload parameters specifies how the memories of the DUT should be filled with instructions and data. For \pulpino we support:
+\begin{itemize}
+    \item \textbf{Memory pre-loading}: In this setting we make use of the fact that we can directly pre-load the memories' functional model. Prior to starting the core all memories are filled with the content of \verb+.slm+ files that have been created of the corresponding object file with special conversion scripts (located in \verb+sw/utis/+).
+    \item \textbf{SPI Slave}: As discussed in the SPI Slave Section (\ref{subsec:spi_slave}) \pulpino's entire memory region can be written from outside via SPI. This makes it possible to load instructions and data through SPI.
+    \item \textbf{JTAG}: Since the whole memory region is mapped to a common address space it is possible to write the RAMs through JTAG as well. Therefore it is possible to load a program via JTAG.
+\end{itemize}
+
+After the program has been loaded by either of the three possibilties specified above the fetch enable signal gets asserted and the core start computation. Depending on the test currently running the results are checked against a golden model.  This can either be some constants that where computed prior to compilation or other entities that get checked, for example a certain register's content.
+
+Once the test passed this check this is reported back to the test bench library that outputs a fixed string over UART. This string either gets checked manually or automatically by the \verb+run_and_check.py+ python script.
+
+\subsubsection{Imperio testbench}
+
+For Imperio's testbench the approach is very similar. Actually the only reason why we employ a different test bench for ASIC related tests is, on the one hand, the reason that we are not allowed to open-source the models like that of the SPI Flash or I2C EEPROM and therefore need a clean separation. On the other hand the top instances of \pulpino are different in regard of input and output. While for \pulpino there are only one-directional I/O this is not longer the case for Imperio sine we have the padframe in between.
+
+\subsubsection{Imperio RTL Simulation}
+
+As mentioned above Imperio's testbench extends the environment of \pulpino's testbench in terms of that it instantiates behavioral models of two I2C EEPROMs and one SPI Flash. This has two advantages:
+\begin{enumerate}
+    \item Using models in the testbench better simulates the PCB environment the ASIC is finally going to be employed.
+    \item It allows us to use a special boot sequence to load instructions and data from an external memory. In the case of Imperio this is going to be a Spansion SPI Flash. For the detailed boot code refer to the appendix~\ref{sec:boot_code} and for an explanation of the boot process to section~\ref{sec:booting}.
+\end{enumerate}
+
+
+\subsubsection{Post Synthesis Simulation}
+\subsubsection{Post Layout Simulation}
+% post synthesis 
+% post layout
+
+% scan chains
+
+\subsubsection{Continuous Integration}
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=\linewidth]{./figures/test_environment}
+  \caption{Functional verification setup.}
+  \label{fig:func_ver}
+\end{figure}
 
 \subsection{Design for Testability (DFT)}
 
@@ -120,13 +201,15 @@ $\quad\quad$others &&&0&&&0.0\\
 
 \section{Timing}
 
-%talk about timing and how timing closure was achieved.
+%talk about timing and how timing closure was achieved. useful skew, skew general relate to RAM bank implementation
 
 \section{Power}
 
-Lowering power has always been a key driving factor for the PULP group. As a matter of fact power consumption has been a point of interest for \pulpino as well.
+% power analysis
 
-In order to estimate power consumption I extended the current testbench to automatically trigger ModelSims VCD dumps. Additionally I configured the CMake environment (for more information you may want to check the Getting Started Guide~\ref{sec:getting_started}) to have a distinct power target. This makes it particularly easy to run a power estimation.
+Lowering power has always been a key driving factor for the PULP group. As a matter of fact power consumption has been a point of interest for \pulpino as well. Nevertheless due to \pulpino's simplicity we spare most of the power saving tricks used by PULP. 
+
+In order to estimate power consumption I extended the current testbench to automatically trigger ModelSim's VCD dumps. Additionally I configured the CMake environment (for more information you may want to check the Getting Started Guide~\ref{sec:getting_started}) to have a distinct power target. This makes it particularly easy to run a power estimation.
 
 For the time being I conducted three different measurements that are mostly representative for Imperio's application context.
 
@@ -159,6 +242,8 @@ Hello World & 19.80 & 59.64 & 13.25 & 39.88 & 0.19 & 0.56 & 33.23 \\ \hline
 Mat. Mul. & 32.00 & 60.00 & 21.17 & 39.68 & 0.19 & 0.35 & 53.35 \\ \hline
   \end{tabularx}
   \end{table}
+
+
 % \section{Results}
 
 

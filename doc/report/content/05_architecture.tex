@@ -57,7 +57,7 @@ In addition the RISC-V ISA provides the opportunity to define instruction set ex
 % Axi slices
 
 \subsection{SPI Slave}
-
+\label{subsec:spi_slave}
 
 \section{Advanced Debug Unit}
 
@@ -101,6 +101,9 @@ Additionally a timer control register makes it possible to set a pre-scaler, ena
 In order to control certain features of the SoC a special set of control registers is needed to do so. Since this is highly application specific (e.g. it only applies to this distinct SoC configuration) it has been my indention to logically and physically separate this sort of functionality into an independent peripheral.
 
 Specificially this peripheral allows you to control the function of pads (e.g. whether they should be used as GPIO or perform there special function like SPI, UART, etc.). Furthermore this unit allows you to reconfigure the boot address. The boot address is the address the core stars fetching instructions as soon as the fetch enable signal of the core has been asserted.
+
+\subsection{GPIO}
+\label{subsec:gpio_peripheral}
 
 \subsection{I2C}
 

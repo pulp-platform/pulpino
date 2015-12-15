@@ -7,7 +7,10 @@
 #include <utils.h>
 #include <pulpino.h>
 
-const char g_numbers[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+const char g_numbers[] = { 
+                           '0', '1', '2', '3', '4', '5', '6', '7', 
+                           '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
+                         };
 
 int check_spi_flash();
 void load_block(unsigned int addr, unsigned int len, int* dest);
@@ -47,21 +50,23 @@ int main()
   while ((spi_get_status() & 0xFFFF) != 1);
 
   // enables QPI
-  spi_setup_cmd_addr(0x71, 8, 0x80000348, 32); // cmd 0x71 write any register
+  // cmd 0x71 write any register
+  spi_setup_cmd_addr(0x71, 8, 0x80000348, 32); 
   spi_set_datalen(0);
   spi_start_transaction(SPI_CMD_WR, SPI_CSN0);
   while ((spi_get_status() & 0xFFFF) != 1);
 
-  //----------------------------------------------------------------------------
+  //-----------------------------------------------------------
   // Read header
-  //----------------------------------------------------------------------------
+  //-----------------------------------------------------------
 
   int header_ptr[8];
   int addr = 0;
 
   spi_setup_dummy(8, 0);
 
-  spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); // cmd 0xEB fast read, needs 8 dummy cycles
+  // cmd 0xEB fast read, needs 8 dummy cycles
+  spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32);
   spi_set_datalen(8 * 32);
   spi_start_transaction(SPI_CMD_QRD, SPI_CSN0);
   spi_read_fifo(header_ptr, 8 * 32);
@@ -76,16 +81,17 @@ int main()
   int data_size = header_ptr[6];
   int data_blocks = header_ptr[7];
 
-  //----------------------------------------------------------------------------
+  //-----------------------------------------------------------
   // Read Instruction RAM
-  //----------------------------------------------------------------------------
+  //-----------------------------------------------------------
 
   uart_send("Copying Instructions\n", 21);
 
   addr = instr_start;
   spi_setup_dummy(8, 0);
   for (int i = 0; i < instr_blocks; i++) { //reads 16 4KB blocks
-    spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); // cmd 0xEB fast read, needs 8 dummy cycles
+    // cmd 0xEB fast read, needs 8 dummy cycles
+    spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); 
     spi_set_datalen(32768);
     spi_start_transaction(SPI_CMD_QRD, SPI_CSN0);
     spi_read_fifo(instr, 32768);
@@ -98,9 +104,9 @@ int main()
 
   while ((spi_get_status() & 0xFFFF) != 1);
 
-  //----------------------------------------------------------------------------
+  //-----------------------------------------------------------
   // Read Data RAM
-  //----------------------------------------------------------------------------
+  //-----------------------------------------------------------
 
   uart_send("Copying Data\n", 13);
 
@@ -108,7 +114,8 @@ int main()
   addr = data_start;
   spi_setup_dummy(8, 0);
   for (int i = 0; i < data_blocks; i++) { //reads 16 4KB blocks
-    spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); // cmd 0xEB fast read, needs 8 dummy cycles
+    // cmd 0xEB fast read, needs 8 dummy cycles
+    spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); 
     spi_set_datalen(32768);
     spi_start_transaction(SPI_CMD_QRD, SPI_CSN0);
     spi_read_fifo(data, 32768);
@@ -123,9 +130,9 @@ int main()
 
   uart_wait_tx_done();
 
-  //----------------------------------------------------------------------------
+  //-----------------------------------------------------------
   // Done jump to main program
-  //----------------------------------------------------------------------------
+  //-----------------------------------------------------------
 
   //jump to program start address (instruction base address)
   jump_and_start((volatile int *)(INSTR_RAM_BASE_ADDR));
@@ -148,14 +155,16 @@ int check_spi_flash() {
     err++;
 
   // check flash model is 128MB or 256MB 1.8V
-  if ( (((rd_id[0] >> 8) & 0xFFFF) != 0x0219) && (((rd_id[0] >> 8) & 0xFFFF) != 0x2018) )
+  if ( (((rd_id[0] >> 8) & 0xFFFF) != 0x0219) && 
+       (((rd_id[0] >> 8) & 0xFFFF) != 0x2018) )
     err++;
 
   return err;
 }
 
 void load_block(unsigned int addr, unsigned int len, int* dest) {
-  spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); // cmd 0xEB fast read, needs 8 dummy cycles
+  // cmd 0xEB fast read, needs 8 dummy cycles
+  spi_setup_cmd_addr(0xEB, 8, ((addr << 8) & 0xFFFFFF00), 32); 
   spi_set_datalen(len);
   spi_start_transaction(SPI_CMD_QRD, SPI_CSN0);
   spi_read_fifo(dest, len);

@@ -150,7 +150,3 @@ The purpose of the stack initialization is to setup a task structure in the data
 
 Remaining functionality that is architecture depended is the configuration of the timer interrupt and a call to return to directly jump to the tasks code. We have to manually call the \verb+ret+ directive since we do not want to return to the function that has called \verb+xPortStartScheduler+ but to the program.
 
-
-\section{Second Section}
-
-
