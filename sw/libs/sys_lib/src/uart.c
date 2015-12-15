@@ -1,6 +1,7 @@
 #include "uart.h"
 #include "utils.h"
-
+#include "uart.h"
+#include "pulpino.h"
 /**
  * Setup UART. The UART defaults to 8 bit character mode with 1 stop bit.
  *
@@ -14,7 +15,7 @@
  */
 void uart_set_cfg(int parity, uint16_t clk_counter) {
   unsigned int i;
-
+  CGREG |= (1 << CGUART);
   *(volatile unsigned int*)(UART_REG_LCR) = 0x83; //sets 8N1 and set DLAB to 1
   *(volatile unsigned int*)(UART_REG_DLM) = (clk_counter >> 8) & 0xFF;
   *(volatile unsigned int*)(UART_REG_DLL) =  clk_counter       & 0xFF;

@@ -49,9 +49,9 @@
 
 /* Peripheral Glock gating */
 // pointer to mem of apb pulpino unit - PointerSocCtrl
-#define __PSC__(a) *(volatile int*) (SOC_CTRL_BASE_ADDR + a)
+#define __PSC__(a) *(unsigned volatile int*) (SOC_CTRL_BASE_ADDR + a)
 
-#define CGREG __PSC__(0x01)
+#define CGREG __PSC__(0x04)
 
 // glock gate UART
 #define CGSPIS    0x00

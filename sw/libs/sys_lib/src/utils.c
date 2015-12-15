@@ -14,6 +14,8 @@ exit (int i) {
 
 // signal end of computation
 void eoc(int i) {
+  // activate GPIO
+  CGREG |= (1 << CGGPIO);
   // setup GPIO
   set_pin_function(8, 1);
   set_gpio_pin_direction(8, 1);
