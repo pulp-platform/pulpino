@@ -1,48 +1,15 @@
-// ============================================================================= //
-//                           COPYRIGHT NOTICE                                    //
-// Copyright 2014 Multitherman Laboratory - University of Bologna                //
-// ALL RIGHTS RESERVED                                                           //
-// This confidential and proprietary software may be used only as authorised by  //
-// a licensing agreement from Multitherman Laboratory - University of Bologna.   //
-// The entire notice above must be reproduced on all authorized copies and       //
-// copies may only be made to the extent permitted by a licensing agreement from //
-// Multitherman Laboratory - University of Bologna.                              //
-// ============================================================================= //
+// Copyright 2015 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
 
-// ============================================================================= //
-// Company:        Multitherman Laboratory @ DEIS - University of Bologna        //
-//                    Viale Risorgimento 2 40136                                 //
-//                    Bologna - fax 0512093785 -                                 //
-//                                                                               //
-// Engineer:       Igor Loi - igor.loi@unibo.it                                  //
-//                                                                               //
-//                                                                               //
-// Additional contributions by:                                                  //
-//                                                                               //
-//                                                                               //
-//                                                                               //
-// Create Date:    01/02/2014                                                    //
-// Design Name:    MISC                                                          //
-// Module Name:    generic_fifo                                                  //
-// Project Name:   PULP                                                          //
-// Language:       SystemVerilog                                                 //
-//                                                                               //
-// Description:   A simple FIFO used in the D_address_decoder, and D_allocator   //
-//                to store the destinations ports                                //
-//                                                                               //
-// Revision:                                                                     //
-// Revision v0.1 - 01/02/2014 : File Created                                     //
-// Revision v0.2 - 02/09/2015 : Updated with a global CG cell                    //
-//                                                                               //
-//                                                                               //
-//                                                                               //
-//                                                                               //
-//                                                                               //
-//                                                                               //
-// ============================================================================= //
-
-module generic_fifo 
-#( 
+module generic_fifo
+#(
    parameter                       DATA_WIDTH = 32,
    parameter                       DATA_DEPTH = 8
 )
@@ -94,7 +61,7 @@ module generic_fifo
       begin
          param_err_flg = 1;
          $display("ERROR: %m :\n  Invalid value (%d) for parameter DATA_DEPTH (legal range: greater than 1)", DATA_DEPTH );
-      end                   
+      end
    end
    // synopsys translate_on
 
@@ -141,16 +108,16 @@ module generic_fifo
           valid_o = 1'b0;
 
           case(valid_i)
-          1'b0 : 
-          begin 
+          1'b0 :
+          begin
                   NS                      = EMPTY;
                   Push_Pointer_NS = Push_Pointer_CS;
                   Pop_Pointer_NS  = Pop_Pointer_CS;
                   gate_clock      = 1'b1;
           end
 
-          1'b1: 
-          begin 
+          1'b1:
+          begin
                   NS                      = MIDDLE;
                   Push_Pointer_NS = Push_Pointer_CS + 1'b1;
                   Pop_Pointer_NS  = Pop_Pointer_CS;
@@ -183,15 +150,15 @@ module generic_fifo
                           Pop_Pointer_NS  = Pop_Pointer_CS + 1'b1;
           end
 
-          2'b00 : 
+          2'b00 :
           begin
-                  gate_clock      = 1'b1; 
+                  gate_clock      = 1'b1;
                   NS                      = MIDDLE;
                   Push_Pointer_NS = Push_Pointer_CS;
                   Pop_Pointer_NS  = Pop_Pointer_CS;
           end
 
-          2'b11: 
+          2'b11:
           begin
                   NS              = MIDDLE;
 
@@ -207,7 +174,7 @@ module generic_fifo
           end
 
           2'b10:
-          begin 
+          begin
                   if(( Push_Pointer_CS == Pop_Pointer_CS - 1) || ( (Push_Pointer_CS == DATA_DEPTH-1) && (Pop_Pointer_CS == 0) ))
                           NS              = FULL;
                   else
@@ -221,7 +188,7 @@ module generic_fifo
                   Pop_Pointer_NS  = Pop_Pointer_CS;
           end
 
-          endcase                     
+          endcase
       end
 
       FULL:
@@ -231,8 +198,8 @@ module generic_fifo
           gate_clock      = 1'b1;
 
           case(grant_i)
-          1'b1: 
-          begin 
+          1'b1:
+          begin
                   NS              = MIDDLE;
 
                   Push_Pointer_NS = Push_Pointer_CS;
@@ -244,12 +211,12 @@ module generic_fifo
           end
 
           1'b0:
-          begin 
+          begin
                   NS              = FULL;
                   Push_Pointer_NS = Push_Pointer_CS;
                   Pop_Pointer_NS  = Pop_Pointer_CS;
           end
-          endcase                 
+          endcase
 
       end // end of FULL
 

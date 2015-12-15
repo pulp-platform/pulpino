@@ -112,28 +112,25 @@ set_property top pulpino [current_fileset]
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 
+add_files -fileset constrs_1 -norecurse /home/atraber/git/pulpino/fpga/pulpino/constraints.xdc
+
 # run synthesis
 if { $core == "OR10N" } {
   # first try will fail
-  catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1}
-  update_compile_order -fileset sources_1
-
-  synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1
-}
-
-if { $core == "RI5CY" } {
+  catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1}
+} else {
   # first try will fail
-  catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV}
-  update_compile_order -fileset sources_1
-
-  synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV
+  catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1}
 }
 
+update_compile_order -fileset sources_1
 
-create_clock -period  4.000 -name clk   -waveform {0.000 2.000} [get_nets {clk}]
-create_clock -period 10.000 -name clk   -waveform {0.000 5.000} [get_nets {spi_clk_i}]
-create_clock -period 10.000 -name tck_i -waveform {0.000 5.000} [get_nets {tck_i}]
-set_property STEPS.SYNTH_DESIGN.ARGS.FLATTEN_HIERARCHY none [get_runs synth_1]
+if { $core == "OR10N" } {
+  synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1
+} else {
+  synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1
+}
+
 #set_property STEPS.SYNTH_DESIGN.ARGS.KEEP_EQUIVALENT_REGISTERS true [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.RESOURCE_SHARING off [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.NO_LC true [get_runs synth_1]

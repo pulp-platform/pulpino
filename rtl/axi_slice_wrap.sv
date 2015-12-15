@@ -1,43 +1,12 @@
-// ============================================================================= //
-//                           COPYRIGHT NOTICE                                    //
-// Copyright 2014 Multitherman Laboratory - University of Bologna                //
-// ALL RIGHTS RESERVED                                                           //
-// This confidential and proprietary software may be used only as authorised by  //
-// a licensing agreement from Multitherman Laboratory - University of Bologna.   //
-// The entire notice above must be reproduced on all authorized copies and       //
-// copies may only be made to the extent permitted by a licensing agreement from //
-// Multitherman Laboratory - University of Bologna.                              //
-// ============================================================================= //
-
-// ============================================================================= //
-// Company:        Multitherman Laboratory @ DEIS - University of Bologna        //
-//                    Viale Risorgimento 2 40136                                 //
-//                    Bologna - fax 0512093785 -                                 //
-//                                                                               //
-// Engineer:       Davide Rossi - davide.rossi@unibo.it                          //
-//                                                                               //
-//                                                                               //
-// Additional contributions by:                                                  //
-//                                                                               //
-//                                                                               //
-//                                                                               //
-// Create Date:    01/02/2014                                                    //
-// Design Name:    AXI 4 INTERCONNECT                                            //
-// Module Name:    axi_slice_wrap                                                //
-// Project Name:   PULP                                                          //
-// Language:       SystemVerilog                                                 //
-//                                                                               //
-// Description:    AXI Master slice with interfaces                              //
-//                                                                               //
-// Revision:                                                                     //
-// Revision v0.1 - 01/02/2014 : File Created                                     //
-//                                                                               //
-//                                                                               //
-//                                                                               //
-//                                                                               //
-//                                                                               //
-//                                                                               //
-// ============================================================================= //
+// Copyright 2015 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
 
 module axi_slice_wrap
 #(
@@ -69,9 +38,9 @@ module axi_slice_wrap
       )
       axi_slice_i
       (
-        .clk_i(clk_i),
-        .rst_ni(rst_ni),
-        .test_en_i(test_en_i),
+        .clk_i                 ( clk_i                            ),
+        .rst_ni                ( rst_ni                           ),
+        .test_en_i             ( test_en_i                        ),
 
         .axi_slave_aw_valid_i  ( axi_slave.aw_valid               ),
         .axi_slave_aw_addr_i   ( axi_slave.aw_addr                ),

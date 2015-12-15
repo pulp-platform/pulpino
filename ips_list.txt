@@ -10,25 +10,28 @@
 #  work, make sure to checkout a branch.
 #
 
-ips/adv_dbg_if                          5bcdbcb987c6cd89cb99032dfed549d85946b786
-
-ips/apb/apb_gpio                        7f3519c2f08f6db40766e7e70d87eba68600809a
-ips/apb/apb_spi_master                  78ba5c32501df6c55fd2fc3e68aa11bf4426e137
-ips/apb/apb_uart                        370cef8639ceea20412cf6e253f3634dc08ba79a
+# ready
+ips/apb/apb_gpio                        dcbac04adbcc9680064e2d95399a879cc6f6d1f1
+ips/apb/apb_spi_master                  e6ca05f05df522cfcc154da3c8a9d865667022be
 ips/apb/apb_event_unit                  master
-ips/apb/apb_i2c                         58bcb35fbde1cd06f8789b895bdd559bd96aa8be
 ips/apb/apb_timer                       master
 ips/apb/apb_pulpino                     master
-ips/apb/apb_fll_if                      9463c71351f671c262295d0d9785a4db2a0c39ee
+ips/apb/apb_fll_if                      829003a80ffcb5b722bdc67d443fe37c99e9fc85
+
+ips/axi/axi_mem_if_DP                   405e9a2cd27f670adc9f7abb91d7ae3e1b82c861
+ips/axi/axi_node                        0193125be350718e7fe8b44308f4dc44749ef60c
+ips/axi/axi_slice                       6cd91f7697c13bf2aa8d63c91de92a92993f2d6c
+ips/axi/axi_slice_dc                    f001d15c2055f7fcba4c834fad706b98223e711e
+ips/axi/axi_spi_slave                   b7f5595e9488ece2d1227aeea053f0a3f8ee6251
+ips/axi/axi_spi_master                  6d1c15b023715430a5457abfd33decd5cf474d52
+
+ips/adv_dbg_if                          5bcdbcb987c6cd89cb99032dfed549d85946b786
+
+ips/apb/apb_uart                        370cef8639ceea20412cf6e253f3634dc08ba79a
+ips/apb/apb_i2c                         58bcb35fbde1cd06f8789b895bdd559bd96aa8be
 
 
 ips/axi/axi2apb                         8eb87763415c999c5f46f9b0c817e5dc2575f037
-ips/axi/axi_mem_if_DP                   94e1843ea49e138c23bf4d70680ff8490bb84e36
-ips/axi/axi_node                        fe326f3bf7ff1a760887aa6ac1de5b427d50ed59
-ips/axi/axi_slice                       9e5a77c163013c1ff6fbdeb7a25a7307fcf4c404
-ips/axi/axi_slice_dc                    de6589d0c05890e91c0785942c206d4797482de3
-ips/axi/axi_spi_slave                   a58ddee4c8da07049e8444f1d82c9382c29232e5
-ips/axi/axi_spi_master                  1550eb8d765f229798d72c3971a33349e6f37598
 ips/or10n                               c749045756bf8a321ad30c0291a06a50bf47a11e
 ips/riscv                               master
 
