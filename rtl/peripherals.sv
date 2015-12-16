@@ -341,6 +341,7 @@ module peripherals
   apb_event_unit
   apb_event_unit_i
   (
+    .clk_i            ( clk_i        ),
     .HCLK             ( clk_int[5]   ),
     .HRESETn          ( rst_n        ),
 
