@@ -48,7 +48,7 @@ This sections begins with an overview of the system's memory map and concludes w
 \end{bytefield}
 
 \section{Register Map}
-
+\label{sec:register_map}
   % TODO: 
   \subsection{UART}
 
@@ -62,6 +62,86 @@ This sections begins with an overview of the system's memory map and concludes w
 
   \subsection{I2C}
 
+  \sprDesc{0x1A10 5000 - 0x1A10 5018}{0x0000\_0000, 0x0000\_0000, 0x0000\_0000, 0x0000\_0000}{I2C Registers}{
+    \begin{bytefield}[rightcurly=.,endianness=big]{32}
+    \bitheader{31,15,7,6,5,6,4,3,2,1,0} \\
+    \begin{rightwordgroup}{CPR}
+      \bitbox{16}{unused}
+      \bitbox{16}{PRE}
+    \end{rightwordgroup}\\
+    \begin{rightwordgroup}{CTRL}
+      \bitbox{24}{unused}
+      \bitbox{1}{\rotatebox{90}{\small \tiny EN}}
+      \bitbox{1}{\rotatebox{90}{\small \tiny IE}}
+      \bitbox{1}{-}
+      \bitbox{1}{-}
+      \bitbox{1}{-}
+      \bitbox{1}{-}
+      \bitbox{1}{-}
+      \bitbox{1}{-}
+    \end{rightwordgroup}\\
+    \begin{rightwordgroup}{TX}
+      \bitbox{24}{unused}
+      \bitbox{8}{TX}
+    \end{rightwordgroup}\\
+    \begin{rightwordgroup}{TX}
+      \bitbox{24}{unused}
+      \bitbox{8}{RX}
+    \end{rightwordgroup} \\
+    \begin{rightwordgroup}{CTRL}
+      \bitbox{24}{unused}
+      \bitbox{1}{\rotatebox{90}{\small \tiny STA}}
+      \bitbox{1}{\rotatebox{90}{\small \tiny STO}}
+      \bitbox{1}{\rotatebox{90}{\small \tiny RD}}
+      \bitbox{1}{\rotatebox{90}{\small \tiny WR}}
+      \bitbox{1}{\rotatebox{90}{\small \tiny ACK}}
+      \bitbox{1}{0}
+      \bitbox{1}{0}
+      \bitbox{1}{\rotatebox{90}{\small \tiny IA}}
+    \end{rightwordgroup}\\
+      \begin{rightwordgroup}{CTRL}
+        \bitbox{24}{unused}
+        \bitbox{1}{\rotatebox{90}{\small \tiny RXA}}
+        \bitbox{1}{\rotatebox{90}{\small \tiny BUS}}
+        \bitbox{1}{\rotatebox{90}{\small \tiny AL}}
+        \bitbox{1}{0}
+        \bitbox{1}{0}
+        \bitbox{1}{0}
+        \bitbox{1}{\rotatebox{90}{\small \tiny TIP}}
+        \bitbox{1}{\rotatebox{90}{\small \tiny IRQ}}
+    \end{rightwordgroup}\\
+    \end{bytefield} 
+  }
+  \begin{itemize}
+    \item \textbf{CPR (Clock Prescale Register)}: Sets the clock prescaler by the value in PRE to achieve the desired I2C clock by dividing the current system clock by the given factor.
+    \item \textbf{CTRL (Control Register):}  
+      \begin{itemize}
+        \item Bit 7: EN (Enable). Enable the I2C peripheral.
+        \item Bit 6: IE (Interrupt enable). Enable interrupts. 
+        \item Bit 5 - 0: Are currently not in use, thy can be written and read but do not have any effect. 
+      \end{itemize}
+    \item \textbf{TX (Transmit Register):} Transmit register.
+    \item \textbf{RX (Receive Register):} Receive register.
+    \item \textbf{CMD (Command Register):} The command register is cleared when command is done or arbitration is lost.
+    \begin{itemize}
+      \item Bit 7: (STA) Send start bit.
+      \item Bit 6: (STO) Send stop bit.
+      \item Bit 5: (RD) Read from bus.
+      \item Bit 4: (WR) Write to bus.
+      \item Bit 3: (ACK) Acknowledge received data.
+      \item Bit 2 - 1: reserved, set to 0.
+      \item Bit 0: IA (Interrupt Acknowldge): Set to one to acknowledge interrupt. Cleared when transmission is done or arbitration is lost.
+    \end{itemize}
+    \item \textbf{STATUS (Status Register):} 
+      \begin{itemize}
+        \item Bit 7: (RXA) Acknowledge from sent data.
+        \item Bit 6: (BUS) Bus is busy.
+        \item Bit 5: (AL) Arbitration lost.
+        \item Bit 4-2: reserved, set to 0.
+        \item Bit 1: (TIP) Transfer in progress.
+        \item Bit 0: (IRQ) Interrupt received. This flag is always set when transmission has finished or bus arpitration was lostm, regardless of whether interrupts are enabled or not. This flag can possibly polled and is cleared by writing 1 to the IA command register.
+     \end{itemize}
+  \end{itemize}
   \subsection{FLL}
 
   \subsection{SoC Control}

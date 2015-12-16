@@ -136,6 +136,7 @@
 \usepackage{textcomp}
 \usepackage{color}
 \usepackage{placeins}
+\usepackage{float}
 
 % ---------------------------------------------------------------------
 
@@ -164,6 +165,17 @@
     }
     \bitbox{16}{#4} % print box with caption
 }
+
+\newcommand\sprDesc[4]{%
+  \textbf{SPR Address:} \texttt{#1}\\%
+  \textbf{Reset Value:} \texttt{#2}\\%
+  \begin{figure}[H]
+    \centering
+    #4
+    \caption{#3}
+  \end{figure}}
+  
+  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%                                                                 %
 %%%%%     Custom Settings                                             %

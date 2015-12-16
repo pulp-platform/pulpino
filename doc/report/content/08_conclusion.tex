@@ -1,3 +1,4 @@
+%!TEX root = ../report.tex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%                                                                 %
@@ -11,15 +12,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \chapter{Conclusion and Future Work}
-Draw your conclusions from the results you achieved and summarize your
-contributions. Comparisons (e.g., of hardware figures) with related
-work are also appropriate here. Point out things that could or need to
-be investigated further.
+% Draw your conclusions from the results you achieved and summarize your
+% contributions. Comparisons (e.g., of hardware figures) with related
+% work are also appropriate here. Point out things that could or need to
+% be investigated further.
 
-\section{First Section}
+\section{Conclusion}
 
+My contributions to the project have been very divers. This begins with the implementation of freeRTOS on the software side as well as on the hardware side with the implementation of the timer and interrupt peripherals. Those peripherals are simpler than the ones used by PULP and therefore better fitting our needs.
 
-\section{Second Section}
+Moreover I contributed to the build and verification framework of PULP/\pulpino by implementing new features like for example the core trace annotation as well as improving already implemented features like rewriting the the testbench's JTAG and SPI interfaces in a more object oriented fashion.
 
+Finally I designed a well performing ASIC in terms of high speed and low power requirements.
 
+\section{Future Work}
 
+Imperio will be taped out in the end of January 2015. Since it has always been designed to be employed on a PCB this will certainly be some work that needs to be done. In particular it would be nice to have an development board that makes use of all of Imperio's features and peripherals. Furthermore it will be necessary to develop software in order to program Imperio accordingly.
+
+Another aspect that should not be lost sight of is the support for the open source community. It will be crucial for the widespread gain of \pulpino to have a community that is using and supporting it for their own projects and products. Especially at the beginning support will be one of the key driving factors for successful project.
+
+Lastly I am hoping that the design is going to be employed in an educational aspect and that everybody has the possibility to learn as much as I did during this semester theses.

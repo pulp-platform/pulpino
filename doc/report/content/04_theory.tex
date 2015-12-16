@@ -144,6 +144,19 @@ For the cooperative case this happens within a normal function call, e.g.: a tas
 
 For the preemptive case this happens within an ISR. The only difference to the cooperative case is that the return from the interrupt (ERET) will use the MEPC register to find out where the current task has been interrupted from.
 
+\subsubsection{Context Switch Overhead}
+
+It is crucial for the property as a real time operating system to know exactly how long (in terms of processing time) certain sequences of code need. While this is often very difficult to state for more complex systems this is quite feasible in the context of a single core microcontroller and especially for \pulpino. For the current implementation of freeRTOS I can give this exact cycle time break-down:
+
+\begin{enumerate}
+  \item 43 cycles for storing of all registers
+  \item 64 cycles for scheduling the next task.
+  \item 43 cycles for the restore sequence of all registers
+  \item 68 cycles overhead for the interrupt call and all subsequent function calls and returns. Interrupt and function calls need a certain amount of time imposed by the compiler to obey the callee/caller convention (e.g. certain registers need to be saved by the callee and some by the caller of a function).
+\end{enumerate}
+
+This makes a total of 218 cycles for the overall context switch e.g. from the time of one task becoming suspended to the time another tasks starts executing.
+
 \subsection{Stack initialization}
 
 The purpose of the stack initialization is to setup a task structure in the data RAM to look like it has been already running and was only switched out by the scheduler. To this point the OS has already allocated some space on the stack. What remains for the initialization to do is to store the start address of the task on the same place we would have stored the return address (register x1) and the MEPC if the task has been switched out. It therefore can simply restore the context of the task albeit it has never been running before.

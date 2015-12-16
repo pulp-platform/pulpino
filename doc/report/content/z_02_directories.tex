@@ -164,7 +164,40 @@ Sometimes it is difficult to have an overview of the cores control flow. We supp
 sh~sw/build> make helloworld.annotate
 \end{shellenv}
 
+\subsection{Imperio related CMake targets}
 
+For now I've only mentioned CMake targets that run for both, Imperio and \pulpino, I will now give an overview about targets that are solely available to Imperio. They are not of interest if you do not have post-synthesis or post-layout netlists.
+
+To compile post synthesis (ps) and post layout (pl) netlists along with all functional models call:
+
+\begin{shellenv}
+sh~sw/build> make vcompile.ps
+sh~sw/build> make vcompile.pl
+\end{shellenv}
+
+In postlayout simulation the netlist gets back annotated with timing information from Cadence Encounter. Consequently simulation takes longer to finish.
+
+Now you are presented with different options depending on how you would like to load the program (either from external flash through the boot ROM or via the SPI Slave), this can either be one of the two options:
+
+\begin{shellenv}
+sh~sw/build> make helloworld.boot.ps
+sh~sw/build> make helloworld.spi.ps
+\end{shellenv}
+
+The same applies to post layout simulation:
+
+\begin{shellenv}
+sh~sw/build> make helloworld.boot.pl
+sh~sw/build> make helloworld.spi.pl
+\end{shellenv}
+
+Finally the utility target for running power simulation is
+
+\begin{shellenv}
+sh~sw/build> make helloworld.power
+\end{shellenv}
+
+This loads the program via SPI and starts the VCD Dump of ModelSim as soon as GPIO 1 has been asserted by the program.
 
 %%% Local Variables:
 %%% mode: latex
