@@ -1,6 +1,3 @@
-# yes I know this looks ugly, but for some reason vsim deso not recognize the VSIM_FLAGS as correct arguments :-/
-# e.g. it did not recognize the -pli ./something.so argument
-#
 set CORE_LIB "riscv_lib"
 
 if {[info exists env(PULP_CORE)]} {
@@ -26,7 +23,7 @@ set cmd "vsim -quiet $TB \
   -L apb_timer_lib \
   -L apb_i2c_lib \
   -L apb_spi_master_lib \
-  -L standalone_lib \
+  -L pulpino_lib \
   +nowarnTRAN \
   +nowarnTSCALE \
   +nowarnTFMPC \
