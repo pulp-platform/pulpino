@@ -34,6 +34,3 @@ ips/apb/apb_i2c                         58bcb35fbde1cd06f8789b895bdd559bd96aa8be
 ips/axi/axi2apb                         8eb87763415c999c5f46f9b0c817e5dc2575f037
 ips/or10n                               c749045756bf8a321ad30c0291a06a50bf47a11e
 ips/riscv                               master
-
-# chip
-imperio                                 master

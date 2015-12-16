@@ -2,18 +2,12 @@
 `define CONFIG_SV
 
 
-
-//`define PULP_FPGA_EMUL
-
 // always define ASIC when we do a synthesis run
 `ifndef PULP_FPGA_EMUL
 `ifdef SYNTHESIS
 `define ASIC
 `endif
 `endif
-
-// TODO: this should not be in here! Put this into the vsim compile scripts
-`define ASIC
 
 // Width of byte enable for a given data width
 `define EVAL_BE_WIDTH(DATAWIDTH) (DATAWIDTH/8)

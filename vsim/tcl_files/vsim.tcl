@@ -11,11 +11,9 @@ if {[info exists env(PULP_CORE)]} {
 
 set cmd "vsim -quiet $TB \
   -L $CORE_LIB \
-  -L imperio_lib \
   -L axi_spi_slave_lib \
   -L axi_slice_lib \
   -L axi_slice_dc_lib \
-  -L fll_lib \
   -L adv_dbg_if_lib \
   -L axi_mem_if_DP_lib \
   -L axi_node_lib \
@@ -28,7 +26,6 @@ set cmd "vsim -quiet $TB \
   -L apb_timer_lib \
   -L apb_i2c_lib \
   -L apb_spi_master_lib \
-  -L imperio_components_lib \
   -L standalone_lib \
   +nowarnTRAN \
   +nowarnTSCALE \
