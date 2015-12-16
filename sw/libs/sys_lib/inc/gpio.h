@@ -41,6 +41,11 @@
 #define DIR_IN  0
 #define DIR_OUT 1
 
+#define GPIO_IRQ_FALL  0x3
+#define GPIO_IRQ_RISE  0x2
+#define GPIO_IRQ_LEV0  0x0
+#define GPIO_IRQ_LEV1  0x1
+
 void set_pin_function(int pinnumber, int function);
 int  get_pin_function(int pinnumber);
 
@@ -49,5 +54,8 @@ int  get_gpio_pin_direction(int pinnumber);
 
 void set_gpio_pin_value(int pinnumber, int value);
 int  get_gpio_pin_value(int pinnumber);
+
+void set_gpio_pin_irq_type(int pinnumber, int type);
+void set_gpio_pin_irq_en(int pinnumber, int enable);
 
 #endif // _GPIO_H_

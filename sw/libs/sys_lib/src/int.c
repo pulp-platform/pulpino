@@ -55,26 +55,9 @@ void int_main(void) {
 
   if (mcause & (1 << 31)) {
     // interrupt handler called because of external IRQ
-     int_handlers[(mcause & 0x1F)].handler(int_handlers[(mcause & 0x1F)].arg);
+    int_handlers[(mcause & 0x1F)].handler(int_handlers[(mcause & 0x1F)].arg);
   }
 
   // printf("Leaving ISR.\n");
   ICP = (1 << mcause);
-}
-
-/**
- * \brief Timer compare interrupt service routine.
- * \param void
- * \return void
- *
- * Interrupt service routine for level-triggerd
- * external irq pin.
- *
- * Can be redefined by user software.
- */
-__attribute__((weak))
-// use weak attribute here, so we can overwrite this function to provide custom exception handlers, e.g. for tests
-void irq_emergency_handler_c(void)
-{
-  for(;;);
 }

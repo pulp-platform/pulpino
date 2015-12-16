@@ -44,7 +44,6 @@ void set_gpio_pin_value(int pinnumber, int value) {
   else
     v |= 1 << pinnumber;
   *(volatile int*) (GPIO_REG_PADOUT) = v;
-
 }
 
 int  get_gpio_pin_value(int pinnumber) {
@@ -54,3 +53,33 @@ int  get_gpio_pin_value(int pinnumber) {
   return v;
 }
 
+void set_gpio_pin_irq_en(int pinnumber, int enable) {
+  int v;
+  v = *(volatile int*) (GPIO_REG_INTEN);
+  if (enable == 0)
+    v &= ~(1 << pinnumber);
+  else
+    v |= 1 << pinnumber;
+  *(volatile int*) (GPIO_REG_INTEN) = v;
+}
+
+void set_gpio_pin_irq_type(int pinnumber, int type) {
+  int type0;
+  int type1;
+
+  type0 = *(volatile int*) (GPIO_REG_INTTYPE0);
+  type1 = *(volatile int*) (GPIO_REG_INTTYPE1);
+
+  if (type & 0x1)
+    type0 &= ~(1 << pinnumber);
+  else
+    type0 |= 1 << pinnumber;
+
+  if (type & 0x2)
+    type1 &= ~(1 << pinnumber);
+  else
+    type1 |= 1 << pinnumber;
+
+  *(volatile int*) (GPIO_REG_INTTYPE0) = type0;
+  *(volatile int*) (GPIO_REG_INTTYPE1) = type1;
+}

@@ -160,7 +160,7 @@ add_subdirectory(bench)
 # RISCV only tests
 if(${RISCV})
   #add_subdirectory(compressed)
-  add_subdirectory(fpga_test)
+  add_subdirectory(fpga)
   add_subdirectory(riscv_tests)
 endif()
 

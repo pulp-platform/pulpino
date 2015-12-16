@@ -112,7 +112,7 @@ set_property top pulpino [current_fileset]
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 
-add_files -fileset constrs_1 -norecurse /home/atraber/git/pulpino/fpga/pulpino/constraints.xdc
+add_files -fileset constrs_1 -norecurse constraints.xdc
 
 # run synthesis
 if { $core == "OR10N" } {
