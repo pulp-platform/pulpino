@@ -78,6 +78,29 @@ macro(add_sim_targets NAME)
     COMMENT "Running ${NAME} in ModelSim"
     ${USES_TERMINAL})
 
+  # run in modelsim in batch mode, output is only generated after simulation terminates
+  add_custom_target(${NAME}.vsimc
+    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
+    COMMAND ${CMAKE_COMMAND} -E remove FS/*
+    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -c -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>\\; run -a\\; exit\\;' > vsim.log"
+    COMMAND tail -n +1 -- ./stdout/*
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
+    COMMENT "Running ${NAME} in ModelSim")
+
+  # run in modelsim with GUI
+  add_custom_target(${NAME}.vsim.spi
+    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
+    COMMAND ${CMAKE_COMMAND} -E remove FS/*
+    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -do 'source tcl_files/run_spi.tcl\\;'"
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
+    COMMENT "Running ${NAME} in ModelSim"
+    ${USES_TERMINAL})
+
+  #############################################################################
+  # post synthesis
+  #############################################################################
   # run in modelsim with GUI post synthesis
   add_custom_target(${NAME}.vsim.spi.ps
     COMMAND ${CMAKE_COMMAND} -E remove stdout/*
@@ -88,6 +111,9 @@ macro(add_sim_targets NAME)
     COMMENT "Running ${NAME} in ModelSim (post synthesis)"
     ${USES_TERMINAL})
 
+  #############################################################################
+  # post layout
+  #############################################################################
   # run in modelsim with GUI post layout
   add_custom_target(${NAME}.vsim.spi.pl
     COMMAND ${CMAKE_COMMAND} -E remove stdout/*
@@ -135,16 +161,6 @@ macro(add_sim_targets NAME)
     COMMENT "Running scan chain testing (post layout)"
     ${USES_TERMINAL})
 
-  # run in modelsim in batch mode, output is only generated after simulation terminates
-  add_custom_target(${NAME}.vsimc
-    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
-    COMMAND ${CMAKE_COMMAND} -E remove FS/*
-    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -c -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>\\; run -a\\; exit\\;' > vsim.log"
-    COMMAND tail -n +1 -- ./stdout/*
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
-    COMMENT "Running ${NAME} in ModelSim")
-
   # run in modelsim with GUI
   # add_custom_target(${NAME}.vsim.boot
   #   COMMAND ${CMAKE_COMMAND} -E remove stdout/*
@@ -155,17 +171,11 @@ macro(add_sim_targets NAME)
   #   COMMENT "Running ${NAME} in ModelSim"
   #   ${USES_TERMINAL})
 
-  # run in modelsim with GUI
-  add_custom_target(${NAME}.vsim.spi
-    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
-    COMMAND ${CMAKE_COMMAND} -E remove FS/*
-    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -do 'source tcl_files/run_spi.tcl\\;'"
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
-    COMMENT "Running ${NAME} in ModelSim"
-    ${USES_TERMINAL})
 
+
+  #############################################################################
   # run on FPGA
+  #############################################################################
   add_custom_target(${NAME}.fpga
     COMMAND ${UTILS_DIR}/run-on-fpga.sh ${NAME}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}
@@ -173,7 +183,9 @@ macro(add_sim_targets NAME)
     COMMENT "Running ${NAME} on FPGA"
     ${USES_TERMINAL})
 
+  #############################################################################
   # testing targets
+  #############################################################################
   add_test(NAME ${NAME}.test
     COMMAND ${UTILS_DIR}/run-and-check.py ${VSIM} $<TARGET_PROPERTY:${NAME}.elf,TB> 0
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
