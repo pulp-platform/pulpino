@@ -1,3 +1,17 @@
+/**
+ * @file
+ * @brief SPI library.
+ *
+ * Provides SPI helper function like configuring SPI and sending
+ * data and commands over SPI.
+ *
+ * @author Unknown
+ *
+ * @version 1.0
+ *
+ * @date 2/10/2015
+ *
+ */
 #ifndef _SPI_H_
 #define _SPI_H_
 

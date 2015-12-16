@@ -1,3 +1,17 @@
+/**
+ * @file
+ * @brief GPIO library.
+ *
+ * Provides GPIO helper function like setting
+ * input/output direction and reading/writing the pins.
+ *
+ * @author Unknown
+ *
+ * @version 1.0
+ *
+ * @date 2/10/2015
+ *
+ */
 #ifndef _GPIO_H_
 #define _GPIO_H_
 

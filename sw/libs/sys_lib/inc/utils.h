@@ -1,3 +1,17 @@
+/**
+ * @file
+ * @brief Utility functions for PULPino.
+ *
+ * Provides utility functions like writing and reading
+ * special prupose register on both RISC-V and OpenRISC.
+ *
+ * @author Unknown
+ *
+ * @version 1.0
+ *
+ * @date 2/10/2015
+ *
+ */
 #ifndef _UTILS_H_
 #define _UTILS_H_
 

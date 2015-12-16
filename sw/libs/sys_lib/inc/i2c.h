@@ -1,3 +1,17 @@
+/**
+ * @file
+ * @brief I2C Peripheral Library.
+ *
+ * I2C functions for sending and receiving data
+ * over an I2C bus.
+ *
+ * @author Unknown
+ *
+ * @version 1.0
+ *
+ * @date 2/10/2015
+ *
+ */
 #ifndef _I2C_H_
 #define _I2C_H_
 
@@ -30,11 +44,46 @@
 #define I2C_STATUS_TIP   0x02
 #define I2C_STATUS_IF    0x01
 
+/** Confgures I2C with the given prescaler.
+ *
+ * @param int prescaler - clock divider used to generate I2C clock.
+ * @param int enable    - enable I2C peripheral
+ *
+*/
 void i2c_setup(int prescaler,int enable);
+
+/** Sends data via I2C.
+ *
+ * @param int value - data that sould be transmitted.
+ *
+*/
 void i2c_send_data(int value);
+
+/** Send command to I2C.
+ *
+ * @param int valie - command that should be send.
+ *
+*/
 void i2c_send_command(int value);
+
+/** Get status of the I2C peripheral.
+ *
+ * @return volatile int - status code
+ *
+*/
 int  i2c_get_status(void);
+
+/** Retrieves data from the I2C bus.
+ *
+ * @return volatile int - data received.
+ *
+ */
 int  i2c_get_data(void);
+
+/** Wait for acknowledge bit. Use after transmitting data.
+ *
+ *
+ */
 int  i2c_get_ack(void);
 
 #endif // _I2C_H_

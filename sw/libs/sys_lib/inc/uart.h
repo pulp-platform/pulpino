@@ -1,3 +1,18 @@
+/**
+ * @file
+ * @brief 16750 UART library.
+ *
+ * Provides UART helper function like setting
+ * control registers and reading/writing over
+ * the serial interface.
+ *
+ * @author Unknown
+ *
+ * @version 1.0
+ *
+ * @date 2/10/2015
+ *
+ */
 #ifndef _UART_H
 #define _UART_H
 
