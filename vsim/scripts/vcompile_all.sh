@@ -34,7 +34,6 @@ echo ""
 
 # IP blocks
 source ${IPS_PATH}/scripts/vcompile_riscv.sh          || exit 1
-source ${IPS_PATH}/scripts/vcompile_or10n.sh          || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_node.sh       || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi2apb.sh        || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_uart.sh       || exit 1
@@ -51,9 +50,9 @@ source ${IPS_PATH}/scripts/vcompile_axi_slice.sh      || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_slice_dc.sh   || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_mem_if_DP.sh  || exit 1
 
-source ./scripts/vcompile_pulpino.sh                  || exit 1
+source ${PULP_PATH}/vsim/scripts/vcompile_pulpino.sh  || exit 1
 
-source ./scripts/vcompile_tb.sh                       || exit 1
+source ${PULP_PATH}/vsim/scripts/vcompile_tb.sh       || exit 1
 
 echo ""
 echo "${Green}--> PULPino platform compilation complete! ${NC}"
