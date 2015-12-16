@@ -219,7 +219,7 @@ module tb;
     $stop();
   end
 
-  // TODO: this is hack, do it properly!
+  // TODO: this is a hack, do it properly!
   `include "tb_spi_pkg.sv"
   `include "tb_mem_pkg.sv"
 

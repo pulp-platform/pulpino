@@ -29,7 +29,7 @@
 /* pointer to mem of timer unit - PointerTimer */
 #define __PT__(a) *(volatile int*) (TIMER_BASE_ADDR + a)
 
-/** timer A register - contains the actual cycle counter
+/** timer A register - contains the actual cycle counter */
 #define TIRA __PT__(TIMERA_ADDR)
 
 /** timer A control register */
