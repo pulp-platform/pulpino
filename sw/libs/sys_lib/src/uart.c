@@ -9,7 +9,7 @@
  * clk_counter  Clock counter value that is used to derive the UART clock.
  *              It has to be in the range of 1..2^16.
  *              There is a prescaler in place that already divides the SoC
- *              clock by 16.  Since this is a counter, a value of 2 means that
+ *              clock by 16.  Since this is a counter, a value of 1 means that
  *              the SoC clock divided by 16*2 = 32 is used. A value of 31 would mean
  *              that we use the SoC clock divided by 16*32 = 512.
  */

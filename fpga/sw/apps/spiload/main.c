@@ -541,9 +541,15 @@ int clock_manager() {
   clk_base = clk_map + (CLKING_AXI_ADDR & MAP_MASK);
   volatile uint32_t* sr = (volatile uint32_t*)(clk_base + 0x4);
   volatile uint32_t* ccr0  = (volatile uint32_t*)(clk_base + 0x200);
+  volatile uint32_t* ccr2  = (volatile uint32_t*)(clk_base + 0x208);
 
   printf("SR   is %08X\n", *sr);
   printf("CCR0 is %08X\n", *ccr0);
+  printf("CCR2 is %08X\n", *ccr2);
+
+  // set to 5 MHz
+  *ccr0 = 0x04004005;
+  *ccr2 = 0x00040080;
 
 fail:
   close(mem_fd);

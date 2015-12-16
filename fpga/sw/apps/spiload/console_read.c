@@ -29,9 +29,13 @@ void read_port()
   ioctl(fd, TCGETS2, &tio);
   tio.c_cflag &= ~CBAUD;
   tio.c_cflag |= BOTHER;
-  tio.c_ispeed = 9600;
-  tio.c_ospeed = 9600;
-  ioctl(fd, TCSETS2, &tio);
+  tio.c_ispeed = 156250;
+  tio.c_ospeed = 156250;
+
+  if (ioctl(fd, TCSETS2, &tio) != 0) {
+    perror("ioctl failed to set baudrate");
+    return;
+  }
 
 
   i = 0;
