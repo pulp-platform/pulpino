@@ -7,7 +7,7 @@ echo "${Green}Compiling component:   ${Brown} work.imperio_tb ${NC}"
 echo "${Green}library: work ${NC}"
 echo "${Red}"
 
-vlog -quiet -sv +incdir+../tb                            								    ../tb/uart.sv                                 || exit 1
+vlog -quiet -sv +incdir+../tb                                                               ../tb/uart.sv                                 || exit 1
 vlog -quiet +define+rtlsim -sv +incdir+../imperio/sourcecode/tb +incdir+../tb +incdir+../rtl/include/    ../imperio/sourcecode/tb/tb.sv   || exit 1
 vlog -quiet -sv                                                        ../imperio/sourcecode/tb/spi_master_padframe.sv                    || exit 1
 vlog -quiet -sv +incdir+../tb -dpiheader        ../tb/jtag_dpi/dpiheader.h ../tb/jtag_dpi.sv                                              || exit 1

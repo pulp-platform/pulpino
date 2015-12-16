@@ -1,33 +1,69 @@
 #!/bin/tcsh
-source scripts/colors.sh
+source ${IPS_PATH}/scripts/colors.sh
 
-echo "${Green}---> Compiling AXI2APB...${NC}"
+##############################################################################
+# Settings
+##############################################################################
 
-echo "${Green}library: axi2apb_lib ${NC}"
+set IP=axi2apb
+set IP_NAME="AXI to APB Bridge"
 
-rm -rf ${MSIM_LIBS_PATH}/axi2apb_lib
 
-vlib ${MSIM_LIBS_PATH}/axi2apb_lib
-vmap axi2apb_lib ${MSIM_LIBS_PATH}/axi2apb_lib
+##############################################################################
+# Check settings
+##############################################################################
 
-echo "${Green}Compiling component:   ${Brown} axi2apb ${NC}"
+# check if environment variables are defined
+if (! $?MSIM_LIBS_PATH ) then
+  echo "${Red} MSIM_LIBS_PATH is not defined ${NC}"
+  exit 1
+endif
+
+if (! $?IPS_PATH ) then
+  echo "${Red} IPS_PATH is not defined ${NC}"
+  exit 1
+endif
+
+
+set LIB_NAME="${IP}_lib"
+set LIB_PATH="${MSIM_LIBS_PATH}/${LIB_NAME}"
+set IP_PATH="${IPS_PATH}/axi/${IP}"
+
+##############################################################################
+# Preparing library
+##############################################################################
+
+echo "${Green}--> Compiling ${IP_NAME}... ${NC}"
+
+rm -rf $LIB_PATH
+
+vlib $LIB_PATH
+vmap $LIB_NAME $LIB_PATH
+
+echo "${Green}Compiling component: ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
 
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi_slice/axi_buffer.sv   || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi_slice/axi_r_buffer.sv   || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi_slice/axi_ar_buffer.sv   || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi_slice/axi_aw_buffer.sv   || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi_slice/axi_w_buffer.sv   || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi_slice/axi_b_buffer.sv   || exit 1
+##############################################################################
+# Compiling RTL
+##############################################################################
 
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi2apb/axi2apb_cmd.sv   || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi2apb/axi2apb_ctrl.sv  || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi2apb/axi2apb_mux.sv   || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi2apb/axi2apb_rd.sv    || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi2apb/axi2apb_wr.sv    || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi2apb/prgen_fifo.sv    || exit 1
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi2apb/axi2apb.sv       || exit 1
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb_cmd.sv   || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb_ctrl.sv  || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb_mux.sv   || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb_rd.sv    || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb_wr.sv    || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/prgen_fifo.sv    || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb.sv       || goto error
 
-vlog -quiet -work axi2apb_lib -sv +incdir+${IPS_PATH}/axi/axi2apb ${IPS_PATH}/axi/axi2apb/AXI_2_APB.sv       || exit 1
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/AXI_2_APB.sv     || goto error
 
-echo "${Cyan}---> AXI2APB compilation complete! ${NC}"
+echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+exit 0
+
+##############################################################################
+# Error handler
+##############################################################################
+
+error:
+echo "${NC}"
+exit 1

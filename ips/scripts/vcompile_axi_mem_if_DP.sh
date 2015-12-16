@@ -1,27 +1,64 @@
 #!/bin/tcsh
-source scripts/colors.sh
+source ${IPS_PATH}/scripts/colors.sh
 
-echo "${Green}--> Compiling AXI memory interface...${NC}"
+##############################################################################
+# Settings
+##############################################################################
 
-echo "${Green}library: axi_mem_if_DP_lib ${NC}"
+set IP=axi_mem_if_DP
+set IP_NAME="AXI Memory interface Dual-Port"
 
-rm -rf ${MSIM_LIBS_PATH}/axi_mem_if_DP_lib
 
-vlib ${MSIM_LIBS_PATH}/axi_mem_if_DP_lib
-vmap axi_mem_if_DP_lib ${MSIM_LIBS_PATH}/axi_mem_if_DP_lib
+##############################################################################
+# Check settings
+##############################################################################
 
-echo "${Green}Compiling component:   ${Brown} axi_mem_if ----> DUAL PORT <-----  ${NC}"
+# check if environment variables are defined
+if (! $?MSIM_LIBS_PATH ) then
+  echo "${Red} MSIM_LIBS_PATH is not defined ${NC}"
+  exit 1
+endif
+
+if (! $?IPS_PATH ) then
+  echo "${Red} IPS_PATH is not defined ${NC}"
+  exit 1
+endif
+
+
+set LIB_NAME="${IP}_lib"
+set LIB_PATH="${MSIM_LIBS_PATH}/${LIB_NAME}"
+set IP_PATH="${IPS_PATH}/axi/${IP}"
+
+##############################################################################
+# Preparing library
+##############################################################################
+
+echo "${Green}--> Compiling ${IP_NAME}... ${NC}"
+
+rm -rf $LIB_PATH
+
+vlib $LIB_PATH
+vmap $LIB_NAME $LIB_PATH
+
+echo "${Green}Compiling component: ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
 
+##############################################################################
+# Compiling RTL
+##############################################################################
 
-vlog -work axi_mem_if_DP_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_mem_if_DP/axi_mem_if_SP.sv              || exit 1
-vlog -work axi_mem_if_DP_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_mem_if_DP/axi_mem_if_DP.sv              || exit 1
-vlog -work axi_mem_if_DP_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_mem_if_DP/axi_read_only_ctrl.sv         || exit 1
-vlog -work axi_mem_if_DP_lib -quiet -sv +incdir+${IPS_PATH}/axi/axi_node ${IPS_PATH}/axi/axi_mem_if_DP/axi_write_only_ctrl.sv        || exit 1
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi_mem_if_SP.sv              || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi_mem_if_DP.sv              || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi_read_only_ctrl.sv         || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi_write_only_ctrl.sv        || goto error
 
-echo "${Cyan}--> AXI memory interface compilation complete! ${NC}"
+echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+exit 0
 
+##############################################################################
+# Error handler
+##############################################################################
 
-
-
-
+error:
+echo "${NC}"
+exit 1

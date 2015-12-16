@@ -3,10 +3,10 @@ clear
 source scripts/colors.sh
 
 
-\rm -rf modelsim_libs
+rm -rf modelsim_libs
 vlib modelsim_libs
 
-\rm -rf work
+rm -rf work
 vlib work
 
 setenv MSIM_LIBS_PATH `pwd`/modelsim_libs

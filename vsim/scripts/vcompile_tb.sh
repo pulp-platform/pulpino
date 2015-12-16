@@ -1,20 +1,62 @@
 #!/bin/tcsh
-source scripts/colors.sh
+source ${PULP_PATH}/vsim/scripts/colors.sh
+
+##############################################################################
+# Settings
+##############################################################################
+
+set IP_NAME="work.tb"
 
 
-echo "${Green} -> Compiling PULPino Testbench..."
+##############################################################################
+# Check settings
+##############################################################################
 
-echo "${Green}Compiling component:   ${Brown} work.tb ${NC}"
-echo "${Green}library: work ${NC}"
+# check if environment variables are defined
+if (! $?VSIM_PATH ) then
+  echo "${Red} VSIM_PATH is not defined ${NC}"
+  exit 1
+endif
+
+if (! $?TB_PATH ) then
+  echo "${Red} TB_PATH is not defined ${NC}"
+  exit 1
+endif
+
+if (! $?RTL_PATH ) then
+  echo "${Red} RTL_PATH is not defined ${NC}"
+  exit 1
+endif
+
+set LIB_NAME="work"
+set LIB_PATH="${VSIM_PATH}/${LIB_NAME}"
+
+##############################################################################
+# Preparing library
+##############################################################################
+
+echo "${Green}--> Compiling ${IP_NAME}... ${NC}"
+
+echo "${Green}Compiling component: ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
 
-vlog -quiet -sv +incdir+../tb                         ../tb/uart.sv                  || exit 1
-vlog -quiet -sv +incdir+../tb +incdir+../rtl/include/ ../tb/tb.sv                    || exit 1
+##############################################################################
+# Compiling RTL
+##############################################################################
 
-vlog -quiet -sv +incdir+../tb -dpiheader        ../tb/jtag_dpi/dpiheader.h ../tb/jtag_dpi.sv       || exit 1
-vlog -quiet -64 -ccflags "-I../tb/jtag_dpi/"    ../tb/jtag_dpi/jtag_dpi.c                          || exit 1
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${TB_PATH}                                                ${TB_PATH}/uart.sv             || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${TB_PATH} +incdir+${RTL_PATH}/include/                   ${TB_PATH}/tb.sv               || goto error
 
+vlog -quiet -sv -work ${LIB_PATH}     +incdir+${TB_PATH} -dpiheader ${TB_PATH}/jtag_dpi/dpiheader.h ${TB_PATH}/jtag_dpi.sv         || goto error
+vlog -quiet -64 -work ${LIB_PATH} -ccflags "-I${TB_PATH}/jtag_dpi/"                                 ${TB_PATH}/jtag_dpi/jtag_dpi.c || goto error
 
+echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+exit 0
 
-echo "${Cyan} Testbench files have been compiled Succesfully${NC}"
+##############################################################################
+# Error handler
+##############################################################################
 
+error:
+echo "${NC}"
+exit 1

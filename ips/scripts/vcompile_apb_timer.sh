@@ -1,9 +1,17 @@
 #!/bin/tcsh
-source scripts/colors.sh
+source ${IPS_PATH}/scripts/colors.sh
+
+##############################################################################
+# Settings
+##############################################################################
 
 set IP=apb_timer
+set IP_NAME="APB Timer"
 
-echo "${Green}--> Compiling APB Timer... ${NC}"
+
+##############################################################################
+# Check settings
+##############################################################################
 
 # check if environment variables are defined
 if (! $?MSIM_LIBS_PATH ) then
@@ -17,17 +25,38 @@ if (! $?IPS_PATH ) then
 endif
 
 
-echo "${Green}library: apb_timer_lib ${NC}"
-rm -rf ${MSIM_LIBS_PATH}/${IP}_lib
+set LIB_NAME="${IP}_lib"
+set LIB_PATH="${MSIM_LIBS_PATH}/${LIB_NAME}"
+set IP_PATH="${IPS_PATH}/apb/${IP}"
 
-vlib ${MSIM_LIBS_PATH}/${IP}_lib
-vmap ${IP}_lib ${MSIM_LIBS_PATH}/${IP}_lib
+##############################################################################
+# Preparing library
+##############################################################################
 
-echo "${Green}Compiling component:   ${Brown} apb_timer ${NC}"
+echo "${Green}--> Compiling ${IP_NAME}... ${NC}"
+
+rm -rf $LIB_PATH
+
+vlib $LIB_PATH
+vmap $LIB_NAME $LIB_PATH
+
+echo "${Green}Compiling component: ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
 
-vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb/${IP}/include -sv ${IPS_PATH}/apb/apb_timer/apb_timer.sv || exit 1
-vlog -work ${IP}_lib -quiet +incdir+${IPS_PATH}/apb/${IP}/include -sv ${IPS_PATH}/apb/apb_timer/timer.sv || exit 1
+##############################################################################
+# Compiling RTL
+##############################################################################
 
-echo "${Cyan}--> APB TIMER compilation complete! ${NC}"
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/apb_timer.sv || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/timer.sv     || goto error
 
+echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+exit 0
+
+##############################################################################
+# Error handler
+##############################################################################
+
+error:
+echo "${NC}"
+exit 1

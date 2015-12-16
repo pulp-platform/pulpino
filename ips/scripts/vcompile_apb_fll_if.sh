@@ -1,7 +1,17 @@
 #!/bin/tcsh
-source scripts/colors.sh
+source ${IPS_PATH}/scripts/colors.sh
 
-echo "${Green}--> Compiling APB FLL interface... ${NC}"
+##############################################################################
+# Settings
+##############################################################################
+
+set IP=apb_fll_if
+set IP_NAME="APB FLL Interface"
+
+
+##############################################################################
+# Check settings
+##############################################################################
 
 # check if environment variables are defined
 if (! $?MSIM_LIBS_PATH ) then
@@ -15,16 +25,37 @@ if (! $?IPS_PATH ) then
 endif
 
 
-echo "${Green}library: apb_fll_if_lib ${NC}"
-rm -rf ${MSIM_LIBS_PATH}/apb_fll_if_lib
+set LIB_NAME="${IP}_lib"
+set LIB_PATH="${MSIM_LIBS_PATH}/${LIB_NAME}"
+set IP_PATH="${IPS_PATH}/apb/${IP}"
 
-vlib ${MSIM_LIBS_PATH}/apb_fll_if_lib
-vmap apb_fll_if_lib ${MSIM_LIBS_PATH}/apb_fll_if_lib
+##############################################################################
+# Preparing library
+##############################################################################
 
-echo "${Green}Compiling component:   ${Brown} apb_fll_if ${NC}"
+echo "${Green}--> Compiling ${IP_NAME}... ${NC}"
+
+rm -rf $LIB_PATH
+
+vlib $LIB_PATH
+vmap $LIB_NAME $LIB_PATH
+
+echo "${Green}Compiling component: ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
 
-vlog -work apb_fll_if_lib -quiet -sv ${IPS_PATH}/apb/apb_fll_if/apb_fll_if.sv    || exit 1
+##############################################################################
+# Compiling RTL
+##############################################################################
 
-echo "${Cyan}--> APB fll interface compilation complete! ${NC}"
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/apb_fll_if.sv    || goto error
 
+echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+exit 0
+
+##############################################################################
+# Error handler
+##############################################################################
+
+error:
+echo "${NC}"
+exit 1

@@ -1,7 +1,17 @@
 #!/bin/tcsh
-source scripts/colors.sh
+source ${IPS_PATH}/scripts/colors.sh
 
-echo "${Green}--> Compiling AXI register slice... ${NC}"
+##############################################################################
+# Settings
+##############################################################################
+
+set IP=axi_slice
+set IP_NAME="AXI Slice"
+
+
+##############################################################################
+# Check settings
+##############################################################################
 
 # check if environment variables are defined
 if (! $?MSIM_LIBS_PATH ) then
@@ -14,21 +24,44 @@ if (! $?IPS_PATH ) then
   exit 1
 endif
 
-echo "${Green}library: axi_slice_lib ${NC}"
-rm -rf ${MSIM_LIBS_PATH}/axi_slice_lib
 
-vlib ${MSIM_LIBS_PATH}/axi_slice_lib
-vmap axi_slice_lib ${MSIM_LIBS_PATH}/axi_slice_lib
+set LIB_NAME="${IP}_lib"
+set LIB_PATH="${MSIM_LIBS_PATH}/${LIB_NAME}"
+set IP_PATH="${IPS_PATH}/axi/${IP}"
 
-echo "${Green}Compiling component:   ${Brown} axi_slice ${NC}"
+##############################################################################
+# Preparing library
+##############################################################################
+
+echo "${Green}--> Compiling ${IP_NAME}... ${NC}"
+
+rm -rf $LIB_PATH
+
+vlib $LIB_PATH
+vmap $LIB_NAME $LIB_PATH
+
+echo "${Green}Compiling component: ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
 
-vlog -work axi_slice_lib -quiet -sv ${IPS_PATH}/axi/axi_slice/axi_buffer.sv      || exit 1
-vlog -work axi_slice_lib -quiet -sv ${IPS_PATH}/axi/axi_slice/axi_ar_buffer.sv   || exit 1
-vlog -work axi_slice_lib -quiet -sv ${IPS_PATH}/axi/axi_slice/axi_aw_buffer.sv   || exit 1
-vlog -work axi_slice_lib -quiet -sv ${IPS_PATH}/axi/axi_slice/axi_b_buffer.sv    || exit 1
-vlog -work axi_slice_lib -quiet -sv ${IPS_PATH}/axi/axi_slice/axi_r_buffer.sv    || exit 1
-vlog -work axi_slice_lib -quiet -sv ${IPS_PATH}/axi/axi_slice/axi_w_buffer.sv    || exit 1
-vlog -work axi_slice_lib -quiet -sv ${IPS_PATH}/axi/axi_slice/axi_slice.sv       || exit 1
+##############################################################################
+# Compiling RTL
+##############################################################################
 
-echo "${Cyan}--> AXI register slice compilation complete! ${NC}"
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/axi_buffer.sv      || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/axi_ar_buffer.sv   || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/axi_aw_buffer.sv   || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/axi_b_buffer.sv    || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/axi_r_buffer.sv    || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/axi_w_buffer.sv    || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/axi_slice.sv       || goto error
+
+echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+exit 0
+
+##############################################################################
+# Error handler
+##############################################################################
+
+error:
+echo "${NC}"
+exit 1

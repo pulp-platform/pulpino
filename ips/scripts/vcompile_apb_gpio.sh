@@ -1,7 +1,17 @@
 #!/bin/tcsh
-source scripts/colors.sh
+source ${IPS_PATH}/scripts/colors.sh
 
-echo "${Green}--> Compiling APB GPIO INTERFACE... ${NC}"
+##############################################################################
+# Settings
+##############################################################################
+
+set IP=apb_gpio
+set IP_NAME="APB GPIO"
+
+
+##############################################################################
+# Check settings
+##############################################################################
 
 # check if environment variables are defined
 if (! $?MSIM_LIBS_PATH ) then
@@ -15,16 +25,37 @@ if (! $?IPS_PATH ) then
 endif
 
 
-echo "${Green}library: apb_gpio_lib ${NC}"
-rm -rf ${MSIM_LIBS_PATH}/apb_gpio_lib
+set LIB_NAME="${IP}_lib"
+set LIB_PATH="${MSIM_LIBS_PATH}/${LIB_NAME}"
+set IP_PATH="${IPS_PATH}/apb/${IP}"
 
-vlib ${MSIM_LIBS_PATH}/apb_gpio_lib
-vmap apb_gpio_lib ${MSIM_LIBS_PATH}/apb_gpio_lib
+##############################################################################
+# Preparing library
+##############################################################################
 
-echo "${Green}Compiling component:   ${Brown} axi_gpio ${NC}"
+echo "${Green}--> Compiling ${IP_NAME}... ${NC}"
+
+rm -rf $LIB_PATH
+
+vlib $LIB_PATH
+vmap $LIB_NAME $LIB_PATH
+
+echo "${Green}Compiling component: ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
 
-vlog -work apb_gpio_lib -quiet -sv ${IPS_PATH}/apb/apb_gpio/apb_gpio.sv    || exit 1
+##############################################################################
+# Compiling RTL
+##############################################################################
 
-echo "${Cyan}--> APB GPIO INTERFACE compilation complete! ${NC}"
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/apb_gpio.sv    || goto error
 
+echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+exit 0
+
+##############################################################################
+# Error handler
+##############################################################################
+
+error:
+echo "${NC}"
+exit 1

@@ -1,21 +1,32 @@
 #!/bin/tcsh
+
+if (! $?VSIM_PATH ) then
+  setenv VSIM_PATH      `pwd`
+endif
+
+if (! $?PULP_PATH ) then
+  setenv PULP_PATH      `pwd`/../
+endif
+
+setenv MSIM_LIBS_PATH ${VSIM_PATH}/modelsim_libs
+
+setenv IPS_PATH       ${PULP_PATH}/ips
+setenv RTL_PATH       ${PULP_PATH}/rtl
+setenv TB_PATH        ${PULP_PATH}/tb
+
 clear
-source scripts/colors.sh
+source ${PULP_PATH}/vsim/scripts/colors.sh
 
 # decide if we want to build for riscv or or1k
 if ( ! $?PULP_CORE) then
   set PULP_CORE="riscv"
 endif
 
-\rm -rf modelsim_libs
+rm -rf modelsim_libs
 vlib modelsim_libs
 
-\rm -rf work
+rm -rf work
 vlib work
-
-setenv MSIM_LIBS_PATH `pwd`/modelsim_libs
-setenv IPS_PATH `pwd`/../ips
-setenv RTL_PATH `pwd`/../rtl
 
 echo ""
 echo "${Green}--> Compiling PULPino Platform... ${NC}"
@@ -23,13 +34,9 @@ echo ""
 
 source ${RTL_PATH}/scripts/vcompile_standalone.sh     || exit 1
 
-if ( $PULP_CORE == "riscv" ) then
-  source ${IPS_PATH}/scripts/vcompile_riscv.sh        || exit 1
-else
-  source ${IPS_PATH}/scripts/vcompile_or10n.sh        || exit 1
-endif
-
 # IP blocks
+source ${IPS_PATH}/scripts/vcompile_riscv.sh          || exit 1
+source ${IPS_PATH}/scripts/vcompile_or10n.sh          || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_node.sh       || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi2apb.sh        || exit 1
 source ${IPS_PATH}/scripts/vcompile_apb_uart.sh       || exit 1

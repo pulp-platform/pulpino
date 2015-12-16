@@ -1,7 +1,17 @@
 #!/bin/tcsh
-source scripts/colors.sh
+source ${IPS_PATH}/scripts/colors.sh
 
-echo "${Green}--> Compiling APB SPI MASTER INTERFACE... ${NC}"
+##############################################################################
+# Settings
+##############################################################################
+
+set IP=apb_spi_master
+set IP_NAME="APB SPI Master"
+
+
+##############################################################################
+# Check settings
+##############################################################################
 
 # check if environment variables are defined
 if (! $?MSIM_LIBS_PATH ) then
@@ -15,24 +25,43 @@ if (! $?IPS_PATH ) then
 endif
 
 
-echo "${Green}library: apb_spi_master_lib ${NC}"
-rm -rf ${MSIM_LIBS_PATH}/apb_spi_master_lib
+set LIB_NAME="${IP}_lib"
+set LIB_PATH="${MSIM_LIBS_PATH}/${LIB_NAME}"
+set IP_PATH="${IPS_PATH}/apb/${IP}"
 
-vlib ${MSIM_LIBS_PATH}/apb_spi_master_lib
-vmap apb_spi_master_lib ${MSIM_LIBS_PATH}/apb_spi_master_lib
+##############################################################################
+# Preparing library
+##############################################################################
 
-echo "${Green}Compiling component:   ${Brown} apb_spi_master ${NC}"
+echo "${Green}--> Compiling ${IP_NAME}... ${NC}"
+
+rm -rf $LIB_PATH
+
+vlib $LIB_PATH
+vmap $LIB_NAME $LIB_PATH
+
+echo "${Green}Compiling component: ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
 
+##############################################################################
+# Compiling RTL
+##############################################################################
 
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/spi_master_apb_if.sv     || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/spi_master_clkgen.sv     || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/spi_master_fifo.sv       || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/spi_master_rx.sv         || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/spi_master_tx.sv         || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/spi_master_controller.sv || goto error
+vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/apb_spi_master.sv        || goto error
 
-vlog -work apb_spi_master_lib -quiet -sv ${IPS_PATH}/apb/apb_spi_master/spi_master_apb_if.sv     || exit 1
-vlog -work apb_spi_master_lib -quiet -sv ${IPS_PATH}/apb/apb_spi_master/spi_master_clkgen.sv     || exit 1
-vlog -work apb_spi_master_lib -quiet -sv ${IPS_PATH}/apb/apb_spi_master/spi_master_fifo.sv       || exit 1
-vlog -work apb_spi_master_lib -quiet -sv ${IPS_PATH}/apb/apb_spi_master/spi_master_rx.sv         || exit 1
-vlog -work apb_spi_master_lib -quiet -sv ${IPS_PATH}/apb/apb_spi_master/spi_master_tx.sv         || exit 1
-vlog -work apb_spi_master_lib -quiet -sv ${IPS_PATH}/apb/apb_spi_master/spi_master_controller.sv || exit 1
-vlog -work apb_spi_master_lib -quiet -sv ${IPS_PATH}/apb/apb_spi_master/apb_spi_master.sv        || exit 1
+echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+exit 0
 
-echo "${Cyan}--> APB SPI MASTER INTERFACE compilation complete! ${NC}"
+##############################################################################
+# Error handler
+##############################################################################
 
+error:
+echo "${NC}"
+exit 1
