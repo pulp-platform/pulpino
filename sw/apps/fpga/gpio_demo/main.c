@@ -53,5 +53,6 @@ int main()
 }
 
 void gpio_int_handler(void* unused) {
+  get_gpio_irq_status();
   printf("GPIO EVENT SEEN\n");
 }

@@ -70,16 +70,20 @@ void set_gpio_pin_irq_type(int pinnumber, int type) {
   type0 = *(volatile int*) (GPIO_REG_INTTYPE0);
   type1 = *(volatile int*) (GPIO_REG_INTTYPE1);
 
-  if (type & 0x1)
+  if ((type & 0x1) == 0)
     type0 &= ~(1 << pinnumber);
   else
     type0 |= 1 << pinnumber;
 
-  if (type & 0x2)
+  if ((type & 0x2) == 0)
     type1 &= ~(1 << pinnumber);
   else
     type1 |= 1 << pinnumber;
 
   *(volatile int*) (GPIO_REG_INTTYPE0) = type0;
   *(volatile int*) (GPIO_REG_INTTYPE1) = type1;
+}
+
+int get_gpio_irq_status() {
+  return *(volatile int*) (GPIO_REG_INTSTATUS);
 }

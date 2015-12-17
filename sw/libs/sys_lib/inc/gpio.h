@@ -57,5 +57,6 @@ int  get_gpio_pin_value(int pinnumber);
 
 void set_gpio_pin_irq_type(int pinnumber, int type);
 void set_gpio_pin_irq_en(int pinnumber, int enable);
+int get_gpio_irq_status();
 
 #endif // _GPIO_H_
