@@ -38,7 +38,7 @@ int main()
     set_gpio_pin_irq_type(i, GPIO_IRQ_RISE);
   }
 
-  IER = 0xFFFFFFFF;
+  IER = 0x1 << 19;
   EER = 0x0;
 
   int_init();
