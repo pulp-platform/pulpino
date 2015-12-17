@@ -47,7 +47,7 @@ int main()
 
   printf("Going to sleep and wait for interrupts now\n");
 
-  while(1) sleep();
+  sleep();
 
   return 0;
 }
