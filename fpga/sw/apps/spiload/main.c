@@ -499,7 +499,7 @@ int process_file(char* buffer, size_t size) {
   for(i = 1; i < entries; i++) {
     if(addr[i] != (addr[i-1] + 0x4) || (i - start_idx) == 255 || i == (entries - 1)) {
       // send block
-      printf("Sending block addr %08X with %d entries\n", addr[start_idx], i - start_idx + 1);
+      // printf("Sending block addr %08X with %d entries\n", addr[start_idx], i - start_idx + 1);
       spi_load(addr[start_idx], (char*)&data[start_idx], (i - start_idx + 1) * 4);
       start_idx = i;
     }
@@ -543,9 +543,9 @@ int clock_manager() {
   volatile uint32_t* ccr0  = (volatile uint32_t*)(clk_base + 0x200);
   volatile uint32_t* ccr2  = (volatile uint32_t*)(clk_base + 0x208);
 
-  printf("SR   is %08X\n", *sr);
-  printf("CCR0 is %08X\n", *ccr0);
-  printf("CCR2 is %08X\n", *ccr2);
+  // printf("SR   is %08X\n", *sr);
+  // printf("CCR0 is %08X\n", *ccr0);
+  // printf("CCR2 is %08X\n", *ccr2);
 
   // set to 5 MHz
   *ccr0 = 0x04004005;
