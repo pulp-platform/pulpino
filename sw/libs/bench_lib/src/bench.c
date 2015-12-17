@@ -87,16 +87,17 @@ void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, u
 
 void perf_print_all(void) {
 #ifdef __riscv__
-  printf("Perf CYCLES: %d\n",      cpu_perf_get(0));
-  printf("Perf INSTR: %d\n",       cpu_perf_get(1));
-  printf("Perf CINSTR: %d\n",      cpu_perf_get(9));
-  printf("Perf LD_STALL: %d\n",    cpu_perf_get(2));
-  printf("Perf JR_STALL: %d\n",    cpu_perf_get(3));
-  printf("Perf IMISS: %d\n",       cpu_perf_get(4));
-  printf("Perf LD: %d\n",          cpu_perf_get(5));
-  printf("Perf ST: %d\n",          cpu_perf_get(6));
-  printf("Perf JUMP: %d\n",        cpu_perf_get(7));
-  printf("Perf BRANCH: %d\n",      cpu_perf_get(8));
+  printf("Perf CYCLES:   %d\n", cpu_perf_get(0));
+  printf("Perf INSN:     %d\n", cpu_perf_get(1));
+  printf("Perf CINSN:    %d\n", cpu_perf_get(10));
+  printf("Perf LD_STALL: %d\n", cpu_perf_get(2));
+  printf("Perf JR_STALL: %d\n", cpu_perf_get(3));
+  printf("Perf IMISS:    %d\n", cpu_perf_get(4));
+  printf("Perf #LD:      %d\n", cpu_perf_get(5));
+  printf("Perf #ST:      %d\n", cpu_perf_get(6));
+  printf("Perf #JUMP:    %d\n", cpu_perf_get(7));
+  printf("Perf #BRANCH:  %d\n", cpu_perf_get(8));
+//  printf("Perf #TAKEN:   %d\n", cpu_perf_get(9));
 #else
   printf("Perf CYCLES: %d\n",      cpu_perf_get(SPR_PCER_CYCLES));
   printf("Perf INSTR: %d\n",       cpu_perf_get(SPR_PCER_INSTR));
