@@ -38,7 +38,7 @@ int main()
     set_gpio_pin_irq_type(i, GPIO_IRQ_RISE);
   }
 
-  IER = 0x1 << 19;
+  IER = 0x1 << GPIO_EVENT;
   EER = 0x0;
 
   int_init();
@@ -47,7 +47,7 @@ int main()
 
   printf("Going to sleep and wait for interrupts now\n");
 
-  sleep();
+  while(1) sleep();
 
   return 0;
 }

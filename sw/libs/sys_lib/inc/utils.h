@@ -60,6 +60,7 @@ static inline int get_core_num()
  */
 static inline void sleep(void) {
 	SCR = 0x01;
+	asm volatile ("nop;nop");
 	asm volatile ("wfi");
 }
 
