@@ -426,14 +426,20 @@ int main(int argc, char **argv)
   // Start device and wait for timeout (if any)
   set_boot_addr(0x00000000);
 
+  if (arguments.timeout > 0) {
+    console_thread_start();
+  }
+
   printf("Starting device\n");
   pulp_ctrl(1, 0);
 
   if (arguments.timeout > 0) {
     printf("Waiting for EOC...\n");
 
-    console_thread_start();
     wait_eoc(arguments.timeout);
+
+    // wait for a moment to also let UART communication finish
+    sleep(1);
     console_thread_stop();
   }
 

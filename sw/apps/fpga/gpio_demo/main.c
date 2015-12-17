@@ -20,28 +20,14 @@
 #define BTN_U_BIT   (1 << 20)
 
 void gpio_int_handler(void* unused);
+void board_setup();
 
 int main()
 {
-  int i;
-
-  // setup GPIO pins
-  for(i = 0; i < 8; i++) {
-    set_gpio_pin_direction(i, DIR_IN);
-    set_pin_function(i, FUNC_GPIO);
-  }
-
-  for(i = 16; i < 20; i++) {
-    set_gpio_pin_direction(i, DIR_IN);
-    set_pin_function(i, FUNC_GPIO);
-    set_gpio_pin_irq_en(i, 1);
-    set_gpio_pin_irq_type(i, GPIO_IRQ_RISE);
-  }
+  board_setup();
 
   IER = 0x1 << GPIO_EVENT;
-  EER = 0x0;
 
-  int_init();
   int_add(GPIO_EVENT, gpio_int_handler, NULL);
   int_enable();
 
@@ -53,6 +39,31 @@ int main()
 }
 
 void gpio_int_handler(void* unused) {
-  get_gpio_irq_status();
-  printf("GPIO EVENT SEEN\n");
+  switch(get_gpio_irq_status()) {
+    case 1 << 16: printf("Enter pressed\n"); break;
+    case 1 << 17: printf("Down pressed\n");  break;
+    case 1 << 18: printf("Left pressed\n");  break;
+    case 1 << 19: printf("Right pressed\n"); break;
+    case 1 << 20: printf("Up pressed\n");    break;
+  }
+}
+
+void board_setup() {
+  int i;
+
+  int_init();
+
+  // setup GPIO pins
+  for(i = 0; i < 8; i++) {
+    set_gpio_pin_direction(i, DIR_IN);
+    set_pin_function(i, FUNC_GPIO);
+  }
+
+  for(i = 16; i < 21; i++) {
+    set_gpio_pin_direction(i, DIR_IN);
+    set_pin_function(i, FUNC_GPIO);
+    set_gpio_pin_irq_en(i, 1);
+    set_gpio_pin_irq_type(i, GPIO_IRQ_RISE);
+  }
+  EER = 0x0;
 }
