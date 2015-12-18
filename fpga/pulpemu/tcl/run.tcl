@@ -43,7 +43,6 @@ update_compile_order -fileset sim_1
 # add pulpino
 add_files -norecurse ../pulpino/pulpino.edf \
                      ../pulpino/pulpino_stub.v \
-                     ../ips/xilinx_mem_32768x32_dp/ip/xilinx_mem_32768x32_dp.dcp \
                      ../ips/xilinx_clock_manager/ip/xilinx_clock_manager.dcp
 
 update_compile_order -fileset sources_1
