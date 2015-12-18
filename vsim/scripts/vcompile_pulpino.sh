@@ -59,6 +59,11 @@ else
   echo "${Yellow} Compiling for OR10N core ${NC}"
 endif
 
+# decide if we want to build for riscv or or1k
+if ( ! $?ASIC_DEFINES) then
+  set ASIC_DEFINES=""
+endif
+
 # components
 vlog -quiet -sv -work ${LIB_PATH} ${RTL_PATH}/components/cluster_clock_gating.sv    || goto error
 vlog -quiet -sv -work ${LIB_PATH} ${RTL_PATH}/components/cluster_clock_inverter.sv  || goto error
