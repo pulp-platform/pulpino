@@ -15,7 +15,7 @@ def write_arr(f, name, arr):
 f = open('parMatrixMul32_stimuli.h', 'w')
 
 
-SIZE = 32 
+SIZE = 16
 RANGE = 2**15/SIZE
 
 m_a   = []

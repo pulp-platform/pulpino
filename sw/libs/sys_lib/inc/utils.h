@@ -30,7 +30,7 @@ static inline int get_core_num()
 }
 
 #ifdef __riscv__
-/** 
+/**
  * @brief Write to CSR.
  * @param CSR register to write.
  * @param Value to write to CSR register.
@@ -41,7 +41,7 @@ static inline int get_core_num()
  */
 #define csrw(csr, value)  asm volatile ("csrw\t\t" #csr ", %0" : /* no output */ : "r" (value));
 
-/** 
+/**
  * @brief Read from CSR.
  * @param void
  * @return 32-bit unsigned int
@@ -49,19 +49,18 @@ static inline int get_core_num()
  * Function to handle CSR reads.
  *
  */
-#define csrr(csr, value)  asm volatile ("csrr\t\t%0, " #csr "": "=r" (value)); 
+#define csrr(csr, value)  asm volatile ("csrr\t\t%0, " #csr "": "=r" (value));
 
-/** 
+/**
  * @brief Request to put the core to sleep.
  * @param void
- * 
+ *
  * Set the core to sleep state and wait for events/interrupt to wake up.
  *
  */
 static inline void sleep(void) {
-	SCR = 0x01;
-	asm volatile ("nop;nop");
-	asm volatile ("wfi");
+  SCR = 0x01;
+  asm volatile ("nop;nop;wfi");
 }
 
 #else // not __riscv__

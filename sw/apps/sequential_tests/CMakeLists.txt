@@ -8,6 +8,7 @@ add_subdirectory(stencil_vect)
 add_subdirectory(towerofhanoi)
 add_subdirectory(matrixMul8)
 add_subdirectory(matrixMul16)
+add_subdirectory(matrixMul32)
 add_subdirectory(motion_detection)
 add_subdirectory(stencil)
 
