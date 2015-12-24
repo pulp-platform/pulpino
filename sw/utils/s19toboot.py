@@ -135,7 +135,7 @@ module boot_code
     output logic [31:0] Q
   );
 
-  const logic [32:0] mem[0:%d] = {
+  const logic [0:%d] [31:0] mem = {
 """ % (math.log(rom_size, 2), (rom_size-1)))
 
 ###############################################################################
