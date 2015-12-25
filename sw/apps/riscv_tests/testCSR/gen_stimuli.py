@@ -48,7 +48,6 @@ instr_32_r('g_csrrw', 0x00, lambda a, p: a)
 instr_32_r('g_csrrs', 0x00, lambda a, p: (p | a))
 instr_32_r('g_csrrc', 0xffffffff, lambda a, p: (p & (~a)))
 
-instr_32_r('g_mscratch', 0x00, lambda a, p: a)
 instr_32_r('g_mepc',     0x00, lambda a, p: a)
 instr_32_r('g_mstatus',  0x00, lambda a, p: (a & 0x01 | 0x6))
 instr_32_r('g_mcpuid',   0x00, lambda a, p: 0x0100)

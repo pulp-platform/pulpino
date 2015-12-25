@@ -5,7 +5,6 @@
 //
 // The program also checks if the correct bits of the following CSR are read-
 // and writeable:
-// - mscratch
 // - mepc
 // - mstatus
 // - mcpuid
@@ -74,8 +73,8 @@ void check_csr_op(testresult_t *result, void (*start)(), void (*stop)()) {
   //-----------------------------------------------------------------
   for(i = 0; i < (sizeof(g_csrrw_a)/4); i++) {
     // update and read CSR
-    util_csrrw("mscratch", g_csrrw_a[i], last);
-    util_csrr ("mscratch", act);
+    util_csrrw("mepc", g_csrrw_a[i], last);
+    util_csrr ("mepc", act);
 
     // check write
     check_uint32(result, "csrrw", act, g_csrrw_exp[i]);
@@ -87,12 +86,12 @@ void check_csr_op(testresult_t *result, void (*start)(), void (*stop)()) {
   //-----------------------------------------------------------------
   // Check CSRRS
   //-----------------------------------------------------------------
-  util_csrrw("mscratch", 0, last);
+  util_csrrw("mepc", 0, last);
 
   for(i = 0; i < (sizeof(g_csrrs_a)/4); i++) {
     // update and read CSR
-    util_csrrs("mscratch", g_csrrs_a[i], last);
-    util_csrr ("mscratch", act);
+    util_csrrs("mepc", g_csrrs_a[i], last);
+    util_csrr ("mepc", act);
 
     // check write
     check_uint32(result, "csrrs", act, g_csrrs_exp[i]);
@@ -104,12 +103,12 @@ void check_csr_op(testresult_t *result, void (*start)(), void (*stop)()) {
   //-----------------------------------------------------------------
   // Check CSRRC
   //-----------------------------------------------------------------
-  util_csrrw("mscratch", 0xffffffff, last);
+  util_csrrw("mepc", 0xffffffff, last);
 
   for(i = 0; i < (sizeof(g_csrrc_a)/4); i++) {
     // update and read CSR
-    util_csrrc("mscratch", g_csrrc_a[i], last);
-    util_csrr ("mscratch", act);
+    util_csrrc("mepc", g_csrrc_a[i], last);
+    util_csrr ("mepc", act);
 
     // check write
     check_uint32(result, "csrrc", act, g_csrrc_exp[i]);
@@ -135,7 +134,6 @@ void check_csr_rw(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i;
 
   // 32-bit registers
-  util_check_rw(mscratch, i, act, last);
   util_check_rw(mepc, i, act, last);
 
   // single bit
