@@ -9,7 +9,7 @@ module boot_code
     output logic [31:0] Q
   );
 
-  const logic [32:0] mem[0:699] = {
+  const logic [0:699] [31:0] mem = {
     32'h0040006F,
     32'h00000093,
     32'h00008113,

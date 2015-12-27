@@ -1,33 +1,77 @@
 #!/bin/tcsh
-source scripts/colors.sh
+source ${IPS_PATH}/scripts/colors.sh
 
-echo "${Green}--> Compiling or10n processor core... ${NC}"
+##############################################################################
+# Settings
+##############################################################################
 
-rm -rf ${MSIM_LIBS_PATH}/or10n_lib
+set IP=or10n
+set IP_NAME="OR10N processor core"
 
-vlib ${MSIM_LIBS_PATH}/or10n_lib
-vmap or10n_lib ${MSIM_LIBS_PATH}/or10n_lib
 
-echo "${Green}Compiling component:   ${Brown} or10n_core ${NC}"
+##############################################################################
+# Check settings
+##############################################################################
+
+# check if environment variables are defined
+if (! $?MSIM_LIBS_PATH ) then
+  echo "${Red} MSIM_LIBS_PATH is not defined ${NC}"
+  exit 1
+endif
+
+if (! $?IPS_PATH ) then
+  echo "${Red} IPS_PATH is not defined ${NC}"
+  exit 1
+endif
+
+
+set LIB_NAME="${IP}_lib"
+set LIB_PATH="${MSIM_LIBS_PATH}/${LIB_NAME}"
+set IP_PATH="${IPS_PATH}/${IP}"
+
+##############################################################################
+# Preparing library
+##############################################################################
+
+echo "${Green}--> Compiling ${IP_NAME}... ${NC}"
+
+rm -rf $LIB_PATH
+
+vlib $LIB_PATH
+vmap $LIB_NAME $LIB_PATH
+
+echo "${Green}Compiling component: ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
 
+##############################################################################
+# Compiling RTL
+##############################################################################
 
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/id_stage.sv             || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/load_store_unit.sv      || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/wb_stage.sv             || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/ex_stage.sv             || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/if_stage.sv             || exit 1
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/id_stage.sv             || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/load_store_unit.sv      || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/wb_stage.sv             || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/ex_stage.sv             || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/if_stage.sv             || goto error
 
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/controller.sv           || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/exc_controller.sv       || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/alu.sv                  || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/mult.sv                 || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/hwloop_controller.sv    || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/hwloop_regs.sv          || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/sp_registers.sv         || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/or10n_core.sv           || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/debug_unit.sv           || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/instr_core_interface.sv || exit 1
-vlog -quiet -sv -work or10n_lib +incdir+${IPS_PATH}/or10n/include ${IPS_PATH}/or10n/register_file.sv        || exit 1
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/controller.sv           || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/exc_controller.sv       || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/alu.sv                  || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/mult.sv                 || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/hwloop_controller.sv    || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/hwloop_regs.sv          || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/sp_registers.sv         || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/or10n_core.sv           || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/debug_unit.sv           || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/instr_core_interface.sv || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/register_file.sv        || goto error
 
-echo "${Cyan}--> or10n processor core compilation complete! ${NC}"
+echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
+exit 0
+
+##############################################################################
+# Error handler
+##############################################################################
+
+error:
+echo "${NC}"
+e

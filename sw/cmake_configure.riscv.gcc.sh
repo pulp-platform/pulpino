@@ -12,14 +12,11 @@ VSIM=`which vsim`
 
 RVC=0
 
-# Use this argument for Imperio TB
-# -DARG_TB="run_imperio.tcl"
 
 PULP_GIT_DIRECTORY=../../
 SIM_DIRECTORY="$PULP_GIT_DIRECTORY/vsim"
 
 cmake "$PULP_GIT_DIRECTORY"/sw/ \
-    -DCMAKE_BUILD_TYPE=Release \
     -DPULP_MODELSIM_DIRECTORY="$SIM_DIRECTORY" \
     -DCMAKE_C_COMPILER="$COMPILER" \
     -DVSIM="$VSIM" \

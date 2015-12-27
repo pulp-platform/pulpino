@@ -426,8 +426,8 @@ module peripherals
       .fll2_wrn    (              ),
       .fll2_add    (              ),
       .fll2_data   (              ),
-      .fll2_ack    (              ),
-      .fll2_r_data ( 'b0          ),
+      .fll2_ack    ( 1'b0         ),
+      .fll2_r_data ( '0           ),
       .fll2_lock   ( 1'b0         )
       );
 

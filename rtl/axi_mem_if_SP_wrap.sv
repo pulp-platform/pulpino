@@ -19,8 +19,9 @@ module axi_mem_if_SP_wrap
     parameter MEM_ADDR_WIDTH = 10
   )(
     // Clock and Reset
-    input logic clk,
-    input logic rst_n,
+    input logic                         clk,
+    input logic                         rst_n,
+    input logic                         test_en_i,
 
     output logic                        mem_req_o,
     output logic [MEM_ADDR_WIDTH-1:0]   mem_addr_o,
@@ -48,6 +49,7 @@ module axi_mem_if_SP_wrap
   (
     .ACLK       ( clk             ),
     .ARESETn    ( rst_n           ),
+    .test_en_i  ( test_en_i       ),
 
     .AWID_i     ( slave.aw_id     ),
     .AWADDR_i   ( slave.aw_addr   ),

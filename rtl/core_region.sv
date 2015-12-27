@@ -289,10 +289,10 @@ module core_region
    )
    axi_slice_core2axi
    (
-     .clk_i      ( clk                 ),
-     .rst_ni     ( rst_n               ),
+     .clk_i      ( clk             ),
+     .rst_ni     ( rst_n           ),
 
-     .test_en_i  ( testmode_i          ),
+     .test_en_i  ( testmode_i      ),
 
      .axi_slave  ( core_master_int ),
      .axi_master ( core_master     )
@@ -381,6 +381,7 @@ module core_region
   (
     .clk         ( clk               ),
     .rst_n       ( rst_n             ),
+    .test_en_i   ( testmode_i        ),
 
     .mem_req_o   ( axi_instr_req     ),
     .mem_addr_o  ( axi_instr_addr    ),
@@ -462,6 +463,7 @@ module core_region
   (
     .clk         ( clk               ),
     .rst_n       ( rst_n             ),
+    .test_en_i   ( testmode_i        ),
 
     .mem_req_o   ( axi_mem_req       ),
     .mem_addr_o  ( axi_mem_addr      ),
@@ -525,13 +527,13 @@ module core_region
     )
   adv_dbg_if_i
   (
-    .tms_pad_i   ( tms_i        ),
-    .tck_pad_i   ( tck_i        ),
-    .trstn_pad_i ( trstn_i      ),
-    .tdi_pad_i   ( tdi_i        ),
-    .tdo_pad_o   ( tdo_o        ),
+    .tms_pad_i   ( tms_i           ),
+    .tck_pad_i   ( tck_i           ),
+    .trstn_pad_i ( trstn_i         ),
+    .tdi_pad_i   ( tdi_i           ),
+    .tdo_pad_o   ( tdo_o           ),
 
-    .test_mode_i ( testmode_i   ),
+    .test_mode_i ( testmode_i      ),
 
     .cpu_addr_o  ( dbginf_addr     ),
     .cpu_data_i  ( dbginf_datai    ),

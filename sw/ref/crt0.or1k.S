@@ -86,7 +86,7 @@ symbol:
     l.nop
 /* ---[ 0x070: Emergency IRQ exception ]--------------------------------- */
     .org 0x70
-    l.j   irq_emergency_handler
+    l.j   default_exception_handler
     l.nop
 
 /* ========================================================= [ entry ] === */
@@ -112,7 +112,7 @@ zero_loop_end:
 
 main_entry:
     l.ori   r3, r0, 0x0
-    l.ori   r4, r0, 0x0
+    l.ori   r4, r0, 0x1
     l.jal  CLABEL(uart_set_cfg);
     l.nop
 
@@ -198,17 +198,6 @@ interrupt_handler:
     l.movhi r9,hi(end_except);
     l.ori   r9,r9,lo(end_except);
     l.j    CLABEL(int_main);
-    l.nop
-
-/* ====================================== [ interrupt handler ] === */
-irq_emergency_handler:
-    l.addi  r1,r1,-EXCEPTION_STACK_SIZE;
-    l.sw    0x18(r1),r9;
-    l.jal   store_regs;
-    l.nop;
-    l.movhi r9,hi(end_except);
-    l.ori   r9,r9,lo(end_except);
-    l.j    CLABEL(irq_emergency_handler_c);
     l.nop
 
 /* ====================================== [ default exception handler ] === */
