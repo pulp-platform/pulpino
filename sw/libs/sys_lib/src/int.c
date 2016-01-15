@@ -48,7 +48,6 @@ void int_main(void) {
   int mcause;
   csrr(mcause, mcause);
 
-  // clear pending register
 
 
   // printf("In ISR. cause = %u\n", mcause & 0x1F);
@@ -59,5 +58,6 @@ void int_main(void) {
   }
 
   // printf("Leaving ISR.\n");
+  // clear pending register
   ICP = (1 << mcause);
 }

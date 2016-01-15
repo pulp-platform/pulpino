@@ -27,7 +27,7 @@ void check_standard_mode(testresult_t *result, void (*start)(), void (*stop)()) 
 
     // waste some time and wait for flash to power up
     // asm volatile is needed so that this loop is not optimized out
-    for (int i = 0; i < 2000; i++) __asm__ volatile ("nop");
+    for (int i = 0; i < 33333; i++) __asm__ volatile ("nop");
 
     *(volatile int*) (SPI_REG_CLKDIV) = 0x4;
 

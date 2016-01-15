@@ -16,6 +16,7 @@ void timer_overflow_isr(void) {
     set_gpio_pin_value(0, 1);
   }
   timer_triggered++;
+  // printf("Value: %d\n", timer_triggered);
 }
 
 
