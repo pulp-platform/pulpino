@@ -98,6 +98,16 @@ macro(add_sim_targets NAME)
     COMMENT "Running ${NAME} in ModelSim"
     ${USES_TERMINAL})
 
+  # run in modelsim with GUI
+  add_custom_target(${NAME}.vsim.boot
+    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
+    COMMAND ${CMAKE_COMMAND} -E remove FS/*
+    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -do 'source tcl_files/run_boot.tcl\\;'"
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
+    COMMENT "Running ${NAME} in ModelSim"
+    ${USES_TERMINAL})
+
   #############################################################################
   # post synthesis
   #############################################################################
@@ -134,14 +144,11 @@ macro(add_sim_targets NAME)
     COMMENT "Running ${NAME} in ModelSim (post layout)"
     ${USES_TERMINAL})
 
-  # run in modelsim with GUI post layout
-  add_custom_target(${NAME}.vsim.boot.ps
-    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
-    COMMAND ${CMAKE_COMMAND} -E remove FS/*
-    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -do 'source tcl_files/run_boot_ps.tcl\\;'"
+  # run in modelsim with GUI scan chain testing
+  add_custom_target(${NAME}.sc.pl
+    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -do 'source tcl_files/run_sc_pl.tcl\\;'"
     WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
-    COMMENT "Running ${NAME} in ModelSim (post synthesis)"
+    COMMENT "Running scan chain testing (post layout)"
     ${USES_TERMINAL})
 
   # run in modelsim with GUI post layout and dump vcd
@@ -154,11 +161,25 @@ macro(add_sim_targets NAME)
     COMMENT "Running ${NAME} in ModelSim (post layout)"
     ${USES_TERMINAL})
 
-  # run in modelsim with GUI scan chain testing
-  add_custom_target(${NAME}.vsim.sc.pl
-    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -do 'source tcl_files/run_sc_pl.tcl\\;'"
+  #############################################################################
+  # post synthesis
+  #############################################################################
+
+  # run in modelsim with GUI post layout
+  add_custom_target(${NAME}.vsim.boot.ps
+    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
+    COMMAND ${CMAKE_COMMAND} -E remove FS/*
+    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -do 'source tcl_files/run_boot_ps.tcl\\;'"
     WORKING_DIRECTORY ./${SUBDIR}
-    COMMENT "Running scan chain testing (post layout)"
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
+    COMMENT "Running ${NAME} in ModelSim (post synthesis)"
+    ${USES_TERMINAL})
+
+  # run in modelsim with GUI scan chain testing
+  add_custom_target(${NAME}.sc.ps
+    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -do 'source tcl_files/run_sc_ps.tcl\\;'"
+    WORKING_DIRECTORY ./${SUBDIR}
+    COMMENT "Running scan chain testing (post synthesis)"
     ${USES_TERMINAL})
 
   # run in modelsim with GUI
