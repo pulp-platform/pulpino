@@ -3,16 +3,6 @@
 #define EXCEPTION_STACK_SIZE 72
 
 
-/* =================================================== [ exceptions ] === */
-/* This section has to be down here, since we have to disable rvc for it  */
-
-  .section .vectors, "ax"
-  .option norvc;
-
-  // reset vector
-  .org 0x00
-  jal x0, reset_handler
-
 /* ========================================================= [ entry ] === */
   .section .text
 
@@ -74,3 +64,13 @@ main_entry:
   addi x10, x0, 0
   addi x11, x0, 0
   jal x1, main
+
+/* =================================================== [ exceptions ] === */
+/* This section has to be down here, since we have to disable rvc for it  */
+
+  .section .vectors, "ax"
+  .option norvc;
+
+  // reset vector
+  .org 0x00
+  jal x0, reset_handler

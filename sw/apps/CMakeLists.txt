@@ -79,7 +79,7 @@ endmacro()
 macro(add_boot_code NAME SOURCE_FILES)
 
   # Compile boot code with RVC enabled
-  # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
 
   # optional argument parsing
   set(oneValueArgs SUBDIR TB LABELS FLAGS)
