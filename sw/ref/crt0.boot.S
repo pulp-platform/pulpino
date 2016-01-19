@@ -7,6 +7,7 @@
 /* This section has to be down here, since we have to disable rvc for it  */
 
   .section .vectors, "ax"
+  .option norvc;
 
   // reset vector
   .org 0x00

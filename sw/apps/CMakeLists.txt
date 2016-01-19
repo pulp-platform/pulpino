@@ -79,7 +79,7 @@ endmacro()
 macro(add_boot_code NAME SOURCE_FILES)
 
   # Compile boot code with RVC enabled
-  #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
+  # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
 
   # optional argument parsing
   set(oneValueArgs SUBDIR TB LABELS FLAGS)
@@ -133,7 +133,7 @@ macro(add_boot_code NAME SOURCE_FILES)
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
 
   add_custom_target(${NAME}.boot.install
-    COMMAND cp boot/boot_code.sv ${PULP_MODELSIM_DIRECTORY}/../rtl/
+    COMMAND cp boot/boot_code.sv ${CMAKE_SOURCE_DIR}/../rtl/
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot/boot_code.sv
     COMMENT STATUS "Copying boot code..."
     )

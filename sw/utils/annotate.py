@@ -48,10 +48,10 @@ for line in f:
         r.write(line + "\n")
         first = False
     else:
-        r.write(line)
+        # r.write(line)
         try:
             pc = int(line.split()[3], 16)
-            print(str(pc);
+            # print(str(pc);
             for i in range(len(sections)):
                 if sections[i].contains(pc):
                     r.write(line.rstrip() + "\t" + sections[i].name + "\n")
