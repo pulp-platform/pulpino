@@ -45,6 +45,7 @@ void int_main(void) {
   // read cause register to get pending interrupt
   // execute ISR.
 
+#ifdef __riscv__
   int mcause;
   csrr(mcause, mcause);
 
@@ -60,4 +61,5 @@ void int_main(void) {
   // printf("Leaving ISR.\n");
   // clear pending register
   ICP = (1 << mcause);
+#endif
 }
