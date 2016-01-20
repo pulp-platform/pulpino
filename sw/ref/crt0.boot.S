@@ -6,6 +6,9 @@
 /* ========================================================= [ entry ] === */
   .section .text
 
+default_exc_handler:
+  jal x0, default_exc_handler
+
 reset_handler:
   /* set all registers to zero */
   mv  x1, x0
@@ -71,6 +74,22 @@ main_entry:
   .section .vectors, "ax"
   .option norvc;
 
-  // reset vector
+  // external interrupts are handled by the same callback
+  // until compiler supports IRQ routines
   .org 0x00
+  .rept 31
+  nop
+  .endr
+  jal x0, default_exc_handler
+
+  // reset vector
+  .org 0x80
   jal x0, reset_handler
+
+  // illegal instruction exception
+  .org 0x84
+  jal x0, default_exc_handler
+
+  // ecall handler
+  .org 0x88
+  jal x0, default_exc_handler
