@@ -135,7 +135,7 @@ For disassembling a program call
 
 To regenerate the bootcode and copy it to the `rtl/` folder use
 
-    make boot_code.boot.install
+    make boot_code.install
 
 ## FPGA
 

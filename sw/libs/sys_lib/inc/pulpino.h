@@ -54,8 +54,8 @@
 /** Peripheral Glock gating */
 #define CGREG __PSC__(0x04)
 
-/** Glock gate UART */
-#define CGSPIS    0x00
+/** Glock gate SPI */
+#define CGSPI     0x00
 /** Glock gate UART */
 #define CGUART    0x01
 /** Glock gate GPIO */
@@ -71,21 +71,7 @@
 /** Glock gate FLL */
 #define CGFLL     0x07
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+/** Boot address register */
+#define BOOTREG     __PSC__(0x08)
 
 #endif

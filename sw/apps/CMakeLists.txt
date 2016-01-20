@@ -132,7 +132,7 @@ macro(add_boot_code NAME SOURCE_FILES)
     WORKING_DIRECTORY ./${SUBDIR}/boot/
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
 
-  add_custom_target(${NAME}.boot.install
+  add_custom_target(${NAME}.install
     COMMAND cp boot/boot_code.sv ${CMAKE_SOURCE_DIR}/../rtl/
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/boot/boot_code.sv
     COMMENT STATUS "Copying boot code..."
