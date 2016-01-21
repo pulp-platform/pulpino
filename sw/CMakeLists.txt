@@ -26,14 +26,15 @@ if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
   set(RISCV 1)
   message("NOTE: Detected RISCV compiler, using RISCV setup")
 
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IXpulpv2 -Wa,-march=IXpulpv2")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mnoaddsubnormround -mnoclip -mnobitop -mnomulmacnormround -mnoshufflepack -mnovect -mnoball")
+
   if(${RVC})
     message("NOTE: Using compressed instructions")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -mrvc -march=RV32IC -Wa,-march=RV32IMC")
-  else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=RV32I -Wa,-march=RV32IM")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
   endif()
 
-  set(CMAKE_OBJDUMP_FLAGS -d)
+  set(CMAKE_OBJDUMP_FLAGS -Mmarch=IXpulpv2 -d)
 
   set(LDSCRIPT      "link.riscv.ld")
   set(LDSCRIPT_BOOT "link.boot.ld" )
@@ -51,7 +52,7 @@ elseif(CMAKE_C_COMPILER MATCHES "or1k(.*)")
   if(CMAKE_OBJDUMP MATCHES "llvm-objdump")
     set(CMAKE_OBJDUMP_FLAGS -arch=or1kle -mattr=mac3,mul16,lv32,crtl -mcpu=pulp3 -symbolize -print-imm-hex -show-hr-enc -section-headers -disassemble -r -s)
   else()
-  set(CMAKE_OBJDUMP_FLAGS -d)
+    set(CMAKE_OBJDUMP_FLAGS -d)
   endif()
 
   set(LDSCRIPT      "link.or1k.ld")
