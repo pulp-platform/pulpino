@@ -50,49 +50,74 @@ void check(testresult_t *result, void (*start)(), void (*stop)()) {
   }
 
   i2c_send_command(I2C_STOP);      //do a stop bit, initiate eeprom write
+  while(i2c_busy());
 
-  for (int i = 0; i < 100; i++) __asm__ volatile ("nop\n"); // wait some time
   // acknowledge polling
   do {
     i2c_send_data(0xA0);
     i2c_send_command(I2C_START_WRITE);
-  } while (i2c_get_ack());
+  } while (!i2c_get_ack());
 
+  i2c_send_command(I2C_STOP);      //do a stop bit, finish acknowledge polling transfer
+  while(i2c_busy());
+
+
+  //---------------------------------------------------------------------------
   // read back data
+  //---------------------------------------------------------------------------
   i2c_send_data(0xA0); // write to EEprom with A0,A1=1 1010 B0 A1 A0 R/Wn
-
   i2c_send_command(I2C_START_WRITE); //do a start bit and send data
 
-  i2c_get_ack();
+  if(!i2c_get_ack()) {
+    printf("No ack received from EEPROM for readback command\n");
+    result->errors++;
+    return;
+  }
 
   i2c_send_data(0x00); //addr MSBs
   i2c_send_command(I2C_WRITE); //do a start bit and send data
 
-  i2c_get_ack();
+  if(!i2c_get_ack()) {
+    printf("No ack received from EEPROM for addr high\n");
+    result->errors++;
+    return;
+  }
 
   i2c_send_data(0x00); //addr LSBs
   i2c_send_command(I2C_WRITE); //do a start bit and send data
 
-  i2c_get_ack();
+  if(!i2c_get_ack()) {
+    printf("No ack received from EEPROM for addr low\n");
+    result->errors++;
+    return;
+  }
 
-  for (int i = 0; i < 100; i++) __asm__ volatile ("nop\n"); // wait some time
 
   i2c_send_data(0xA1); // write to EEprom with A0,A1=1 1010 B0 A1 A0 R/Wn
   i2c_send_command(I2C_START_WRITE); //do a start bit and send data
 
-  i2c_get_ack();
+  if(!i2c_get_ack()) {
+    printf("No ack received from EEPROM before sending read\n");
+    result->errors++;
+    return;
+  }
 
   for (int i = 0; i < 16; i++) {
-    i2c_send_command(I2C_READ); //do a start bit and send data
-    i2c_get_ack();
+    if (i == 15)
+      i2c_send_command(I2C_STOP_READ); //do a stop bit and read data
+    else
+      i2c_send_command(I2C_READ); //do a start bit and read data
+
+    if (!i2c_get_ack()) {
+      printf("No ack received from EEPROM for byte %d\n", i);
+      result->errors++;
+      return;
+    }
+
     value = i2c_get_data();
     printf("Received %d expecting %d\n", value, i);
     if (value != i) {
       result->errors++;
     }
   }
-
-  i2c_send_command(I2C_STOP); //do a stop bit
 }
-
-

@@ -61,7 +61,7 @@ void i2c_send_data(int value);
 
 /** Send command to I2C.
  *
- * @param int valie - command that should be send.
+ * @param int value - command that should be send.
  *
 */
 void i2c_send_command(int value);
@@ -85,5 +85,7 @@ int  i2c_get_data(void);
  *
  */
 int  i2c_get_ack(void);
+
+int i2c_busy(void);
 
 #endif // _I2C_H_
