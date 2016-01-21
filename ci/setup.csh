@@ -1,6 +1,6 @@
 #!/bin/tcsh
 
-setenv PATH /usr/scratch2/larain/jenkins/artefacts/riscv_gcc/1.2.4/bin:$PATH
+setenv PATH /usr/scratch2/larain/jenkins/artefacts/riscv_gcc/2.2.2/bin:$PATH
 
 ./update-ips.py
 
