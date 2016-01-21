@@ -1,13 +1,16 @@
 #include "bench.h"
 #include "uart.h"
+#include "gpio.h"
 #include "spr-defs.h"
 
 void bench_timer_start(void) {
+  set_gpio_pin_value(0, 1);
   start_timer();
 }
 
 void bench_timer_stop(void) {
   stop_timer();
+  set_gpio_pin_value(0, 0);
 }
 
 void bench_timer_reset(void) {
@@ -46,6 +49,9 @@ void print_summary(unsigned int errors)
 
 void run_benchmark(testcase_t *test, testresult_t *result)
 {
+  set_gpio_pin_value(0, 0);
+  set_gpio_pin_direction(0, DIR_OUT);
+  set_pin_function(0, FUNC_GPIO);
   result->errors = 0;
 
   bench_timer_reset();
