@@ -157,7 +157,7 @@ vlog_file.write("""};
 
   logic [%d:0] A_Q;
 
-  always_ff @(posedge CLK)
+  always_ff @(posedge CLK, negedge RSTN)
   begin
     if (~RSTN)
       A_Q <= '0;
