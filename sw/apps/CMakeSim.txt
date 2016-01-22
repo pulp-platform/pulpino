@@ -155,7 +155,7 @@ macro(add_sim_targets NAME)
   add_custom_target(${NAME}.powerc
     COMMAND ${CMAKE_COMMAND} -E remove stdout/*
     COMMAND ${CMAKE_COMMAND} -E remove FS/*
-    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -c -do 'source tcl_files/run_power.tcl\\; run -a; exit'"
+    COMMAND tcsh -c "${SETENV} ${VSIM} -64 -c -do 'source tcl_files/run_power.tcl\\; run -a\\; exit'"
     WORKING_DIRECTORY ./${SUBDIR}
     DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
     COMMENT "Running ${NAME} in ModelSim (post layout)"
