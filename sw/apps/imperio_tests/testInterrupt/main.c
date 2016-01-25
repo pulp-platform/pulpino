@@ -10,25 +10,22 @@
 
 volatile int timer_triggered = 0;
 
-void timer_overflow_isr(void) {
-  if (timer_triggered == 1) {
-    set_gpio_pin_direction(0, DIR_OUT);
-    set_gpio_pin_value(0, 1);
-  }
+__attribute__ ((interrupt))
+void int_time_cmp(void) {
+  ICP = (1 << 29);
+  // if (timer_triggered == 1) {
+  //   set_gpio_pin_direction(0, DIR_OUT);
+  //   set_gpio_pin_value(0, 1);
+  // }
   timer_triggered++;
-  // printf("Value: %d\n", timer_triggered);
+  // clear pending register
 }
 
 
 int main() {
-
-  //printf("Hello World!!!!!\n");
-  //asm volatile (".byte 0,0,0,0");
-  //printf("Post ILLINSN\n");
-
   // Configure ISRs
   int_init();
-  int_add(TIMER_A_OUTPUT_CMP, (void *) timer_overflow_isr, 0);
+  //int_add(TIMER_A_OUTPUT_CMP, (void *) timer_overflow_isr, 0);
   int_enable();
 
   EER = 0xff;
@@ -38,8 +35,10 @@ int main() {
   TOCRA = 0x80;
   TPRA  = 0x3F; // set prescaler, enable interrupts and start timer.
 
-  while (timer_triggered < 5)
+  while (timer_triggered < 5) {
+    printf("Loop Counter: %d\n", timer_triggered);
     sleep();
+  }
 
   set_gpio_pin_value(0, 0);
   int_disable();
