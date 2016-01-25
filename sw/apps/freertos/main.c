@@ -3,7 +3,7 @@
 #include "task.h"
 #include "semphr.h"
 
-#define DELAY_LOOP 1000
+#define DELAY_LOOP 10000
 #define TRUE 1
 
 void task1 (void *pvParameters) {
@@ -12,7 +12,7 @@ void task1 (void *pvParameters) {
 
 		printf("Task 1\n");
 
-		//taskYIELD();
+		taskYIELD();
 
 		for(int i = 0; i < DELAY_LOOP; i++)
 			portNOP();
@@ -28,7 +28,7 @@ void task2 (void *pvParameters) {
 
 		printf("Task 2\n");
 
-		//taskYIELD();
+		taskYIELD();
 
 		for(int i = 0; i < DELAY_LOOP; i++)
 			portNOP();

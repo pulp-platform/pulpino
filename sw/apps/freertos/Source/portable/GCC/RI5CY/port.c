@@ -99,7 +99,7 @@
 
 #define portSAVE_CONTEXT()                                            \
      int_disable();                                                   \
-     asm volatile ( "addi sp,   sp, -0x80                       \n\t" \
+     asm volatile ( "addi sp,   sp, -0x6c                       \n\t" \
                     "sw   x1,   0x04(sp)						\n\t" \
                     "sw   x3,   0x08(sp)						\n\t" \
                     "sw   x4,   0x0c(sp)						\n\t" \
@@ -176,7 +176,7 @@
                     "lw   x29,  0x70(sp)						\n\t" \
                     "lw   x30,  0x74(sp)						\n\t" \
                     "lw   x31,  0x78(sp)						\n\t" \
-                    "addi sp,   sp,             0x80            \n\t" \
+                    "addi sp,   sp,             0x7c            \n\t" \
                 );                                                    \
                 int_enable();                                         \
 
@@ -248,19 +248,18 @@ void vPortEndScheduler( void )
 /*-----------------------------------------------------------*/
 
 /*
- * Manual context switch.  The first thing we do is save the registers so we
- * can use a naked attribute.
+ * Manual context switch.
  */
 void vPortYield( void );
 void vPortYield( void )
 {
-    // next time the stored task will resume from here
     portSAVE_CONTEXT();
     vTaskSwitchContext();
     portRESTORE_CONTEXT();
     /* called in a non interrupt context only - this function
      accounts for manual context switches */
-    // asm volatile ( "ret" );
+    // asm volatile ("addi sp,   sp, 0x10                       \n\t");
+    asm volatile ( "ret" );
     /* restore from restored context return register
                               we need this manual return since GCC would return to the task
                               it thinks it just left (where it knows where it stored the return address). */
@@ -277,12 +276,27 @@ void vPortYield( void )
 void vPortYieldFromTick( void );
 void vPortYieldFromTick( void )
 {
+    // next time the stored task will resume from here
     portSAVE_CONTEXT();
-    if ( xTaskIncrementTick() != pdFALSE )
-    {
+    if ( xTaskIncrementTick() != pdFALSE ) {
         vTaskSwitchContext();
     }
     portRESTORE_CONTEXT();
+    int mcause;
+    csrr(mcause, mcause);
+    // clear pending register
+    ICP = (1 << mcause);
+
+    // this is hacky but needed since we would run directly into
+    // another interrupt if we didn't wait long enough.
+    for (int i = 0; i < 6; i++)
+        asm volatile ("nop");
+
+    /* we do need this since the return from interrupt is not handled
+       in the crt0 runtime - because the call to the timer ISR is naked */
+    /* return address is restored from stack to the empc register */
+    // asm volatile ("addi sp,   sp, 0x10                       \n\t");
+    asm volatile ( "eret" );
 }
 /*-----------------------------------------------------------*/
 
@@ -313,11 +327,7 @@ void int_time_cmp(void)
 {
     /* interrupts are disabled until eret */
     vPortYieldFromTick();
-    /* we do need this since the return from interrupt is not handled
-       in the crt0 runtime - because the call to the timer ISR is naked */
 
-    /* return address is restored from stack to the empc register */
-    // asm volatile ( "eret" );
 }
 #else
 /*
@@ -327,9 +337,14 @@ void int_time_cmp(void)
  */
 void int_time_cmp(void)
 {
+    int mcause;
+    csrr(mcause, mcause);
+    // clear pending register
+    ICP = (1 << mcause);
     xTaskIncrementTick();
+
     /* return address is restored from stack to the empc register */
-    // asm volatile ( "eret" );
+    asm volatile ( "eret" );
 }
 #endif
 

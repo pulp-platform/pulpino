@@ -150,9 +150,11 @@ end_except:
   // external interrupts are handled by the same callback
   // until compiler supports IRQ routines
   .org 0x00
-  .rept 31
+  .rept 29
   nop
   .endr
+  jal x0, int_time_cmp
+  nop
   jal x0, interrupt_handler
 
   // reset vector

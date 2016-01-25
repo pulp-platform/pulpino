@@ -620,7 +620,6 @@ StackType_t *pxTopOfStack;
 		/* Setup the newly allocated TCB with the initial state of the task. */
 		prvInitialiseTCBVariables( pxNewTCB, pcName, uxPriority, xRegions, usStackDepth );
 
-        printf("Top of Task %s Stack%X\n",pcName, (unsigned int) pxTopOfStack);
 
 		/* Initialize the TCB stack to look as if the task was already running,
 		but had been interrupted by the scheduler.  The return address is set
@@ -2204,6 +2203,7 @@ BaseType_t xSwitchRequired = pdFALSE;
 
 void vTaskSwitchContext( void )
 {
+    //printf("Switching out: %s\n", pxCurrentTCB->pcTaskName);
 	if( uxSchedulerSuspended != ( UBaseType_t ) pdFALSE )
 	{
 		/* The scheduler is currently suspended - do not allow a context
