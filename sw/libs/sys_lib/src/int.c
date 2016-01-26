@@ -10,6 +10,12 @@
 #include "uart.h"
 #include "event.h"
 
+/* int time cmp stub */
+__attribute__ ((weak, interrupt))
+void int_time_cmp (void) {
+
+}
+
 /* Interrupt handlers table */
 struct ihnd int_handlers[MAX_INT_HANDLERS];
 
