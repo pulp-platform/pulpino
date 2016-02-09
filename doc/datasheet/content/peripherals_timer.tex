@@ -1,0 +1,52 @@
+\section{Timer}
+
+The timer unit has no external signals.
+
+The timer unit has 2 timers per default. This can be overwritten by a parameter
+when instantiating the timer.
+
+\regDesc{0x1A10\_30?0}{0x0000\_0000}{TIMER (Current Timer Value)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,15,0} \\
+  \begin{rightwordgroup}{TIMER}
+    \bitbox{32}{TIMER}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{TIMER}{Current Timer Value.\\
+    Current value of the timer. There is an internal prescaler per timer that
+    allows to specify the interval in which the timer will be increased. The
+    prescaler is controlled by \signal{CTRL}.
+
+    When \signal{TIMER} reaches \signal{FFFF\_FFFF} an interrupt will be
+    raised.
+  }
+}
+
+\regDesc{0x1A10\_30?4}{0x0000\_0000}{CTRL (Timer Control)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,15,0} \\
+  \begin{rightwordgroup}{CTRL}
+    \bitbox{26}{unused}
+    \bitbox{3}{\tiny PRE}
+    \bitbox{2}{0}
+    \bitbox{1}{\rotatebox{90}{\tiny EN}}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 5:3}{PRE}{Prescaler value.}
+  \regItem{Bit 0}{EN}{Enable the timer.}
+}
+
+\regDesc{0x1A10\_30?8}{0x0000\_0000}{CMP (Timer Compare)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,15,0} \\
+  \begin{rightwordgroup}{CMP}
+    \bitbox{32}{CMP}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{CMP}{Timer Compare.\\
+    An interrupt will be raised when \signal{TIMER} reaches \signal{CMP}
+  }
+}

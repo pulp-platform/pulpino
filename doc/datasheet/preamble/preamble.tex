@@ -105,3 +105,28 @@
     \caption{#3}
   \end{figure}}
 
+\newcommand{\memsection}[4]{
+    \bytefieldsetup{bitheight=#3\baselineskip}    % define the height of the memsection
+    \bitbox[]{10}{
+    \texttt{#1}     % print end address
+    \\ \vspace{#3\baselineskip} \vspace{-2\baselineskip} \vspace{-#3pt} % do some spacing
+    \texttt{#2} % print start address
+    }
+    \bitbox{16}{#4} % print box with caption
+}
+
+\newcommand\regDesc[5]{%
+  \subsection{#3}
+  \textbf{Address:} \texttt{#1}\\%
+  \textbf{Reset Value:} \texttt{#2}\\%
+  \begin{figure}[H]
+    \centering
+    #4
+  \end{figure}
+  \begin{enumerate}[leftmargin=15mm]
+    #5
+  \end{enumerate}}
+
+\newcommand\regItem[3]{%
+  \item[\texttt{#1}] \textbf{#2}: #3
+}

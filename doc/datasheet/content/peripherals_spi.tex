@@ -1,0 +1,203 @@
+\section{SPI Master}
+
+\begin{table}[H]
+ \caption{External SPI Signals}
+ \label{tab:spi_signals}
+  \begin{tabularx}{\textwidth}{@{}llX@{}} \toprule
+    \textbf{Signal}                  & \textbf{Direction} & \textbf{Description}        \\ \toprule
+    \signal{spi\_clk}                & \textbf{output}    & Transmit Data               \\ \hline
+    \signal{spi\_csn0}               & \textbf{output}    & Chip Select 0               \\ \hline
+    \signal{spi\_csn1}               & \textbf{output}    & Chip Select 1               \\ \hline
+    \signal{spi\_csn2}               & \textbf{output}    & Chip Select 2               \\ \hline
+    \signal{spi\_csn3}               & \textbf{output}    & Chip Select 3               \\ \hline
+    \signal{spi\_mode[1:0]}          & \textbf{output}    & SPI Mode                    \\ \hline
+    \signal{spi\_sdo0}               & \textbf{output}    & Output Line 0               \\ \hline
+    \signal{spi\_sdo1}               & \textbf{output}    & Output Line 1               \\ \hline
+    \signal{spi\_sdo2}               & \textbf{output}    & Output Line 2               \\ \hline
+    \signal{spi\_sdo3}               & \textbf{output}    & Output Line 3               \\ \hline
+    \signal{spi\_sdi0}               & \textbf{input}     & Input Line 0                \\ \hline
+    \signal{spi\_sdi1}               & \textbf{input}     & Input Line 1                \\ \hline
+    \signal{spi\_sdi2}               & \textbf{input}     & Input Line 2                \\ \hline
+    \signal{spi\_sdi3}               & \textbf{input}     & Input Line 3                \\ \hline
+    \signal{events\_o[1:0]}          & \textbf{output}    & Event/Interrupt             \\ \hline
+  \end{tabularx}
+\end{table}
+
+\regDesc{0x1A10\_2000}{0x0000\_0000}{STATUS (Status Register)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,11,8,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{STATUS}
+    \bitbox{20}{unused}
+    \bitbox{4}{CS}
+    \bitbox{3}{0}
+    \bitbox{1}{\rotatebox{90}{\tiny SRST}}
+    \bitbox{1}{\rotatebox{90}{\tiny QWR}}
+    \bitbox{1}{\rotatebox{90}{\tiny QRD}}
+    \bitbox{1}{\rotatebox{90}{\tiny WR}}
+    \bitbox{1}{\rotatebox{90}{\tiny RD}}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 11:8}{CS}{Chip Select.\\
+    Specify the chip select signal that should be used for the next transfer.
+  }
+  \regItem{Bit 4}{SRST}{Software Reset.\\
+    Clear FIFOs and abort active transfers.
+  }
+  \regItem{Bit 3}{QWR}{Quad Write Command.\\
+    Perform a write using Quad SPI mode.
+  }
+  \regItem{Bit 2}{QRD}{Quad Read Command.\\
+    Perform a read using Quad SPI mode.
+  }
+  \regItem{Bit 1}{WR}{Write Command.\\
+    Perform a write using standard SPI mode.
+  }
+  \regItem{Bit 0}{RD}{Read Command.\\
+    Perform a read using standard SPI mode.
+  }
+}
+
+\regDesc{0x1A10\_2004}{0x0000\_0000}{CLKDIV (Clock Divider)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,11,8,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{CLKDIV}
+    \bitbox{20}{unused}
+    \bitbox{4}{CS}
+    \bitbox{3}{0}
+    \bitbox{1}{\rotatebox{90}{\tiny SRST}}
+    \bitbox{1}{\rotatebox{90}{\tiny QWR}}
+    \bitbox{1}{\rotatebox{90}{\tiny QRD}}
+    \bitbox{1}{\rotatebox{90}{\tiny WR}}
+    \bitbox{1}{\rotatebox{90}{\tiny RD}}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 7:0}{CLKDIV}{Clock Divider.\\
+    Clock divider value used to divide the SoC clock for the SPI transfers. This
+    register should not be modified while a transfer is in progress.
+  }
+}
+
+\regDesc{0x1A10\_2008}{0x0000\_0000}{SPICMD (SPI Command)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,0} \\
+  \begin{rightwordgroup}{SPICMD}
+    \bitbox{32}{SPICMD}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{SPICMD}{SPI Command.\\
+    When performing a read or write transfer the SPI command is sent first
+    before any data is read or written.
+    The length of the SPI command can be controlled with the \signal{SPILEN}
+    register.
+  }
+}
+
+\regDesc{0x1A10\_200C}{0x0000\_0000}{SPIADR (SPI Address)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,0} \\
+  \begin{rightwordgroup}{SPIADR}
+    \bitbox{32}{SPIADR}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{SPIADR}{SPI Address.\\
+    When performing a read or write transfer the SPI command is sent first
+    before any data is read or written, after this the SPI address is sent.
+    The length of the SPI address can be controlled with the \signal{SPILEN}
+    register.
+  }
+}
+
+\regDesc{0x1A10\_2010}{0x0000\_0000}{SPILEN (SPI Transfer Length)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,0} \\
+  \begin{rightwordgroup}{SPILEN}
+    \bitbox{16}{DATALEN}
+    \bitbox{4}{0}
+    \bitbox{6}{ADDRLEN}
+    \bitbox{6}{CMDLEN}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:16}{DATALEN}{SPI Data Length.\\
+    The number of bits read or written.
+    Note that first the SPI command and address are written to an SPI slave
+    device.
+  }
+  \regItem{Bit 13:8}{ADDRLEN}{SPI Address Length.\\
+    The number of bits of the SPI address that should be sent.
+  }
+  \regItem{Bit 5:0}{CMDLEN}{SPI Command Length.\\
+    The number of bits of the SPI command that should be sent.
+  }
+}
+
+\regDesc{0x1A10\_2014}{0x0000\_0000}{SPIDUM (SPI Dummy Cycles)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,0} \\
+  \begin{rightwordgroup}{SPIDUM}
+    \bitbox{16}{DUMMYWR}
+    \bitbox{16}{DUMMYRD}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:16}{DUMMYWR}{Write Dummy Cycles.\\
+    Dummy cycles (nothing being written or read) between sending the SPI
+    command + SPI address and writing the data.
+  }
+  \regItem{Bit 15:0}{DUMMYRD}{Read Dummy Cycles.\\
+    Dummy cycles (nothing being written or read) between sending the SPI
+    command + SPI address and reading the data.
+  }
+}
+
+\regDesc{0x1A10\_2018}{0x0000\_0000}{TXFIFO (SPI Transmit FIFO)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,0} \\
+  \begin{rightwordgroup}{TXFIFO}
+    \bitbox{32}{TX}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{TX}{Transmit Data.\\
+    Write data into the FIFO.
+  }
+}
+
+\regDesc{0x1A10\_2020}{0x0000\_0000}{RXFIFO (SPI Receive FIFO)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,0} \\
+  \begin{rightwordgroup}{RXFIFO}
+    \bitbox{32}{RX}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{RX}{Receive Data.\\
+    Read data from the FIFO.
+  }
+}
+
+\regDesc{0x1A10\_2024}{0x0000\_0000}{INTCFG (Interrupt Configuration)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,0} \\
+  \begin{rightwordgroup}{INTCFG}
+    \bitbox{1}{\rotatebox{90}{\tiny EN}}
+    \bitbox{1}{\rotatebox{90}{\tiny CNTEN}}
+    \bitbox{2}{0}
+    \bitbox{4}{CNTRX}
+    \bitbox{4}{0}
+    \bitbox{4}{CNTTX}
+    \bitbox{4}{0}
+    \bitbox{4}{RHTX}
+    \bitbox{4}{0}
+    \bitbox{4}{THTX}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31}{EN}{Interrupt Enable.\\
+    Enable interrupts
+  }
+}

@@ -1,0 +1,125 @@
+\section{I2C}
+
+\regDesc{0x1A10\_5000}{0x0000\_0000}{CPR (Clock Prescale Register)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,15,0} \\
+  \begin{rightwordgroup}{CPR}
+    \bitbox{16}{unused}
+    \bitbox{16}{PRE}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 15:0}{PRE}{Prescaler.\\
+    Sets the clock prescaler by the value in PRE to
+    achieve the desired I2C clock by dividing the current system clock by the
+    given factor.}
+}
+
+
+\regDesc{0x1A10\_5004}{0x0000\_0000}{CTRL (Control Register)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,15,0} \\
+  \begin{rightwordgroup}{CTRL}
+    \bitbox{24}{unused}
+    \bitbox{1}{\rotatebox{90}{\tiny EN}}
+    \bitbox{1}{\rotatebox{90}{\tiny IE}}
+    \bitbox{1}{-}
+    \bitbox{1}{-}
+    \bitbox{1}{-}
+    \bitbox{1}{-}
+    \bitbox{1}{-}
+    \bitbox{1}{-}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 7}{EN}{Enable.\\
+  Enable the I2C peripheral.}
+  \regItem{Bit 6}{IE}{Interrupt enable.\\
+  Enable interrupts.}
+  \regItem{Bit 5:0}{Reserved}{Set to 0.}
+}
+
+
+
+\regDesc{0x1A10\_5008}{0x0000\_0000}{TX (Transmit Register)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,15,0} \\
+  \begin{rightwordgroup}{TX}
+    \bitbox{24}{unused}
+    \bitbox{8}{TX}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 7:0}{TX}{Transmit Register}
+}
+
+
+\regDesc{0x1A10\_500C}{0x0000\_0000}{RX (Receive Register)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,15,0} \\
+  \begin{rightwordgroup}{TX}
+    \bitbox{24}{unused}
+    \bitbox{8}{RX}
+  \end{rightwordgroup} \\
+  \end{bytefield}
+}
+{
+  \regItem{Bit 7:0}{RX}{Receive Register}
+}
+
+
+\regDesc{0x1A10\_5010}{0x0000\_0000}{CMD (Command Register)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,15,0} \\
+  \begin{rightwordgroup}{CMD}
+    \bitbox{24}{unused}
+    \bitbox{1}{\rotatebox{90}{\small \tiny STA}}
+    \bitbox{1}{\rotatebox{90}{\small \tiny STO}}
+    \bitbox{1}{\rotatebox{90}{\small \tiny RD}}
+    \bitbox{1}{\rotatebox{90}{\small \tiny WR}}
+    \bitbox{1}{\rotatebox{90}{\small \tiny ACK}}
+    \bitbox{1}{0}
+    \bitbox{1}{0}
+    \bitbox{1}{\rotatebox{90}{\small \tiny IA}}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 7}{STA}{Send start bit.}
+  \regItem{Bit 6}{STO}{Send stop bit.}
+  \regItem{Bit 5}{RD}{Read from bus.}
+  \regItem{Bit 4}{WR}{Write to bus.}
+  \regItem{Bit 3}{ACK}{Acknowledge received data.}
+  \regItem{Bit 2:1}{Reserved}{Set to 0.}
+  \regItem{Bit 0}{IA}{Interrupt Acknowldge.\\
+    Set to one to acknowledge interrupt.
+    Cleared when transmission is done or arbitration is lost.}
+}
+
+
+\regDesc{0x1A10\_5014}{0x0000\_0000}{STATUS (Status Register)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,15,0} \\
+  \begin{rightwordgroup}{STATUS}
+    \bitbox{24}{unused}
+    \bitbox{1}{\rotatebox{90}{\small \tiny RXA}}
+    \bitbox{1}{\rotatebox{90}{\small \tiny BUS}}
+    \bitbox{1}{\rotatebox{90}{\small \tiny AL}}
+    \bitbox{1}{0}
+    \bitbox{1}{0}
+    \bitbox{1}{0}
+    \bitbox{1}{\rotatebox{90}{\small \tiny TIP}}
+    \bitbox{1}{\rotatebox{90}{\small \tiny IRQ}}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 7}{RXA}{Acknowledge from sent data.}
+  \regItem{Bit 6}{BUS}{Bus is busy.}
+  \regItem{Bit 5}{AL}{Arbitration lost.}
+  \regItem{Bit 4:2}{Reserved}{Set to 0.}
+  \regItem{Bit 1}{TIP}{Transfer in progress.}
+  \regItem{Bit 0}{IRQ}{Interrupt received.\\
+    This flag is always set when transmission has finished or bus arpitration
+  was lostm, regardless of whether interrupts are enabled or not. This flag can
+possibly polled and is cleared by writing 1 to the IA command register.}
+}
+

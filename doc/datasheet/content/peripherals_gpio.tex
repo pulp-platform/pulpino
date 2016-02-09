@@ -1,0 +1,383 @@
+\section{GPIO}
+
+\begin{table}[H]
+ \caption{External GPIO Signals}
+ \label{tab:gpio_signals}
+  \begin{tabularx}{\textwidth}{@{}llX@{}} \toprule
+    \textbf{Signal}                  & \textbf{Direction} & \textbf{Description}         \\ \toprule
+    \signal{gpio\_in[31:0]}          & \textbf{input}     & Transmit Data                \\ \hline
+    \signal{gpio\_out[31:0]}         & \textbf{output}    & Receive Data                 \\ \hline
+    \signal{gpio\_dir[31:0]}         & \textbf{output}    & Request to Send              \\ \hline
+    \signal{gpio\_padcfg[5:0][31:0]} & \textbf{output}    & Pad Configuration            \\ \hline
+    \signal{interrupt}               & \textbf{output}    & Interrupt (Rise or Fall or Level)\\ \hline
+  \end{tabularx}
+\end{table}
+
+\regDesc{0x1A10\_1000}{0x0000\_0000}{PADDIR (Pad Direction)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{PADDIR}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+    \bitbox{1}{\tiny D}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{PADDIR}{Pad Direction.\\
+    Control the direction of each of the GPIO pads. A value of \signal{1} means
+    it is configured as an output, while \signal{0} configures it as an input.
+  }
+}
+
+\regDesc{0x1A10\_1004}{0x0000\_0000}{PADIN (Input Values)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{PADIN}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+    \bitbox{1}{\tiny I}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{PADIN}{Input Values.
+  }
+}
+
+\regDesc{0x1A10\_1008}{0x0000\_0000}{PADOUT (Output Values)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{PADOUT}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+    \bitbox{1}{\tiny O}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{PADOUT}{Output Values.
+  }
+}
+
+\regDesc{0x1A10\_100C}{0x0000\_0000}{INTEN (Interrupt Enable)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{INTEN}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+    \bitbox{1}{\tiny IT}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{INTEN}{Interrupt Enable. \\
+    Interrupt enable per input bit. INTTYPE0 and INTTYPE1 control the interrupt
+    triggering behavior.
+
+    There are four triggers available
+    \begin{itemize}
+      \item \signal{INTTYPE0 = 0, INTTYPE1 = 0}: Level 1
+      \item \signal{INTTYPE0 = 1, INTTYPE1 = 0}: Level 0
+      \item \signal{INTTYPE0 = 0, INTTYPE1 = 1}: Rise
+      \item \signal{INTTYPE0 = 1, INTTYPE1 = 1}: Fall
+    \end{itemize}
+  }
+}
+
+\regDesc{0x1A10\_1010}{0x0000\_0000}{INTTYPE0 (Interrupt Type 0)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{INTTYPE0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+    \bitbox{1}{\tiny T0}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{INTTYPE0}{Interrupt Type 0. \\
+    Controls the interrupt trigger behavior together with INTTYPE1. Use INTEN to
+    enable interrupts first.
+  }
+}
+
+\regDesc{0x1A10\_1014}{0x0000\_0000}{INTTYPE1 (Interrupt Type 1)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{INTTYPE1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+    \bitbox{1}{\tiny T1}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{INTTYPE1}{Interrupt Type 1. \\
+    Controls the interrupt trigger behavior together with INTTYPE0. Use INTEN to
+    enable interrupts first.
+  }
+}
+
+\regDesc{0x1A10\_1018}{0x0000\_0000}{INTSTATUS (Interrupt Status)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{INTSTATUS}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+    \bitbox{1}{\tiny S}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{INTSTATUS}{Interrupt Status. \\
+    Contains interrupt status per GPIO line. The status register is cleared when
+    read. Similarly the \signal{interrupt} line is high while a bit is set in
+    interrupt status and will be deasserted when the status register is read.
+  }
+}
+
+\regDesc{0x1A10\_1020 - 0x1A10\_103C}{0x0000\_0000}{PADCFG0-7 (Pad Configuration
+Registers 0-7)}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{PADCFG0-7}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+    \bitbox{1}{\tiny P}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{PADCFG0-7}{Pad Configuration Registers. \\
+    The pad configuration registers control various aspects of the pads that are
+    typically used in ASICs, e.g. drive strength, Schmitt-Triggers, Slew Rate,
+    etc. Since those configuration parameters depend on the exact pads used,
+    each implementation is free to use the PADCFG0-7 registers in every way it
+    wants and also leave them unconnected, if unneeded.
+  }
+}

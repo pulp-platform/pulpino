@@ -1,25 +1,65 @@
 \chapter{Memory Map}
 
+Figure~\ref{fig:pulpino_memory_map} shows the default memory-map of PULPino
+assuming 32 kB of data and instruction RAM. This can be changed in the PULPino
+top-level SystemVerilog file.
+
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.8\textwidth]{./figures/memory_map}
+  %\includegraphics[width=0.8\textwidth]{./figures/memory_map}
+
+  \begin{bytefield}{24}
+  \begin{rightwordgroup}{Instruction Memory}
+  \memsection{0x0000 0000}{0x0008 0000}{7}{32kB RAM}
+  \end{rightwordgroup}\\
+  \begin{rightwordgroup}{Boot ROM (r/o)}
+  \memsection{0x0000 8000}{0x0008 8000}{3}{512B ROM}
+  \end{rightwordgroup}\\
+  \memsection{}{}{3}{} \\
+  \begin{rightwordgroup}{Data Memory}
+  \memsection{0x0010 0000}{0x0010 8000}{7}{32kB RAM}
+  \end{rightwordgroup}\\
+  \memsection{}{}{3}{} \\
+  \begin{rightwordgroup}{Peripherals}
+  \memsection{0x1A10 0000}{}{2}{UART} \\
+  \memsection{0x1A10 1000}{}{2}{GPIO} \\
+  \memsection{0x1A10 2000}{}{2}{SPI Master} \\
+  \memsection{0x1A10 3000}{}{2}{Timer} \\
+  \memsection{0x1A10 4000}{}{2}{Event/Interrupt Unit} \\
+  \memsection{0x1A10 5000}{}{2}{I2C} \\
+  \memsection{0x1A10 6000}{}{2}{FLL} \\
+  \memsection{0x1A10 7000}{}{2}{SoC Control}
+  \end{rightwordgroup}
+  \\
+  \end{bytefield}
+
   \caption{\pulpino memory map.}
   \label{fig:pulpino_memory_map}
+
 \end{figure}
 
-\section{Interrupt table}
-\begin{figure}[h!]
-\centering
-	\begin{tabular}{|l|l|l|}
-		\hline
-		0 & external interrupt & 0x00000000 \\ \hline
-		1 & non maskable external interrupt & 0x00000004 \\ \hline
-		2 & illegal instruction exception & 0x00000008 \\ \hline
-		3 & timer compare interrupt & 0x0000000c \\ \hline
-		4 & RESET handler & 0x00000010 \\	\hline
-	\end{tabular}
-	\caption{\pulpino interrupt table.}
-	\label{fig:interrupt_table}
-\end{figure}
+\section{Interrupt Vector Table}
 
+The IVT of PULPino follows the definition given for the \rvcore core.
 
+\begin{table}[H]
+  \caption{Interrupt/exception offset vector table}
+  \label{tab:exc_table}
+  \centering\begin{tabular}{@{}ll@{}} \toprule
+    \textbf{Description}\hspace*{110pt}   & \textbf{Address} \\ \midrule
+    Reserved - Not used                   & \signal{0x00000000} - \signal{0x00000058} \\ \hline
+    Interrupt Line 23: I2C IRQ            & \signal{0x0000005C} \\ \hline
+    Interrupt Line 24: UART IRQ           & \signal{0x00000060} \\ \hline
+    Interrupt Line 25: GPIO IRQ           & \signal{0x00000064} \\ \hline
+    Interrupt Line 26: SPI Master 0       & \signal{0x00000068} \\ \hline
+    Interrupt Line 27: SPI Master 1       & \signal{0x0000006C} \\ \hline
+    Interrupt Line 28: Timer A Output Cmp & \signal{0x00000070} \\ \hline
+    Interrupt Line 29: Timer A Overflow   & \signal{0x00000074} \\ \hline
+    Interrupt Line 30: Timer B Output Cmp & \signal{0x00000078} \\ \hline
+    Interrupt Line 31: Timer B Overflow   & \signal{0x0000007C} \\ \hline
+    RESET                                 & \signal{0x00000080} \\ \hline
+    Illegal Instruction Exception         & \signal{0x00000084} \\ \hline
+    \texttt{ECALL} Instruction            & \signal{0x00000088} \\ \hline
+    Invalid Memory Access                 & \signal{0x0000008C} \\ \bottomrule
+  \end{tabular}
+\end{table}
