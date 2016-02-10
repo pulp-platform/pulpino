@@ -84,15 +84,15 @@ Copy the cmake-configure.{or1k/riscv}.{gcc/llvm}.sh bash script to the build fol
 This script can be found in the sw subfolder of the git repository.
 
 Modify the cmake-configure script to your needs and execute it inside the build folder.
-This will setup everything to perform simulations using modelsim.
+This will setup everything to perform simulations using ModelSim.
 
 Inside the build folder, execute
 
     make vcompile
 
-to compile the RTL libraries. CMake automatically takes care of setting the
-`PULP_CORE` environment variable to the correct value based on the compiler you
-specified when configuring cmake.
+to compile the RTL libraries using ModelSim. CMake automatically takes care of
+setting the `PULP_CORE` environment variable to the correct value based on the
+compiler you specified when configuring cmake.
 
 To run a simulation in the modelsim GUI use
 
@@ -117,12 +117,13 @@ The same targets are supported on both make and ninja.
 
 
 
-## Debugging the core
+## Interactive debug
 
-To interactively debug the core via gdb, you need the jtag bridge as well as a
-working version of gdb for the ISA you want to debug.
+To interactively debug software via gdb, you need the jtag bridge as well as a
+working version of gdb for the ISA you want to debug. The debug bridge depends
+on the `jtag_dpi` package that emulates a JTAG port and provides a TCP socket
+to which the jtag bridge can connect to.
 
-TODO: more information required
 
 ## Utilities
 
@@ -133,11 +134,11 @@ For disassembling a program call
 
     make helloworld.read
 
-To regenerate the bootcode and copy it to the `rtl/` folder use
+To regenerate the bootcode and copy it to the `rtl` folder use
 
     make boot_code.install
 
 ## FPGA
 
 PULPino can be synthesized and run on a ZedBoard.
-Take a look at the fpga subfolder for more information.
+Take a look at the `fpga` subfolder for more information.

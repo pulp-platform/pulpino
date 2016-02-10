@@ -1,2 +1,13 @@
 html/*
 latex/*
+*.aux
+*.log
+*.toc
+*.mtc*
+*.acn
+*.lof
+*.lot
+*.glo
+*.ist
+*.maf
+*.out

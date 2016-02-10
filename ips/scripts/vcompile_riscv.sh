@@ -65,6 +65,7 @@ vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/mult.sv 
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/cs_registers.sv           || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/load_store_unit.sv        || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/debug_unit.sv             || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/riscv_tracer.sv           || goto error
 
 echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
 exit 0
