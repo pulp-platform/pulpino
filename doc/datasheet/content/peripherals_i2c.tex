@@ -1,4 +1,24 @@
-\section{I2C}
+\section{I$^\text{2}$C}
+
+I$^\text{2}$C is an open-drain signaling protocol, meaning that the pad output
+driver will be switched on and off, while always driving a low value when
+enabled. Logic high values are achieved by using a pull-up resistor on the
+\signal{SDA} and \signal{SCL} lines.
+
+\begin{table}[H]
+ \caption{I$^\text{2}$C Signals}
+ \label{tab:i2c_signals}
+  \begin{tabularx}{\textwidth}{@{}llX@{}} \toprule
+    \textbf{Signal}                  & \textbf{Direction} & \textbf{Description}        \\ \toprule
+    \signal{scl\_pad\_i}             & \textbf{input}     & SCL Input                   \\ \hline
+    \signal{scl\_pad\_o}             & \textbf{output}    & SCL Output (always 0)       \\ \hline
+    \signal{scl\_padoen\_o}          & \textbf{output}    & SCL Pad Direction           \\ \hline
+    \signal{sda\_pad\_i}             & \textbf{input}     & SDA Input                   \\ \hline
+    \signal{sda\_pad\_o}             & \textbf{output}    & SDA Output (always 0)       \\ \hline
+    \signal{sda\_padoen\_o}          & \textbf{output}    & SDA Pad Direction           \\ \hline
+    \signal{interrupt\_o}            & \textbf{output}    & Event/Interrupt             \\ \hline
+  \end{tabularx}
+\end{table}
 
 \regDesc{0x1A10\_5000}{0x0000\_0000}{CPR (Clock Prescale Register)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
@@ -11,7 +31,7 @@
 }{
   \regItem{Bit 15:0}{PRE}{Prescaler.\\
     Sets the clock prescaler by the value in PRE to
-    achieve the desired I2C clock by dividing the current system clock by the
+    achieve the desired I$^\text{2}$C clock by dividing the current system clock by the
     given factor.}
 }
 
@@ -33,7 +53,7 @@
   \end{bytefield}
 }{
   \regItem{Bit 7}{EN}{Enable.\\
-  Enable the I2C peripheral.}
+  Enable the I$^\text{2}$C peripheral.}
   \regItem{Bit 6}{IE}{Interrupt enable.\\
   Enable interrupts.}
   \regItem{Bit 5:0}{Reserved}{Set to 0.}
