@@ -26,15 +26,20 @@ if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
   set(RISCV 1)
   message("NOTE: Detected RISCV compiler, using RISCV setup")
 
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IXpulpv2 -Wa,-march=IXpulpv2")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mnoaddsubnormround -mnoclip -mnobitop -mnomulmacnormround -mnoshufflepack -mnovect -mnoball")
+  if(${GCC_ETH})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IXpulpv2 -Wa,-march=IXpulpv2")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mnoaddsubnormround -mnoclip -mnobitop -mnomulmacnormround -mnoshufflepack -mnovect -mnoball")
+    set(CMAKE_OBJDUMP_FLAGS -Mmarch=IXpulpv2 -d)
+  else()
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=RV32I -Wa,-march=RV32I")
+    set(CMAKE_OBJDUMP_FLAGS -d)
+  endif()
 
   if(${RVC})
     message("NOTE: Using compressed instructions")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
   endif()
 
-  set(CMAKE_OBJDUMP_FLAGS -Mmarch=IXpulpv2 -d)
 
   set(LDSCRIPT      "link.riscv.ld")
   set(LDSCRIPT_BOOT "link.boot.ld" )

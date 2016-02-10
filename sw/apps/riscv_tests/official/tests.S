@@ -115,10 +115,10 @@ TEST(slti);
 #include "tests/slti.S"
 
 
-#undef  TESTSUITE
-#define TESTSUITE mul
-TEST(mul);
-#include "tests/mul.S"
+##undef  TESTSUITE
+##define TESTSUITE mul
+#TEST(mul);
+##include "tests/mul.S"
 
 //-----------------------------------------------------------------------
 // LUI/AUIPC
