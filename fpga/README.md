@@ -12,7 +12,7 @@ scripts.
 
 ## Get Started
 
-1. Make sure you have the vivado toolchain in your path before continuing.
+1. Make sure you have the Vivado toolchain in your PATH before continuing.
 
 2. Type `make all` in the fpga directory
    This builds the FPGA bitstream for the ZedBoard, downloads and compiles linux
@@ -22,7 +22,8 @@ scripts.
 3. Prepare the SD card and the ZedBoard for booting via SD card.
    To prepare the card, follow the Xilinx guide [1].
 
-4. Copy the boot.bin file to the first partition of the SD card.
+4. Copy the BOOT.BIN, uImage and devicetree.dtb files to the first partition of the SD card.
+   Those files can be found inside the `fpga/sw/sd_image` folder.
 
 5. Extract the content of the rootfs.tar archive and put it on the second
    partition of the SD card.
@@ -45,13 +46,13 @@ The boot.bin and rootfs.tar files can be found under the folder sw/sd_image.
    Otherwise see section "get started" above.
 
 2. Currently the only method to load a program into the PULPino system is via
-   SPI. Linux uses its SPI master to communicate with PULPinos SPI slave and
+   SPI. Linux uses its SPI master to communicate with PULPino's SPI slave and
    writes directly into the instruction and data memory of PULPino.
-   The spiload program which can be found under sw/spi_loader takes care of
+   The spiload program which can be found under sw/apps/spiload takes care of
    this.
 
-3. Compile the spi_loader application for the ZYNQ.
-   Just type `make` inside the sw/spi_loader folder.
+3. Compile the spiload application for the ZYNQ.
+   Just type `make` inside the sw/apps/spiload folder.
 
 4. Transfer this program to the ZYNQ. We suggest using scp, but any other
    method works as well of course.
@@ -72,7 +73,18 @@ The boot.bin and rootfs.tar files can be found under the folder sw/sd_image.
    and starts it.
 
 
-## Connected peripherlas & communication with PULPino
+As an alternative, there is a cmake target for running applications on fpga
+directly. Just call
+
+    make applicationName.fpga
+
+You need to be able to ssh into the Linux running on the ZYNQ fpga (e.g. using
+public keys) and you need to setup the environment variable `$FPGA_HOSTNAME`.
+Take a look at the script `./sw/utils/run-on-fpga.sh` to understand how it
+works.
+
+
+## Connected peripherals & communication with PULPino
 
 PULPino includes a set of built-in peripherals like SPI, UART and GPIOs.
 The SPI slave peripheral is connected to the SPI master of the ZYNQ, thus it is
