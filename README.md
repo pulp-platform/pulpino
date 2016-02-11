@@ -14,8 +14,8 @@ privileged specification is supported. When the core is idle, the platform can
 be put into a low power mode, where only a simple event unit is active and
 wakes up the core in case an event/interrupt arrives.
 
-The PULPino platform is available for RTL simulation, FPGA and will be taped
-out as an ASIC in UMC 65nm by the end of January. It has full debug support on
+The PULPino platform is available for RTL simulation, FPGA and was taped
+out as an ASIC in UMC 65nm in January 2016. It has full debug support on
 all targets. In addition we support extended profiling with source code
 annotated execution times through KCacheGrind in RTL simulations.
 
