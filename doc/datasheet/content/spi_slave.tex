@@ -2,12 +2,12 @@
 \label{chap:spi_slave}
 
 The SPI slave is an active peripheral in the sense that it receives/sends data
-without the assistance of the core. In fact is intended as an external interface
-through which a user of the system can access the internal memories from
-outside.
-This can be used to pre-load programs into the memories, start the system, wait
-for an acknowledgment that the program has terminated and then examine the
-results.
+without the assistance of the core. Its intended purpose is to function as an
+external interface through which a user of the system can access the internal
+memories from outside.
+This mechanism can be used to pre-load programs into the memories, start the
+system, wait for an acknowledgment that the program has terminated and then
+examine the results.
 
 The SPI slave has an AXI master through which it can access all peripherals and
 memories. From the outside it can be accesses by sending SPI/QSPI commands to it.
@@ -15,4 +15,26 @@ QSPI is an extension to SPI that uses four data lanes instead of one and is thus
 four times as fast as the standard SPI.
 
 If pins on an ASIC are scarce, it is possible to just connect the standard SPI
-interface to pins and accept the performance loss in transfers from/to the SoC.
+interface to pins and accept the performance loss in transfers from/to the SoC
+compared to the QSPI mode. The signals \signal{spi\_sdi1-3} and
+\signal{spi\_sdo1-3} are exclusively used for QSPI mode.
+
+\begin{table}[H]
+ \caption{SPI Slave Signals}
+ \label{tab:sspi_signals}
+  \begin{tabularx}{\textwidth}{@{}llX@{}} \toprule
+    \textbf{Signal}         & \textbf{Direction} & \textbf{Description}        \\ \toprule
+    \signal{spi\_sclk}      & \textbf{input}     & Slave Clock                 \\ \hline
+    \signal{spi\_cs}        & \textbf{input}     & Chip Select                 \\ \hline
+    \signal{spi\_mode[1:0]} & \textbf{output}    & SPI Mode                    \\ \hline
+    \signal{spi\_sdi0}      & \textbf{input}     & Input Line 0                \\ \hline
+    \signal{spi\_sdi1}      & \textbf{input}     & Input Line 1                \\ \hline
+    \signal{spi\_sdi2}      & \textbf{input}     & Input Line 2                \\ \hline
+    \signal{spi\_sdi3}      & \textbf{input}     & Input Line 3                \\ \hline
+    \signal{spi\_sdo0}      & \textbf{output}    & Output Line 0               \\ \hline
+    \signal{spi\_sdo1}      & \textbf{output}    & Output Line 1               \\ \hline
+    \signal{spi\_sdo2}      & \textbf{output}    & Output Line 2               \\ \hline
+    \signal{spi\_sdo3}      & \textbf{output}    & Output Line 3               \\ \hline
+  \end{tabularx}
+\end{table}
+
