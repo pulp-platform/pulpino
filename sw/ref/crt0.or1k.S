@@ -1,3 +1,13 @@
+// Copyright 2016 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License. You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
 #include "spr-defs.h"
 #include "pulpino.h"
 
@@ -202,11 +212,11 @@ interrupt_handler:
 
 /* ====================================== [ default exception handler ] === */
 default_exception_handler:
-    l.addi  r1, r1, -EXCEPTION_STACK_SIZE;          
-    l.sw    4(r1), r3;             
-    l.sw    8(r1), r4;             
-    l.mfspr r3,r0,SPR_NPC;          
-    l.mfspr r4,r0,SPR_EPCR_BASE;   
+    l.addi  r1, r1, -EXCEPTION_STACK_SIZE;
+    l.sw    4(r1), r3;
+    l.sw    8(r1), r4;
+    l.mfspr r3,r0,SPR_NPC;
+    l.mfspr r4,r0,SPR_EPCR_BASE;
 
     l.sw    0x18(r1),r9;
     l.jal   store_regs;
@@ -215,7 +225,7 @@ default_exception_handler:
     l.jal   default_exception_handler_c
     l.nop
 
-    l.jal   end_except ; 
+    l.jal   end_except ;
     l.nop
 
 /* ====================================== [ illegal instruction handler] === */
