@@ -598,4 +598,83 @@ module core_region
     .axi_master_b_ready   ( dbg_master.b_ready   )
     );
 
+
+  //----------------------------------------------------------------------------//
+  // Test Code
+  //----------------------------------------------------------------------------//
+
+  // introduce random stalls for data access to stress LSU
+`ifdef DATA_STALL_RANDOM
+  random_stalls data_stalls_i
+  (
+    .clk           ( clk                     ),
+
+    .core_req_i    ( RISCV_CORE.data_req_o   ),
+    .core_addr_i   ( RISCV_CORE.data_addr_o  ),
+    .core_we_i     ( RISCV_CORE.data_we_o    ),
+    .core_be_i     ( RISCV_CORE.data_be_o    ),
+    .core_wdata_i  ( RISCV_CORE.data_wdata_o ),
+    .core_gnt_o    (                         ),
+    .core_rdata_o  (                         ),
+    .core_rvalid_o (                         ),
+
+    .data_req_o    (                         ),
+    .data_addr_o   (                         ),
+    .data_we_o     (                         ),
+    .data_be_o     (                         ),
+    .data_wdata_o  (                         ),
+    .data_gnt_i    ( core_lsu_gnt            ),
+    .data_rdata_i  ( core_lsu_rdata          ),
+    .data_rvalid_i ( core_lsu_rvalid         )
+  );
+
+  initial begin
+    force RISCV_CORE.data_gnt_i    = data_stalls_i.core_gnt_o;
+    force RISCV_CORE.data_rvalid_i = data_stalls_i.core_rvalid_o;
+    force RISCV_CORE.data_rdata_i  = data_stalls_i.core_rdata_o;
+
+    force core_lsu_req   = data_stalls_i.data_req_o;
+    force core_lsu_addr  = data_stalls_i.data_addr_o;
+    force core_lsu_we    = data_stalls_i.data_we_o;
+    force core_lsu_be    = data_stalls_i.data_be_o;
+    force core_lsu_wdata = data_stalls_i.data_wdata_o;
+  end
+`endif
+
+  // introduce random stalls for instruction access to stress instruction
+  // fetcher
+`ifdef INSTR_STALL_RANDOM
+  random_stalls instr_stalls_i
+  (
+    .clk           ( clk                     ),
+
+    .core_req_i    ( RISCV_CORE.instr_req_o  ),
+    .core_addr_i   ( RISCV_CORE.instr_addr_o ),
+    .core_we_i     (                         ),
+    .core_be_i     (                         ),
+    .core_wdata_i  (                         ),
+    .core_gnt_o    (                         ),
+    .core_rdata_o  (                         ),
+    .core_rvalid_o (                         ),
+
+    .data_req_o    (                         ),
+    .data_addr_o   (                         ),
+    .data_we_o     (                         ),
+    .data_be_o     (                         ),
+    .data_wdata_o  (                         ),
+    .data_gnt_i    ( core_instr_gnt          ),
+    .data_rdata_i  ( core_instr_rdata        ),
+    .data_rvalid_i ( core_instr_rvalid       )
+  );
+
+  initial begin
+    force RISCV_CORE.instr_gnt_i    = instr_stalls_i.core_gnt_o;
+    force RISCV_CORE.instr_rvalid_i = instr_stalls_i.core_rvalid_o;
+    force RISCV_CORE.instr_rdata_i  = instr_stalls_i.core_rdata_o;
+
+    force core_instr_req   = instr_stalls_i.data_req_o;
+    force core_instr_addr  = instr_stalls_i.data_addr_o;
+  end
+`endif
+
 endmodule

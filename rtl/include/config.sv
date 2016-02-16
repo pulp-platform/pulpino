@@ -24,4 +24,10 @@
 `define ROM_ADDR_WIDTH      10
 `define ROM_START_ADDR      32'h8000
 
+// Simulation only stuff
+`ifndef SYNTHESIS
+//`define DATA_STALL_RANDOM
+//`define INSTR_STALL_RANDOM
+`endif
+
 `endif

@@ -77,6 +77,7 @@ vlog -quiet -sv -work ${LIB_PATH} ${RTL_PATH}/components/sp_ram.sv              
 
 # files depending on RISCV vs. OR1K
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/core_region.sv        || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/random_stalls.sv      || goto error
 
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/boot_rom_wrap.sv      || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/boot_code.sv          || goto error
