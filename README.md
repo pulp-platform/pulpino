@@ -2,30 +2,31 @@
 
 # Introduction
 
-PULPino is an open-source microcontroller like system, based on a small 32-bit
-RISC-V core that was developed at ETH Zurich. The core has an IPC close to 1, full
+PULPino is an open-source microcontroller system, based on a small 32-bit
+RISC-V core developed at ETH Zurich. The core has an IPC close to 1, full
 support for the base integer instruction set (RV32I), compressed instructions
 (RV32C) and partial support for the multiplication instruction set
-extension (RV32M). It implements our non-standard extensions for hardware
-loops, post-incrementing load and store instructions, ALU and MAC
-operations.
+extension (RV32M). It implements several ISA extensions such as:
+hardware loops, post-incrementing load and store instructions, ALU and MAC
+operations, which increase the efficiency of the core in low-power signal
+processing applications.
+
 To allow embedded operating systems such as FreeRTOS to run, a subset of the
 privileged specification is supported. When the core is idle, the platform can
 be put into a low power mode, where only a simple event unit is active and
-wakes up the core in case an event/interrupt arrives.
+everything else is clock-gated and consumes minimal power (leakage). A
+specialized event unit wakes up the core in case an event/interrupt arrives.
 
-The PULPino platform is available for RTL simulation, FPGA and was taped
-out as an ASIC in UMC 65nm in January 2016. It has full debug support on
-all targets. In addition we support extended profiling with source code
-annotated execution times through KCacheGrind in RTL simulations.
+For communication with the outside world, PULPino contains a broad set of
+peripherals, including I2S, I2C, SPI and UART. The platform internal devices
+can be accessed from outside via JTAG and SPI which allows pre-loading
+RAMs with executable code. In standalone mode, the platform boots from an
+internal boot ROM and loads its program from an external SPI flash.
 
-PULPino is based on IP blocks from the PULP project, the Parallel
-Ultra-Low-Power Processor that is developed as a collaboration between multiple
-universities in Europe, including the Swiss Federal Institute of Technology
-Zurich (ETHZ), University of Bologna, Politecnico di Milano, Swiss Federal
-Institute of Technology Lausanne (EPFL) and the Laboratory for Electronics and
-Information Technology of Atomic Energy and Alternative Energies Commission
-(CEA-LETI).
+The PULPino platform is available for RTL simulation as well FPGA.
+PULPino has been taped-out as an ASIC in UMC 65nm in January 2016. It has full
+debug support on all targets. In addition we support extended profiling with
+source code annotated execution times through KCacheGrind in RTL simulations.
 
 
 ## Requirements
