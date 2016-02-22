@@ -10,7 +10,7 @@
 
 #include "pulpino.h"
 
-#define EXCEPTION_STACK_SIZE 72
+#define EXCEPTION_STACK_SIZE 96
 
 
 /* ========================================================= [ entry ] === */
@@ -125,10 +125,34 @@ store_regs:
   sw x29, 0x38(x2)  // t4
   sw x30, 0x3c(x2)  // t5
   sw x31, 0x40(x2)  // t6
+  csrr x28, 0x7B0
+  csrr x29, 0x7B1
+  csrr x30, 0x7B2
+  sw x28, 0x44(x2)  // lpstart[0]
+  sw x29, 0x48(x2)  // lpend[0]
+  sw x30, 0x4C(x2)  // lpcount[0]
+  csrr x28, 0x7B4
+  csrr x29, 0x7B5
+  csrr x30, 0x7B6
+  sw x28, 0x50(x2)  // lpstart[1]
+  sw x29, 0x54(x2)  // lpend[1]
+  sw x30, 0x58(x2)  // lpcount[1]
   jalr x0, x1
 
 // load back registers from stack
 end_except:
+  lw x28, 0x50(x2)  // lpstart[1]
+  lw x29, 0x54(x2)  // lpend[1]
+  lw x30, 0x58(x2)  // lpcount[1]
+  csrrw x0, 0x7B4, x28
+  csrrw x0, 0x7B5, x29
+  csrrw x0, 0x7B6, x30
+  lw x28, 0x44(x2)  // lpstart[0]
+  lw x29, 0x48(x2)  // lpend[0]
+  lw x30, 0x4C(x2)  // lpcount[0]
+  csrrw x0, 0x7B0, x28
+  csrrw x0, 0x7B1, x29
+  csrrw x0, 0x7B2, x30
   lw  x3, 0x00(x2)
   lw  x4, 0x04(x2)
   lw  x5, 0x08(x2)
