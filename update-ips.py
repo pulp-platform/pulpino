@@ -4,7 +4,8 @@ import sys,os,subprocess
 # git command to use
 git = "git"
 
-server = "git@iis-git.ee.ethz.ch:pulp-project"
+# uncomment if you want to set it manually
+# server = "git@iis-git.ee.ethz.ch:pulp-project"
 
 cwd = os.getcwd()
 
@@ -34,6 +35,22 @@ def execute_out(cmd, silent=False):
     out, err = p.communicate()
 
     return out
+
+def find_server():
+    stdout = execute_out("%s remote -v" % (git))
+
+    stdout = stdout.split('\n')
+    for line in stdout:
+        if "origin" in line:
+            splits = line.split(' ')
+            splits = splits[0].split('\t')
+            return splits[1]
+
+    print tcolors.ERROR + "ERROR: could not find remote server." + tcolors.ENDC
+    sys.exit(1)
+
+if vars().has_key('server'):
+    server = find_server()
 
 # get a list of all IPs that we are interested in from ips_list.txt
 ips = []
