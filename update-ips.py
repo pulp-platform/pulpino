@@ -44,13 +44,19 @@ def find_server():
         if "origin" in line:
             splits = line.split(' ')
             splits = splits[0].split('\t')
-            return splits[1]
+
+            remote = splits[1]
+
+            # now we have to remove the pulpino.git suffix
+            return remote.rsplit('/', 1)[0]
 
     print tcolors.ERROR + "ERROR: could not find remote server." + tcolors.ENDC
     sys.exit(1)
 
-if vars().has_key('server'):
+if not vars().has_key('server'):
     server = find_server()
+
+print "Using remote git server %s" % (server)
 
 # get a list of all IPs that we are interested in from ips_list.txt
 ips = []
