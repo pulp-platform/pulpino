@@ -49,7 +49,7 @@ void run_benchmark(testcase_t *test, testresult_t *result);
  * @brief Runs a series of benchmarks and prints the results.
  * @param[in] tests an array with the benchmarks to run.
  */
-void run_suite(testcase_t *tests);
+unsigned int run_suite(testcase_t *tests);
 
 /**
  * @brief Checks if actual == expected and if not, prints fail_msg and

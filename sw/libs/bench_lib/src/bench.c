@@ -71,7 +71,7 @@ void run_benchmark(testcase_t *test, testresult_t *result)
   result->time = get_time();
 }
 
-void run_suite(testcase_t *tests)
+unsigned int run_suite(testcase_t *tests)
 {
   // figure out how many tests should be run
   size_t num = 0;
@@ -91,6 +91,7 @@ void run_suite(testcase_t *tests)
 
   print_summary(errors);
 
+  return errors;
 }
 
 void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, uint32_t expected)
