@@ -35,12 +35,18 @@ PULPino has the following requirements
 
 - ModelSim in reasonably recent version (we tested it with versions >= 10.2c)
 - CMake >= 2.8.0, versions greater than 3.1.0 recommended due to support for ninja
-- riscv-toolchain, specifically you need riscv32-unknown-elf-gcc compiler and friends
+- riscv-toolchain, specifically you need riscv32-unknown-elf-gcc compiler and
+  friends. There are two choices for this toolchain: Either using the official
+  RISC-V toolchain supported by Berkeley or the custom RISC-V toolchain from
+  ETH. The ETH version supports all the ISA extensions that were incorporated
+  into the RI5CY core.
+- python2 >= 2.6
 
 ## Editions
 
 There are two PULPino editions available, one for OR1K based on the OR10N core
-and one for RISCV based on the RI5CY core.
+and one for RISCV based on the RI5CY core. Only the RISC-V based version is
+currently open-source.
 The software included in this repository is compatible with both ISAs and
 automatically targets the correct ISA based on the compiler used.
 
