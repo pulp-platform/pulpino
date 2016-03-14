@@ -11,12 +11,12 @@
 #
 
 # ready
-ips/apb/apb_gpio                        dcbac04adbcc9680064e2d95399a879cc6f6d1f1
-ips/apb/apb_spi_master                  e6ca05f05df522cfcc154da3c8a9d865667022be
+ips/apb/apb_gpio                        master
+ips/apb/apb_spi_master                  master
 ips/apb/apb_event_unit                  master
 ips/apb/apb_timer                       master
 ips/apb/apb_pulpino                     master
-ips/apb/apb_fll_if                      829003a80ffcb5b722bdc67d443fe37c99e9fc85
+ips/apb/apb_fll_if                      master
 
 ips/axi/axi_mem_if_DP                   405e9a2cd27f670adc9f7abb91d7ae3e1b82c861
 ips/axi/axi_node                        0193125be350718e7fe8b44308f4dc44749ef60c
@@ -25,11 +25,11 @@ ips/axi/axi_slice_dc                    f001d15c2055f7fcba4c834fad706b98223e711e
 ips/axi/axi_spi_slave                   b7f5595e9488ece2d1227aeea053f0a3f8ee6251
 ips/axi/axi_spi_master                  6d1c15b023715430a5457abfd33decd5cf474d52
 
-ips/adv_dbg_if                          5bcdbcb987c6cd89cb99032dfed549d85946b786
+ips/adv_dbg_if                          master
 
-ips/apb/apb_uart                        370cef8639ceea20412cf6e253f3634dc08ba79a
-ips/apb/apb_i2c                         58bcb35fbde1cd06f8789b895bdd559bd96aa8be
+ips/apb/apb_uart                        master
+ips/apb/apb_i2c                         master
 
 
-ips/axi/axi2apb                         8eb87763415c999c5f46f9b0c817e5dc2575f037
+ips/axi/axi2apb                         master
 ips/riscv                               master
