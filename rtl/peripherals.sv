@@ -191,6 +191,7 @@ module peripherals
   (
     .clk_i     ( clk_i     ),
     .rst_ni    ( rst_n     ),
+    .test_en_i ( testmode_i),
 
     .axi_slave ( slave     ),
 

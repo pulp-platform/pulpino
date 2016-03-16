@@ -1,0 +1,133 @@
+#define NumberOfStimuli 10
+
+#define IMM_0 7
+
+#define LEN_0 4
+
+#define IMM_1 10
+
+#define LEN_1 4
+
+#define IMM_2 14
+
+#define LEN_2 0
+
+#define IMM_3 3
+
+#define LEN_3 5
+
+#define IMM_4 2
+
+#define LEN_4 15
+
+#define IMM_5 25
+
+#define LEN_5 6
+
+#define IMM_6 2
+
+#define LEN_6 1
+
+#define IMM_7 20
+
+#define LEN_7 6
+
+#define IMM_8 18
+
+#define LEN_8 7
+
+#define IMM_9 1
+
+#define LEN_9 7
+
+unsigned int op_a[] = {
+0x8EE8638E,
+0x88050B1C,
+0x2EFD4355,
+0x324337C7,
+0x8D96738D,
+0x8366DF04,
+0xAF0FCDF4,
+0xCD3BCB94,
+0x150D835C,
+0x850CBE0F,
+};
+
+unsigned int op_c[] = {
+0x398A7DE7,
+0x8D51DC6D,
+0x0DF2D26B,
+0xED80F3E4,
+0x288F3785,
+0x455E4353,
+0x81FF8B1F,
+0x654B4525,
+0x0CB6F5EB,
+0xA939E871,
+};
+
+unsigned int res_bset[] = {
+0x8EE86F8E,
+0x88057F1C,
+0x2EFD4355,
+0x324337FF,
+0x8D97FFFD,
+0xFF66DF04,
+0xAF0FCDFC,
+0xCFFBCB94,
+0x17FD835C,
+0x850CBFFF,
+};
+
+unsigned int res_bclr[] = {
+0x8EE8600E,
+0x8805031C,
+0x2EFD0355,
+0x32433607,
+0x8D940001,
+0x0166DF04,
+0xAF0FCDF0,
+0xC80BCB94,
+0x1401835C,
+0x850CBE01,
+};
+
+unsigned int res_bextract[] = {
+0x00000007,
+0x00000002,
+0xFFFFFFFF,
+0xFFFFFFF8,
+0xFFFF9CE3,
+0xFFFFFFC1,
+0x00000001,
+0xFFFFFFD3,
+0x00000043,
+0x00000007,
+};
+
+unsigned int res_bextractu[] = {
+0x00000007,
+0x00000002,
+0x00000001,
+0x00000038,
+0x00009CE3,
+0x00000041,
+0x00000001,
+0x00000053,
+0x00000043,
+0x00000007,
+};
+
+unsigned int res_binsert[] = {
+0x398A7767,
+0x8D51F06D,
+0x0DF2D26B,
+0xED80F23C,
+0x288DCE35,
+0x095E4353,
+0x81FF8B13,
+0x614B4525,
+0x0D72F5EB,
+0xA939E81F,
+};
+

@@ -47,15 +47,8 @@ echo "${Red}"
 # Compiling RTL
 ##############################################################################
 
-vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb_cmd.sv   || goto error
-vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb_ctrl.sv  || goto error
-vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb_mux.sv   || goto error
-vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb_rd.sv    || goto error
-vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb_wr.sv    || goto error
-vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/prgen_fifo.sv    || goto error
-vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/axi2apb.sv       || goto error
-
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/AXI_2_APB.sv     || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH} ${IP_PATH}/AXI_2_APB_32.sv  || goto error
 
 echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
 exit 0
