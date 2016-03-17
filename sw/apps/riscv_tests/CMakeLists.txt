@@ -16,6 +16,7 @@ add_subdirectory(testExceptions)
 # arithmetic operations
 add_subdirectory(testALU)
 add_subdirectory(testDivRem)
+add_subdirectory(testShufflePack)
 
 # other core features
 add_subdirectory(testCSR)
