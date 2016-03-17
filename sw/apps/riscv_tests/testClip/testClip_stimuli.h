@@ -1,0 +1,74 @@
+#define NumberOfStimuli 10
+
+#define CLIP_IMM_0 13
+
+#define CLIP_IMM_1 4
+
+#define CLIP_IMM_2 4
+
+#define CLIP_IMM_3 4
+
+#define CLIP_IMM_4 28
+
+#define CLIP_IMM_5 2
+
+#define CLIP_IMM_6 11
+
+#define CLIP_IMM_7 7
+
+#define CLIP_IMM_8 7
+
+#define CLIP_IMM_9 4
+
+unsigned int op_a_clip[] = {
+0x000C51FF,
+0x001E474E,
+0xFFF5D57B,
+0x0013BAB6,
+0x000147B4,
+0xFFF6E1E3,
+0x0019BE85,
+0x000F9DE0,
+0xFFFC9180,
+0x00102CB9,
+};
+
+unsigned int op_a_clipu[] = {
+0x001C7AB9,
+0x001C6D8F,
+0x0013BC22,
+0x000549F3,
+0x0006A594,
+0xFFF64746,
+0x001B02B0,
+0x000673B7,
+0x0013248D,
+0xFFFC6AF2,
+};
+
+unsigned int res_clip[] = {
+0x00000FFF,
+0x00000007,
+0xFFFFFFF8,
+0x00000007,
+0x000147B4,
+0xFFFFFFFE,
+0x000003FF,
+0x0000003F,
+0xFFFFFFC0,
+0x00000007,
+};
+
+unsigned int res_clipu[] = {
+0x00000FFF,
+0x00000007,
+0x00000007,
+0x00000007,
+0x0006A594,
+0x00000000,
+0x000003FF,
+0x0000003F,
+0x0000003F,
+0x00000000,
+};
+

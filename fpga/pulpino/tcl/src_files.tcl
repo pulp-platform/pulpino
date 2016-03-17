@@ -112,14 +112,8 @@ set SRC_AXI_SLICE "
 
 # axi2apb
 set SRC_AXI2APB "
-   $IPS/axi/axi2apb/axi2apb_cmd.sv \
-   $IPS/axi/axi2apb/axi2apb_ctrl.sv \
-   $IPS/axi/axi2apb/axi2apb_mux.sv \
-   $IPS/axi/axi2apb/axi2apb_rd.sv \
-   $IPS/axi/axi2apb/axi2apb.sv \
    $IPS/axi/axi2apb/AXI_2_APB.sv \
-   $IPS/axi/axi2apb/axi2apb_wr.sv \
-   $IPS/axi/axi2apb/prgen_fifo.sv \
+   $IPS/axi/axi2apb/AXI_2_APB_32.sv \
 "
 
 set SRC_ADV_DEBUG_IF "
