@@ -15,6 +15,7 @@ set cmd "vsim -quiet $TB \
   -L axi_mem_if_DP_lib \
   -L axi_node_lib \
   -L axi2apb_lib \
+  -L core2axi_lib \
   -L apb_fll_if_lib \
   -L apb_uart_lib \
   -L apb_pulpino_lib \

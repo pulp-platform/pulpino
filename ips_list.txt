@@ -24,6 +24,7 @@ ips/axi/axi_slice                       6cd91f7697c13bf2aa8d63c91de92a92993f2d6c
 ips/axi/axi_slice_dc                    f001d15c2055f7fcba4c834fad706b98223e711e
 ips/axi/axi_spi_slave                   b7f5595e9488ece2d1227aeea053f0a3f8ee6251
 ips/axi/axi_spi_master                  6d1c15b023715430a5457abfd33decd5cf474d52
+ips/axi/core2axi                        master
 
 ips/adv_dbg_if                          master
 

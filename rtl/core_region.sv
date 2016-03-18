@@ -133,10 +133,10 @@ module core_region
 
   AXI_BUS
   #(
-    .AXI_ADDR_WIDTH   ( AXI_ADDR_WIDTH ),
-    .AXI_DATA_WIDTH   ( AXI_DATA_WIDTH ),
-    .AXI_ID_WIDTH     ( AXI_ID_MASTER_WIDTH   ),
-    .AXI_USER_WIDTH   ( AXI_USER_WIDTH )
+    .AXI_ADDR_WIDTH   ( AXI_ADDR_WIDTH      ),
+    .AXI_DATA_WIDTH   ( AXI_DATA_WIDTH      ),
+    .AXI_ID_WIDTH     ( AXI_ID_MASTER_WIDTH ),
+    .AXI_USER_WIDTH   ( AXI_USER_WIDTH      )
   )
   core_master_int();
 
@@ -254,14 +254,17 @@ module core_region
   `endif
 
 
-  core2axi
+  core2axi_wrap
   #(
-    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH )
+    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH      ),
+    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH      ),
+    .AXI_ID_WIDTH   ( AXI_ID_MASTER_WIDTH ),
+    .AXI_USER_WIDTH ( AXI_USER_WIDTH      )
   )
   core2axi_i
   (
-    .clk   ( clk   ),
-    .rst_n ( rst_n ),
+    .clk_i         ( clk             ),
+    .rst_ni        ( rst_n           ),
 
     .data_req_i    ( core_axi_req    ),
     .data_gnt_o    ( core_axi_gnt    ),

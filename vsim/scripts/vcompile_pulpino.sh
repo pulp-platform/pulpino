@@ -83,7 +83,6 @@ vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/boot_code.sv          || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/instr_ram_wrap.sv     || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/sp_ram_wrap.sv        || goto error
-vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/core2axi.sv           || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/ram_mux.sv            || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/axi_node_intf_wrap.sv || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/top.sv                || goto error
@@ -93,6 +92,7 @@ vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/axi_mem_if_SP_wrap.sv || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/clk_rst_gen.sv        || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/axi_slice_wrap.sv     || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${RTL_PATH}/include ${ASIC_DEFINES} ${CORE_DEFINES} ${RTL_PATH}/core2axi_wrap.sv      || goto error
 
 echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
 exit 0

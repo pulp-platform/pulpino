@@ -49,6 +49,7 @@ source ${IPS_PATH}/scripts/vcompile_axi_spi_slave.sh  || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_slice.sh      || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_slice_dc.sh   || exit 1
 source ${IPS_PATH}/scripts/vcompile_axi_mem_if_DP.sh  || exit 1
+source ${IPS_PATH}/scripts/vcompile_core2axi.sh       || exit 1
 
 source ${PULP_PATH}/vsim/scripts/vcompile_pulpino.sh  || exit 1
 
