@@ -61,6 +61,7 @@ vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/controll
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/decoder.sv                || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/ex_stage.sv               || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/alu.sv                    || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/alu_div.sv                || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/mult.sv                   || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/cs_registers.sv           || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${IP_PATH}/include ${IP_PATH}/load_store_unit.sv        || goto error
