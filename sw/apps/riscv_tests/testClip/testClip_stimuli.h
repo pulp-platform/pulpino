@@ -1,24 +1,24 @@
 #define NumberOfStimuli 10
 
-#define CLIP_IMM_0 13
+#define CLIP_IMM_0 13-1
 
-#define CLIP_IMM_1 4
+#define CLIP_IMM_1 4-1
 
-#define CLIP_IMM_2 4
+#define CLIP_IMM_2 4-1
 
-#define CLIP_IMM_3 4
+#define CLIP_IMM_3 4-1
 
-#define CLIP_IMM_4 28
+#define CLIP_IMM_4 28-1
 
-#define CLIP_IMM_5 2
+#define CLIP_IMM_5 2-1
 
-#define CLIP_IMM_6 11
+#define CLIP_IMM_6 11-1
 
-#define CLIP_IMM_7 7
+#define CLIP_IMM_7 7-1
 
-#define CLIP_IMM_8 7
+#define CLIP_IMM_8 7-1
 
-#define CLIP_IMM_9 4
+#define CLIP_IMM_9 4-1
 
 unsigned int op_a_clip[] = {
 0x000C51FF,

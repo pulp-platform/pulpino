@@ -3,9 +3,6 @@ include_directories(includes)
 add_subdirectory(basic)
 add_subdirectory(official)
 
-add_subdirectory(testBitManipulation)
-add_subdirectory(testCnt)
-
 # memory access
 add_subdirectory(testMisaligned)
 
@@ -15,6 +12,12 @@ add_subdirectory(testExceptions)
 
 # arithmetic operations
 add_subdirectory(testALU)
+
+# ETH specific features
+add_subdirectory(testBitManipulation)
+add_subdirectory(testCnt)
+add_subdirectory(testClip)
+add_subdirectory(testVecArith)
 add_subdirectory(testDivRem)
 add_subdirectory(testShufflePack)
 
