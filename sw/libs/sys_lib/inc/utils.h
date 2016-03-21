@@ -81,6 +81,11 @@ static inline unsigned long mfspr(unsigned long spr)
   asm volatile ("l.mfspr\t\t%0,%1,0" : "=r" (value) : "r" (spr));
   return value;
 }
+
+static inline void sleep(void) {
+  SCR = 0x01;
+  asm volatile ("l.nop;l.nop;l.psync");
+}
 #endif
 
 /* Loops/exits simulation */

@@ -12,7 +12,10 @@ scripts.
 
 ## Get Started
 
-1. Make sure you have the Vivado toolchain in your PATH before continuing.
+1. Make sure you have the Vivado toolchain and the Xilinx SDK in your PATH
+   before continuing. The Vivado toolchain is required to generate the
+   bitstream, while the SDK contains the ARM compiler that is used for
+   cross-compiling linux and applications.
 
 2. Type `make all` in the fpga directory
    This builds the FPGA bitstream for the ZedBoard, downloads and compiles linux

@@ -151,12 +151,7 @@ endmacro()
 
 ################################################################################
 
-# add_subdirectory(spi_regression)
-
-add_subdirectory(boot_code)
-
 add_subdirectory(helloworld)
-add_subdirectory(freertos)
 
 # add_subdirectory(debug)
 add_subdirectory(bench)
@@ -166,6 +161,8 @@ if(${RISCV})
   #add_subdirectory(compressed)
   add_subdirectory(fpga)
   add_subdirectory(riscv_tests)
+  add_subdirectory(freertos)
+  add_subdirectory(boot_code)
 endif()
 
 add_subdirectory(sequential_tests)

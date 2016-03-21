@@ -81,11 +81,11 @@ set(VSIM "vsim" CACHE FILEPATH "Path to the vsim executable")
 
 if(${RISCV})
   set(crt0      "ref/crt0.riscv.S")
+  set(crt0_boot "ref/crt0.boot.S")
 else()
   set(crt0      "ref/crt0.or1k.S")
+  set(crt0_boot "ref/crt0.or1k.S") # dummy, not functional
 endif()
-
-set(crt0_boot   "ref/crt0.boot.S")
 
 include_directories(libs/sys_lib/inc)
 set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
@@ -107,7 +107,7 @@ endif()
 
 
 add_custom_target(vcompile
-  COMMAND tcsh -c "./vcompile/build_rtl_sim.csh"
+  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./vcompile/build_rtl_sim.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 

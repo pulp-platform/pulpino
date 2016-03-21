@@ -25,13 +25,17 @@
 #ifndef _INT_H_
 #define _INT_H_
 
+#ifndef __riscv__
+#include "spr-defs.h"
+#endif
+
 /* Number of interrupt handlers - really depends on PIC width in OR1200*/
-#define MAX_INT_HANDLERS	32
+#define MAX_INT_HANDLERS  32
 
 /* Handler entry */
 struct ihnd {
-	void 	(*handler)(void *);
-	void	*arg;
+  void  (*handler)(void *);
+  void  *arg;
 };
 
 /** 
@@ -73,11 +77,16 @@ void int_main();
  * interrupts are globally disable. 
  */
 static inline void int_disable(void) {
-	// read-modify-write
-	int mstatus;
-	asm volatile ("csrr %0, mstatus": "=r" (mstatus));
-	mstatus &= 0xFFFFFFFE;
-	asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
+#ifdef __riscv__
+  // read-modify-write
+  int mstatus;
+  asm volatile ("csrr %0, mstatus": "=r" (mstatus));
+  mstatus &= 0xFFFFFFFE;
+  asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
+  asm("csrw 0x300, %0" : : "r" (0x0) );
+#else
+  mtspr(SPR_SR, mfspr(SPR_SR) & (~SPR_SR_IEE));
+#endif
 }
 
 /** 
@@ -89,11 +98,15 @@ static inline void int_disable(void) {
  * interrupts are globally enabled. 
  */
 static inline void int_enable(void) {
-	// read-modify-write
-	int mstatus;
-	asm volatile ("csrr %0, mstatus": "=r" (mstatus));
-	mstatus |= 0x01;
-	asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
+#ifdef __riscv__
+  // read-modify-write
+  int mstatus;
+  asm volatile ("csrr %0, mstatus": "=r" (mstatus));
+  mstatus |= 0x01;
+  asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
+#else
+  mtspr(SPR_SR, mfspr(SPR_SR) | (SPR_SR_IEE));
+#endif
 }
 
 /** 
