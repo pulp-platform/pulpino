@@ -1,12 +1,11 @@
 #!/bin/tcsh
-source ${IPS_PATH}/scripts/colors.sh
+source ${PULP_PATH}/vsim/vcompile/colors.csh
 
 ##############################################################################
 # Settings
 ##############################################################################
 
-set IP=axi_slice_dc
-set IP_NAME="AXI Slice with Dual Clock FIFOs"
+set IP_NAME="work.tb"
 
 
 ##############################################################################
@@ -14,31 +13,29 @@ set IP_NAME="AXI Slice with Dual Clock FIFOs"
 ##############################################################################
 
 # check if environment variables are defined
-if (! $?MSIM_LIBS_PATH ) then
-  echo "${Red} MSIM_LIBS_PATH is not defined ${NC}"
+if (! $?VSIM_PATH ) then
+  echo "${Red} VSIM_PATH is not defined ${NC}"
   exit 1
 endif
 
-if (! $?IPS_PATH ) then
-  echo "${Red} IPS_PATH is not defined ${NC}"
+if (! $?TB_PATH ) then
+  echo "${Red} TB_PATH is not defined ${NC}"
   exit 1
 endif
 
+if (! $?RTL_PATH ) then
+  echo "${Red} RTL_PATH is not defined ${NC}"
+  exit 1
+endif
 
-set LIB_NAME="${IP}_lib"
-set LIB_PATH="${MSIM_LIBS_PATH}/${LIB_NAME}"
-set IP_PATH="${IPS_PATH}/axi/${IP}"
+set LIB_NAME="work"
+set LIB_PATH="${VSIM_PATH}/${LIB_NAME}"
 
 ##############################################################################
 # Preparing library
 ##############################################################################
 
 echo "${Green}--> Compiling ${IP_NAME}... ${NC}"
-
-rm -rf $LIB_PATH
-
-vlib $LIB_PATH
-vmap $LIB_NAME $LIB_PATH
 
 echo "${Green}Compiling component: ${Brown} ${IP_NAME} ${NC}"
 echo "${Red}"
@@ -47,14 +44,11 @@ echo "${Red}"
 # Compiling RTL
 ##############################################################################
 
-vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/dc_data_buffer.v            || goto error
-vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/dc_full_detector.v          || goto error
-vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/dc_synchronizer.v           || goto error
-vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/dc_token_ring_fifo_din.v    || goto error
-vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/dc_token_ring_fifo_dout.v   || goto error
-vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/dc_token_ring.v             || goto error
-vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/axi_slice_dc_master.sv      || goto error
-vlog -quiet -sv -work ${LIB_PATH} ${IP_PATH}/axi_slice_dc_slave.sv       || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${TB_PATH}                                                ${TB_PATH}/uart.sv             || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${TB_PATH} +incdir+${RTL_PATH}/include/                   ${TB_PATH}/tb.sv               || goto error
+
+vlog -quiet -sv -work ${LIB_PATH}     +incdir+${TB_PATH} -dpiheader ${TB_PATH}/jtag_dpi/dpiheader.h ${TB_PATH}/jtag_dpi.sv         || goto error
+vlog -quiet -64 -work ${LIB_PATH} -ccflags "-I${TB_PATH}/jtag_dpi/"                                 ${TB_PATH}/jtag_dpi/jtag_dpi.c || goto error
 
 echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
 exit 0

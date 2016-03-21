@@ -1,5 +1,5 @@
 #!/bin/tcsh
-source ${PULP_PATH}/vsim/scripts/colors.sh
+source ${PULP_PATH}/vsim/vcompile/colors.csh
 
 ##############################################################################
 # Settings

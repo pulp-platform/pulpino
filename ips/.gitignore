@@ -1,14 +1,5 @@
 adv_dbg_if
 apb
-axi/axi2apb
-axi/axi_mem_if_DP
-axi/axi_node
-axi/axi_slice
-axi/axi_slice_dc
-axi/axi_spi_slave
-axi/axi_spi_master
-common_cells
-scm
-or10n
+axi
 riscv
-fll
+or10n

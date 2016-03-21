@@ -1,0 +1,61 @@
+#
+# List of IPs and relative branch/commit-hash/tag.
+# Uses the YAML syntax.
+#
+# Examples:
+#
+#   or10n:
+#     commit: tags/PULP3_final
+#     domain: [cluster]
+#   udma:
+#     commit: 62b10440
+#     domain: [soc]
+#   axi_slice:
+#     commit: master
+#     domain: [soc,cluster]
+# If a *tag* or *commit* is referenced, the IP will be in a
+#  state of DETACHED HEAD. Before committing any additional
+#  work, make sure to checkout a branch.
+#
+
+# APB IPs
+apb/apb_event_unit:
+  commit: master
+apb/apb_fll_if:
+  commit: master
+apb/apb_gpio:
+  commit: master
+apb/apb_i2c:
+  commit: master
+apb/apb_pulpino:
+  commit: master
+apb/apb_spi_master:
+  commit: master
+apb/apb_timer:
+  commit: master
+apb/apb_uart:
+  commit: master
+
+# AXI IPs
+axi/axi2apb:
+  commit: master
+axi/axi_mem_if_DP:
+  commit: master
+axi/axi_node:
+  commit: master
+axi/axi_slice:
+  commit: master
+axi/axi_slice_dc:
+  commit: master
+axi/axi_spi_master:
+  commit: master
+axi/axi_spi_slave:
+  commit: master
+axi/core2axi:
+  commit: master
+
+adv_dbg_if:
+  commit: master
+
+riscv:
+  commit: master

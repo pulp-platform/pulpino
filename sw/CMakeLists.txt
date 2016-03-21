@@ -28,7 +28,7 @@ if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
 
   if(${GCC_ETH})
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IXpulpv2 -Wa,-march=IXpulpv2")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mnoaddsubnormround -mnoclip -mnobitop -mnomulmacnormround -mnoshufflepack -mnovect -mnoball")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mnoaddsubnormround -mnomulmacnormround")
     set(CMAKE_OBJDUMP_FLAGS -Mmarch=IXpulpv2 -d)
   else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=RV32I -Wa,-march=RV32I")
@@ -107,23 +107,22 @@ endif()
 
 
 add_custom_target(vcompile
-  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./scripts/vcompile_all.sh"
+  COMMAND tcsh -c "./vcompile/build_rtl_sim.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
 add_custom_target(vcompile.ps
-  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./scripts/vcompile_ps.sh"
+  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./vcompile/vcompile_ps.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
 add_custom_target(vcompile.pl
-  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./scripts/vcompile_pl.sh"
+  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./vcompile/vcompile_pl.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
 add_custom_target(vcompile.core
-  COMMAND tcsh ./scripts/vcompile_riscv.sh
-  COMMAND tcsh ./scripts/vcompile_or10n.sh
+  COMMAND tcsh ./vcompile/vcompile_riscv.csh
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 

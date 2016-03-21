@@ -1,4 +1,7 @@
 work/
-typescript
 modelsim_libs/
 modelsim.ini
+transcript
+vcompile/ips/
+vcompile/vcompile_ips.csh
+tcl_files/config/vsim_ips.tcl
