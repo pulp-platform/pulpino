@@ -21,22 +21,22 @@ macro(add_sim_targets NAME)
   # directory
   ##############################################################################
 
-  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/work         ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work)
-
   add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/modelsim.ini
     COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/modelsim.ini ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/modelsim.ini)
+
+  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/work         ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work)
 
   add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files
     COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/tcl_files    ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files)
 
-  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/do_files
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/do_files     ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/do_files)
+  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/waves
+    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/waves        ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/waves)
 
   add_custom_target(${NAME}.links ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/modelsim.ini
-                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files
                                               ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work
-                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/do_files)
+                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files
+                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/waves)
 
 
   ##############################################################################

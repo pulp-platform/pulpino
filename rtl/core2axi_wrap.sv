@@ -15,7 +15,8 @@ module core2axi_wrap
     parameter AXI_ADDR_WIDTH   = 32,
     parameter AXI_DATA_WIDTH   = 32,
     parameter AXI_USER_WIDTH   = 6,
-    parameter AXI_ID_WIDTH     = 6
+    parameter AXI_ID_WIDTH     = 6,
+    parameter REGISTERED_GRANT = "FALSE"
 )
 (
     input logic                       clk_i,
@@ -39,11 +40,12 @@ module core2axi_wrap
   //********************************************************
   core2axi
   #(
-    .AXI4_ADDRESS_WIDTH ( AXI_ADDR_WIDTH ),
-    .AXI4_RDATA_WIDTH   ( AXI_DATA_WIDTH ),
-    .AXI4_WDATA_WIDTH   ( AXI_DATA_WIDTH ),
-    .AXI4_ID_WIDTH      ( AXI_ID_WIDTH   ),
-    .AXI4_USER_WIDTH    ( AXI_USER_WIDTH )
+    .AXI4_ADDRESS_WIDTH ( AXI_ADDR_WIDTH   ),
+    .AXI4_RDATA_WIDTH   ( AXI_DATA_WIDTH   ),
+    .AXI4_WDATA_WIDTH   ( AXI_DATA_WIDTH   ),
+    .AXI4_ID_WIDTH      ( AXI_ID_WIDTH     ),
+    .AXI4_USER_WIDTH    ( AXI_USER_WIDTH   ),
+    .REGISTERED_GRANT   ( REGISTERED_GRANT )
   )
   core2axi_i
   (

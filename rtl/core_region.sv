@@ -256,10 +256,11 @@ module core_region
 
   core2axi_wrap
   #(
-    .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH      ),
-    .AXI_DATA_WIDTH ( AXI_DATA_WIDTH      ),
-    .AXI_ID_WIDTH   ( AXI_ID_MASTER_WIDTH ),
-    .AXI_USER_WIDTH ( AXI_USER_WIDTH      )
+    .AXI_ADDR_WIDTH   ( AXI_ADDR_WIDTH      ),
+    .AXI_DATA_WIDTH   ( AXI_DATA_WIDTH      ),
+    .AXI_ID_WIDTH     ( AXI_ID_MASTER_WIDTH ),
+    .AXI_USER_WIDTH   ( AXI_USER_WIDTH      ),
+    .REGISTERED_GRANT ( `CORE2AXI_REG_GRANT )
   )
   core2axi_i
   (
