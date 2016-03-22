@@ -6,5 +6,4 @@ set TB            tb
 set VSIM_FLAGS    ""
 set MEMLOAD       "PRELOAD"
 
-source ./tcl_files/vsim.tcl
-
+source ./tcl_files/config/vsim.tcl
