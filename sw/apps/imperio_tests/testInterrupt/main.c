@@ -34,7 +34,7 @@ void int_time_cmp(void) {
 int main() {
   // Configure ISRs
   int_init();
-  //int_add(TIMER_A_OUTPUT_CMP, (void *) timer_overflow_isr, 0);
+  int_add(29, (void *) int_time_cmp, 0);
   int_enable();
 
   EER = 0xff;

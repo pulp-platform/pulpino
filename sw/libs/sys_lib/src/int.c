@@ -59,8 +59,6 @@ void int_main(void) {
   int mcause;
   csrr(mcause, mcause);
 
-
-
   // printf("In ISR. cause = %u\n", mcause & 0x1F);
 
   if (mcause & (1 << 31)) {
@@ -71,5 +69,23 @@ void int_main(void) {
   // printf("Leaving ISR.\n");
   // clear pending register
   ICP = (1 << mcause);
+#else
+  int pending;
+  int irq;
+
+  while ((pending = IPR) != 0) {
+
+    irq = __builtin_pulp_ff1(pending) - 1;
+
+    printf("In ISR. cause = %u, irq %u\n", pending, irq);
+
+    // interrupt handler called because of external IRQ
+    if (int_handlers[irq].handler != NULL)
+      int_handlers[irq].handler(int_handlers[irq].arg);
+
+    // printf("Leaving ISR.\n");
+    // clear pending register
+    ICP = (1 << irq);
+  };
 #endif
 }
