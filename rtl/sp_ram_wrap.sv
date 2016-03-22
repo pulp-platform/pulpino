@@ -53,7 +53,7 @@ module sp_ram_wrap
 
    sp_ram_bank
    #(
-    .NUM_BANKS  ( RAM_SIZE/1024 ),
+    .NUM_BANKS  ( RAM_SIZE/4096 ),
     .BANK_SIZE  ( 1024          )
    )
    sp_ram_bank_i
