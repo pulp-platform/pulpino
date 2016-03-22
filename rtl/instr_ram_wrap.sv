@@ -12,25 +12,26 @@
 
 module instr_ram_wrap
   #(
-    parameter RAM_SIZE   = 32768,               // in words
-    parameter ADDR_WIDTH = $clog2(RAM_SIZE) + 1 // one bit more than necessary, for the boot rom
+    parameter RAM_SIZE   = 32768,                // in bytes
+    parameter ADDR_WIDTH = $clog2(RAM_SIZE) + 1, // one bit more than necessary, for the boot rom
+    parameter DATA_WIDTH = 32
   )(
     // Clock and Reset
-    input  logic clk,
-    input  logic rst_n,
+    input  logic                    clk,
+    input  logic                    rst_n,
 
-    input  logic                   en_i,
-    input  logic [ADDR_WIDTH-1:0]  addr_i,
-    input  logic [31:0]            wdata_i,
-    output logic [31:0]            rdata_o,
-    input  logic                   we_i,
-    input  logic [3:0]             be_i,
-    input  logic                   bypass_en_i
+    input  logic                    en_i,
+    input  logic [ADDR_WIDTH-1:0]   addr_i,
+    input  logic [DATA_WIDTH-1:0]   wdata_i,
+    output logic [DATA_WIDTH-1:0]   rdata_o,
+    input  logic                    we_i,
+    input  logic [DATA_WIDTH/8-1:0] be_i,
+    input  logic                    bypass_en_i
   );
 
   logic is_boot, is_boot_q;
-  logic [31:0] rdata_boot;
-  logic [31:0] rdata_ram;
+  logic [DATA_WIDTH-1:0] rdata_boot;
+  logic [DATA_WIDTH-1:0] rdata_ram;
 
 
   assign is_boot = (addr_i[ADDR_WIDTH-1] == 1'b1);
@@ -38,7 +39,8 @@ module instr_ram_wrap
 
   sp_ram_wrap
   #(
-    .RAM_SIZE ( RAM_SIZE  )
+    .RAM_SIZE   ( RAM_SIZE   ),
+    .DATA_WIDTH ( DATA_WIDTH )
   )
   sp_ram_wrap_i
   (
@@ -55,10 +57,13 @@ module instr_ram_wrap
   );
 
   boot_rom_wrap
+  #(
+    .DATA_WIDTH ( DATA_WIDTH )
+  )
   boot_rom_wrap_i
   (
     .clk     ( clk                         ),
-    .rstn_i  ( rst_n                       ),
+    .rst_n   ( rst_n                       ),
     .en_i    ( en_i & is_boot              ),
     .addr_i  ( addr_i[`ROM_ADDR_WIDTH-1:0] ),
     .rdata_o ( rdata_boot                  )

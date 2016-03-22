@@ -12,19 +12,20 @@
 
 module sp_ram_wrap
   #(
-    parameter RAM_SIZE   = 32768, // in words
-    parameter ADDR_WIDTH = $clog2(RAM_SIZE)
+    parameter RAM_SIZE   = 32768,              // in bytes
+    parameter ADDR_WIDTH = $clog2(RAM_SIZE),
+    parameter DATA_WIDTH = 32
   )(
     // Clock and Reset
-    input  logic clk,
-    input  logic rstn_i,
-    input  logic                   en_i,
-    input  logic [ADDR_WIDTH-1:0]  addr_i,
-    input  logic [31:0]            wdata_i,
-    output logic [31:0]            rdata_o,
-    input  logic                   we_i,
-    input  logic [3:0]             be_i,
-    input  logic                   bypass_en_i
+    input  logic                    clk,
+    input  logic                    rstn_i,
+    input  logic                    en_i,
+    input  logic [ADDR_WIDTH-1:0]   addr_i,
+    input  logic [DATA_WIDTH-1:0]   wdata_i,
+    output logic [DATA_WIDTH-1:0]   rdata_o,
+    input  logic                    we_i,
+    input  logic [DATA_WIDTH/8-1:0] be_i,
+    input  logic                    bypass_en_i
   );
 
 `ifdef PULP_FPGA_EMUL
@@ -71,6 +72,7 @@ module sp_ram_wrap
   sp_ram
   #(
     .ADDR_WIDTH ( ADDR_WIDTH ),
+    .DATA_WIDTH ( DATA_WIDTH ),
     .NUM_WORDS  ( RAM_SIZE   )
   )
   sp_ram_i
@@ -87,4 +89,3 @@ module sp_ram_wrap
 `endif
 
 endmodule
-

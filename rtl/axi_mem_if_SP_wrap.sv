@@ -26,9 +26,9 @@ module axi_mem_if_SP_wrap
     output logic                        mem_req_o,
     output logic [MEM_ADDR_WIDTH-1:0]   mem_addr_o,
     output logic                        mem_we_o,
-    output logic [3:0]                  mem_be_o,
-    input  logic [31:0]                 mem_rdata_i,
-    output logic [31:0]                 mem_wdata_o,
+    output logic [AXI_DATA_WIDTH/8-1:0] mem_be_o,
+    input  logic [AXI_DATA_WIDTH-1:0]   mem_rdata_i,
+    output logic [AXI_DATA_WIDTH-1:0]   mem_wdata_o,
 
     AXI_BUS.Slave  slave
   );

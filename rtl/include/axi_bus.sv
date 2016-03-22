@@ -28,7 +28,7 @@ interface AXI_BUS
     parameter AXI_USER_WIDTH = 6
 );
 
-  localparam AXI_STRB_WIDTH = `EVAL_BE_WIDTH(AXI_DATA_WIDTH);
+  localparam AXI_STRB_WIDTH = AXI_DATA_WIDTH/8;
 
   logic [AXI_ADDR_WIDTH-1:0] aw_addr;
   logic [2:0]                aw_prot;

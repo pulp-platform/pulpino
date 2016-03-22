@@ -40,81 +40,165 @@ module axi2apb_wrap
   //********************************************************
   //************** AXI2APB WRAPER **************************
   //********************************************************
-  AXI_2_APB_32
-  #(
-    .AXI4_ADDRESS_WIDTH ( AXI_ADDR_WIDTH ),
-    .AXI4_RDATA_WIDTH   ( AXI_DATA_WIDTH ),
-    .AXI4_WDATA_WIDTH   ( AXI_DATA_WIDTH ),
-    .AXI4_ID_WIDTH      ( AXI_ID_WIDTH   ),
-    .AXI4_USER_WIDTH    ( 1              ),
 
-    .BUFF_DEPTH_SLAVE   ( 2              ),
-    .APB_NUM_SLAVES     ( APB_NUM_SLAVES ),
-    .APB_ADDR_WIDTH     ( APB_ADDR_WIDTH )
-  )
-  axi2apb_i
-  (
-    .ACLK       ( clk_i               ),
-    .ARESETn    ( rst_ni              ),
-    .test_en_i  ( test_en_i           ),
+  generate if (AXI_DATA_WIDTH == 32)
+    begin
+      AXI_2_APB_32
+      #(
+        .AXI4_ADDRESS_WIDTH ( AXI_ADDR_WIDTH ),
+        .AXI4_RDATA_WIDTH   ( AXI_DATA_WIDTH ),
+        .AXI4_WDATA_WIDTH   ( AXI_DATA_WIDTH ),
+        .AXI4_ID_WIDTH      ( AXI_ID_WIDTH   ),
+        .AXI4_USER_WIDTH    ( 1              ),
 
-    .AWID_i     ( axi_slave.aw_id     ),
-    .AWADDR_i   ( axi_slave.aw_addr   ),
-    .AWLEN_i    ( axi_slave.aw_len    ),
-    .AWSIZE_i   ( axi_slave.aw_size   ),
-    .AWBURST_i  ( axi_slave.aw_burst  ),
-    .AWLOCK_i   ( axi_slave.aw_lock   ),
-    .AWCACHE_i  ( axi_slave.aw_cache  ),
-    .AWPROT_i   ( axi_slave.aw_prot   ),
-    .AWREGION_i ( axi_slave.aw_region ),
-    .AWUSER_i   ( axi_slave.aw_user   ),
-    .AWQOS_i    ( axi_slave.aw_qos    ),
-    .AWVALID_i  ( axi_slave.aw_valid  ),
-    .AWREADY_o  ( axi_slave.aw_ready  ),
+        .BUFF_DEPTH_SLAVE   ( 2              ),
+        .APB_NUM_SLAVES     ( APB_NUM_SLAVES ),
+        .APB_ADDR_WIDTH     ( APB_ADDR_WIDTH )
+      )
+      axi2apb_i
+      (
+        .ACLK       ( clk_i               ),
+        .ARESETn    ( rst_ni              ),
+        .test_en_i  ( test_en_i           ),
 
-    .WDATA_i    ( axi_slave.w_data    ),
-    .WSTRB_i    ( axi_slave.w_strb    ),
-    .WLAST_i    ( axi_slave.w_last    ),
-    .WUSER_i    ( axi_slave.w_user    ),
-    .WVALID_i   ( axi_slave.w_valid   ),
-    .WREADY_o   ( axi_slave.w_ready   ),
+        .AWID_i     ( axi_slave.aw_id     ),
+        .AWADDR_i   ( axi_slave.aw_addr   ),
+        .AWLEN_i    ( axi_slave.aw_len    ),
+        .AWSIZE_i   ( axi_slave.aw_size   ),
+        .AWBURST_i  ( axi_slave.aw_burst  ),
+        .AWLOCK_i   ( axi_slave.aw_lock   ),
+        .AWCACHE_i  ( axi_slave.aw_cache  ),
+        .AWPROT_i   ( axi_slave.aw_prot   ),
+        .AWREGION_i ( axi_slave.aw_region ),
+        .AWUSER_i   ( axi_slave.aw_user   ),
+        .AWQOS_i    ( axi_slave.aw_qos    ),
+        .AWVALID_i  ( axi_slave.aw_valid  ),
+        .AWREADY_o  ( axi_slave.aw_ready  ),
 
-    .BID_o      ( axi_slave.b_id      ),
-    .BRESP_o    ( axi_slave.b_resp    ),
-    .BVALID_o   ( axi_slave.b_valid   ),
-    .BUSER_o    ( axi_slave.b_user    ),
-    .BREADY_i   ( axi_slave.b_ready   ),
+        .WDATA_i    ( axi_slave.w_data    ),
+        .WSTRB_i    ( axi_slave.w_strb    ),
+        .WLAST_i    ( axi_slave.w_last    ),
+        .WUSER_i    ( axi_slave.w_user    ),
+        .WVALID_i   ( axi_slave.w_valid   ),
+        .WREADY_o   ( axi_slave.w_ready   ),
 
-    .ARID_i     ( axi_slave.ar_id     ),
-    .ARADDR_i   ( axi_slave.ar_addr   ),
-    .ARLEN_i    ( axi_slave.ar_len    ),
-    .ARSIZE_i   ( axi_slave.ar_size   ),
-    .ARBURST_i  ( axi_slave.ar_burst  ),
-    .ARLOCK_i   ( axi_slave.ar_lock   ),
-    .ARCACHE_i  ( axi_slave.ar_cache  ),
-    .ARPROT_i   ( axi_slave.ar_prot   ),
-    .ARREGION_i ( axi_slave.ar_region ),
-    .ARUSER_i   ( axi_slave.ar_user   ),
-    .ARQOS_i    ( axi_slave.ar_qos    ),
-    .ARVALID_i  ( axi_slave.ar_valid  ),
-    .ARREADY_o  ( axi_slave.ar_ready  ),
+        .BID_o      ( axi_slave.b_id      ),
+        .BRESP_o    ( axi_slave.b_resp    ),
+        .BVALID_o   ( axi_slave.b_valid   ),
+        .BUSER_o    ( axi_slave.b_user    ),
+        .BREADY_i   ( axi_slave.b_ready   ),
 
-    .RID_o      ( axi_slave.r_id      ),
-    .RDATA_o    ( axi_slave.r_data    ),
-    .RRESP_o    ( axi_slave.r_resp    ),
-    .RLAST_o    ( axi_slave.r_last    ),
-    .RUSER_o    ( axi_slave.r_user    ),
-    .RVALID_o   ( axi_slave.r_valid   ),
-    .RREADY_i   ( axi_slave.r_ready   ),
+        .ARID_i     ( axi_slave.ar_id     ),
+        .ARADDR_i   ( axi_slave.ar_addr   ),
+        .ARLEN_i    ( axi_slave.ar_len    ),
+        .ARSIZE_i   ( axi_slave.ar_size   ),
+        .ARBURST_i  ( axi_slave.ar_burst  ),
+        .ARLOCK_i   ( axi_slave.ar_lock   ),
+        .ARCACHE_i  ( axi_slave.ar_cache  ),
+        .ARPROT_i   ( axi_slave.ar_prot   ),
+        .ARREGION_i ( axi_slave.ar_region ),
+        .ARUSER_i   ( axi_slave.ar_user   ),
+        .ARQOS_i    ( axi_slave.ar_qos    ),
+        .ARVALID_i  ( axi_slave.ar_valid  ),
+        .ARREADY_o  ( axi_slave.ar_ready  ),
 
-    .PENABLE    ( penable             ),
-    .PWRITE     ( pwrite              ),
-    .PADDR      ( paddr               ),
-    .PSEL       ( psel                ),
-    .PWDATA     ( pwdata              ),
-    .PRDATA     ( prdata              ),
-    .PREADY     ( pready              ),
-    .PSLVERR    ( pslverr             )
-  );
+        .RID_o      ( axi_slave.r_id      ),
+        .RDATA_o    ( axi_slave.r_data    ),
+        .RRESP_o    ( axi_slave.r_resp    ),
+        .RLAST_o    ( axi_slave.r_last    ),
+        .RUSER_o    ( axi_slave.r_user    ),
+        .RVALID_o   ( axi_slave.r_valid   ),
+        .RREADY_i   ( axi_slave.r_ready   ),
+
+        .PENABLE    ( penable             ),
+        .PWRITE     ( pwrite              ),
+        .PADDR      ( paddr               ),
+        .PSEL       ( psel                ),
+        .PWDATA     ( pwdata              ),
+        .PRDATA     ( prdata              ),
+        .PREADY     ( pready              ),
+        .PSLVERR    ( pslverr             )
+      );
+    end
+    else if (AXI_DATA_WIDTH == 64)
+    begin
+      AXI_2_APB
+      #(
+        .AXI4_ADDRESS_WIDTH ( AXI_ADDR_WIDTH ),
+        .AXI4_RDATA_WIDTH   ( AXI_DATA_WIDTH ),
+        .AXI4_WDATA_WIDTH   ( AXI_DATA_WIDTH ),
+        .AXI4_ID_WIDTH      ( AXI_ID_WIDTH   ),
+        .AXI4_USER_WIDTH    ( 1              ),
+
+        .BUFF_DEPTH_SLAVE   ( 2              ),
+        .APB_NUM_SLAVES     ( APB_NUM_SLAVES ),
+        .APB_ADDR_WIDTH     ( APB_ADDR_WIDTH )
+      )
+      axi2apb_i
+      (
+        .ACLK       ( clk_i               ),
+        .ARESETn    ( rst_ni              ),
+        .test_en_i  ( test_en_i           ),
+
+        .AWID_i     ( axi_slave.aw_id     ),
+        .AWADDR_i   ( axi_slave.aw_addr   ),
+        .AWLEN_i    ( axi_slave.aw_len    ),
+        .AWSIZE_i   ( axi_slave.aw_size   ),
+        .AWBURST_i  ( axi_slave.aw_burst  ),
+        .AWLOCK_i   ( axi_slave.aw_lock   ),
+        .AWCACHE_i  ( axi_slave.aw_cache  ),
+        .AWPROT_i   ( axi_slave.aw_prot   ),
+        .AWREGION_i ( axi_slave.aw_region ),
+        .AWUSER_i   ( axi_slave.aw_user   ),
+        .AWQOS_i    ( axi_slave.aw_qos    ),
+        .AWVALID_i  ( axi_slave.aw_valid  ),
+        .AWREADY_o  ( axi_slave.aw_ready  ),
+
+        .WDATA_i    ( axi_slave.w_data    ),
+        .WSTRB_i    ( axi_slave.w_strb    ),
+        .WLAST_i    ( axi_slave.w_last    ),
+        .WUSER_i    ( axi_slave.w_user    ),
+        .WVALID_i   ( axi_slave.w_valid   ),
+        .WREADY_o   ( axi_slave.w_ready   ),
+
+        .BID_o      ( axi_slave.b_id      ),
+        .BRESP_o    ( axi_slave.b_resp    ),
+        .BVALID_o   ( axi_slave.b_valid   ),
+        .BUSER_o    ( axi_slave.b_user    ),
+        .BREADY_i   ( axi_slave.b_ready   ),
+
+        .ARID_i     ( axi_slave.ar_id     ),
+        .ARADDR_i   ( axi_slave.ar_addr   ),
+        .ARLEN_i    ( axi_slave.ar_len    ),
+        .ARSIZE_i   ( axi_slave.ar_size   ),
+        .ARBURST_i  ( axi_slave.ar_burst  ),
+        .ARLOCK_i   ( axi_slave.ar_lock   ),
+        .ARCACHE_i  ( axi_slave.ar_cache  ),
+        .ARPROT_i   ( axi_slave.ar_prot   ),
+        .ARREGION_i ( axi_slave.ar_region ),
+        .ARUSER_i   ( axi_slave.ar_user   ),
+        .ARQOS_i    ( axi_slave.ar_qos    ),
+        .ARVALID_i  ( axi_slave.ar_valid  ),
+        .ARREADY_o  ( axi_slave.ar_ready  ),
+
+        .RID_o      ( axi_slave.r_id      ),
+        .RDATA_o    ( axi_slave.r_data    ),
+        .RRESP_o    ( axi_slave.r_resp    ),
+        .RLAST_o    ( axi_slave.r_last    ),
+        .RUSER_o    ( axi_slave.r_user    ),
+        .RVALID_o   ( axi_slave.r_valid   ),
+        .RREADY_i   ( axi_slave.r_ready   ),
+
+        .PENABLE    ( penable             ),
+        .PWRITE     ( pwrite              ),
+        .PADDR      ( paddr               ),
+        .PSEL       ( psel                ),
+        .PWDATA     ( pwdata              ),
+        .PRDATA     ( prdata              ),
+        .PREADY     ( pready              ),
+        .PSLVERR    ( pslverr             )
+      );
+    end
+  endgenerate
 
 endmodule

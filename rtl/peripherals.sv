@@ -123,8 +123,8 @@ module peripherals
   /// Peripheral Clock Gating                                    ///
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
-   
-  generate 
+
+  generate
      genvar i;
        for (i = 0; i < APB_NUM_SLAVES; i = i + 1) begin
         cluster_clock_gating core_clock_gate
