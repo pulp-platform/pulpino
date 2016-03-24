@@ -10,6 +10,8 @@ module uart_tb_rx
     input  logic rx_en,
     output logic word_done
   );
+  timeunit      1ps;
+  timeprecision 1ps;
 
   localparam BIT_PERIOD = (1000000000/BAUD_RATE*1000);
 
