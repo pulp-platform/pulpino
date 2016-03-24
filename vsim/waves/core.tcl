@@ -2,6 +2,8 @@
 set rvcores [find instances -recursive -bydu riscv_core -nodu]
 
 if {$rvcores ne ""} {
+  set rvprefetch [find instances -recursive -bydu riscv_prefetch_L0_buffer -nodu]
+
   add wave -group "Core"                                     $rvcores/*
   add wave -group "IF Stage" -group "Hwlp Ctrl"              $rvcores/if_stage_i/hwloop_controller_i/*
   if {$rvprefetch ne ""} {

@@ -22,6 +22,7 @@ add_subdirectory(testDivRem)
 add_subdirectory(testShufflePack)
 add_subdirectory(testAddSubNorm)
 add_subdirectory(testMacNorm)
+add_subdirectory(testDotMul)
 
 # other core features
 add_subdirectory(testCSR)
