@@ -74,12 +74,22 @@
   endgenerate
 `else
   task mem_preload;
+    reg [1023:0] l2_imem_file;
+    reg [1023:0] l2_dmem_file;
     begin
       $display("Preloading memory");
       #10;
 
-      $readmemh("slm_files/l2_stim.slm",    top_i.core_region_i.instr_mem.sp_ram_wrap_i.sp_ram_i.mem);
-      $readmemh("slm_files/tcdm_bank0.slm", top_i.core_region_i.data_mem.sp_ram_i.mem);
+      if(!$value$plusargs("l2_imem=%s", l2_imem_file))
+         l2_imem_file = "slm_files/l2_stim.slm";
+       $display("Preloading instruction memory from %0s", l2_imem_file);
+      $readmemh(l2_imem_file, top_i.core_region_i.instr_mem.sp_ram_wrap_i.sp_ram_i.mem);
+
+      if(!$value$plusargs("l2_dmem=%s", l2_dmem_file))
+         l2_dmem_file = "slm_files/tcdm_bank0.slm";
+       $display("Preloading data memory from %0s", l2_dmem_file);
+      $readmemh(l2_dmem_file, top_i.core_region_i.data_mem.sp_ram_i.mem);
+
     end
   endtask
 `endif
