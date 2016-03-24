@@ -4,8 +4,13 @@ set rvcores [find instances -recursive -bydu riscv_core -nodu]
 if {$rvcores ne ""} {
   add wave -group "Core"                                     $rvcores/*
   add wave -group "IF Stage" -group "Hwlp Ctrl"              $rvcores/if_stage_i/hwloop_controller_i/*
-  add wave -group "IF Stage" -group "Prefetch" -group "FIFO" $rvcores/if_stage_i/prefetch_32/prefetch_buffer_i/fifo_i/*
-  add wave -group "IF Stage" -group "Prefetch"               $rvcores/if_stage_i/prefetch_32/prefetch_buffer_i/*
+  if {$rvprefetch ne ""} {
+    add wave -group "IF Stage" -group "Prefetch" -group "L0"   $rvcores/if_stage_i/prefetch_128/prefetch_buffer_i/L0_buffer_i/*
+    add wave -group "IF Stage" -group "Prefetch"               $rvcores/if_stage_i/prefetch_128/prefetch_buffer_i/*
+  } {
+    add wave -group "IF Stage" -group "Prefetch" -group "FIFO" $rvcores/if_stage_i/prefetch_32/prefetch_buffer_i/fifo_i/*
+    add wave -group "IF Stage" -group "Prefetch"               $rvcores/if_stage_i/prefetch_32/prefetch_buffer_i/*
+  }
   add wave -group "IF Stage"                                 $rvcores/if_stage_i/*
   add wave -group "ID Stage"                                 $rvcores/id_stage_i/*
 #  add wave -group "RF"                                       $rvcores/id_stage_i/registers_i/mem
