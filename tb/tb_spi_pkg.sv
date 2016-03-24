@@ -2,9 +2,9 @@
   `define SPI_QUAD_TX 2'b01
   `define SPI_QUAD_RX 2'b10
 
-  `define SPI_SEMIPERIOD      50000    //10Mhz SPI CLK
+  `define SPI_SEMIPERIOD      50ns    //10Mhz SPI CLK
 
-  `define DELAY_BETWEEN_SPI   100000
+  `define DELAY_BETWEEN_SPI   100ns
 
   int                   num_stim,num_exp,num_cycles,num_err = 0;   // counters for statistics
 
@@ -377,4 +377,18 @@
     spi_write_reg(0,8'h1,8'h1);
 
     padmode_spi_master = `SPI_QUAD_TX;
+  endtask
+
+  task spi_check_return_codes;
+    output exit_code;
+
+    spi_read_word(use_qspi, 8'hB, 32'h1A00_7014, recv_data);
+    $display("[SPI] Received %X", recv_data);
+    if (recv_data != '0) begin
+      exit_code = `EXIT_FAIL;
+      $display("Test FAILED");
+    end else begin
+      exit_code = `EXIT_SUCCESS;
+      $display("Test OK");
+    end
   endtask

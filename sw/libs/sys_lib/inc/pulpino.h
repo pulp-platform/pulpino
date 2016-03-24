@@ -84,4 +84,6 @@
 /** Boot address register */
 #define BOOTREG     __PSC__(0x08)
 
+#define RES_STATUS  __PSC__(0x14)
+
 #endif

@@ -18,7 +18,7 @@ module tb;
   parameter  BAUDRATE      = 781250; // 1562500
   parameter  CLK_USE_FLL   = 0;  // 0 or 1
 
-  int                   exit_status = `EXIT_ERROR; // modelsim exit code, will be overwritten when successfull
+  int           exit_status = `EXIT_ERROR; // modelsim exit code, will be overwritten when successfull
 
   string        memload;
   logic         s_clk   = 1'b0;
@@ -212,16 +212,15 @@ module tb;
       spi_check(use_qspi);
     end
 
-    #200000
+    #200ns;
     fetch_enable = 1'b1;
 
     // end of computation
     wait(top_i.gpio_out[8]);
-    $fflush();
-    $stop();
 
-    spi_read_word(use_qspi, 8'hB, 32'h0000_0000, recv_data);
-    $display("[SPI] Received %X", recv_data);
+    spi_check_return_codes(exit_status);
+
+    $fflush();
     $stop();
   end
 

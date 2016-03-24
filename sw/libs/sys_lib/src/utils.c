@@ -18,11 +18,17 @@
 
 // exit loop
 void exit (int i) {
+  eoc(i);
   while (1);
 }
 
 // signal end of computation
 void eoc(int i) {
+  if (i != 0)
+    RES_STATUS = 1;
+  else
+    RES_STATUS = 0;
+
   // activate GPIO
   CGREG |= (1 << CGGPIO);
   // setup GPIO

@@ -82,9 +82,6 @@ main_entry:
 
   jal  uart_wait_tx_done;
 
-  addi   x10, x0, 0
-  jal  eoc;
-
   /* if program exits call exit routine from library */
   jal  x1, exit
 
