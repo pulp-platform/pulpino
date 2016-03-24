@@ -12,3 +12,9 @@ set cmd "vsim -quiet $TB \
   $VSIM_FLAGS"
 
 eval $cmd
+
+# check exit status in tb and quit the simulation accordingly
+proc run_and_exit {} {
+  run -all
+  quit -code [examine -radix decimal sim:/tb/exit_status]
+}

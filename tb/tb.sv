@@ -4,6 +4,10 @@
 `define REF_CLK_PERIOD   (2*15.25us)  // 32.786 kHz --> FLL reset value --> 50 MHz
 `define CLK_PERIOD       20.00ns      // 25 MHz
 
+`define EXIT_SUCCESS  0
+`define EXIT_FAIL     1
+`define EXIT_ERROR   -1
+
 module tb;
   timeunit      1ns;
   timeprecision 1ps;
@@ -13,6 +17,8 @@ module tb;
   parameter  ENABLE_VPI    = 0;
   parameter  BAUDRATE      = 781250; // 1562500
   parameter  CLK_USE_FLL   = 0;  // 0 or 1
+
+  int                   exit_status = `EXIT_ERROR; // modelsim exit code, will be overwritten when successfull
 
   string        memload;
   logic         s_clk   = 1'b0;
