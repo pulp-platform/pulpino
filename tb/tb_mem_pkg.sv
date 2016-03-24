@@ -11,6 +11,8 @@
     integer      data_size;
     integer      data_width;
     logic [31:0] data;
+    string       l2_imem_file;
+    string       l2_dmem_file;
     begin
       $display("Preloading memory");
 
@@ -23,8 +25,17 @@
       instr_mem = new [instr_size/4];
       data_mem  = new [data_size/4];
 
-      $readmemh("slm_files/l2_stim.slm",    instr_mem);
-      $readmemh("slm_files/tcdm_bank0.slm", data_mem);
+      if(!$value$plusargs("l2_imem=%s", l2_imem_file))
+         l2_imem_file = "slm_files/l2_stim.slm";
+
+      $display("Preloading instruction memory from %0s", l2_imem_file);
+      $readmemh(l2_imem_file, instr_mem);
+
+      if(!$value$plusargs("l2_dmem=%s", l2_dmem_file))
+         l2_dmem_file = "slm_files/tcdm_bank0.slm";
+
+      $display("Preloading data memory from %0s", l2_dmem_file);
+      $readmemh(l2_dmem_file, data_mem);
 
 
       // preload data memory
