@@ -53,6 +53,9 @@ def find_server():
     print tcolors.ERROR + "ERROR: could not find remote server." + tcolors.ENDC
     sys.exit(1)
 
+if len(sys.argv) > 1:
+    server = sys.argv[1]
+
 if not vars().has_key('server'):
     [server, group, remote] = find_server()
 
@@ -80,7 +83,7 @@ else:
 # creates an IPApproX database
 ipdb = ipstools.IPDatabase(ips_dir="./ips", skip_scripts=True)
 # updates the IPs from the git repo
-ipdb.update_ips()
+ipdb.update_ips(server = server)
 
 # launch generate-ips.py
 execute("./generate-scripts.py")

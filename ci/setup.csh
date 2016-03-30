@@ -2,7 +2,7 @@
 
 setenv PATH /usr/scratch2/larain/haugoug/artefacts/riscv_gcc/2.2.2/bin:$PATH
 
-./update-ips.py
+./update-ips.py git@iis-git.ee.ethz.ch   || exit 1
 
 set OBJDUMP=`which riscv32-unknown-elf-objdump`
 set OBJCOPY=`which riscv32-unknown-elf-objcopy`
