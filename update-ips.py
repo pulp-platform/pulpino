@@ -26,17 +26,27 @@ def find_server():
     stdout = stdout.split('\n')
     for line in stdout:
         if "origin" in line:
-            splits = line.split(' ')
-            splits = splits[0].split('\t')
+            tmp = line.split(' ')
+            tmp = tmp[0].split('\t')
 
-            remote = splits[1]
+            remote = tmp[1]
 
-            # now we have to remove the pulpino.git suffix and figure out the group
-            remote =  remote.rsplit('/', 1)[0]
-            tmp = remote[::-1]
-            tmp = re.split(r'[:/]', tmp, 1)
-            server = tmp[1][::-1]
-            group = tmp[0][::-1]
+            if "https://" in remote:
+                # first remove the https, we'll put it back later
+                remote = remote[8:]
+
+                # now we have to remove the pulpino.git suffix and figure out the group
+                tmp = remote.split('/', 2)
+                server = "https://%s" % (tmp[0])
+                group = tmp[1]
+                remote = "%s/%s" % (server, group)
+            else:
+                # now we have to remove the pulpino.git suffix and figure out the group
+                remote =  remote.rsplit('/', 1)[0]
+                tmp = remote[::-1]
+                tmp = re.split(r'[:/]', tmp, 1)
+                server = tmp[1][::-1]
+                group = tmp[0][::-1]
 
             return [server, group, remote]
 
@@ -46,7 +56,7 @@ def find_server():
 if not vars().has_key('server'):
     [server, group, remote] = find_server()
 
-print "Using remote git server %s" % (server)
+print "Using remote git server %s, remote is %s" % (server, remote)
 
 
 # download IPApproX tools in ./ipstools and import them
@@ -58,16 +68,15 @@ if os.path.exists("ipstools") and os.path.isdir("ipstools"):
     import ipstools
 else:
     # try to find the ipstools repository
-    if execute("git clone %s/IPApproX ipstools" % (remote)) != 0:
-        if execute("git clone %s:pulp-tools/IPApproX ipstools" % (server)) != 0:
-            execute("git clone %s/pulp-tools/IPApproX ipstools" % (server))
+    if "http" in remote:
+        if execute("git clone %s/IPApproX.git ipstools" % (remote)) != 0:
+            execute("git clone %s/pulp-tools/IPApproX.git ipstools" % (server))
+    else:
+        if execute("git clone %s/IPApproX.git ipstools" % (remote)) != 0:
+            execute("git clone %s:pulp-tools/IPApproX.git ipstools" % (server))
 
     import ipstools
 
-try:
-    os.mkdir("fe/ips")
-except OSError:
-    pass
 # creates an IPApproX database
 ipdb = ipstools.IPDatabase(ips_dir="./ips", skip_scripts=True)
 # updates the IPs from the git repo
@@ -75,4 +84,3 @@ ipdb.update_ips()
 
 # launch generate-ips.py
 execute("./generate-scripts.py")
-
