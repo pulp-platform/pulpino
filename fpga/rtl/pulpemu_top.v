@@ -22,7 +22,13 @@ module pulpemu_top(
   FIXED_IO_ps_srstb,
   LD_o,
   sw_i,
-  btn_i
+  btn_i,
+  oled_sclk_io,
+  oled_sdin_io,
+  oled_dc_o,
+  oled_res_o,
+  oled_vbat_o,
+  oled_vdd_o
   );
 
   inout  [14:0] DDR_addr;
@@ -50,6 +56,12 @@ module pulpemu_top(
   output  [7:0] LD_o;
   input   [7:0] sw_i;
   input   [4:0] btn_i;
+  inout         oled_sclk_io;
+  inout         oled_sdin_io;
+  output        oled_dc_o;
+  output        oled_res_o;
+  output        oled_vbat_o;
+  output        oled_vdd_o;
 
 
   wire [14:0] DDR_addr;
@@ -101,6 +113,13 @@ module pulpemu_top(
   wire [31:0] gpio_in;                 // input
   wire [31:0] gpio_in_ps7;             // output of ps7 => to pulpino
   wire [31:0] gpio_out;                // output
+
+  wire        scl_oen;
+  wire        scl_in;
+  wire        scl_out;
+  wire        sda_oen;
+  wire        sda_in;
+  wire        sda_out;
 
   reg   [7:0] LD_q;
 
@@ -188,6 +207,19 @@ module pulpemu_top(
   assign gpio_in[15:8]  = 8'b0;
   assign gpio_in[20:16] = btn_i;
   assign gpio_in[31:21] = gpio_in_ps7[31:21];
+
+
+  // I2C for LCD
+  assign oled_sclk_io = (~scl_oen) ? scl_out : 1'bz;
+  assign scl_in       = oled_sclk_io;
+  assign oled_sdin_io = (~sda_oen) ? sda_out : 1'bz;
+  assign sda_in       = oled_sdin_io;
+
+  assign oled_vbat_o  = 1'b1;
+  assign oled_vdd_o   = 1'b1;
+
+  assign oled_dc_o    = gpio_out[16];
+  assign oled_res_o   = gpio_out[17];
 
   // Zynq Processing System
   ps7_wrapper ps7_wrapper_i (
@@ -325,12 +357,12 @@ module pulpemu_top(
     .spi_master_sdo2_o (                ),
     .spi_master_sdo3_o (                ),
 
-    .scl_i             (                ),
-    .scl_o             (                ),
-    .scl_oen_o         (                ),
-    .sda_i             (                ),
-    .sda_o             (                ),
-    .sda_oen_o         (                ),
+    .scl_i             ( scl_in         ),
+    .scl_o             ( scl_out        ),
+    .scl_oen_o         ( scl_oen        ),
+    .sda_i             ( sda_in         ),
+    .sda_o             ( sda_out        ),
+    .sda_oen_o         ( sda_oen        ),
 
     .gpio_in           ( gpio_in        ),
     .gpio_out          ( gpio_out       ),

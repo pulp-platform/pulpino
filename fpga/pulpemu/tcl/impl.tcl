@@ -25,6 +25,17 @@ set_property PACKAGE_PIN U19 [get_ports {LD_o[6]}];  # "LD6"
 set_property PACKAGE_PIN U14 [get_ports {LD_o[7]}];  # "LD7"
 
 # ----------------------------------------------------------------------------
+# OLED Display - Bank 13
+# ----------------------------------------------------------------------------
+set_property PACKAGE_PIN AB12 [get_ports {oled_sclk_io}];  # "OLED-SCLK"
+set_property PACKAGE_PIN AA12 [get_ports {oled_sdin_io}];  # "OLED-SCIN"
+set_property PACKAGE_PIN U10  [get_ports {oled_dc_o}];     # "OLED-DC"
+set_property PACKAGE_PIN U9   [get_ports {oled_res_o}];    # "OLED-RES"
+set_property PACKAGE_PIN U11  [get_ports {oled_vbat_o}];   # "OLED-VBAT"
+set_property PACKAGE_PIN U12  [get_ports {oled_vdd_o}];    # "OLED-VDD"
+
+
+# ----------------------------------------------------------------------------
 # User Push Buttons - Bank 34
 # ----------------------------------------------------------------------------
 set_property PACKAGE_PIN P16 [get_ports {btn_i[0]}];  # "BTNC"
@@ -48,6 +59,8 @@ set_property PACKAGE_PIN M15 [get_ports {sw_i[7]}];  # "SW7"
 set_property IOSTANDARD LVCMOS33 [get_ports -of_objects [get_iobanks 33]];
 set_property IOSTANDARD LVCMOS18 [get_ports -of_objects [get_iobanks 34]];
 set_property IOSTANDARD LVCMOS18 [get_ports -of_objects [get_iobanks 35]];
+set_property IOSTANDARD LVCMOS33 [get_ports -of_objects [get_iobanks 13]];
+
 
 
 # physical constraints
