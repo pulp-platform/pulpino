@@ -7,7 +7,7 @@ setenv PATH /usr/scratch2/larain/haugoug/artefacts/riscv_gcc/2.2.8/:$PATH
 set OBJDUMP=`which riscv32-unknown-elf-objdump`
 set OBJCOPY=`which riscv32-unknown-elf-objcopy`
 set TARGET_C_FLAGS="-m32 -O3"
-set COMPILER="riscv32-unknown-elf-gcc"
+set COMPILER=`which riscv32-unknown-elf-gcc`
 set GCC_ETH=1
 
 set TB="run.tcl"
