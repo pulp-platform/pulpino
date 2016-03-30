@@ -55,6 +55,8 @@ def find_server():
 
 if len(sys.argv) > 1:
     server = sys.argv[1]
+    group  = "pulp-project"
+    remote = "%s/%s" % (server, group)
 
 if not vars().has_key('server'):
     [server, group, remote] = find_server()
