@@ -1,4 +1,7 @@
 NCORES=4
+ARM_TOOLCHAIN_PATH := $(shell which arm-xilinx-linux-gnueabi-gcc)
+ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
+ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
 
 
 all: u-boot linux rootfs devtree fsbl sd_image/BOOT.BIN
@@ -59,7 +62,7 @@ buildroot:
 	cd buildroot && git checkout tags/2015.05
 
 buildroot/.config: $(filter-out $(wildcard buildroot), buildroot)
-	cp ./buildroot.config ./buildroot/.config
+	cat ./buildroot.config | sed 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)#g' > ./buildroot/.config
 
 buildroot/output/images/rootfs.tar: buildroot/.config
 	cd buildroot && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- -j${NCORES}
