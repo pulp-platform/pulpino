@@ -85,7 +85,7 @@ else:
 # creates an IPApproX database
 ipdb = ipstools.IPDatabase(ips_dir="./ips", skip_scripts=True)
 # updates the IPs from the git repo
-ipdb.update_ips(server = server)
+ipdb.update_ips(remote = remote)
 
 # launch generate-ips.py
 execute("./generate-scripts.py")
