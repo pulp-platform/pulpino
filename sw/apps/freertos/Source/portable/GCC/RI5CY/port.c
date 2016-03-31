@@ -90,7 +90,7 @@
  * causing the 31 (32 register + mepc - x0 - x2) registers to be on the stack twice.
  *
  * Then we load the stack pointer of the current task and push all registers to the stack.
- * The last thing we do is to adjust the stack poitner (sp) to accomodate for the memory
+ * The last thing we do is to adjust the stack poitner (sp) to accommodate for the memory
  * we used.
  *
  * The interrupts will have been disabled during the call to portSAVE_CONTEXT()
@@ -195,7 +195,7 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 {
     int usAddress = ( int ) pxCode;
 
-    /* End of stack marker. Usefull for debugging - unncecessary for deployment */
+    /* End of stack marker. Useful for debugging - unncecessary for deployment */
     *pxTopOfStack = ( StackType_t ) 0xdeadbeef;
     pxTopOfStack--;
 

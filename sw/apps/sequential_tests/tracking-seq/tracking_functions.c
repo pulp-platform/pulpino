@@ -70,7 +70,7 @@ void blob_formation(){
 		// the pixel is assigned to the closer blob (min r2)
 
 			r2min_t = RLIM ;		// to be minimized
-			tag 	= NB_BLOB ;		// if tag = NB_BLOB, pixel is assigned to noone
+			tag 	= NB_BLOB ;		// if tag = NB_BLOB, pixel is assigned to no one
 
 			y_t      = (pixel[i++] & 0x7F);
 			x_t      = (pixel[i++] & 0x3F);
@@ -472,7 +472,7 @@ void blob_merge()
 			
 			//update next i blob and final list
 			if(!coll_flag) {	
-			// if i blob hasn't merged any j blob it will be transfered into official blob list
+			// if i blob hasn't merged any j blob it will be transferred into official blob list
 			// else check if new bigger blob can incorporate any other j blob
 				
 				write_blob_list(NB_BLOB,i);

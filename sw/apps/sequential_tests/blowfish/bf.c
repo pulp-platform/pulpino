@@ -60,7 +60,7 @@ error+=1;
     printf("Ok!!\n",0,0,0,0);
   }
   else {
-    printf("Not OK! %d errors occured!\n",error,0,0,0);
+    printf("Not OK! %d errors occurred!\n",error,0,0,0);
   }
 
   /* int *DEFAULT_RESULT; */

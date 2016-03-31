@@ -63,7 +63,7 @@ void int_init(void);
 /**
  * @brief Main interrupt service routine.
  * 
- * Calls the appropiate ISR.
+ * Calls the appropriate ISR.
  *
  */
 void int_main();
