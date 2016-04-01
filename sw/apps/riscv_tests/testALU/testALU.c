@@ -175,6 +175,7 @@ void check_logic_imm(testresult_t *result, void (*start)(), void (*stop)()) {
 
 void check_shifts(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i;
+  uint32_t act;
 
   //-----------------------------------------------------------------
   // Check sll
@@ -212,13 +213,31 @@ void check_shifts(testresult_t *result, void (*start)(), void (*stop)()) {
   //-----------------------------------------------------------------
   // Check p.ror
   //-----------------------------------------------------------------
-  // for(i = 0; i < (sizeof(g_ror_act)/4); i++) {
-  //   asm volatile ("p.ror %[c], %[a], %[b]\n"
-  //                 : [c] "+r" (g_ror_act[i])
-  //                 : [a] "r"  (g_ror_a[i]), [b] "r" (g_ror_b[i]));
+  for(i = 0; i < (sizeof(g_ror_act)/4); i++) {
+    asm volatile ("p.ror %[c], %[a], %[b]\n"
+                  : [c] "+r" (g_ror_act[i])
+                  : [a] "r"  (g_ror_a[i]), [b] "r" (g_ror_b[i]));
 
-  //   check_uint32(result, "p.ror", g_ror_act[i],  g_ror_exp[i]);
-  // }
+    check_uint32(result, "p.ror", g_ror_act[i],  g_ror_exp[i]);
+  }
+
+  asm volatile ("p.ror %[c], %[a], %[b]\n"
+                : [c] "=r" (act)
+                : [a] "r"  (0x12345678), [b] "r" (0));
+
+  check_uint32(result, "p.ror", act, 0x12345678);
+
+  asm volatile ("p.ror %[c], %[a], %[b]\n"
+                : [c] "=r" (act)
+                : [a] "r"  (0x12345678), [b] "r" (1));
+
+  check_uint32(result, "p.ror", act, 0x091A2B3C);
+
+  asm volatile ("p.ror %[c], %[a], %[b]\n"
+                : [c] "=r" (act)
+                : [a] "r"  (0x12345678), [b] "r" (31));
+
+  check_uint32(result, "p.ror", act, 0x2468ACF0);
 }
 
 void check_shifts_imm(testresult_t *result, void (*start)(), void (*stop)()) {
