@@ -193,7 +193,7 @@ int spi_read_reg(unsigned int addr) {
   }
 
 
-  // check if write was sucessful
+  // check if write was successful
   if (ioctl(fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
     perror("SPI_IOC_MESSAGE");
     retval = -1;
@@ -311,7 +311,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
   // prepare for readback
   rd_buf = (char*)malloc(transfer_len);
   if (rd_buf == NULL) {
-    printf("Unable to acquire buffer to check if write was sucessful\n");
+    printf("Unable to acquire buffer to check if write was successful\n");
 
     retval = -1;
     goto fail;
@@ -340,7 +340,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
   wr_buf[3] = addr >> 8;
   wr_buf[4] = addr;
 
-  // check if write was sucessful
+  // check if write was successful
   if (ioctl(fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
     perror("SPI_IOC_MESSAGE");
     retval = -1;

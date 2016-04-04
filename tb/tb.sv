@@ -18,7 +18,7 @@ module tb;
   parameter  BAUDRATE      = 781250; // 1562500
   parameter  CLK_USE_FLL   = 0;  // 0 or 1
 
-  int           exit_status = `EXIT_ERROR; // modelsim exit code, will be overwritten when successfull
+  int           exit_status = `EXIT_ERROR; // modelsim exit code, will be overwritten when successful
 
   string        memload;
   logic         s_clk   = 1'b0;

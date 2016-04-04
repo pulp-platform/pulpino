@@ -32,7 +32,7 @@
 #define I2C_STOP_WRITE  0x50
 
 #define I2C_CTR_EN        0x80 // enable only
-#define I2C_CTR_INTEN     0x40 // interupt enable only
+#define I2C_CTR_INTEN     0x40 // interrupt enable only
 #define I2C_CTR_EN_INTEN  0xC0 // enable i2c and interrupts
 
 #define I2C_REG_PRE             ( I2C_BASE_ADDR + 0x00 )
@@ -58,7 +58,7 @@ void i2c_setup(int prescaler,int enable);
 
 /** Sends data via I2C.
  *
- * @param int value - data that sould be transmitted.
+ * @param int value - data that should be transmitted.
  *
 */
 void i2c_send_data(int value);

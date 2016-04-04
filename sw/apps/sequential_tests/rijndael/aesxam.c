@@ -197,12 +197,12 @@ int main()
 	for (i = 0; i < 16; i++){
 	  if (encoutbuf[i] != check_encoutbuf[i]) {
 	    error+=1;
-	    /* 	  printf("Error occured in encryption\n",0,0,0,0); */
+	    /* 	  printf("Error occurred in encryption\n",0,0,0,0); */
 	    //printf("encrypted: %d, expected: %d\n",encoutbuf[i],check_encoutbuf[i],0,0);
 	  }
 	  if (decoutbuf[i] != check_decoutbuf[i]) {
 	    error+=1;
-	    /* 	  printf("Error occured in decryption\n",0,0,0,0); */
+	    /* 	  printf("Error occurred in decryption\n",0,0,0,0); */
 	    //printf("decrypted: %d, expected: %d\n",decoutbuf[i],check_decoutbuf[i],0,0);
 	  } 
 	}
