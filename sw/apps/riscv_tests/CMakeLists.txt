@@ -12,6 +12,7 @@ add_subdirectory(testExceptions)
 
 # arithmetic operations
 add_subdirectory(testALU)
+add_subdirectory(testALUExt)
 
 # ETH specific features
 add_subdirectory(testBitManipulation)
