@@ -19,6 +19,8 @@
 #
 
 # APB IPs
+apb/apb_node:
+  commit: master
 apb/apb_event_unit:
   commit: master
 apb/apb_fll_if:

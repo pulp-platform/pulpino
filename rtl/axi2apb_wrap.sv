@@ -16,8 +16,7 @@ module axi2apb_wrap
     parameter AXI_DATA_WIDTH   = 32,
     parameter AXI_USER_WIDTH   = 6,
     parameter AXI_ID_WIDTH     = 6,
-    parameter APB_ADDR_WIDTH   = 12,
-    parameter APB_NUM_SLAVES   = 8
+    parameter APB_ADDR_WIDTH   = 32
 )
 (
     input logic                                 clk_i,
@@ -26,14 +25,8 @@ module axi2apb_wrap
 
     AXI_BUS.Slave                               axi_slave,
 
-    output logic                                penable,
-    output logic                                pwrite,
-    output logic        [APB_ADDR_WIDTH-1:0]    paddr,
-    output logic        [APB_NUM_SLAVES-1:0]    psel,
-    output logic                      [31:0]    pwdata,
-    input  logic [APB_NUM_SLAVES-1:0] [31:0]    prdata,
-    input  logic        [APB_NUM_SLAVES-1:0]    pready,
-    input  logic        [APB_NUM_SLAVES-1:0]    pslverr
+    APB_BUS.Master                              apb_master
+
 );
 
 
@@ -43,7 +36,7 @@ module axi2apb_wrap
 
   generate if (AXI_DATA_WIDTH == 32)
     begin
-      AXI_2_APB_32
+      axi2apb32
       #(
         .AXI4_ADDRESS_WIDTH ( AXI_ADDR_WIDTH ),
         .AXI4_RDATA_WIDTH   ( AXI_DATA_WIDTH ),
@@ -52,7 +45,6 @@ module axi2apb_wrap
         .AXI4_USER_WIDTH    ( 1              ),
 
         .BUFF_DEPTH_SLAVE   ( 2              ),
-        .APB_NUM_SLAVES     ( APB_NUM_SLAVES ),
         .APB_ADDR_WIDTH     ( APB_ADDR_WIDTH )
       )
       axi2apb_i
@@ -110,19 +102,19 @@ module axi2apb_wrap
         .RVALID_o   ( axi_slave.r_valid   ),
         .RREADY_i   ( axi_slave.r_ready   ),
 
-        .PENABLE    ( penable             ),
-        .PWRITE     ( pwrite              ),
-        .PADDR      ( paddr               ),
-        .PSEL       ( psel                ),
-        .PWDATA     ( pwdata              ),
-        .PRDATA     ( prdata              ),
-        .PREADY     ( pready              ),
-        .PSLVERR    ( pslverr             )
+        .PENABLE    ( apb_master.penable  ),
+        .PWRITE     ( apb_master.pwrite   ),
+        .PADDR      ( apb_master.paddr    ),
+        .PSEL       ( apb_master.psel     ),
+        .PWDATA     ( apb_master.pwdata   ),
+        .PRDATA     ( apb_master.prdata   ),
+        .PREADY     ( apb_master.pready   ),
+        .PSLVERR    ( apb_master.pslverr  )
       );
     end
     else if (AXI_DATA_WIDTH == 64)
     begin
-      AXI_2_APB
+      axi2apb
       #(
         .AXI4_ADDRESS_WIDTH ( AXI_ADDR_WIDTH ),
         .AXI4_RDATA_WIDTH   ( AXI_DATA_WIDTH ),
@@ -131,7 +123,6 @@ module axi2apb_wrap
         .AXI4_USER_WIDTH    ( 1              ),
 
         .BUFF_DEPTH_SLAVE   ( 2              ),
-        .APB_NUM_SLAVES     ( APB_NUM_SLAVES ),
         .APB_ADDR_WIDTH     ( APB_ADDR_WIDTH )
       )
       axi2apb_i
@@ -189,14 +180,14 @@ module axi2apb_wrap
         .RVALID_o   ( axi_slave.r_valid   ),
         .RREADY_i   ( axi_slave.r_ready   ),
 
-        .PENABLE    ( penable             ),
-        .PWRITE     ( pwrite              ),
-        .PADDR      ( paddr               ),
-        .PSEL       ( psel                ),
-        .PWDATA     ( pwdata              ),
-        .PRDATA     ( prdata              ),
-        .PREADY     ( pready              ),
-        .PSLVERR    ( pslverr             )
+        .PENABLE    ( apb_master.penable  ),
+        .PWRITE     ( apb_master.pwrite   ),
+        .PADDR      ( apb_master.paddr    ),
+        .PSEL       ( apb_master.psel     ),
+        .PWDATA     ( apb_master.pwdata   ),
+        .PRDATA     ( apb_master.prdata   ),
+        .PREADY     ( apb_master.pready   ),
+        .PSLVERR    ( apb_master.pslverr  )
       );
     end
   endgenerate
