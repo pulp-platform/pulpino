@@ -15,7 +15,7 @@ if {$rvcores ne ""} {
   }
   add wave -group "IF Stage"                                 $rvcores/if_stage_i/*
   add wave -group "ID Stage"                                 $rvcores/id_stage_i/*
-#  add wave -group "RF"                                       $rvcores/id_stage_i/registers_i/mem
+  add wave -group "RF"                                       $rvcores/id_stage_i/registers_i/mem
   add wave -group "Decoder"                                  $rvcores/id_stage_i/decoder_i/*
   add wave -group "Controller"                               $rvcores/id_stage_i/controller_i/*
   add wave -group "Exc Ctrl"                                 $rvcores/id_stage_i/exc_controller_i/*
@@ -38,7 +38,7 @@ if {$or10n_core ne ""} {
   add wave -group "Core"                                     $or10n_core/*
   add wave -group "IF Stage"                                 $or10n_core/if_stage_i/*
   add wave -group "ID Stage"                                 $or10n_core/id_stage_i/*
-#  add wave -group "RF"                                       $or10n_core/id_stage_i/registers_i/mem
+  add wave -group "RF"                                       $or10n_core/id_stage_i/registers_i/mem
   add wave -group "Controller"                               $or10n_core/id_stage_i/controller_i/*
   add wave -group "Exc Ctrl"                                 $or10n_core/id_stage_i/exc_controller_i/*
   add wave -group "EX Stage" -group "ALU"                    $or10n_core/ex_stage_i/alu_i/*

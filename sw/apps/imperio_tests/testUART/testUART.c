@@ -25,9 +25,7 @@ testcase_t testcases[] = {
 
 int main()
 {
-  run_suite(testcases);
-
-  return 0;
+  return run_suite(testcases);
 }
 
 void check_uart(testresult_t *result, void (*start)(), void (*stop)()) {
@@ -46,11 +44,10 @@ void check_uart(testresult_t *result, void (*start)(), void (*stop)()) {
 
         if (c != '0' + i) {
           result->errors++;
-          printf("Wrong character received: %c\n", c);
+          printf("Error: act: %c; exp: %c\n", c, '0' + i);
+          return;
         }
       }
     }
   }
-
-  synch_barrier();
 }
