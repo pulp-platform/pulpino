@@ -25,9 +25,9 @@ module peripherals
     // Clock and Reset
     input logic clk_i,
     input logic rst_n,
-    
+
     AXI_BUS.Master axi_spi_master,
-    
+
     input  logic             spi_clk_i,
     input  logic             testmode_i,
     input  logic             spi_cs_i,
@@ -40,9 +40,9 @@ module peripherals
     input  logic             spi_sdi1_i,
     input  logic             spi_sdi2_i,
     input  logic             spi_sdi3_i,
-    
+
     AXI_BUS.Slave  slave,
-    
+
     output logic              uart_tx,
     input  logic              uart_rx,
     output logic              uart_rts,
@@ -95,12 +95,12 @@ module peripherals
     output logic       [31:0] pad_mux_o,
     output logic       [31:0] boot_addr_o
   );
-  
+
   localparam APB_ADDR_WIDTH  = 32;
   localparam APB_NUM_SLAVES  = 8;
-     
+
   APB_BUS s_apb_bus();
-  
+
   APB_BUS s_uart_bus();
   APB_BUS s_gpio_bus();
   APB_BUS s_spi_bus();
@@ -109,7 +109,7 @@ module peripherals
   APB_BUS s_i2c_bus();
   APB_BUS s_fll_bus();
   APB_BUS s_soc_ctrl_bus();
-  
+
   logic [1:0]   s_spim_event;
   logic [3:0]   timer_irq;
   logic [31:0]  peripheral_clock_gate_ctrl;
@@ -118,13 +118,13 @@ module peripherals
   logic         i2c_event;
   logic         s_power_event;
   logic         s_gpio_event;
-  
+
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
   /// Peripheral Clock Gating                                    ///
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
-  
+
   generate
      genvar i;
        for (i = 0; i < APB_NUM_SLAVES; i = i + 1) begin
@@ -137,7 +137,7 @@ module peripherals
         );
       end
    endgenerate
-  
+
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
   /// SPI Slave, AXI Master                                      ///
@@ -178,7 +178,7 @@ module peripherals
   /// AXI2APB Bridge                                             ///
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
-  
+
   axi2apb_wrap
   #(
       .AXI_ADDR_WIDTH ( AXI_ADDR_WIDTH     ),
@@ -189,13 +189,13 @@ module peripherals
   )
   axi2apb_i
   (
-    .clk_i     ( clk_i     ),
-    .rst_ni    ( rst_n     ),
-    .test_en_i ( testmode_i),
+    .clk_i     ( clk_i      ),
+    .rst_ni    ( rst_n      ),
+    .test_en_i ( testmode_i ),
 
-    .axi_slave ( slave     ),
-    
-    .apb_master( s_apb_bus )
+    .axi_slave ( slave      ),
+
+    .apb_master( s_apb_bus  )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -203,29 +203,29 @@ module peripherals
   /// APB Bus                                                    ///
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
-  
+
   periph_bus_wrap
   #(
-     .APB_ADDR_WIDTH(32),
-     .APB_DATA_WIDTH(32)
+     .APB_ADDR_WIDTH( APB_ADDR_WIDTH ),
+     .APB_DATA_WIDTH( 32             )
   )
   periph_bus_i
   (
-     .clk_i(clk_i),
-     .rst_ni(rst_ni),
-     
-     .apb_slave(s_apb_bus),
-     
-     .uart_master(s_uart_bus),
-     .gpio_master(s_gpio_bus),
-     .spi_master(s_spi_bus),
-     .timer_master(s_timer_bus),
-     .event_unit_master(s_event_unit_bus),
-     .i2c_master(s_i2c_bus),
-     .fll_master(s_fll_bus),
-     .soc_ctrl_master(s_soc_ctrl_bus)
+     .clk_i             ( clk_i            ),
+     .rst_ni            ( rst_ni           ),
+
+     .apb_slave         ( s_apb_bus        ),
+
+     .uart_master       ( s_uart_bus       ),
+     .gpio_master       ( s_gpio_bus       ),
+     .spi_master        ( s_spi_bus        ),
+     .timer_master      ( s_timer_bus      ),
+     .event_unit_master ( s_event_unit_bus ),
+     .i2c_master        ( s_i2c_bus        ),
+     .fll_master        ( s_fll_bus        ),
+     .soc_ctrl_master   ( s_soc_ctrl_bus   )
   );
-  
+
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
   /// APB Slave 0: APB UART interface                            ///
@@ -245,7 +245,7 @@ module peripherals
     .PRDATA   ( s_uart_bus.prdata  ),
     .PREADY   ( s_uart_bus.pready  ),
     .PSLVERR  ( s_uart_bus.pslverr ),
-    
+
     .INT      ( s_uart_event ),   //Interrupt output
 
     .OUT1N    (),                    //Output 1
