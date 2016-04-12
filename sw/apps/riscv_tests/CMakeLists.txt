@@ -20,7 +20,7 @@ add_subdirectory(testCnt)
 add_subdirectory(testClip)
 add_subdirectory(testVecArith)
 # disabled for now
-#add_subdirectory(testDivRem)
+add_subdirectory(testDivRem)
 add_subdirectory(testShufflePack)
 add_subdirectory(testAddSubNorm)
 add_subdirectory(testMacNorm)
