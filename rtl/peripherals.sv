@@ -212,7 +212,7 @@ module peripherals
   periph_bus_i
   (
      .clk_i             ( clk_i            ),
-     .rst_ni            ( rst_ni           ),
+     .rst_ni            ( rst_n            ),
 
      .apb_slave         ( s_apb_bus        ),
 
