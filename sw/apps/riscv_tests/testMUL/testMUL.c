@@ -13,6 +13,8 @@
 #include "utils.h"
 #include "bench.h"
 
+#include "stimuli.h"
+
 void check_mulh  (testresult_t *result, void (*start)(), void (*stop)());
 void check_mulhu (testresult_t *result, void (*start)(), void (*stop)());
 void check_mulhsu(testresult_t *result, void (*start)(), void (*stop)());
@@ -65,6 +67,7 @@ void check_mulh(testresult_t *result, void (*start)(), void (*stop)()) {
   int act;
   int a;
   int b;
+  int i;
 
   util_check_mulh(result, 0x0, 0x0, 0x0);
   util_check_mulh(result, 0x00010000, 0x00010000, 0x00000001);
@@ -76,12 +79,17 @@ void check_mulh(testresult_t *result, void (*start)(), void (*stop)()) {
   util_check_mulh(result, 0xFFFFFFFF, 0xFFFFFFFF, 0x00000000);
   util_check_mulh(result, 0xFFFFFFFF, 0x00000001, 0xFFFFFFFF);
   util_check_mulh(result, 0x00000001, 0xFFFFFFFF, 0xFFFFFFFF);
+
+  for(i = 0; i < n_stimuli; i++) {
+    util_check_mulh(result, stim_mulh_a[i], stim_mulh_b[i], stim_mulh_exp[i]);
+  }
 }
 
 void check_mulhu(testresult_t *result, void (*start)(), void (*stop)()) {
   int act;
   int a;
   int b;
+  int i;
 
   util_check_mulhu(result, 0x0, 0x0, 0x0);
   util_check_mulhu(result, 0x00010000, 0x00010000, 0x00000001);
@@ -93,12 +101,17 @@ void check_mulhu(testresult_t *result, void (*start)(), void (*stop)()) {
   util_check_mulhu(result, 0xFFFFFFFF, 0xFFFFFFFF, 0xfffffffe);
   util_check_mulhu(result, 0xFFFFFFFF, 0x00000001, 0x00000000);
   util_check_mulhu(result, 0x00000001, 0xFFFFFFFF, 0x00000000);
+
+  for(i = 0; i < n_stimuli; i++) {
+    util_check_mulhu(result, stim_mulhu_a[i], stim_mulhu_b[i], stim_mulhu_exp[i]);
+  }
 }
 
 void check_mulhsu(testresult_t *result, void (*start)(), void (*stop)()) {
   int act;
   int a;
   int b;
+  int i;
 
   util_check_mulhsu(result, 0x0, 0x0, 0x0);
   util_check_mulhsu(result, 0x00010000, 0x00010000, 0x00000001);
@@ -110,4 +123,8 @@ void check_mulhsu(testresult_t *result, void (*start)(), void (*stop)()) {
   util_check_mulhsu(result, 0xFFFFFFFF, 0xFFFFFFFF, 0xffffffff);
   util_check_mulhsu(result, 0xFFFFFFFF, 0x00000001, 0xffffffff);
   util_check_mulhsu(result, 0x00000001, 0xFFFFFFFF, 0x00000000);
+
+  for(i = 0; i < n_stimuli; i++) {
+    util_check_mulhsu(result, stim_mulhsu_a[i], stim_mulhsu_b[i], stim_mulhsu_exp[i]);
+  }
 }
