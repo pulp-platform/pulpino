@@ -18,6 +18,7 @@ set SRC_COMPONENTS " \
 # pulpino
 set SRC_PULPINO " \
    $RTL/axi2apb_wrap.sv \
+   $RTL/periph_bus_wrap.sv \
    $RTL/core2axi_wrap.sv \
    $RTL/axi_node_intf_wrap.sv \
    $RTL/axi_spi_slave_wrap.sv \
