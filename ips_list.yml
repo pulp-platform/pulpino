@@ -37,6 +37,8 @@ apb/apb_timer:
   commit: master
 apb/apb_uart:
   commit: master
+apb/apb2per:
+  commit: master
 
 # AXI IPs
 axi/axi2apb:

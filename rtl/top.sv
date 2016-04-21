@@ -1,7 +1,7 @@
 // Copyright 2015 ETH Zurich and University of Bologna.
 // Copyright and related rights are licensed under the Solderpad Hardware
 // License, Version 0.51 (the “License”); you may not use this file except in
-// compliance with the License.  You may obtain a copy of the License at
+// compliance with the License. You may obtain a copy of the License at
 // http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
 // or agreed to in writing, software, hardware and materials distributed under
 // this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
@@ -9,6 +9,7 @@
 // specific language governing permissions and limitations under the License.
 
 `include "axi_bus.sv"
+`include "debug_bus.sv"
 
 `define AXI_ADDR_WIDTH         32
 `define AXI_DATA_WIDTH         32
@@ -123,6 +124,9 @@ module pulpino_top
   )
   masters[2:0]();
 
+  DEBUG_BUS
+  debug();
+
   //----------------------------------------------------------------------------//
   // Clock and reset generation
   //----------------------------------------------------------------------------//
@@ -179,6 +183,7 @@ module pulpino_top
     .dbg_master     ( masters[1]        ),
     .data_slave     ( slaves[1]         ),
     .instr_slave    ( slaves[0]         ),
+    .debug          ( debug             ),
 
     .tck_i          ( tck_i             ),
     .trstn_i        ( trstn_i           ),
@@ -204,6 +209,7 @@ module pulpino_top
     .rst_n           ( rstn_int          ),
 
     .axi_spi_master  ( masters[2]        ),
+    .debug           ( debug             ),
 
     .spi_clk_i       ( spi_clk_i         ),
     .testmode_i      ( testmode_i        ),

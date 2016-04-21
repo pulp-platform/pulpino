@@ -10,6 +10,7 @@
 
 `include "axi_bus.sv"
 `include "apb_bus.sv"
+`include "debug_bus.sv"
 `include "config.sv"
 
 module peripherals
@@ -27,6 +28,8 @@ module peripherals
     input logic rst_n,
 
     AXI_BUS.Master axi_spi_master,
+
+    DEBUG_BUS.Master debug,
 
     input  logic             spi_clk_i,
     input  logic             testmode_i,
@@ -109,6 +112,7 @@ module peripherals
   APB_BUS s_i2c_bus();
   APB_BUS s_fll_bus();
   APB_BUS s_soc_ctrl_bus();
+  APB_BUS s_debug_bus();
 
   logic [1:0]   s_spim_event;
   logic [3:0]   timer_irq;
@@ -223,7 +227,8 @@ module peripherals
      .event_unit_master ( s_event_unit_bus ),
      .i2c_master        ( s_i2c_bus        ),
      .fll_master        ( s_fll_bus        ),
-     .soc_ctrl_master   ( s_soc_ctrl_bus   )
+     .soc_ctrl_master   ( s_soc_ctrl_bus   ),
+     .debug_master      ( s_debug_bus      )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -482,4 +487,41 @@ module peripherals
       .pad_mux_o   ( pad_mux_o                  ),
       .boot_addr_o ( boot_addr_o                )
     );
+
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// APB Slave 8: APB2PER for debug                             ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
+
+  apb2per
+  #(
+    .PER_ADDR_WIDTH ( 15             ),
+    .APB_ADDR_WIDTH ( APB_ADDR_WIDTH )
+  )
+  apb2per_debug_i
+  (
+    .clk_i                ( clk_i                   ),
+    .rst_ni               ( rst_n                   ),
+
+    .PADDR                ( s_debug_bus.paddr       ),
+    .PWDATA               ( s_debug_bus.pwdata      ),
+    .PWRITE               ( s_debug_bus.pwrite      ),
+    .PSEL                 ( s_debug_bus.psel        ),
+    .PENABLE              ( s_debug_bus.penable     ),
+    .PRDATA               ( s_debug_bus.prdata      ),
+    .PREADY               ( s_debug_bus.pready      ),
+    .PSLVERR              ( s_debug_bus.pslverr     ),
+
+    .per_master_req_o     ( debug.req               ),
+    .per_master_add_o     ( debug.addr              ),
+    .per_master_we_o      ( debug.we                ),
+    .per_master_wdata_o   ( debug.wdata             ),
+    .per_master_be_o      (                         ),
+    .per_master_gnt_i     ( debug.gnt               ),
+
+    .per_master_r_valid_i ( debug.rvalid            ),
+    .per_master_r_opc_i   ( '0                      ),
+    .per_master_r_rdata_i ( debug.rdata             )
+  );
 endmodule

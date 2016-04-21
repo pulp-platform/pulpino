@@ -14,7 +14,7 @@
 `include "config.sv"
 
 // SOC PERIPHERALS APB BUS PARAMETRES
-`define NB_MASTER  8
+`define NB_MASTER  9
 
 // MASTER PORT TO CVP
 `define UART_START_ADDR       32'h1A10_0000
@@ -47,6 +47,10 @@
 // MASTER PORT TO SOC CTRL
 `define SOC_CTRL_START_ADDR   32'h1A10_7000
 `define SOC_CTRL_END_ADDR     32'h1A10_7FFF
+
+// MASTER PORT TO DEBUG
+`define DEBUG_START_ADDR      32'h1A11_0000
+`define DEBUG_END_ADDR        32'h1A11_7FFF
 
 `define APB_ASSIGN_SLAVE(lhs, rhs)     \
     assign lhs.paddr    = rhs.paddr;   \

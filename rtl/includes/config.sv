@@ -22,12 +22,6 @@
 `define ROM_ADDR_WIDTH      12
 `define ROM_START_ADDR      32'h8000
 
-`ifdef RISCV
-`define CORE2AXI_REG_GRANT "FALSE"
-`else
-`define CORE2AXI_REG_GRANT "TRUE"
-`endif
-
 // Simulation only stuff
 `ifndef SYNTHESIS
 //`define DATA_STALL_RANDOM

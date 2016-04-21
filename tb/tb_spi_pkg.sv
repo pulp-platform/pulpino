@@ -280,6 +280,20 @@
     end
   endtask
 
+  task spi_write_word;
+    input          use_qspi;
+    input   [31:0] addr;
+    input   [31:0] data;
+    begin
+      spi_csn  = 1'b0;
+      #`DELAY_BETWEEN_SPI;
+      spi_send_cmd_addr(use_qspi, 8'h2, addr);
+      spi_send_data(use_qspi, data);
+      #100 spi_csn  = 1'b1;
+      #`DELAY_BETWEEN_SPI;
+    end
+  endtask
+
   task spi_read_word;
     input          use_qspi;
     input    [7:0] command;
