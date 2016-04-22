@@ -227,5 +227,6 @@ module tb;
   // TODO: this is a hack, do it properly!
   `include "tb_spi_pkg.sv"
   `include "tb_mem_pkg.sv"
+  `include "mem_dpi.svh"
 
 endmodule
