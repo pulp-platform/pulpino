@@ -23,19 +23,21 @@ void test_npc_ppc(testresult_t *result, void (*start)(), void (*stop)());
 void test_illegal(testresult_t *result, void (*start)(), void (*stop)());
 void test_single_step(testresult_t *result, void (*start)(), void (*stop)());
 void test_jumps(testresult_t *result, void (*start)(), void (*stop)());
+void test_jumps_after_branch(testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
   { .name = "init",                    .test = test_init            },
 
-  { .name = " 2. test_rw_gpr",          .test = test_rw_gpr          },
-  { .name = " 3. test_rw_csr",          .test = test_rw_csr          },
-  { .name = " 4. test_rw_dbg_regs",     .test = test_rw_dbg_regs     },
-  { .name = " 5. test_halt_resume",     .test = test_halt_resume     },
-  { .name = " 6. test_ebreak",          .test = test_ebreak          },
-  { .name = " 7. test_npc_ppc",         .test = test_npc_ppc         },
-  { .name = " 8. test_illegal",         .test = test_illegal         },
-  { .name = " 9. test_single_step",     .test = test_single_step     },
-  { .name = "10. test_jumps",           .test = test_jumps           },
+  { .name = " 2. test_rw_gpr",              .test = test_rw_gpr             },
+  { .name = " 3. test_rw_csr",              .test = test_rw_csr             },
+  { .name = " 4. test_rw_dbg_regs",         .test = test_rw_dbg_regs        },
+  { .name = " 5. test_halt_resume",         .test = test_halt_resume        },
+  { .name = " 6. test_ebreak",              .test = test_ebreak             },
+  { .name = " 7. test_npc_ppc",             .test = test_npc_ppc            },
+  { .name = " 8. test_illegal",             .test = test_illegal            },
+  { .name = " 9. test_single_step",         .test = test_single_step        },
+  { .name = "10. test_jumps",               .test = test_jumps              },
+  { .name = "11. test_jumps_after_branch",  .test = test_jumps_after_branch },
 
   { .name = "finish",                  .test = test_finish          },
   {0, 0}
@@ -270,4 +272,32 @@ void test_jumps(testresult_t *result, void (*start)(), void (*stop)()) {
                 "      nop;"
                 "jmpd: nop;"
                 ::: "x16");
+}
+
+//----------------------------------------------------------------------------
+// 11. Jumps after Branch
+//----------------------------------------------------------------------------
+void test_jumps_after_branch(testresult_t *result, void (*start)(), void (*stop)()) {
+  uint32_t act = 0;
+  testcase_current = 11;
+
+  
+  asm volatile ("ebreak");
+  
+  // check jumps after branch
+  asm volatile ("la  x6, before_branch;"
+                "la  x7, after_branch;"
+                "addi x16, x0, 10;"
+                "addi x17, x0, 10;"
+                "beq x16,x17, before_branch;"
+                "j   jmp_branch;"
+                "nop;"
+                "jmp_branch: addi %[a], %[a], 4;"
+                "before_branch: ebreak;"
+                "after_branch:  addi %[a], %[a], 4;"
+                : [a] "+r" (act)
+                ::  "x6", "x7", "x16", "x17");
+
+  check_uint32(result, "branch_aft_jmp", act, 4);
+
 }
