@@ -296,10 +296,12 @@
 
   task spi_read_word;
     input          use_qspi;
-    input    [7:0] command;
     input   [31:0] addr;
     output  [31:0] data;
+
+    logic    [7:0] command;
     begin
+      command = 8'hB;
       padmode_spi_master = use_qspi ? `SPI_QUAD_TX : `SPI_STD;
       spi_sck = 0;
       #`SPI_SEMIPERIOD spi_sck = 0;
@@ -385,6 +387,78 @@
     end
   endtask
 
+  task spi_write_halfword;
+    input          use_qspi;
+    input   [31:0] addr;
+    input   [15:0] data;
+
+    logic   [31:0] temp;
+    begin
+      spi_read_word(use_qspi, {addr[31:2], 2'b00}, temp);
+
+      case (addr[1])
+        1'b0: temp[15: 0] = data[15:0];
+        1'b1: temp[31:16] = data[15:0];
+      endcase
+
+      spi_write_word(use_qspi, {addr[31:2], 2'b00}, temp);
+    end
+  endtask
+
+  task spi_write_byte;
+    input          use_qspi;
+    input   [31:0] addr;
+    input   [ 7:0] data;
+
+    logic   [31:0] temp;
+    begin
+      spi_read_word(use_qspi, {addr[31:2], 2'b00}, temp);
+
+      case (addr[1:0])
+        2'b00: temp[ 7: 0] = data[7:0];
+        2'b01: temp[15: 8] = data[7:0];
+        2'b10: temp[23:16] = data[7:0];
+        2'b11: temp[31:24] = data[7:0];
+      endcase
+
+      spi_write_word(use_qspi, {addr[31:2], 2'b00}, temp);
+    end
+  endtask
+
+  task spi_read_halfword;
+    input          use_qspi;
+    input   [31:0] addr;
+    output  [15:0] data;
+
+    logic   [31:0] temp;
+    begin
+      spi_read_word(use_qspi, {addr[31:2], 2'b00}, temp);
+
+      case (addr[1])
+        1'b0: data[15:0] = temp[15: 0];
+        1'b1: data[15:0] = temp[31:16];
+      endcase
+    end
+  endtask
+
+  task spi_read_byte;
+    input          use_qspi;
+    input   [31:0] addr;
+    output  [ 7:0] data;
+
+    logic   [31:0] temp;
+    begin
+      spi_read_word(use_qspi, {addr[31:2], 2'b00}, temp);
+
+      case (addr[1:0])
+        2'b00: data[7:0] = temp[ 7: 0];
+        2'b01: data[7:0] = temp[15: 8];
+        2'b10: data[7:0] = temp[23:16];
+        2'b11: data[7:0] = temp[31:24];
+      endcase
+    end
+  endtask
+
   task spi_enable_qpi;
     $display("[SPI] Enabling QPI mode");
     //Sets QPI mode
@@ -396,7 +470,7 @@
   task spi_check_return_codes;
     output exit_code;
 
-    spi_read_word(use_qspi, 8'hB, 32'h1A10_7014, recv_data);
+    spi_read_word(use_qspi, 32'h1A10_7014, recv_data);
     $display("[SPI] Received %X", recv_data);
     if (recv_data != '0) begin
       exit_code = `EXIT_FAIL;

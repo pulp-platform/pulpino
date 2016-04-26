@@ -17,7 +17,7 @@
     input   [31:0] addr;
     output  [31:0] data;
     begin
-      spi_read_word(use_qspi, 8'hB, addr, data);
+      spi_read_word(use_qspi, addr, data);
     end
   endtask
 
@@ -25,7 +25,7 @@
     input   [14:0] addr;
     output  [31:0] data;
     begin
-      spi_read_word(use_qspi, 8'hB, {16'h1A11, 1'b0, addr[14:0]}, data);
+      spi_read_word(use_qspi, {16'h1A11, 1'b0, addr[14:0]}, data);
     end
   endtask
 
@@ -84,7 +84,7 @@
     input   [ 4:0] addr;
     output  [31:0] data;
     begin
-      spi_read_word(use_qspi, 8'hB, {16'h1A11, 1'b0, 7'h10, 1'b0, addr[4:0], 2'b00}, data);
+      spi_read_word(use_qspi, {16'h1A11, 1'b0, 7'h10, 1'b0, addr[4:0], 2'b00}, data);
     end
   endtask
 
@@ -100,7 +100,7 @@
     input   [11:0] addr;
     output  [31:0] data;
     begin
-      spi_read_word(use_qspi, 8'hB, {16'h1A11, 1'b0, 1'b1, addr[11:0], 2'b00}, data);
+      spi_read_word(use_qspi, {16'h1A11, 1'b0, 1'b1, addr[11:0], 2'b00}, data);
     end
   endtask
 
@@ -742,40 +742,136 @@
   task debug_test_jumps_after_branch;
     logic [31:0] npc;
     logic [31:0] ppc;
-    logic [31:0] npc_exp;
-    logic [31:0] ppc_exp;
-    logic [31:0] npc_new;
-    logic [31:0] data;
+    logic [31:0] pc0;
+    logic [31:0] pc1;
+    logic [31:0] pc2;
+    logic [31:0] bt;
+    logic [31:0] jmp;
     begin
       $display("[DEBUG] Running test_jumps_after_branch");
 
       debug_wait_for_stall();
-      debug_write(`DBG_IE_REG, 32'h0000_08AC);
-      debug_resume();
 
+      debug_gpr_read(5'd16, bt);
+      debug_gpr_read(5'd17, jmp);
+      debug_gpr_read(5'd18, pc0);
+      debug_gpr_read(5'd19, pc1);
+
+      debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
+
+      // look for pc0, the addi
+      debug_resume();
       debug_wait_for_stall();
+
       // read NPC and PPC
-      debug_read(`DBG_NPC_REG, npc);
       debug_read(`DBG_PPC_REG, ppc);
 
-      debug_gpr_read(5'd06, ppc_exp);
-      debug_gpr_read(5'd07, npc_exp);
-
-      if (npc !== npc_exp) begin
-        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp);
+      if (ppc !== pc0) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, pc0);
         dbg_tb_errors++;
       end
 
-      if (ppc !== ppc_exp) begin
-        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, ppc_exp);
+      // look for pc1, the addi
+      debug_resume();
+      debug_wait_for_stall();
+
+      // read NPC and PPC
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (ppc !== pc1) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, pc1);
         dbg_tb_errors++;
       end
 
-      debug_read(`DBG_CAUSE_REG, data);
-      if (data !== 32'h0000_0003) begin
-        $display("ERROR: DBG_CAUSE has not the correct value: act %X, expected %X", data, 32'h0000_00B);
+      // look for bt, the addi
+      debug_resume();
+      debug_wait_for_stall();
+
+      // read NPC and PPC
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (ppc !== bt) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, bt);
         dbg_tb_errors++;
       end
+
+      // look for jmp, the addi
+      debug_resume();
+      debug_wait_for_stall();
+
+      // read NPC and PPC
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (ppc !== jmp) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, jmp);
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_CTRL_REG, 32'h0001_0000); // disable single step
+
+      debug_resume();
+
+
+
+      //------------------------------------------------------------------------------
+      debug_wait_for_stall();
+
+      debug_gpr_read(5'd16, pc2);
+      debug_gpr_read(5'd17, jmp);
+      debug_gpr_read(5'd18, pc0);
+      debug_gpr_read(5'd19, pc1);
+
+      debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
+
+      // look for pc0, the addi
+      debug_resume();
+      debug_wait_for_stall();
+
+      // read NPC and PPC
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (ppc !== pc0) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, pc0);
+        dbg_tb_errors++;
+      end
+
+      // look for pc1, the addi
+      debug_resume();
+      debug_wait_for_stall();
+
+      // read NPC and PPC
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (ppc !== pc1) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, pc1);
+        dbg_tb_errors++;
+      end
+
+      // look for pc2, the addi
+      debug_resume();
+      debug_wait_for_stall();
+
+      // read NPC and PPC
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (ppc !== pc2) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, pc2);
+        dbg_tb_errors++;
+      end
+
+      // look for jmp, the addi
+      debug_resume();
+      debug_wait_for_stall();
+
+      // read NPC and PPC
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (ppc !== jmp) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, jmp);
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_CTRL_REG, 32'h0001_0000); // disable single step
 
       debug_resume();
     end

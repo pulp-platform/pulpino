@@ -1,19 +1,21 @@
 typedef struct {
   byte we;
-  byte be;
   int  addr;
-  int  wdata;
-  int  rdata;
+  int  size;
 } mem_packet_t;
 
 import "DPI-C"         function void mem_init(input int port);
-import "DPI-C"         function int  mem_poll(output mem_packet_t packet);
-import "DPI-C"         function void mem_push(input mem_packet_t packet);
+import "DPI-C"         function int  mem_poll(output mem_packet_t packet, output byte buffer[1024]);
+import "DPI-C"         function int  mem_push(input mem_packet_t packet, input byte buffer[1024]);
 
 task mem_dpi;
   input int port;
+  byte buffer[1024];
   mem_packet_t packet;
   int i;
+  int local_addr;
+  int local_size;
+  logic [31:0] rdata_temp;
   begin
     mem_init(port);
 
@@ -22,15 +24,109 @@ task mem_dpi;
       for (i = 0; i < 100; i++)
         @(posedge s_clk);
 
-      if (mem_poll(packet)) begin
+      if (mem_poll(packet, buffer) == 0) begin
         // we got a valid packet
-        // let's perform an SPI transaction and send back the result
-        if (packet.we)
-          spi_write_word(1, packet.addr, packet.wdata);
-        else
-          spi_read_word(1, 8'hB, packet.addr, packet.rdata);
+        // let's perform the SPI transactions and send back the result
+        local_addr = packet.addr;
+        local_size = packet.size;
+        i = 0;
 
-        mem_push(packet);
+        if (packet.we) begin
+          // write
+
+          // first align addresses to words
+          if (local_addr[0]) begin
+            spi_write_byte(use_qspi, local_addr, buffer[i]);
+            i          += 1;
+            local_addr += 1;
+            local_size -= 1;
+          end
+
+          if (local_addr[1] && local_size >= 2) begin
+            spi_write_halfword(use_qspi, local_addr, {buffer[i+1][7:0], buffer[i][7:0]});
+            i          += 2;
+            local_addr += 2;
+            local_size -= 2;
+          end
+
+          // now main loop, always aligned
+          // TODO: this can be replaced by one single burst
+          while(local_size >= 4) begin
+            spi_write_word(use_qspi, local_addr, {buffer[i+3][7:0], buffer[i+2][7:0], buffer[i+1][7:0], buffer[i][7:0]});
+            i          += 4;
+            local_addr += 4;
+            local_size -= 4;
+          end
+
+          // now take care of the last max 3 bytes
+          if (local_size >= 2) begin
+            spi_write_halfword(use_qspi, local_addr, {buffer[i+1][7:0], buffer[i][7:0]});
+            i          += 2;
+            local_addr += 2;
+            local_size -= 2;
+          end
+
+          if (local_size >= 1) begin
+            spi_write_byte(use_qspi, local_addr, buffer[i]);
+            i          += 1;
+            local_addr += 1;
+            local_size -= 1;
+          end
+        end else begin
+          // read
+
+          // first align addresses to words
+          if (local_addr[0]) begin
+            spi_read_byte(use_qspi, local_addr, rdata_temp[7:0]);
+            buffer[i] = rdata_temp[7:0];
+            i          += 1;
+            local_addr += 1;
+            local_size -= 1;
+          end
+
+          if (local_addr[1] && local_size >= 2) begin
+            spi_read_halfword(use_qspi, local_addr, rdata_temp[15:0]);
+            buffer[i]   = rdata_temp[ 7:0];
+            buffer[i+1] = rdata_temp[15:8];
+            i          += 2;
+            local_addr += 2;
+            local_size -= 2;
+          end
+
+          // now main loop, always aligned
+          // TODO: this can be replaced by one single burst
+          while(local_size >= 4) begin
+            spi_read_word(use_qspi, local_addr, rdata_temp[31:0]);
+            buffer[i]   = rdata_temp[ 7:0];
+            buffer[i+1] = rdata_temp[15:8];
+            buffer[i+2] = rdata_temp[23:16];
+            buffer[i+3] = rdata_temp[31:24];
+            i          += 4;
+            local_addr += 4;
+            local_size -= 4;
+          end
+
+          // now take care of the last max 3 bytes
+          if (local_size >= 2) begin
+            spi_read_halfword(use_qspi, local_addr, rdata_temp[15:0]);
+            buffer[i]   = rdata_temp[ 7:0];
+            buffer[i+1] = rdata_temp[15:8];
+            i          += 2;
+            local_addr += 2;
+            local_size -= 2;
+          end
+
+          if (local_size >= 1) begin
+            spi_read_byte(use_qspi, local_addr, rdata_temp[7:0]);
+            buffer[i] = rdata_temp[7:0];
+            i          += 1;
+            local_addr += 1;
+            local_size -= 1;
+          end
+        end
+
+        if (mem_push(packet, buffer) != 0)
+          $display("mem_push has failed");
       end
     end
   end

@@ -65,55 +65,115 @@ void mem_socket_open() {
   fprintf(stderr, "Listening on port %d\n", mem_socket_port);
 }
 
-int mem_poll(mem_packet_t* packet) {
-  char data[9];
+void mem_reopen() {
+  close(mem_socket_c);
+  mem_socket_open(mem_socket_port);
+}
+
+int mem_poll(mem_packet_t* packet, char* buffer) {
+  char header[9];
   int ret;
+  int received;
 
   if(!mem_got_con) {
     if(!mem_check_con()) {
-      return 0;
+      return -1;
     }
   }
 
-  ret = recv(mem_socket_c, data, 9, 0);
+  memset(header, 0, sizeof(header));
+
+  ret = recv(mem_socket_c, header, 9, 0);
 
   // check connection abort
   if((ret == -1 && errno != EWOULDBLOCK) || (ret == 0)) {
     printf("Memory connection closed\n");
 
-    close(mem_socket_c);
-    mem_socket_open(mem_socket_port);
-    return 0;
+    mem_reopen();
+    return -1;
   }
 
   // no available data
   if(ret == -1 && errno == EWOULDBLOCK)
-    return 0;
+    return -1;
 
   if (ret != 9) {
-    printf("Well, not a complete packet then...\n");
-    return 0;
+    printf("ERROR: Well, not a complete packet then..., size is only %d\n", ret);
+    return -1;
   }
 
-  packet->we    = (data[0] & 0x80) == 0x80;
-  packet->be    =  data[0] & 0x0F;
-  packet->addr  =  ntohl(*((int*)&data[1]));
-  packet->wdata =  ntohl(*((int*)&data[5]));
+  packet->we   = (header[0] & 0x01) == 0x01;
+  packet->addr =  *((int*)&header[1]);
+  packet->size =  *((int*)&header[5]);
 
-  printf("Request for Address %08X, Wdata %08X, Write %d, BE %X\n", packet->addr, packet->wdata, packet->we, packet->be);
+  // printf("Request for Address %08X, Write %d, size %d\n", packet->addr, packet->we, packet->size);
 
-  return 1;
+  if (packet->we) {
+    if(buffer == NULL) {
+      printf("ERROR: Could not allocate buffer\n");
+      return -1;
+    }
+
+    received = 0;
+    while (received != packet->size) {
+      ret = recv(mem_socket_c, &buffer[received], packet->size - received, 0);
+
+      // check connection abort
+      if((ret == -1 && errno != EWOULDBLOCK) || (ret == 0)) {
+        printf("Memory connection closed\n");
+
+        mem_reopen();
+        return -1;
+      }
+
+      if(ret == -1 && errno == EWOULDBLOCK)
+        continue;
+
+      received += ret;
+    }
+  }
+
+  return 0;
 }
 
-void mem_push(const mem_packet_t* packet) {
+int mem_push(const mem_packet_t* packet, const char* buffer) {
   int ret;
-  uint32_t data;
+  char header[8];
 
-  data = htonl(packet->rdata);
-  ret = send(mem_socket_c, &data, 4, 0);
-  if (ret != 4) {
-    printf ("Unable to send\n");
+  if (packet->we) {
+    // write
+    *((int*)&header[0]) = 0; // OK
+    *((int*)&header[1]) = 0; // size
+
+    ret = send(mem_socket_c, header, 5, 0);
+    if (ret != 5) {
+      printf ("Unable to send header\n");
+      return -1;
+    }
+  } else {
+    // read
+    *((int*)&header[0]) = 0; // OK
+    *((int*)&header[1]) = packet->size; // size
+
+    ret = send(mem_socket_c, header, 5, 0);
+    if (ret != 5) {
+      printf ("Unable to send header\n");
+      return -1;
+    }
+
+    if(buffer == NULL) {
+      printf("ERROR: Could not get buffer\n");
+      return -1;
+    }
+
+    ret = send(mem_socket_c, buffer, packet->size, 0);
+    if (ret != packet->size) {
+      printf ("Unable to send data\n");
+      return -1;
+    }
   }
+
+  return 0;
 }
 
 void mem_init(const int port) {
