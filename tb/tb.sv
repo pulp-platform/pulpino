@@ -14,9 +14,9 @@ module tb;
 
   // +MEMLOAD= valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
   parameter  SPI           = "QUAD";    // valid values are "SINGLE", "QUAD"
-  parameter  ENABLE_VPI    = 0;
   parameter  BAUDRATE      = 781250; // 1562500
   parameter  CLK_USE_FLL   = 0;  // 0 or 1
+  parameter  TEST          = ""; //valid values are "" (NONE), "DEBUG"
 
   int           exit_status = `EXIT_ERROR; // modelsim exit code, will be overwritten when successfull
 
@@ -51,27 +51,6 @@ module tb;
   jtag_i jtag_if();
 
   adv_dbg_if_t adv_dbg_if = new(jtag_if);
-
-  generate if(ENABLE_VPI == 1)
-  begin
-    // jtag dpi module
-    jtag_dpi
-    #(
-      .TIMEOUT_COUNT ( 6'd10 )
-    )
-    i_jtag
-    (
-      .clk_i    ( s_clk   ),
-      .enable_i ( s_rst_n ),
-
-      .tms_o    ( jtag_if.tms     ),
-      .tck_o    ( jtag_if.tck     ),
-      .trst_o   ( jtag_if.trstn   ),
-      .tdi_o    ( jtag_if.tdi     ),
-      .tdo_i    ( jtag_if.tdo     )
-     );
-  end
-  endgenerate
 
   // use 8N1
   uart_tb_rx
@@ -188,6 +167,9 @@ module tb;
     s_rst_n = 1'b1;
 
     #500ns;
+    if (use_qspi)
+      spi_enable_qpi();
+
 
     if (memload != "STANDALONE")
     begin
@@ -205,15 +187,17 @@ module tb;
     end
     else if (memload == "SPI")
     begin
-      if (use_qspi)
-        spi_enable_qpi();
-
       spi_load(use_qspi);
       spi_check(use_qspi);
     end
 
     #200ns;
     fetch_enable = 1'b1;
+    
+    if(TEST == "DEBUG")
+    begin
+      debug_tests();
+    end
 
     // end of computation
     wait(top_i.gpio_out[8]);
@@ -228,5 +212,6 @@ module tb;
   `include "tb_spi_pkg.sv"
   `include "tb_mem_pkg.sv"
   `include "mem_dpi.svh"
+  `include "spi_debug_test.svh"
 
 endmodule
