@@ -32,14 +32,14 @@ module sp_ram_wrap
   xilinx_mem_8192x32
   sp_ram_i
   (
-    .clka   ( clk                ),
-    .rsta   ( 1'b0               ), // reset is active high
+    .clka   ( clk                    ),
+    .rsta   ( 1'b0                   ), // reset is active high
 
-    .ena    ( en_i               ),
-    .addra  ( addr_i             ),
-    .dina   ( wdata_i            ),
-    .douta  ( rdata_o            ),
-    .wea    ( be_i & {4{we_i}}   )
+    .ena    ( en_i                   ),
+    .addra  ( addr_i[ADDR_WIDTH-1:2] ),
+    .dina   ( wdata_i                ),
+    .douta  ( rdata_o                ),
+    .wea    ( be_i & {4{we_i}}       )
   );
 
   // TODO: we should kill synthesis when the ram size is larger than what we
