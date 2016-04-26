@@ -26,7 +26,7 @@ void test_jumps(testresult_t *result, void (*start)(), void (*stop)());
 void test_jumps_after_branch(testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
-  { .name = "init",                    .test = test_init            },
+  { .name = "init",                         .test = test_init               },
 
   { .name = " 2. test_rw_gpr",              .test = test_rw_gpr             },
   { .name = " 3. test_rw_csr",              .test = test_rw_csr             },
@@ -39,7 +39,7 @@ testcase_t testcases[] = {
   { .name = "10. test_jumps",               .test = test_jumps              },
   { .name = "11. test_jumps_after_branch",  .test = test_jumps_after_branch },
 
-  { .name = "finish",                  .test = test_finish          },
+  { .name = "finish",                       .test = test_finish             },
   {0, 0}
 };
 
@@ -275,29 +275,42 @@ void test_jumps(testresult_t *result, void (*start)(), void (*stop)()) {
 }
 
 //----------------------------------------------------------------------------
-// 11. Jumps after Branch
+// 11. Jumps after Branch, in single-stepping mode
 //----------------------------------------------------------------------------
 void test_jumps_after_branch(testresult_t *result, void (*start)(), void (*stop)()) {
   uint32_t act = 0;
   testcase_current = 11;
 
-  
-  asm volatile ("ebreak");
-  
-  // check jumps after branch
-  asm volatile ("la  x6, before_branch;"
-                "la  x7, after_branch;"
-                "addi x16, x0, 10;"
-                "addi x17, x0, 10;"
-                "beq x16,x17, before_branch;"
-                "j   jmp_branch;"
-                "nop;"
-                "jmp_branch: addi %[a], %[a], 4;"
-                "before_branch: ebreak;"
-                "after_branch:  addi %[a], %[a], 4;"
-                : [a] "+r" (act)
-                ::  "x6", "x7", "x16", "x17");
+  // check jumps after branch taken
+  asm volatile ("        la  x16, bt_11;"
+                "        la  x17, jmp_11;"
+                "        la  x18, pc0_11;"
+                "        la  x19, pc1_11;"
+                "        ebreak;"
+                "pc0_11: addi %[a], x0, 4;"
+                "pc1_11: beq x0, x0, bt_11;"
+                "        j jmp_11;"
+                "        nop;"
+                "bt_11:  addi %[a], x0, 2;"
+                "jmp_11: nop;"
+                : [a] "=r" (act)
+                ::  "x16", "x17", "x18", "x19");
 
-  check_uint32(result, "branch_aft_jmp", act, 4);
+  check_uint32(result, "branch_aft_jmp_t", act, 2);
 
+  // check jumps after branch not taken
+  asm volatile ("          la  x16, pc2_11_2;"
+                "          la  x17, jmp_11_2;"
+                "          la  x18, pc0_11_2;"
+                "          la  x19, pc1_11_2;"
+                "          ebreak;"
+                "pc0_11_2: addi %[a], x0, 4;"
+                "pc1_11_2: beq x0, x16, bt_11_2;"
+                "pc2_11_2: j jmp_11_2;"
+                "bt_11_2:  addi %[a], x0, 2;"
+                "jmp_11_2: nop;"
+                : [a] "=r" (act)
+                ::  "x16", "x17", "x18", "x19");
+
+  check_uint32(result, "branch_aft_jmp_nt", act, 4);
 }
