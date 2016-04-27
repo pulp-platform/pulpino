@@ -765,9 +765,14 @@
 
       // read NPC and PPC
       debug_read(`DBG_PPC_REG, ppc);
+      debug_read(`DBG_NPC_REG, npc);
 
       if (ppc !== pc0) begin
         $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, pc0);
+        dbg_tb_errors++;
+      end
+      if (npc !== pc1) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, pc1);
         dbg_tb_errors++;
       end
 
@@ -777,9 +782,14 @@
 
       // read NPC and PPC
       debug_read(`DBG_PPC_REG, ppc);
-
+      debug_read(`DBG_NPC_REG, npc);
+      
       if (ppc !== pc1) begin
         $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, pc1);
+        dbg_tb_errors++;
+      end
+      if (npc !== bt) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, bt);
         dbg_tb_errors++;
       end
 
@@ -789,9 +799,14 @@
 
       // read NPC and PPC
       debug_read(`DBG_PPC_REG, ppc);
+      debug_read(`DBG_NPC_REG, npc);
 
       if (ppc !== bt) begin
         $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, bt);
+        dbg_tb_errors++;
+      end
+      if (npc !== jmp) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, jmp);
         dbg_tb_errors++;
       end
 
@@ -829,9 +844,14 @@
 
       // read NPC and PPC
       debug_read(`DBG_PPC_REG, ppc);
+      debug_read(`DBG_NPC_REG, npc);
 
       if (ppc !== pc0) begin
         $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, pc0);
+        dbg_tb_errors++;
+      end
+      if (npc !== pc1) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, pc1);
         dbg_tb_errors++;
       end
 
@@ -841,9 +861,14 @@
 
       // read NPC and PPC
       debug_read(`DBG_PPC_REG, ppc);
+      debug_read(`DBG_NPC_REG, npc);
 
       if (ppc !== pc1) begin
         $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, pc1);
+        dbg_tb_errors++;
+      end
+      if (npc !== pc2) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, pc2);
         dbg_tb_errors++;
       end
 
@@ -853,9 +878,14 @@
 
       // read NPC and PPC
       debug_read(`DBG_PPC_REG, ppc);
+      debug_read(`DBG_NPC_REG, npc);
 
       if (ppc !== pc2) begin
         $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, pc2);
+        dbg_tb_errors++;
+      end
+      if (npc !== jmp) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, jmp);
         dbg_tb_errors++;
       end
 
