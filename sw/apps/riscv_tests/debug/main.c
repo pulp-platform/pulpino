@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "bench.h"
 
+
 void test_init(testresult_t *result, void (*start)(), void (*stop)());
 void test_finish(testresult_t *result, void (*start)(), void (*stop)());
 
@@ -24,22 +25,32 @@ void test_illegal(testresult_t *result, void (*start)(), void (*stop)());
 void test_single_step(testresult_t *result, void (*start)(), void (*stop)());
 void test_jumps(testresult_t *result, void (*start)(), void (*stop)());
 void test_jumps_after_branch(testresult_t *result, void (*start)(), void (*stop)());
+void test_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
+void test_nested_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
+void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
+void test_ss_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
+void test_wfi_sleep(testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
-  { .name = "init",                         .test = test_init               },
+  { .name = "init",                           .test = test_init                  },
 
-  { .name = " 2. test_rw_gpr",              .test = test_rw_gpr             },
-  { .name = " 3. test_rw_csr",              .test = test_rw_csr             },
-  { .name = " 4. test_rw_dbg_regs",         .test = test_rw_dbg_regs        },
-  { .name = " 5. test_halt_resume",         .test = test_halt_resume        },
-  { .name = " 6. test_ebreak",              .test = test_ebreak             },
-  { .name = " 7. test_npc_ppc",             .test = test_npc_ppc            },
-  { .name = " 8. test_illegal",             .test = test_illegal            },
-  { .name = " 9. test_single_step",         .test = test_single_step        },
-  { .name = "10. test_jumps",               .test = test_jumps              },
-  { .name = "11. test_jumps_after_branch",  .test = test_jumps_after_branch },
-
-  { .name = "finish",                       .test = test_finish             },
+  { .name = " 2. test_rw_gpr",                .test = test_rw_gpr                },
+  { .name = " 3. test_rw_csr",                .test = test_rw_csr                },
+  { .name = " 4. test_rw_dbg_regs",           .test = test_rw_dbg_regs           },
+  { .name = " 5. test_halt_resume",           .test = test_halt_resume           },
+  { .name = " 6. test_ebreak",                .test = test_ebreak                },
+  { .name = " 7. test_npc_ppc",               .test = test_npc_ppc               },
+  { .name = " 8. test_illegal",               .test = test_illegal               },
+  { .name = " 9. test_single_step",           .test = test_single_step           },
+  { .name = "10. test_jumps",                 .test = test_jumps                 },
+  { .name = "11. test_jumps_after_branch",    .test = test_jumps_after_branch    },
+  { .name = "12. test_hardware_loop",         .test = test_hardware_loop         },
+  { .name = "13. test_nested_hardware_loop",  .test = test_nested_hardware_loop  },
+  { .name = "14. test_illegal_hardware_loop", .test = test_illegal_hardware_loop },
+  { .name = "15. test_ss_hardware_loop",      .test = test_ss_hardware_loop      },
+  { .name = "16. test_wfi_sleep",             .test = test_wfi_sleep             },
+  
+  { .name = "finish",                         .test = test_finish                },
   {0, 0}
 };
 
@@ -313,4 +324,265 @@ void test_jumps_after_branch(testresult_t *result, void (*start)(), void (*stop)
                 ::  "x16", "x17", "x18", "x19");
 
   check_uint32(result, "branch_aft_jmp_nt", act, 4);
+}
+
+#define HWLP_COUNTI 10
+//----------------------------------------------------------------------------
+// 12. Hardware Loop
+//----------------------------------------------------------------------------
+void test_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
+  uint32_t act = 0;
+  testcase_current = 12;
+
+  // check hardware loop size 4, loop#0
+  asm volatile ("lp.counti x0, %[N];"
+                "lp.starti x0, start_HWLP_1;"
+                "lp.endi   x0, end_HWLP_1;"
+                "start_HWLP_1: addi %[act], %[act], 1;"
+                "              ebreak;"
+                "              addi %[act], %[act], 2;"
+                "end_HWLP_1:   addi %[act], %[act], 3;"
+                : [act] "+r" (act)
+                : [N]   "i"  (HWLP_COUNTI));
+
+
+  check_uint32(result, "hardware_loop", act, HWLP_COUNTI*(1+2+3));
+  
+  act = 0;
+  // check hardware loop size 3, loop#0
+  asm volatile ("lp.counti x0, %[N];"
+                "lp.starti x0, start_HWLP_2;"
+                "lp.endi   x0, end_HWLP_2;"
+                "start_HWLP_2: ebreak;"
+                "              addi %[act], %[act], 1;"
+                "end_HWLP_2:   addi %[act], %[act], 2;"
+                : [act] "+r" (act)
+                : [N]   "i"  (2*HWLP_COUNTI));
+
+
+  check_uint32(result, "hardware_loop", act, 2*HWLP_COUNTI*(1+2));
+
+  act = 0;
+  // check hardware loop size 2, loop#1
+  asm volatile ("lp.counti x1, %[N];"
+                "lp.starti x1, start_HWLP_3;"
+                "lp.endi   x1, end_HWLP_3;"
+                "start_HWLP_3: addi %[act], %[act], 1;"
+                "end_HWLP_3:   ebreak;"
+                : [act] "+r" (act)
+                : [N]   "i"  (3*HWLP_COUNTI));
+
+
+  check_uint32(result, "hardware_loop", act, 3*HWLP_COUNTI*(1));
+  
+  act = 0;
+  // check hardware loop size 2, ebreak after lp.counti, loop#1
+  asm volatile ("la x16, %[N];"
+                "lp.counti x1, %[N];"
+                "ebreak;"
+                "lp.starti x1, start_HWLP_4;"
+                "lp.endi   x1, end_HWLP_4;"
+                "start_HWLP_4: addi %[act], %[act], 1;"
+                "end_HWLP_4:   nop;"
+                : [act] "+r" (act)
+                : [N]   "i"  (3*HWLP_COUNTI)
+                : "x16");
+
+
+  check_uint32(result, "hardware_loop", act, 3*HWLP_COUNTI*(1));
+
+  act = 0;
+  // check hardware loop size 2, ebreak after lp.starti, loop#1
+  asm volatile ("la x16, %[N];"
+                "la x17, start_HWLP_5;"
+                "lp.counti x1, %[N];"
+                "lp.starti x1, start_HWLP_5;"
+                "ebreak;"
+                "lp.endi   x1, end_HWLP_5;"
+                "start_HWLP_5: addi %[act], %[act], 1;"
+                "end_HWLP_5:   nop;"
+                : [act] "+r" (act)
+                : [N]   "i"  (3*HWLP_COUNTI)
+                : "x16", "x17");
+
+  act = 0;
+  // check hardware loop size 2, ebreak after lp.endi, loop#1
+  asm volatile ("la x16, %[N];"
+                "la x17, start_HWLP_6;"
+                "la x18, end_HWLP_6;"
+                "lp.counti x1, %[N];"
+                "lp.starti x1, start_HWLP_6;"
+                "lp.endi   x1, end_HWLP_6;"
+                "ebreak;"
+                "start_HWLP_6: addi %[act], %[act], 1;"
+                "end_HWLP_6:   nop;"
+                : [act] "+r" (act)
+                : [N]   "i"  (3*HWLP_COUNTI)
+                : "x16", "x17", "x18");
+
+
+  check_uint32(result, "hardware_loop", act, 3*HWLP_COUNTI*(1));
+
+}
+
+//----------------------------------------------------------------------------
+// 13. Nested Hardware Loop
+//----------------------------------------------------------------------------
+void test_nested_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
+  uint32_t act = 0;
+  testcase_current = 13;
+
+  asm volatile ("la x16, %[N];"
+                "la x17, start_HWLP_7;"
+                "la x18, end_HWLP_7;"
+                "lp.counti x1, %[N];"
+                "lp.starti x1, start_HWLP_7;"
+                "lp.endi   x1, end_HWLP_7;"
+                "ebreak;" // <--- first ebreak, happens once
+                "la x19, %[N_in];"
+                "la x20, start_HWLP_7_in;"
+                "la x21, end_HWLP_7;"
+                "start_HWLP_7: lp.counti x0, %[N_in];"
+                "lp.starti x0, start_HWLP_7_in;"
+                "lp.endi   x0, end_HWLP_7;"
+                "ebreak;" // <--- second ebreak, happens HWLP_COUNTI/2 times
+                "start_HWLP_7_in: addi %[act], %[act], 1;"
+                "end_HWLP_7:      ebreak;" // <--- third ebreak, happens HWLP_COUNTI*HWLP_COUNTI/2 times
+                : [act] "+r" (act)
+                : [N]   "i"  (HWLP_COUNTI/2), [N_in]   "i"  (HWLP_COUNTI)
+                : "x16", "x17", "x18", "x19", "x20", "x21");
+
+
+  check_uint32(result, "nested_hardware_loop", act, HWLP_COUNTI*HWLP_COUNTI/2);
+
+
+}
+
+//----------------------------------------------------------------------------
+// 14. Illegal Hardware Loop
+//----------------------------------------------------------------------------
+void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
+  uint32_t act = 0;
+  testcase_current = 14;
+
+  // Illegal instruction is the last one, a patch in the debugger in order to
+  // decrement the hwlp counter is needed
+
+  asm volatile ("la x16, start_HWLP_8;"
+                "li x17, 0x84;"
+                "la x18, end_HWLP_8;"
+                "la x19, end_HWLP_8_1;"
+                "lp.counti x0, %[N];"
+                "lp.starti x0, start_HWLP_8;"
+                "lp.endi   x0, end_HWLP_8;"
+                "ebreak;" 
+                "start_HWLP_8: addi %[act], %[act], 1;"
+                "end_HWLP_8:   .word 0xF0F0F0F;" 
+                "end_HWLP_8_1: nop;"
+                : [act] "+r" (act)
+                : [N]   "i"  (HWLP_COUNTI)
+                : "x16", "x17", "x18", "x19");
+
+  check_uint32(result, "illegal_hardware_loop", act, HWLP_COUNTI);
+
+  // Illegal instruction is not the last one, normal debug is ok
+  act = 0;
+  asm volatile ("la x16, start_HWLP_9;"
+                "li x17, 0x84;"
+                "la x18, end_HWLP_9;"
+                "la x19, before_ill_hwlp;"
+                "lp.counti x0, %[N];"
+                "lp.starti x0, start_HWLP_9;"
+                "lp.endi   x0, end_HWLP_9;"
+                "ebreak;" 
+                "start_HWLP_9:    addi %[act], %[act], 1;"
+                "before_ill_hwlp: .word 0xF0F0F0F;" 
+                "end_HWLP_9:      nop;"
+                : [act] "+r" (act)
+                : [N]   "i"  (HWLP_COUNTI)
+                : "x16", "x17", "x18", "x19");
+
+
+  check_uint32(result, "illegal_hardware_loop", act, HWLP_COUNTI);
+
+
+}
+
+//----------------------------------------------------------------------------
+// 15. Hardware Loop Single Step
+//----------------------------------------------------------------------------
+void test_ss_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
+  volatile uint32_t act = 0;
+  uint32_t act_add = (uint32_t)&act;
+  
+  testcase_current = 15;
+
+  act = 0;
+  asm volatile ("la x16, start_HWLP_10;"
+                "la x17, middle_HWLP_10;"
+                "la x18, end_HWLP_10;"
+                "la x19, %[N];"
+                "la x22, store_HWLP_10;"
+                "mv x20, %[act_add];"
+                "xor x21, x21, x21;"
+                "lp.counti x0, %[N];"
+                "lp.starti x0, start_HWLP_10;"
+                "lp.endi   x0, end_HWLP_10;"
+                "ebreak;" 
+                "start_HWLP_10:    addi x21, x21, 1;"
+                "middle_HWLP_10:   addi x21, x21, 2;" 
+                "end_HWLP_10:      addi x21, x21, 3;"
+                "store_HWLP_10:    sw x21, 0(%[act_add]);"
+                : 
+                : [N]   "i"  (HWLP_COUNTI), [act_add] "r" (act_add)
+                : "x16", "x17", "x18", "x19", "x20", "x21", "x22");
+
+
+  check_uint32(result, "ss_hardware_loop", act, HWLP_COUNTI*(1+2+3));
+
+
+}
+
+#define SLEEP_ADDR 0x1A104020
+//----------------------------------------------------------------------------
+// 16. WFI and sleep
+//----------------------------------------------------------------------------
+void test_wfi_sleep(testresult_t *result, void (*start)(), void (*stop)()) {
+  uint32_t act = 0;
+  testcase_current = 16;
+
+  // single step mode
+  asm volatile ("la x16, WFI_PPC_1;"
+                "la x17, WFI_NPC_1;"
+                "la x18, WFI_NPC_2;"
+                "ebreak;"
+                "WFI_PPC_1: wfi;"
+                "WFI_NPC_1: addi %[act], %[act], 1;"
+                "WFI_NPC_2: addi %[act], %[act], 2;"
+                : [act] "+r" (act)
+                :
+                : "x16", "x17", "x18");
+
+  check_uint32(result, "wfi", act, 1+2);
+
+  // single step mode
+  act = 0;
+  asm volatile ("la x16, SLEEP_SS_NPC_1;"
+                "la x17, SLEEP_SS_NPC_2;"
+                "la x18, SLEEP_SS_NPC_3;"
+                "la x19, SLEEP_SS_NPC_4;"
+                "la x20, SLEEP_SS_NPC_5;"
+                "ebreak;"
+                "SLEEP_SS_NPC_1: sw %[one], 0x0(%[addr]);"
+                "SLEEP_SS_NPC_2: wfi;"
+                "SLEEP_SS_NPC_3: nop;" 
+                "                sw x0, 0x0(%[addr]);"
+                "SLEEP_SS_NPC_4: addi %[act], %[act], 10;"
+                "SLEEP_SS_NPC_5: addi %[act], %[act], 10;"
+                : [act]  "+r" (act)
+                : [one]  "r" (0x1), [addr]  "r" (SLEEP_ADDR)
+                : "x16", "x17", "x18", "x19", "x20", "x0");
+
+  check_uint32(result, "sleep_ss", act, 20);
+                   
 }

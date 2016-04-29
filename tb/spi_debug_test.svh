@@ -907,6 +907,723 @@
     end
   endtask
 
+  task debug_test_hardware_loop;
+    logic [31:0] data;
+    logic [31:0] lpcount,lpstart,lpend;
+    int i;
+    begin
+      $display("[DEBUG] Running test_hardwareloop");
+
+      // check hardware loop size 4, loop#0
+      for(i = 10; i > 0; i--) begin
+          debug_wait_for_stall();
+    
+          debug_csr_read(12'h7B2, data); //read lpcount[0]
+          if ( data !== i ) begin
+             $display("ERROR: lpcount[0] has not the correct value: act %X, expected %X", data, i);
+             dbg_tb_errors++;
+          end
+          debug_resume();
+      end
+
+      // check hardware loop size 3, loop#0
+      for(i = 20; i > 0; i--) begin
+          debug_wait_for_stall();
+    
+          debug_csr_read(12'h7B2, data); //read lpcount[0]
+          if ( data !== i ) begin
+             $display("ERROR: lpcount[0] has not the correct value: act %X, expected %X", data, i);
+             dbg_tb_errors++;
+          end
+          debug_resume();
+      end
+
+     // check hardware loop size 2, loop#1
+      for(i = 30; i > 0; i--) begin
+          debug_wait_for_stall();
+    
+          debug_csr_read(12'h7B6, data); //read lpcount[1]
+          if ( data !== i ) begin
+             $display("ERROR: lpcount[1] has not the correct value: act %X, expected %X", data, i);
+             dbg_tb_errors++;
+          end
+          debug_resume();
+      end
+
+      // check hardware loop size 2, ebreak after lp.counti, loop#1
+      debug_wait_for_stall();
+      
+      debug_gpr_read(5'd16, lpcount);
+      
+      debug_csr_read(12'h7B6, data); //read lpcount[1]
+      
+      if ( data !== lpcount ) begin
+       $display("ERROR: lpcount[1] has not the correct value: act %X, expected %X", data, lpcount);
+       dbg_tb_errors++;
+      end
+
+      debug_resume();
+
+      // check hardware loop size 2, ebreak after lp.starti, loop#1
+      debug_wait_for_stall();
+      
+      debug_gpr_read(5'd16, lpcount);
+      debug_gpr_read(5'd17, lpstart);
+      
+      debug_csr_read(12'h7B6, data); //read lpcount[1]
+      if ( data !== lpcount ) begin
+       $display("ERROR: lpcount[1] has not the correct value: act %X, expected %X", data, lpcount);
+       dbg_tb_errors++;
+      end
+
+      debug_csr_read(12'h7B4, data); //read lpstart[1]
+      if ( data !== lpstart ) begin
+       $display("ERROR: lpstart[1] has not the correct value: act %X, expected %X", data, lpstart);
+       dbg_tb_errors++;
+      end  
+      
+      debug_resume();
+
+      // check hardware loop size 2, ebreak after lp.endi, loop#1
+      debug_wait_for_stall();
+
+      debug_gpr_read(5'd16, lpcount);
+      debug_gpr_read(5'd17, lpstart);
+      debug_gpr_read(5'd18, lpend);
+       
+      debug_csr_read(12'h7B6, data); //read lpcount[1]
+      if ( data !== lpcount ) begin
+       $display("ERROR: lpcount[1] has not the correct value: act %X, expected %X", data, lpcount);
+       dbg_tb_errors++;
+      end  
+      
+      debug_csr_read(12'h7B4, data); //read lpstart[1]
+      if ( data !== lpstart ) begin
+       $display("ERROR: lpstart[1] has not the correct value: act %X, expected %X", data, lpstart);
+       dbg_tb_errors++;
+      end  
+
+      debug_csr_read(12'h7B5, data); //read lpend[1]
+      if ( data !== lpend ) begin
+       $display("ERROR: lpend[1] has not the correct value: act %X, expected %X", data, lpend);
+       dbg_tb_errors++;
+      end    
+      debug_resume();
+
+    end
+  endtask
+
+  task debug_test_nested_hardware_loop;
+    logic [31:0] data;
+    
+    logic [31:0] lpcount0,lpstart0,lpend0;
+    logic [31:0] lpcount1,lpstart1,lpend1;
+
+    logic [31:0] lpcount0_exp,lpstart0_exp,lpend0_exp;
+    logic [31:0] lpcount1_exp,lpstart1_exp,lpend1_exp;
+    
+    int i,j;
+    begin
+      $display("[DEBUG] Running test_nested_hardwareloop");
+      
+      debug_wait_for_stall();
+
+      debug_gpr_read(5'd16, lpcount1_exp);
+      debug_gpr_read(5'd17, lpstart1_exp);
+      debug_gpr_read(5'd18, lpend1_exp);
+
+      debug_csr_read(12'h7B6, lpcount1); //read lpcount[1]
+      debug_csr_read(12'h7B4, lpstart1); //read lstart[1]
+      debug_csr_read(12'h7B5, lpend1);   //read lpend[1]
+      
+      if ( lpcount1_exp !== lpcount1 ) begin
+       $display("ERROR: lpcount[1] has not the correct value: act %X, expected %X", lpcount1, lpcount1_exp);
+       dbg_tb_errors++;
+      end
+
+      if ( lpstart1_exp !== lpstart1 ) begin
+       $display("ERROR: lpstart[1] has not the correct value: act %X, expected %X", lpstart1, lpstart1_exp);
+       dbg_tb_errors++;
+      end
+
+      if ( lpend1_exp !== lpend1 ) begin
+       $display("ERROR: lpend[1] has not the correct value: act %X, expected %X", lpend1, lpend1_exp);
+       dbg_tb_errors++;
+      end
+
+      debug_resume();
+      
+      
+      for(i = 5; i > 0; i--) begin // OUTERMOST LOOP
+
+          debug_wait_for_stall();
+    
+          debug_gpr_read(5'd19, lpcount0_exp);
+          debug_gpr_read(5'd20, lpstart0_exp);
+          debug_gpr_read(5'd21, lpend0_exp);
+          
+          debug_csr_read(12'h7B2, lpcount0); //read lpcount[0]
+          debug_csr_read(12'h7B0, lpstart0); //read lstart[0]
+          debug_csr_read(12'h7B1, lpend0);   //read lpend[0]
+      
+          if ( lpcount0_exp !== lpcount0 ) begin
+           $display("ERROR: [OUTER] lpcount[0] has not the correct value: act %X, expected %X", lpcount0, lpcount0_exp);
+           dbg_tb_errors++;
+          end
+
+          if ( lpstart0_exp !== lpstart0 ) begin
+           $display("ERROR: [OUTER] lpstart[0] has not the correct value: act %X, expected %X", lpstart0, lpstart0_exp);
+           dbg_tb_errors++;
+          end
+
+          if ( lpend0_exp !== lpend0 ) begin
+           $display("ERROR: [OUTER] lpend[0] has not the correct value: act %X, expected %X", lpend0, lpend0_exp);
+           dbg_tb_errors++;
+          end
+
+          debug_resume();
+
+          for(j = 10; j > 0; j--) begin // INNERMOST LOOP
+
+              debug_wait_for_stall();
+          
+              debug_csr_read(12'h7B6, lpcount1); //read lpcount[1]
+              debug_csr_read(12'h7B2, lpcount0); //read lpcount[0]
+
+              if ( lpcount1 !== i ) begin
+               $display("ERROR: [INNER] lpcount[1] has not the correct value: act %X, expected %X", lpcount1, i);
+               dbg_tb_errors++;
+              end
+
+              if ( lpcount0 !== j ) begin
+               $display("ERROR: [INNER] lpcount[0] has not the correct value: act %X, expected %X", lpcount0, j);
+               dbg_tb_errors++;
+              end
+
+              debug_resume();
+          
+
+          end // INNERMOST LOOP
+
+
+      end // OUTERMOST LOOP
+    end
+  endtask
+
+
+  task debug_test_illegal_hardware_loop;
+    logic [31:0] npc;
+    logic [31:0] ppc;
+    logic [31:0] npc_exp,npc_exp_1;
+    logic [31:0] ppc_exp;
+    logic [31:0] npc_new, npc_last;
+    logic [31:0] data;
+    logic [31:0] lpcount0, lpcount0_new;
+    int i;
+    begin
+      $display("[DEBUG] Running test_illegal_hardware_loop");
+
+           
+      // Illegal instruction is the last one, a patch in the debugger in order to
+      // decrement the hwlp counter is needed
+
+      debug_wait_for_stall();
+      debug_write(`DBG_IE_REG, 32'h0000_08AC);
+      
+      debug_gpr_read(5'd16, npc_new);
+      debug_gpr_read(5'd17, npc_exp);
+      debug_gpr_read(5'd18, ppc_exp);
+      debug_gpr_read(5'd19, npc_last);
+      
+      debug_resume();
+
+      for(i = 10; i > 0; i--) begin 
+      
+          debug_wait_for_stall();
+          // read NPC and PPC
+          debug_read(`DBG_NPC_REG, npc);
+          debug_read(`DBG_PPC_REG, ppc);
+
+          if (npc !== npc_exp) begin
+            $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp);
+            dbg_tb_errors++;
+          end
+
+          if (ppc !== ppc_exp) begin
+            $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, ppc_exp);
+            dbg_tb_errors++;
+          end
+
+          debug_read(`DBG_CAUSE_REG, data);
+          if (data !== 32'h0000_0002) begin
+            $display("ERROR: DBG_CAUSE has not the correct value: act %X, expected %X", data, 32'h0000_002);
+            dbg_tb_errors++;
+          end
+
+          // read lpcount
+          debug_csr_read(12'h7B2, lpcount0); 
+          // decrement it
+          lpcount0_new = lpcount0 - 1;
+          // write lpcount
+          if(lpcount0_new == 0) begin
+             // jump to the last instruction
+             npc_new = npc_last;
+          end else begin
+             // patch to decrement the loop counter by 1
+             debug_csr_write(12'h7B2, lpcount0_new); 
+          end
+          
+          // now jump to the next instruction
+          debug_write(`DBG_NPC_REG, npc_new);
+          
+          debug_read(`DBG_NPC_REG, npc);
+          debug_read(`DBG_PPC_REG, ppc);
+
+          if (npc !== npc_new) begin
+            $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_new);
+            dbg_tb_errors++;
+          end
+
+          if (ppc !== ppc_exp) begin
+            $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, ppc_exp);
+            dbg_tb_errors++;
+          end
+
+          debug_resume();
+
+
+      end
+
+      // Illegal instruction is not the last one, normal debug is ok
+
+      debug_wait_for_stall();
+      debug_write(`DBG_IE_REG, 32'h0000_08AC);
+      
+      debug_gpr_read(5'd16, npc_exp_1);
+      debug_gpr_read(5'd17, npc_exp);
+      debug_gpr_read(5'd18, npc_new);
+      debug_gpr_read(5'd19, ppc_exp);
+
+      debug_resume();
+
+      for(i = 10; i > 0; i--) begin 
+      
+          debug_wait_for_stall();
+          // read NPC and PPC
+          debug_read(`DBG_NPC_REG, npc);
+          debug_read(`DBG_PPC_REG, ppc);
+
+          if (npc !== npc_exp) begin
+            $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp);
+            dbg_tb_errors++;
+          end
+
+          if (ppc !== ppc_exp) begin
+            $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, ppc_exp);
+            dbg_tb_errors++;
+          end
+
+          debug_read(`DBG_CAUSE_REG, data);
+          if (data !== 32'h0000_0002) begin
+            $display("ERROR: DBG_CAUSE has not the correct value: act %X, expected %X", data, 32'h0000_002);
+            dbg_tb_errors++;
+          end
+
+          // now jump to the next instruction
+          debug_write(`DBG_NPC_REG, npc_new);
+          
+          debug_read(`DBG_NPC_REG, npc);
+          debug_read(`DBG_PPC_REG, ppc);
+
+          if (npc !== npc_new) begin
+            $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_new);
+            dbg_tb_errors++;
+          end
+
+          if (ppc !== ppc_exp) begin
+            $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, ppc_exp);
+            dbg_tb_errors++;
+          end
+
+          debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
+          
+          debug_resume();
+          // execute the last instruction of the loop
+          debug_wait_for_stall();
+
+          // read NPC and PPC
+          debug_read(`DBG_NPC_REG, npc);
+          debug_read(`DBG_PPC_REG, ppc);
+
+          if (ppc !== npc_new) begin
+            $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, npc_new);
+            dbg_tb_errors++;
+          end
+          
+          debug_csr_read(12'h7B2, lpcount0); //read lpcount[0]
+          
+          if(lpcount0 !== 1) begin //hardware loop not finished
+          
+            if (npc !== npc_exp_1) begin
+              $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp_1);
+              dbg_tb_errors++;
+            end
+          
+          end
+
+
+          debug_write(`DBG_CTRL_REG, 32'h0000_0000); // disable single step and resume
+
+
+      end
+    end
+  endtask
+
+
+  task debug_test_ss_hardware_loop;
+    logic [31:0] npc;
+    logic [31:0] ppc;
+    logic [31:0] hit_reg;
+    logic [31:0] start_hwlp, middle_hwlp, end_hwlp, count_hwlp, count_hwlp_loop, store_hwlp;
+    logic [31:0] start_hwlp_csr, count_hwlp_csr, end_hwlp_csr;
+    logic [31:0] data, data_add;
+    int i, data_gold;
+    begin
+      $display("[DEBUG] Running debug_test_hardware_single_step");
+
+      debug_wait_for_stall();
+      
+      debug_gpr_read(5'd20, data_add);
+      debug_gpr_read(5'd21, data);
+
+      debug_gpr_read(5'd16, start_hwlp);
+      debug_gpr_read(5'd17, middle_hwlp);
+      debug_gpr_read(5'd18, end_hwlp);
+      debug_gpr_read(5'd19, count_hwlp);
+      debug_gpr_read(5'd22, store_hwlp);
+
+      debug_csr_read(12'h7B0, start_hwlp_csr); 
+      debug_csr_read(12'h7B1, end_hwlp_csr); 
+      debug_csr_read(12'h7B2, count_hwlp_csr); 
+
+      if (start_hwlp !== start_hwlp_csr) begin
+        $display("ERROR: lpstart has not the correct value: act %X, expected %X", start_hwlp_csr, start_hwlp);
+        dbg_tb_errors++;
+      end
+      if (end_hwlp !== end_hwlp_csr) begin
+        $display("ERROR: lpend has not the correct value: act %X, expected %X", end_hwlp_csr, end_hwlp);
+        dbg_tb_errors++;
+      end
+      if (count_hwlp !== count_hwlp_csr) begin
+        $display("ERROR: lpcount has not the correct value: act %X, expected %X", count_hwlp_csr, count_hwlp);
+        dbg_tb_errors++;
+      end
+      if (data !== 0) begin
+        $display("ERROR: data has not the correct value: act %X, expected %X", data, 0);
+        dbg_tb_errors++;
+      end
+
+      debug_read(`DBG_HIT_REG, hit_reg);
+      if (hit_reg[0]) begin
+        $display("ERROR: SSTH is set");
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
+      debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+      
+      data_gold = 0;
+      for( i = count_hwlp; i > 0; i--) begin
+          
+          // FIRST INSTRUCTION
+          debug_wait_for_stall();
+          
+          // read NPC and PPC
+          debug_read(`DBG_NPC_REG, npc);
+          debug_read(`DBG_PPC_REG, ppc);
+
+          if (npc !== middle_hwlp) begin
+            $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, middle_hwlp);
+            dbg_tb_errors++;
+          end
+
+          if (ppc !== start_hwlp) begin
+            $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, start_hwlp);
+            dbg_tb_errors++;
+          end
+
+          debug_gpr_read(5'd21, data);
+          data_gold = data_gold + 1;
+          if (data !== data_gold) begin
+            $display("ERROR: data has not the correct value: act %X, expected %X", data, data_gold);
+            dbg_tb_errors++;
+          end
+          
+          debug_csr_read(12'h7B2, count_hwlp_loop);
+
+          if (count_hwlp_loop !== i) begin
+            $display("ERROR: lpcount_loop has not the correct value: act %X, expected %X", count_hwlp_loop, i);
+            dbg_tb_errors++;
+          end
+
+          debug_resume();
+
+          // SECOND INSTRUCTION
+          debug_wait_for_stall();
+          
+          // read NPC and PPC
+          debug_read(`DBG_NPC_REG, npc);
+          debug_read(`DBG_PPC_REG, ppc);
+
+          if (npc !== end_hwlp) begin
+            $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, end_hwlp);
+            dbg_tb_errors++;
+          end
+
+          if (ppc !== middle_hwlp) begin
+            $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, middle_hwlp);
+            dbg_tb_errors++;
+          end
+
+          debug_gpr_read(5'd21, data);
+          
+          data_gold = data_gold + 2;
+          if (data !== data_gold) begin
+            $display("ERROR: data has not the correct value: act %X, expected %X", data, data_gold);
+            dbg_tb_errors++;
+          end
+          
+          debug_csr_read(12'h7B2, count_hwlp_loop);
+
+          if (count_hwlp_loop !== i) begin
+            $display("ERROR: lpcount_loop has not the correct value: act %X, expected %X", count_hwlp_loop, i);
+            dbg_tb_errors++;
+          end
+
+          debug_resume();
+
+          // THIRD INSTRUCTION
+          debug_wait_for_stall();
+          
+          // read NPC and PPC
+          debug_read(`DBG_NPC_REG, npc);
+          debug_read(`DBG_PPC_REG, ppc);
+          if(i !== 1) begin
+            if (npc !== start_hwlp) begin
+              $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, start_hwlp);
+              dbg_tb_errors++;
+            end
+          end else begin
+            if (npc !== store_hwlp) begin
+              $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, start_hwlp);
+              dbg_tb_errors++;
+            end
+          end
+
+          if (ppc !== end_hwlp) begin
+            $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, end_hwlp);
+            dbg_tb_errors++;
+          end
+
+          debug_gpr_read(5'd21, data);
+          
+          data_gold = data_gold + 3;
+          if (data !== data_gold) begin
+            $display("ERROR: data has not the correct value: act %X, expected %X", data, data_gold);
+            dbg_tb_errors++;
+          end
+          
+          debug_csr_read(12'h7B2, count_hwlp_loop);
+
+          if (count_hwlp_loop !== i) begin
+            $display("ERROR: lpcount_loop (end) has not the correct value: act %X, expected %X", count_hwlp_loop, i);
+            dbg_tb_errors++;
+          end
+
+          debug_resume();
+
+      end
+
+      debug_wait_for_stall();
+      
+      debug_mem_lw(data_add, data);
+      
+      if (data !== data_gold) begin
+        $display("ERROR: data in memory has not the correct value: act %X, expected %X", data, data_gold);
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_CTRL_REG, 32'h0000_0000); //RESUME, but NO Single Step
+      debug_resume();
+
+      end
+  endtask
+
+  task debug_test_wfi_sleep;
+    logic [31:0] npc;
+    logic [31:0] ppc;
+    logic [31:0] npc_exp_1, npc_exp_2, npc_exp_3, npc_exp_4;
+    logic [31:0] ppc_exp;
+    logic [31:0] jmp_to;
+    logic [31:0] data, addr_clk;
+    int i;
+    begin
+      $display("[DEBUG] Running debug_test_wfi_sleep");
+      
+      // WFI
+      debug_wait_for_stall(); //ebreak
+      
+      debug_gpr_read(5'd16, ppc_exp);
+      debug_gpr_read(5'd17, npc_exp_1);
+      debug_gpr_read(5'd18, npc_exp_2);
+
+      debug_read(`DBG_HIT_REG, data);
+      if (data[0]) begin
+        $display("ERROR: SSTH is set");
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
+      debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+
+      debug_wait_for_stall(); 
+     
+      // read NPC and PPC
+      debug_read(`DBG_NPC_REG, npc);
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (npc !== npc_exp_1) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp_1);
+        dbg_tb_errors++;
+      end
+
+      if (ppc !== ppc_exp) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, ppc_exp);
+        dbg_tb_errors++;
+      end
+      
+      debug_read(`DBG_HIT_REG, data);
+      if (~data[0]) begin
+        $display("ERROR: SSTH is not set");
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+      
+      debug_wait_for_stall(); //addi
+     
+      // read NPC and PPC
+      debug_read(`DBG_NPC_REG, npc);
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (npc !== npc_exp_2) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp_2);
+        dbg_tb_errors++;
+      end
+
+      if (ppc !== npc_exp_1) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, npc_exp_1);
+        dbg_tb_errors++;
+      end
+      
+      debug_read(`DBG_HIT_REG, data);
+      if (~data[0]) begin
+        $display("ERROR: SSTH is not set");
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_CTRL_REG, 32'h0000_0000); //RESUME, but NO Single Step
+
+      //SLEEP SINGLE STEP, the CORE won't go to sleep
+      debug_wait_for_stall(); //ebreak
+
+      debug_gpr_read(5'd16, ppc_exp);
+      debug_gpr_read(5'd17, npc_exp_1);
+      debug_gpr_read(5'd18, npc_exp_2);
+      debug_gpr_read(5'd19, npc_exp_3);
+      debug_gpr_read(5'd20, npc_exp_4);
+      
+      jmp_to = npc_exp_3;
+      
+      debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
+      debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+
+      debug_wait_for_stall(); //sw to clock gate
+     
+      // read NPC and PPC
+      debug_read(`DBG_NPC_REG, npc);
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (npc !== npc_exp_1) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp_1);
+        dbg_tb_errors++;
+      end
+
+      if (ppc !== ppc_exp) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, ppc_exp);
+        dbg_tb_errors++;
+      end
+      
+      debug_read(`DBG_HIT_REG, data);
+      if (~data[0]) begin
+        $display("ERROR: SSTH is not set");
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+      
+      debug_wait_for_stall(); //wfi
+     
+      // read NPC and PPC
+      debug_read(`DBG_NPC_REG, npc);
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (npc !== npc_exp_2) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp_2);
+        dbg_tb_errors++;
+      end
+
+      if (ppc !== npc_exp_1) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, npc_exp_1);
+        dbg_tb_errors++;
+      end
+      
+      debug_read(`DBG_HIT_REG, data);
+      if (~data[0]) begin
+        $display("ERROR: SSTH is not set");
+        dbg_tb_errors++;
+      end
+      debug_write(`DBG_NPC_REG, jmp_to);
+ 
+      debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+      
+      debug_wait_for_stall(); //addi
+      // read NPC and PPC
+      debug_read(`DBG_NPC_REG, npc);
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (npc !== npc_exp_4) begin
+        $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp_2);
+        dbg_tb_errors++;
+      end
+
+      if (ppc !== jmp_to) begin
+        $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, npc_exp_1);
+        dbg_tb_errors++;
+      end
+      
+      debug_read(`DBG_HIT_REG, data);
+      if (~data[0]) begin
+        $display("ERROR: SSTH is not set");
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_CTRL_REG, 32'h0000_0000); //RESUME, but NO Single Step
+
+    end
+  endtask
+
+
   task debug_tests;
     logic [31:0] testcase_nr;
     begin
@@ -927,6 +1644,11 @@
           09: debug_test_single_step();
           10: debug_test_jumps();
           11: debug_test_jumps_after_branch();
+          12: debug_test_hardware_loop();
+          13: debug_test_nested_hardware_loop();
+          14: debug_test_illegal_hardware_loop();
+          15: debug_test_ss_hardware_loop();
+          16: debug_test_wfi_sleep();
 
           32'hFFFF_FFFF: break;
           default: $display("ERROR: Unknown testcase %d", testcase_nr);
