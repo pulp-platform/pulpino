@@ -149,3 +149,10 @@ To regenerate the bootcode and copy it to the `rtl` folder use
 
 PULPino can be synthesized and run on a ZedBoard.
 Take a look at the `fpga` subfolder for more information.
+
+## Creating a tarball of the PULPino sources
+
+If for some reason you don't want to use the git sub-repository approach, you
+can create a tarball of the whole design by executing `./create-tarball.py`.
+This will download the latest PULPino sources, including all IPS, remove the
+git internal folders and create a tar gz.
