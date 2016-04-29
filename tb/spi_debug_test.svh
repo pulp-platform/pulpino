@@ -2,8 +2,8 @@
 `define DBG_HIT_REG     15'h0004
 `define DBG_IE_REG      15'h0008
 `define DBG_CAUSE_REG   15'h000C
-`define DBG_NPC_REG     15'h1200
-`define DBG_PPC_REG     15'h1204
+`define DBG_NPC_REG     15'h2000
+`define DBG_PPC_REG     15'h2004
 
 `define EVENT_UNIT_BASE_ADDR 32'h1A10_4000
 
@@ -26,16 +26,22 @@
   task debug_read;
     input   [14:0] addr;
     output  [31:0] data;
+
+    logic [31:0] addr_int;
     begin
-      spi_read_word(use_qspi, {16'h1A11, 1'b0, addr[14:0]}, data);
+      addr_int = 32'h1A11_0000 + addr;
+      spi_read_word(use_qspi, addr_int, data);
     end
   endtask
 
   task debug_write;
     input   [14:0] addr;
     input   [31:0] data;
+
+    logic [31:0] addr_int;
     begin
-      spi_write_word(use_qspi, {16'h1A11, 1'b0, addr[14:0]}, data);
+      addr_int = 32'h1A11_0000 + addr;
+      spi_write_word(use_qspi, addr_int, data);
     end
   endtask
 
@@ -85,32 +91,44 @@
   task debug_gpr_read;
     input   [ 4:0] addr;
     output  [31:0] data;
+
+    logic   [14:0] addr_int;
     begin
-      spi_read_word(use_qspi, {16'h1A11, 1'b0, 7'h10, 1'b0, addr[4:0], 2'b00}, data);
+      addr_int = 15'h400 + (addr * 4);
+      debug_read(addr_int, data);
     end
   endtask
 
   task debug_gpr_write;
     input   [ 4:0] addr;
     input   [31:0] data;
+
+    logic   [14:0] addr_int;
     begin
-      spi_write_word(use_qspi, {16'h1A11, 1'b0, 7'h10, 1'b0, addr[4:0], 2'b00}, data);
+      addr_int = 15'h400 + (addr * 4);
+      debug_write(addr_int, data);
     end
   endtask
 
   task debug_csr_read;
     input   [11:0] addr;
     output  [31:0] data;
+
+    logic   [14:0] addr_int;
     begin
-      spi_read_word(use_qspi, {16'h1A11, 1'b0, 1'b1, addr[11:0], 2'b00}, data);
+      addr_int = 15'h4000 + (addr * 4);
+      debug_read(addr_int, data);
     end
   endtask
 
   task debug_csr_write;
     input   [11:0] addr;
     input   [31:0] data;
+
+    logic   [14:0] addr_int;
     begin
-      spi_write_word(use_qspi, {16'h1A11, 1'b0, 1'b1, addr[11:0], 2'b00}, data);
+      addr_int = 15'h4000 + (addr * 4);
+      debug_write(addr_int, data);
     end
   endtask
 
