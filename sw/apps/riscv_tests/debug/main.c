@@ -30,6 +30,7 @@ void test_nested_hardware_loop(testresult_t *result, void (*start)(), void (*sto
 void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_ss_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_wfi_sleep(testresult_t *result, void (*start)(), void (*stop)());
+void test_access_while_sleep(testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
   { .name = "init",                           .test = test_init                  },
@@ -49,7 +50,8 @@ testcase_t testcases[] = {
   { .name = "14. test_illegal_hardware_loop", .test = test_illegal_hardware_loop },
   { .name = "15. test_ss_hardware_loop",      .test = test_ss_hardware_loop      },
   { .name = "16. test_wfi_sleep",             .test = test_wfi_sleep             },
-  
+  { .name = "17. test_access_while_sleep",    .test = test_access_while_sleep    },
+
   { .name = "finish",                         .test = test_finish                },
   {0, 0}
 };
@@ -347,7 +349,7 @@ void test_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
 
   check_uint32(result, "hardware_loop", act, HWLP_COUNTI*(1+2+3));
-  
+
   act = 0;
   // check hardware loop size 3, loop#0
   asm volatile ("lp.counti x0, %[N];"
@@ -374,7 +376,7 @@ void test_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
 
   check_uint32(result, "hardware_loop", act, 3*HWLP_COUNTI*(1));
-  
+
   act = 0;
   // check hardware loop size 2, ebreak after lp.counti, loop#1
   asm volatile ("la x16, %[N];"
@@ -475,9 +477,9 @@ void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*st
                 "lp.counti x0, %[N];"
                 "lp.starti x0, start_HWLP_8;"
                 "lp.endi   x0, end_HWLP_8;"
-                "ebreak;" 
+                "ebreak;"
                 "start_HWLP_8: addi %[act], %[act], 1;"
-                "end_HWLP_8:   .word 0xF0F0F0F;" 
+                "end_HWLP_8:   .word 0xF0F0F0F;"
                 "end_HWLP_8_1: nop;"
                 : [act] "+r" (act)
                 : [N]   "i"  (HWLP_COUNTI)
@@ -494,9 +496,9 @@ void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*st
                 "lp.counti x0, %[N];"
                 "lp.starti x0, start_HWLP_9;"
                 "lp.endi   x0, end_HWLP_9;"
-                "ebreak;" 
+                "ebreak;"
                 "start_HWLP_9:    addi %[act], %[act], 1;"
-                "before_ill_hwlp: .word 0xF0F0F0F;" 
+                "before_ill_hwlp: .word 0xF0F0F0F;"
                 "end_HWLP_9:      nop;"
                 : [act] "+r" (act)
                 : [N]   "i"  (HWLP_COUNTI)
@@ -514,7 +516,7 @@ void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*st
 void test_ss_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
   volatile uint32_t act = 0;
   uint32_t act_add = (uint32_t)&act;
-  
+
   testcase_current = 15;
 
   act = 0;
@@ -528,12 +530,12 @@ void test_ss_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()
                 "lp.counti x0, %[N];"
                 "lp.starti x0, start_HWLP_10;"
                 "lp.endi   x0, end_HWLP_10;"
-                "ebreak;" 
+                "ebreak;"
                 "start_HWLP_10:    addi x21, x21, 1;"
-                "middle_HWLP_10:   addi x21, x21, 2;" 
+                "middle_HWLP_10:   addi x21, x21, 2;"
                 "end_HWLP_10:      addi x21, x21, 3;"
                 "store_HWLP_10:    sw x21, 0(%[act_add]);"
-                : 
+                :
                 : [N]   "i"  (HWLP_COUNTI), [act_add] "r" (act_add)
                 : "x16", "x17", "x18", "x19", "x20", "x21", "x22");
 
@@ -543,7 +545,6 @@ void test_ss_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()
 
 }
 
-#define SLEEP_ADDR 0x1A104020
 //----------------------------------------------------------------------------
 // 16. WFI and sleep
 //----------------------------------------------------------------------------
@@ -551,7 +552,9 @@ void test_wfi_sleep(testresult_t *result, void (*start)(), void (*stop)()) {
   uint32_t act = 0;
   testcase_current = 16;
 
+  //----------------------------------------------------------------------------
   // single step mode
+  //----------------------------------------------------------------------------
   asm volatile ("la x16, WFI_PPC_1;"
                 "la x17, WFI_NPC_1;"
                 "la x18, WFI_NPC_2;"
@@ -565,7 +568,9 @@ void test_wfi_sleep(testresult_t *result, void (*start)(), void (*stop)()) {
 
   check_uint32(result, "wfi", act, 1+2);
 
+  //----------------------------------------------------------------------------
   // single step mode
+  //----------------------------------------------------------------------------
   act = 0;
   asm volatile ("la x16, SLEEP_SS_NPC_1;"
                 "la x17, SLEEP_SS_NPC_2;"
@@ -573,16 +578,84 @@ void test_wfi_sleep(testresult_t *result, void (*start)(), void (*stop)()) {
                 "la x19, SLEEP_SS_NPC_4;"
                 "la x20, SLEEP_SS_NPC_5;"
                 "ebreak;"
-                "SLEEP_SS_NPC_1: sw %[one], 0x0(%[addr]);"
+                "SLEEP_SS_NPC_1: sw %[one], 0x20(%[addr]);"
                 "SLEEP_SS_NPC_2: wfi;"
-                "SLEEP_SS_NPC_3: nop;" 
-                "                sw x0, 0x0(%[addr]);"
+                "SLEEP_SS_NPC_3: nop;"
                 "SLEEP_SS_NPC_4: addi %[act], %[act], 10;"
                 "SLEEP_SS_NPC_5: addi %[act], %[act], 10;"
+                "                sw x0, 0x20(%[addr]);"
                 : [act]  "+r" (act)
-                : [one]  "r" (0x1), [addr]  "r" (SLEEP_ADDR)
-                : "x16", "x17", "x18", "x19", "x20", "x0");
+                : [one]  "r" (0x1), [addr]  "r" (EVENT_UNIT_BASE_ADDR)
+                : "x16", "x17", "x18", "x19", "x20");
 
   check_uint32(result, "sleep_ss", act, 20);
-                   
+
+  //----------------------------------------------------------------------------
+  // single step mode during sleep
+  // TB wakes us up again
+  //----------------------------------------------------------------------------
+  act = 0;
+  asm volatile ("la x16, SLEEP_SSW_PC_1;"
+                "la x17, SLEEP_SSW_PC_2;"
+                "la x18, SLEEP_SSW_PC_3;"
+                "                ebreak;"
+                "SLEEP_SSW_PC_1: sw %[one], 0x20(%[addr]);"
+                "SLEEP_SSW_PC_2: wfi;"
+                "SLEEP_SSW_PC_3: addi %[act], %[act], 10;"
+                "                addi %[act], %[act], 10;"
+                : [act]  "+r" (act)
+                : [one]  "r" (0x1), [addr]  "r" (EVENT_UNIT_BASE_ADDR)
+                : "x16", "x17", "x18");
+
+  check_uint32(result, "sleep_ss", act, 20);
+}
+
+//----------------------------------------------------------------------------
+// 17. Access while sleep
+//----------------------------------------------------------------------------
+void test_access_while_sleep(testresult_t *result, void (*start)(), void (*stop)()) {
+  uint32_t gpr = 0;
+  uint32_t csr = 0xB15B00B5;
+  testcase_current = 17;
+
+  // check if we can access internal registers while the core is sleeping
+  // This includes GPR, CSR and Debug Registers
+  asm volatile ("         ebreak;"
+                "         sw %[one], 0x20(%[event_unit]);"
+                "         li x16, 0x16161616;"
+                "         li x17, 0x17171717;"
+                "         la x18, aws_wfi;"
+                "         csrw 0x780, %[csr];"
+                "aws_wfi: wfi;"
+                "         sw x0, 0x14(%[event_unit]);"
+                "         mv   %[gpr], x16;"
+                "         csrr %[csr], 0x780;"
+                : [gpr] "+r"       ( gpr        ),
+                  [csr] "+r"       ( csr        )
+                : [one] "r"        ( 0x1        ),
+                  [event_unit] "r" ( EVENT_UNIT_BASE_ADDR )
+                : "x16", "x17", "x18");
+
+  check_uint32(result, "gpr written", gpr, 0xFEDCBA00);
+  check_uint32(result, "csr written", csr, 0xC0DE1234);
+
+  // Identical to the one before, but this time we exit the sleep mode by setting the NPC register
+  asm volatile ("         ebreak;"
+                "         sw %[one], 0x20(%[event_unit]);"
+                "         li x16, 0x16161616;"
+                "         li x17, 0x17171717;"
+                "         la x18, aws_nsl;"
+                "         csrw 0x780, %[csr];"
+                "         wfi;"
+                "aws_nsl: sw x0, 0x14(%[event_unit]);"
+                "         mv   %[gpr], x16;"
+                "         csrr %[csr], 0x780;"
+                : [gpr] "+r"       ( gpr        ),
+                  [csr] "+r"       ( csr        )
+                : [one] "r"        ( 0x1        ),
+                  [event_unit] "r" ( EVENT_UNIT_BASE_ADDR )
+                : "x16", "x17", "x18");
+
+  check_uint32(result, "gpr written", gpr, 0xFEDCBA00);
+  check_uint32(result, "csr written", csr, 0xC0DE1234);
 }
