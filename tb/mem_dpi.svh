@@ -13,9 +13,11 @@ task mem_dpi;
   byte buffer[1024];
   mem_packet_t packet;
   int i;
+  int j;
   int local_addr;
   int local_size;
   logic [31:0] rdata_temp;
+  logic [31:0] rdata_temp_arr[];
   begin
     mem_init(port);
 
@@ -94,17 +96,19 @@ task mem_dpi;
           end
 
           // now main loop, always aligned
-          // TODO: this can be replaced by one single burst
-          while(local_size >= 4) begin
-            spi_read_word(use_qspi, local_addr, rdata_temp[31:0]);
-            buffer[i]   = rdata_temp[ 7:0];
-            buffer[i+1] = rdata_temp[15:8];
-            buffer[i+2] = rdata_temp[23:16];
-            buffer[i+3] = rdata_temp[31:24];
-            i          += 4;
-            local_addr += 4;
-            local_size -= 4;
+          // Done in one single burst
+          rdata_temp_arr = new[local_size/4];
+          spi_read_nword(use_qspi, local_addr, local_size/4, rdata_temp_arr);
+          for (j = 0; j < local_size/4; j++) begin
+            buffer[i]   = rdata_temp_arr[j][ 7:0];
+            buffer[i+1] = rdata_temp_arr[j][15:8];
+            buffer[i+2] = rdata_temp_arr[j][23:16];
+            buffer[i+3] = rdata_temp_arr[j][31:24];
+            i += 4;
           end
+          local_addr += (local_size/4) * 4;
+          local_size -= (local_size/4) * 4;
+          rdata_temp_arr.delete();
 
           // now take care of the last max 3 bytes
           if (local_size >= 2) begin

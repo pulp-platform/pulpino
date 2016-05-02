@@ -294,12 +294,15 @@
     end
   endtask
 
-  task spi_read_word;
+  task spi_read_nword;
     input          use_qspi;
     input   [31:0] addr;
-    output  [31:0] data;
+    input int      n;
+    inout   [31:0] data[];
 
     logic    [7:0] command;
+    int i;
+    int j;
     begin
       command = 8'hB;
       padmode_spi_master = use_qspi ? `SPI_QUAD_TX : `SPI_STD;
@@ -311,7 +314,7 @@
       #`SPI_SEMIPERIOD spi_sck = 0;
       if (use_qspi)
       begin
-        for (int i = 2; i > 0; i--)
+        for (i = 2; i > 0; i--)
         begin
           spi_sdo3 = command[4*i-1];
           spi_sdo2 = command[4*i-2];
@@ -323,7 +326,7 @@
       end
       else
       begin
-        for (int i = 7; i >= 0; i--)
+        for (i = 7; i >= 0; i--)
         begin
           spi_sdo0 = command[i];
           #`SPI_SEMIPERIOD spi_sck = 1;
@@ -332,7 +335,7 @@
       end
       if (use_qspi)
       begin
-        for (int i = 8; i > 0; i--)
+        for (i = 8; i > 0; i--)
         begin
           spi_sdo3 = addr[4*i-1];
           spi_sdo2 = addr[4*i-2];
@@ -344,7 +347,7 @@
       end
       else
       begin
-        for (int i = 31; i >= 0; i--)
+        for (i = 31; i >= 0; i--)
         begin
           spi_sdo0 = addr[i];
           #`SPI_SEMIPERIOD spi_sck = 1;
@@ -352,30 +355,36 @@
         end
       end
       padmode_spi_master = use_qspi ? `SPI_QUAD_RX : `SPI_STD;
-      for (int i = 32; i >= 0; i--)
+      for (i = 32; i >= 0; i--)
       begin
         #`SPI_SEMIPERIOD spi_sck = 1;
         #`SPI_SEMIPERIOD spi_sck = 0;
       end
       if (use_qspi)
       begin
-        for (int i = 8; i > 0; i--)
+        for (j = 0; j < n; j++)
         begin
-          #`SPI_SEMIPERIOD spi_sck = 1;
-          data[4*i-1] = spi_sdi3;
-          data[4*i-2] = spi_sdi2;
-          data[4*i-3] = spi_sdi1;
-          data[4*i-4] = spi_sdi0;
-          #`SPI_SEMIPERIOD spi_sck = 0;
+          for (i = 8; i > 0; i--)
+          begin
+            #`SPI_SEMIPERIOD spi_sck = 1;
+            data[j][4*i-1] = spi_sdi3;
+            data[j][4*i-2] = spi_sdi2;
+            data[j][4*i-3] = spi_sdi1;
+            data[j][4*i-4] = spi_sdi0;
+            #`SPI_SEMIPERIOD spi_sck = 0;
+          end
         end
       end
       else
       begin
-        for (int i = 31; i >= 0; i--)
+        for (j = 0; j < n; j++)
         begin
-          #`SPI_SEMIPERIOD spi_sck = 1;
-          data[i] = spi_sdi0;
-          #`SPI_SEMIPERIOD spi_sck = 0;
+          for (i = 31; i >= 0; i--)
+          begin
+            #`SPI_SEMIPERIOD spi_sck = 1;
+            data[j][i] = spi_sdi0;
+            #`SPI_SEMIPERIOD spi_sck = 0;
+          end
         end
       end
       #`SPI_SEMIPERIOD spi_sck = 0;
@@ -384,6 +393,18 @@
       #`SPI_SEMIPERIOD spi_sck = 0;
       #`SPI_SEMIPERIOD spi_sck = 0;
       padmode_spi_master = use_qspi ? `SPI_QUAD_TX : `SPI_STD;
+    end
+  endtask
+
+  task spi_read_word;
+    input          use_qspi;
+    input   [31:0] addr;
+    output  [31:0] data;
+
+    logic   [31:0] tmp[1];
+    begin
+      spi_read_nword(use_qspi, addr, 1, tmp);
+      data = tmp[0];
     end
   endtask
 
