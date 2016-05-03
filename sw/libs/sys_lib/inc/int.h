@@ -38,8 +38,8 @@ struct ihnd {
   void  *arg;
 };
 
-/** 
- * @brief Add interrupt handler. 
+/**
+ * @brief Add interrupt handler.
  *
  * Adds a new interrupt handler on position vect.
  * @param unsigned long vect - interrupt address to which interrupt handler is added.
@@ -47,12 +47,12 @@ struct ihnd {
  * @param void* arg - arguments for the ISR.
  *
  * @return 0 on error, 1 otherwise
- */ 
+ */
 int int_add(unsigned long vect, void (* handler)(void *), void *arg);
 
 
 /**
- * @brief Interrupt initialization routine 
+ * @brief Interrupt initialization routine
  *
  * Initializes an empty interrupt service table,
  * capable to handle 32 interrupts.
@@ -62,19 +62,19 @@ void int_init(void);
 
 /**
  * @brief Main interrupt service routine.
- * 
- * Calls the appropiate ISR.
+ *
+ * Calls the appropriate ISR.
  *
  */
 void int_main();
 
-/** 
+/**
  * \brief Disables interrupts globally.
  * \param void
  * \return void
  *
- * By writing 1 to the ie (interruptenable) bit 
- * interrupts are globally disable. 
+ * By writing 1 to the ie (interruptenable) bit
+ * interrupts are globally disable.
  */
 static inline void int_disable(void) {
 #ifdef __riscv__
@@ -89,13 +89,13 @@ static inline void int_disable(void) {
 #endif
 }
 
-/** 
+/**
  * \brief Enables interrupts globally.
  * \param void
  * \return void
  *
- * By writing 1 to the ie (interruptenable) bit 
- * interrupts are globally enabled. 
+ * By writing 1 to the ie (interruptenable) bit
+ * interrupts are globally enabled.
  */
 static inline void int_enable(void) {
 #ifdef __riscv__
@@ -109,7 +109,7 @@ static inline void int_enable(void) {
 #endif
 }
 
-/** 
+/**
  * \brief Timer compare interrupt service routine.
  * \param void
  * \return void
@@ -122,7 +122,7 @@ static inline void int_enable(void) {
  */
 void int_time_cmp(void);
 
-/** 
+/**
  * \brief Timer compare interrupt service routine.
  * \param void
  * \return void

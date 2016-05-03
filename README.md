@@ -119,7 +119,7 @@ Replace helloworld with the test/application you want to run.
 ### Using ninja instead of make
 
 You can use ninja instead make to build software for PULPino, just replace all
-occurences of make with ninja.
+occurrences of make with ninja.
 The same targets are supported on both make and ninja.
 
 
