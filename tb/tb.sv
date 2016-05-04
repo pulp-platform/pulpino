@@ -197,6 +197,8 @@ module tb;
     if(TEST == "DEBUG")
     begin
       debug_tests();
+    end else if (TEST == "MEM_DPI") begin
+      mem_dpi(4567);
     end
 
     // end of computation
@@ -211,7 +213,7 @@ module tb;
   // TODO: this is a hack, do it properly!
   `include "tb_spi_pkg.sv"
   `include "tb_mem_pkg.sv"
-  `include "mem_dpi.svh"
   `include "spi_debug_test.svh"
+  `include "mem_dpi.svh"
 
 endmodule
