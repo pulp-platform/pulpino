@@ -2,7 +2,7 @@
 #source tcl/false_paths.tcl
 
 # clocks
-create_clock -period 12.000 -name clk      [get_nets {pulpino_wrap_i/clk}]
+create_clock -period 25.000 -name clk      [get_nets {pulpino_wrap_i/clk}]
 create_clock -period 40.000 -name spi_sck  [get_nets {pulpino_wrap_i/spi_clk_i}]
 create_clock -period 40.000 -name tck      [get_nets {pulpino_wrap_i/tck_i}]
 
@@ -81,6 +81,9 @@ wait_on_run impl_1
 # report area utilization
 report_utilization -hierarchical -hierarchical_depth 1 -file pulpemu.txt
 report_utilization -hierarchical -hierarchical_depth 2 -cells pulpino_wrap_i -file pulpino.txt
+
+report_timing_summary -file pulpemu_timing_summary.txt
+report_timing         -file pulpemu_timing.txt         -max_paths 10
 
 # output Verilog netlist + SDC for timing simulation
 write_verilog -force -mode timesim -cell pulpino_wrap_i ../simu/pulpino_impl.v
