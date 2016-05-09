@@ -51,6 +51,7 @@ Linux running on the ARM cores of the ZYNQ.
 9. In order to login use the following credentials:
 
        username: root
+
        password: pulp
 
 
