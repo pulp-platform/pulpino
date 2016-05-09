@@ -48,6 +48,11 @@ Linux running on the ARM cores of the ZYNQ.
    address via dhcp. You can check with `ifconfig` and friends if your device
    has gotten an IP address and use it to connect to it via a host.
 
+9. In order to login use the following credentials:
+       username: root
+       password: pulp
+
+
 
 The boot.bin and rootfs.tar files can be found under the folder sw/sd_image.
 
