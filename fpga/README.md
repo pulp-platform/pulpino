@@ -49,6 +49,7 @@ Linux running on the ARM cores of the ZYNQ.
    has gotten an IP address and use it to connect to it via a host.
 
 9. In order to login use the following credentials:
+
        username: root
        password: pulp
 
