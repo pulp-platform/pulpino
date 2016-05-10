@@ -181,12 +181,18 @@ end_except:
   // external interrupts are handled by the same callback
   // until compiler supports IRQ routines
   .org 0x00
-  .rept 29
-  nop
+  .rept 23
+  nop                       // unused
   .endr
-  jal x0, int_time_cmp
-  nop
-  jal x0, interrupt_handler
+  jal x0, interrupt_handler // 23: i2c
+  jal x0, interrupt_handler // 24: uart
+  jal x0, interrupt_handler // 25: gpio
+  jal x0, interrupt_handler // 26: spim
+  jal x0, interrupt_handler // 27: spim
+  nop                       // 28: timer
+  jal x0, int_time_cmp      // 29: timer
+  nop                       // 30: timer
+  nop                       // 31: timer
 
   // reset vector
   .org 0x80
