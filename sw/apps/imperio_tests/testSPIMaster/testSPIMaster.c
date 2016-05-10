@@ -33,6 +33,7 @@ void flash_read_qpi(unsigned int address, int* buffer, unsigned int size);
 
 void check_standard_mode(testresult_t *result, void (*start)(), void (*stop)());
 void check_qpi_mode(testresult_t *result, void (*start)(), void (*stop)());
+void flash_check(testresult_t *result, unsigned int size_initial, unsigned int increase);
 
 testcase_t testcases[] = {
   { .name = "SPI Master Standard Mode",   .test = check_standard_mode       },
@@ -83,9 +84,12 @@ void check_standard_mode(testresult_t *result, void (*start)(), void (*stop)()) 
 }
 
 void check_qpi_mode(testresult_t *result, void (*start)(), void (*stop)()) {
-  start();
   int id;
-  result->errors = 0;
+  int i;
+  unsigned int flash_addr = 0;
+  char buffer[512];
+
+  start();
 
   *(volatile int*) (SPI_REG_CLKDIV) = 0x4;
 
@@ -163,9 +167,7 @@ void check_qpi_mode(testresult_t *result, void (*start)(), void (*stop)()) {
   //---------------------------------------------------------------------//
   // check if a sector erase is needed and perform it
   //---------------------------------------------------------------------//
-  unsigned int flash_addr = 0;
-  char buffer[512];
-  for(int i = 0; i < 512; i++)
+  for(i = 0; i < 512; i++)
     buffer[i] = i;
 
   flash_sector_erase_parameter(flash_addr);
@@ -180,12 +182,18 @@ void check_qpi_mode(testresult_t *result, void (*start)(), void (*stop)()) {
   while(flash_get_wip_qpi());
 
   flash_read_qpi(0, buffer, 512);
-  for(int i = 0; i < 512; i++) {
+  for(i = 0; i < 512; i++) {
     if (buffer[i] != (i & 0xFF)) {
       printf ("Content of flash memory is incorrect at index %d: got %X, expected %X\n", i, buffer[i], i);
       result->errors++;
     }
   }
+
+  flash_check(result, 12, 4);
+
+  flash_check(result, 24, 12);
+
+  flash_check(result, 4, 4);
 
   stop();
 }
@@ -199,7 +207,7 @@ void flash_write_qpi(unsigned int address, int* buffer, unsigned int size) {
   while(flash_get_wip_qpi());
 
   //-------------------------------------------------------------------------//
-  //sends write enable command
+  // sends write enable command
   //-------------------------------------------------------------------------//
   spi_setup_cmd_addr(CMD_WREN, 8, 0, 0);
   spi_set_datalen(0);
@@ -303,4 +311,101 @@ void flash_read_qpi(unsigned int address, int* buffer, unsigned int size) {
   spi_set_datalen(size * 8);
   spi_start_transaction(SPI_CMD_QRD, SPI_CSN0);
   spi_read_fifo(buffer, size * 8);
+}
+
+void waste_time() {
+  int i;
+  volatile int k = 0;
+  for(i = 0; i < 500; i++) k = 0;
+}
+
+void flash_check(testresult_t *result, unsigned int size_initial, unsigned int increase) {
+  unsigned int flash_addr;
+  unsigned int address;
+  char buffer[512];
+  int i;
+
+  address = 0;
+  flash_addr = 0;
+
+  //---------------------------------------------------------------------//
+  // check if a sector erase is needed and perform it
+  //---------------------------------------------------------------------//
+  for(i = 0; i < 512; i++)
+    buffer[i] = i;
+
+  flash_sector_erase_parameter(flash_addr);
+
+  {
+    unsigned int address = 0;
+    unsigned int size = 512;
+    unsigned int size_int;
+    // check if a write is in progress and wait until it ends
+    while(flash_get_wip_qpi());
+
+    //-------------------------------------------------------------------------//
+    // sends write enable command
+    //-------------------------------------------------------------------------//
+    spi_setup_cmd_addr(CMD_WREN, 8, 0, 0);
+    spi_set_datalen(0);
+    spi_start_transaction(SPI_CMD_QWR,SPI_CSN0);
+    while ((spi_get_status() & 0xFFFF) != 1);
+
+    //-------------------------------------------------------------------------//
+    // write to flash
+    //-------------------------------------------------------------------------//
+
+    spi_setup_cmd_addr(CMD_PP, 8, address << 8, 24);
+    spi_set_datalen(size * 8);
+
+    spi_start_transaction(SPI_CMD_QWR,SPI_CSN0);
+
+    size_int = size_initial;
+    for (int j = 0; j < size; j += size_int) {
+      waste_time();
+
+      size_int = (size - j) > (size_int + increase) ? (size_int + increase) : (size - j);
+
+      spi_write_fifo(&buffer[j], size_int * 8);
+    }
+
+    while ((spi_get_status() & 0xFFFF) != 1);
+  }
+
+  //---------------------------------------------------------------------//
+  // read back data from flash
+  //---------------------------------------------------------------------//
+
+  // check if a write is in progress and wait until it ends
+  while(flash_get_wip_qpi());
+
+  {
+    unsigned int address = 0;
+    unsigned int size = 512;
+    unsigned int size_int;
+    int tmp;
+
+    while ((spi_get_status() & 0xFFFF) != 1);
+
+    spi_setup_cmd_addr(CMD_4QIOR, 8, address, 32);
+    spi_setup_dummy(10, 0);
+    spi_set_datalen(size * 8);
+    spi_start_transaction(SPI_CMD_QRD, SPI_CSN0);
+
+    size_int = size_initial;
+    for (int j = 0; j < size; j += size_int) {
+      waste_time();
+
+      size_int = (size - j) > (size_int + increase) ? (size_int + increase) : (size - j);
+
+      spi_read_fifo(&buffer[j], size_int * 8);
+    }
+  }
+
+  for(i = 0; i < 512; i++) {
+    if (buffer[i] != (i & 0xFF)) {
+      printf ("Content of flash memory is incorrect at index %d: got %X, expected %X\n", i, buffer[i], i);
+      result->errors++;
+    }
+  }
 }

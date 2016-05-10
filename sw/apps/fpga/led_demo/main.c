@@ -21,7 +21,7 @@ void left_to_right_off_slow(unsigned int first, unsigned int last);
 
 void waste_time() {
   int i;
-  for(i = 0; i < 100000; i++) asm volatile("nop");
+  for(i = 0; i < 100; i++) asm volatile("nop");
 }
 
 #define SW_0_BIT    (1 <<  0)
@@ -52,20 +52,20 @@ int main()
 {
   int i;
 
-  for(i = 0; i < 8; i++) {
-    set_gpio_pin_direction(i, DIR_IN);
-    set_pin_function(i, FUNC_GPIO);
-  }
+  // for(i = 0; i < 8; i++) {
+  //   set_gpio_pin_direction(i, DIR_IN);
+  //   set_pin_function(i, FUNC_GPIO);
+  // }
 
-  for(i = 8; i < 16; i++) {
-    set_gpio_pin_direction(i, DIR_OUT);
-    set_pin_function(i, FUNC_GPIO);
-  }
+  // for(i = 8; i < 16; i++) {
+  //   set_gpio_pin_direction(i, DIR_OUT);
+  //   set_pin_function(i, FUNC_GPIO);
+  // }
 
-  for(i = 16; i < 20; i++) {
-    set_gpio_pin_direction(i, DIR_IN);
-    set_pin_function(i, FUNC_GPIO);
-  }
+  // for(i = 16; i < 20; i++) {
+  //   set_gpio_pin_direction(i, DIR_IN);
+  //   set_pin_function(i, FUNC_GPIO);
+  // }
 
   while(1) {
     left_to_right_on_slow(LED_1, LED_7);

@@ -42,7 +42,7 @@ int main()
 
   printf("Going to sleep and wait for interrupts now\n");
 
-  sleep();
+  while(1) sleep();
 
   return 0;
 }
@@ -54,6 +54,7 @@ void gpio_int_handler(void* unused) {
     case 1 << 18: printf("Left pressed\n");  break;
     case 1 << 19: printf("Right pressed\n"); break;
     case 1 << 20: printf("Up pressed\n");    break;
+    default:      printf("Unknown GPIO\n");  break;
   }
 }
 

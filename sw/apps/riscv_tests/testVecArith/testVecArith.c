@@ -284,8 +284,9 @@ void check_avg(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i;
   unsigned int act;
 
-  util_check_rr(result, AVG,  i, g_avg);
-  util_check_rr(result, AVGU, i, g_avgu);
+  // replaced by addN
+  // util_check_rr(result, AVG,  i, g_avg);
+  // util_check_rr(result, AVGU, i, g_avgu);
 
   //-----------------------------------------------------------------
   // Check lv32.avg.h
