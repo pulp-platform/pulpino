@@ -27,7 +27,7 @@ if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
   message("NOTE: Detected RISCV compiler, using RISCV setup")
 
   if(${GCC_ETH})
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IMXpulpv3 -Wa,-march=IMXpulpv3")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IMXpulpv2 -Wa,-march=IMXpulpv2")
     set(CMAKE_OBJDUMP_FLAGS -Mmarch=IMXpulpv2 -d)
   else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=RV32IM -Wa,-march=RV32IM")
