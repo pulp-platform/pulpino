@@ -28,7 +28,12 @@ module pulpemu_top(
   oled_dc_o,
   oled_res_o,
   oled_vbat_o,
-  oled_vdd_o
+  oled_vdd_o,
+  ext_tck_i,
+  ext_trstn_i,
+  ext_tdi_i,
+  ext_tms_i,
+  ext_tdo_o
   );
 
   inout  [14:0] DDR_addr;
@@ -62,6 +67,12 @@ module pulpemu_top(
   output        oled_res_o;
   output        oled_vbat_o;
   output        oled_vdd_o;
+
+  input         ext_tck_i;
+  input         ext_trstn_i;
+  input         ext_tdi_i;
+  input         ext_tms_i;
+  output        ext_tdo_o;
 
 
   wire [14:0] DDR_addr;
@@ -183,13 +194,22 @@ module pulpemu_top(
   end
 
   // JTAG signals
-  assign tck_i            = jtag_emu_o[0];
-  assign trst_ni          = jtag_emu_o[1];
-  assign td_i             = jtag_emu_o[2];
-  assign tms_i            = jtag_emu_o[3];
+  // for JTAG EMU
+  // assign tck_i            = jtag_emu_o[0];
+  // assign trst_ni          = jtag_emu_o[1];
+  // assign td_i             = jtag_emu_o[2];
+  // assign tms_i            = jtag_emu_o[3];
   assign jtag_emu_i[3:0]  = 4'b0;
   assign jtag_emu_i[4]    = td_o;
   assign jtag_emu_i[31:5] = 27'b0;
+
+  // for external JTAG
+  assign tck_i   = ext_tck_i;
+  assign trst_ni = ext_trstn_i;
+  assign td_i    = ext_tdi_i;
+  assign tms_i   = ext_tms_i;
+
+  assign ext_tdo_o = td_o;
 
 
   // GPIO signals

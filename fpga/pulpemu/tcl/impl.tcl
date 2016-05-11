@@ -36,6 +36,17 @@ set_property PACKAGE_PIN U12  [get_ports {oled_vdd_o}];    # "OLED-VDD"
 
 
 # ----------------------------------------------------------------------------
+# P-MOD for JTAG Access - Bank 13
+# ----------------------------------------------------------------------------
+set_property PACKAGE_PIN Y11  [get_ports {ext_tdi_i}];     # "P-MOD: JA1"
+set_property PACKAGE_PIN AA11 [get_ports {ext_tms_i}];     # "P-MOD: JA2"
+set_property PACKAGE_PIN Y10  [get_ports {ext_tck_i}];     # "P-MOD: JA3"
+set_property PACKAGE_PIN AA9  [get_ports {ext_tdo_o}];     # "P-MOD: JA4"
+set_property PACKAGE_PIN AB11 [get_ports {ext_trstn_i}];   # "P-MOD: JA7"
+
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ext_tck_i_IBUF]
+
+# ----------------------------------------------------------------------------
 # User Push Buttons - Bank 34
 # ----------------------------------------------------------------------------
 set_property PACKAGE_PIN P16 [get_ports {btn_i[0]}];  # "BTNC"
