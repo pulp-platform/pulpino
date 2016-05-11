@@ -377,9 +377,6 @@
       debug_read(`DBG_NPC_REG, npc);
       debug_read(`DBG_PPC_REG, ppc);
 
-      npc_last = npc - 4;
-      ppc_last = ppc - 4;
-
       for(i = 0; i < 10; i++) begin
         debug_wait_for_stall();
         // read NPC and PPC
@@ -391,7 +388,7 @@
           dbg_tb_errors++;
         end
 
-        if (ppc !== npc_last) begin
+        if (i != 0 && ppc !== npc_last) begin
           $display("ERROR: PPC is not equal to last NPC");
           dbg_tb_errors++;
         end
