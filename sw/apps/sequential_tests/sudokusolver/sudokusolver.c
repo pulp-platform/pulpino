@@ -20,8 +20,7 @@ testcase_t testcases[] = {
 };
 
 int main() {
-  run_suite(testcases);
-  return 0;
+  return run_suite(testcases);
 }
 
 void check(testresult_t *result, void (*start)(), void (*stop)()) {

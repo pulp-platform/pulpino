@@ -47,7 +47,7 @@ int main()
 
   print_summary(error);
 
-  return 0;
+  return error;
 }
 
 

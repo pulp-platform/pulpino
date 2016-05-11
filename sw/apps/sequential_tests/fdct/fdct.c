@@ -258,12 +258,7 @@ testcase_t testcases[] = {
 
 int main()
 {
-
-  run_suite(testcases);
-
-  eoc(0);
-  
-  return 0;
+  return run_suite(testcases);
 }
 
 

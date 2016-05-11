@@ -89,12 +89,10 @@ int main()
   int retval = 0;
 
   if(get_core_id() == 0) {
-    retval = run_suite(testcases);
+    return run_suite(testcases);
   }
 
-  synch_barrier();
-
-  return retval;
+  return 0;
 }
 
 

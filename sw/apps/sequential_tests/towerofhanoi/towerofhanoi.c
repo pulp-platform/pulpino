@@ -41,7 +41,7 @@ int main()
 
   print_summary(error);
 
-  return 0;
+  return error;
 }
 
 void computeGold(int n, char* A, char* B, char* C)
