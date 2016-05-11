@@ -7,7 +7,7 @@ add_subdirectory(official)
 add_subdirectory(testMisaligned)
 
 # interrupts and events
-# add_subdirectory(testEvents)
+add_subdirectory(testEvents)
 add_subdirectory(testExceptions)
 
 # arithmetic operations
