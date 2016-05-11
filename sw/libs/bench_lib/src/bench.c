@@ -112,7 +112,8 @@ void perf_print_all(void) {
   printf("Perf #ST:      %d\n", cpu_perf_get(6));
   printf("Perf #JUMP:    %d\n", cpu_perf_get(7));
   printf("Perf #BRANCH:  %d\n", cpu_perf_get(8));
-//  printf("Perf #TAKEN:   %d\n", cpu_perf_get(9));
+  printf("Perf #TAKEN:   %d\n", cpu_perf_get(9));
+  printf("Perf #RVC:     %d\n", cpu_perf_get(10));
 #else
   printf("Perf CYCLES: %d\n",      cpu_perf_get(SPR_PCER_CYCLES));
   printf("Perf INSTR: %d\n",       cpu_perf_get(SPR_PCER_INSTR));
