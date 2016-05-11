@@ -37,7 +37,7 @@ int main() {
   int_add(29, (void *) int_time_cmp, 0);
   int_enable();
 
-  EER = 0xff;
+  EER = 0xF0000000; // enable all timer events;
   IER = 0xF0000000; // enable all timer interrupts
 
   /* Setup Timer A */
