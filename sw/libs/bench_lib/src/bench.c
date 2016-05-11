@@ -50,10 +50,8 @@ void print_summary(unsigned int errors)
 
   if (errors == 0) {
     printf("SUCCESS\n");
-    printf("OOOOOOK!!!!!!\n"); // TODO: remove this one
   } else {
     printf("FAIL\n");
-    printf("NOT OK!!!!!\n");   // TODO: remove this one
   }
 }
 
@@ -144,5 +142,5 @@ void illegal_insn_handler_c(void)
 #endif
   insn = *((unsigned int*)(exception_address));
   printf("Illegal instruction encountered at address 0x%08X: %X\n", exception_address, insn);
-  eoc(0);
+  exit(1);
 }
