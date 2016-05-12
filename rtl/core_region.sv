@@ -182,6 +182,7 @@ module core_region
     .debug_rdata_o   ( debug.rdata       ),
     .debug_halted_o  (                   ),
     .debug_halt_i    ( 1'b0              ),
+    .debug_resume_i  ( 1'b0              ),
 
     .fetch_enable_i  ( fetch_enable_i    ),
     .core_busy_o     ( core_busy_o       ),
