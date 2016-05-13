@@ -13,10 +13,10 @@ VSIM=`which vsim`
 RVC=0
 
 # if you are using the ETH gcc compiler that supports the extended instruction
-# of RI5CY and is restricted to only issue multiplications and no divisions,
-# set this to 1
-# Otherwise it is assumed that the official riscv compiler is used
-GCC_ETH=0
+# of RI5CY, set this to 1
+# Otherwise it is assumed that the official riscv compiler is used and no special
+# instructions are inserted
+GCC_ETH=1
 
 
 PULP_GIT_DIRECTORY=../../
