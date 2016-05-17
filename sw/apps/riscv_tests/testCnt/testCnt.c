@@ -51,28 +51,28 @@ void check_ff1(testresult_t *result, void (*start)(), void (*stop)()) {
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.ff1", act,  5);
+  check_uint32(result, "p.ff1", act,  4);
 
   a = 0x110100;
   asm volatile ("p.ff1 %[d], %[a]"
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.ff1", act,  9);
+  check_uint32(result, "p.ff1", act,  8);
 
   a = 0x00000000;
   asm volatile ("p.ff1 %[d], %[a]"
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.ff1", act,  0);
+  check_uint32(result, "p.ff1", act,  32);
 
   a = 0x80000000;
   asm volatile ("p.ff1 %[d], %[a]"
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.ff1", act,  32);
+  check_uint32(result, "p.ff1", act,  31);
 
   unsigned int i;
   for(i = 0; i < 32; i++) {
@@ -82,7 +82,7 @@ void check_ff1(testresult_t *result, void (*start)(), void (*stop)()) {
                   : [d] "=r" (act)
                   : [a] "r"  (a));
 
-    exp = i + 1;
+    exp = i;
 
     check_uint32(result, "p.ff1", act,  exp);
   }
@@ -94,7 +94,7 @@ void check_ff1(testresult_t *result, void (*start)(), void (*stop)()) {
                   : [d] "=r" (act)
                   : [a] "r"  (a));
 
-    exp = i + 1;
+    exp = i;
 
     check_uint32(result, "p.ff1", act,  exp);
   }
@@ -111,14 +111,14 @@ void check_fl1(testresult_t *result, void (*start)(), void (*stop)()) {
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.fl1", act,  31);
+  check_uint32(result, "p.fl1", act,  30);
 
   a = 0x00000001;
   asm volatile ("p.fl1 %[d], %[a]"
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.fl1", act,  1);
+  check_uint32(result, "p.fl1", act,  0);
 
   unsigned int i;
   for(i = 0; i < 32; i++) {
@@ -128,7 +128,7 @@ void check_fl1(testresult_t *result, void (*start)(), void (*stop)()) {
                   : [d] "=r" (act)
                   : [a] "r"  (a));
 
-    exp = i + 1;
+    exp = i;
 
     check_uint32(result, "p.fl1", act,  exp);
   }
@@ -140,7 +140,7 @@ void check_fl1(testresult_t *result, void (*start)(), void (*stop)()) {
                   : [d] "+r" (act)
                   : [a] "r"  (a));
 
-    exp = i + 1;
+    exp = i;
 
     check_uint32(result, "p.fl1", act,  exp);
   }
@@ -189,22 +189,16 @@ void check_cnt(testresult_t *result, void (*start)(), void (*stop)()) {
 }
 
 
-unsigned int clb_golden(int32_t val) {
-  unsigned int var_out;
+unsigned int clb_golden(int32_t Op1) {
+  int A;
 
-  if (val == 0)
-    var_out = 0;
-  else if (val == (int32_t)0xffffffff)
-    var_out = 31;
+  if (Op1 == 0) A = 0;
+  else if (Op1 == (int) 0xFFFFFFFFL) A = 31;
   else {
-    if (val < 0)
-      val = ~val;
-
-    for(var_out = 0; val < (int32_t)0x40000000; var_out++)
-      val <<= 1;
+          if ((int) Op1 < (int) 0) Op1 = ~Op1;
+          for (A=0; (int) Op1 < (int) 0x40000000L; A++) Op1 = Op1 << 1;
   }
-
-  return var_out;
+  return A;
 }
 
 void check_clb(testresult_t *result, void (*start)(), void (*stop)()) {
@@ -217,35 +211,42 @@ void check_clb(testresult_t *result, void (*start)(), void (*stop)()) {
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.clb", act,  0);
+  check_uint32(result, "p.clb", act,  clb_golden(a));
 
   a = 0x00000001;
   asm volatile ("p.clb %[d], %[a]"
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.clb", act,  30);
+  check_uint32(result, "p.clb", act,  clb_golden(a));
 
   a = 0xF0000000;
   asm volatile ("p.clb %[d], %[a]"
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.clb", act,  3);
+  check_uint32(result, "p.clb", act,  clb_golden(a));
 
   a = 0xFFFFFFFE;
   asm volatile ("p.clb %[d], %[a]"
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.clb", act,  30);
+  check_uint32(result, "p.clb", act,  clb_golden(a));
+
+  a = 0xFFFFFFFF;
+  asm volatile ("p.clb %[d], %[a]"
+                : [d] "=r" (act)
+                : [a] "r"  (a));
+
+  check_uint32(result, "p.clb", act,  clb_golden(a));
 
   a = 0x00000000;
   asm volatile ("p.clb %[d], %[a]"
                 : [d] "=r" (act)
                 : [a] "r"  (a));
 
-  check_uint32(result, "p.clb", act,  0);
+  check_uint32(result, "p.clb", act,  clb_golden(a));
 
   unsigned int i;
   for(i = 0; i < 32; i++) {
@@ -255,8 +256,6 @@ void check_clb(testresult_t *result, void (*start)(), void (*stop)()) {
                   : [d] "=r" (act)
                   : [a] "r"  (a));
 
-    exp = clb_golden(a);
-
-    check_uint32(result, "p.clb", act,  exp);
+    check_uint32(result, "p.clb", act,  clb_golden(a));
   }
 }
