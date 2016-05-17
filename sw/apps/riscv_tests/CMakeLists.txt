@@ -14,7 +14,7 @@ add_subdirectory(testExceptions)
 add_subdirectory(testALU)
 add_subdirectory(testALUExt)
 # disabled for now since opcodes clash
-#add_subdirectory(testMUL)
+add_subdirectory(testMUL)
 
 # ETH specific features
 add_subdirectory(testBitManipulation)

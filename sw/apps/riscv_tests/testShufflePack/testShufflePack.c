@@ -62,17 +62,17 @@ testcase_t testcases[] = {
   } else if ((arg_b >> 6) == 1) { \
     asm volatile (SHUFFLEI1_B_SCI " %[c], %[a], %[imm]\n" \
       : [c] "+r" (res) \
-      : [a] "r"  (arg_a), [imm] "i" (arg_b)); \
+      : [a] "r"  (arg_a), [imm] "i" (arg_b-64)); \
     check_uint32(result, "shuffle_b", res, arg_exp); \
   } else if ((arg_b >> 6) == 2) { \
     asm volatile (SHUFFLEI2_B_SCI " %[c], %[a], %[imm]\n" \
       : [c] "+r" (res) \
-      : [a] "r"  (arg_a), [imm] "i" (arg_b)); \
+      : [a] "r"  (arg_a), [imm] "i" (arg_b-128)); \
     check_uint32(result, "shuffle_b", res, arg_exp); \
   } else { \
     asm volatile (SHUFFLEI3_B_SCI " %[c], %[a], %[imm]\n" \
       : [c] "+r" (res) \
-      : [a] "r"  (arg_a), [imm] "i" (arg_b)); \
+      : [a] "r"  (arg_a), [imm] "i" (arg_b-192)); \
     check_uint32(result, "shuffle_b", res, arg_exp); \
   }
 
@@ -118,61 +118,61 @@ void check_shuffle_h(testresult_t *result, void (*start)(), void (*stop) ()) {
              : [c] "+r" (res)
              : [a] "r"  (g_shuffle_sci_h_a[0]), [imm] "i" (g_shuffle_sci_h_0));
 
-  check_uint32(result, "shuffle_h", res, g_shuffle_sci_h_exp[0]);
+  check_uint32(result, "shuffle_h_sci", res, g_shuffle_sci_h_exp[0]);
 
   asm volatile (SHUFFLE_H_SCI " %[c], %[a], %[imm]\n"
               : [c] "+r" (res)
               : [a] "r"  (g_shuffle_sci_h_a[1]), [imm] "i" (g_shuffle_sci_h_1));
 
-  check_uint32(result, "shuffle_h", res, g_shuffle_sci_h_exp[1]);
+  check_uint32(result, "shuffle_h_sci", res, g_shuffle_sci_h_exp[1]);
 
   asm volatile (SHUFFLE_H_SCI " %[c], %[a], %[imm]\n"
               : [c] "+r" (res)
               : [a] "r"  (g_shuffle_sci_h_a[2]), [imm] "i" (g_shuffle_sci_h_2));
 
-  check_uint32(result, "shuffle_h", res, g_shuffle_sci_h_exp[2]);
+  check_uint32(result, "shuffle_h_sci", res, g_shuffle_sci_h_exp[2]);
 
   asm volatile (SHUFFLE_H_SCI " %[c], %[a], %[imm]\n"
               : [c] "+r" (res)
               : [a] "r"  (g_shuffle_sci_h_a[3]), [imm] "i" (g_shuffle_sci_h_3));
 
-  check_uint32(result, "shuffle_h", res, g_shuffle_sci_h_exp[3]);
+  check_uint32(result, "shuffle_h_sci", res, g_shuffle_sci_h_exp[3]);
 
   asm volatile (SHUFFLE_H_SCI " %[c], %[a], %[imm]\n"
               : [c] "+r" (res)
               : [a] "r"  (g_shuffle_sci_h_a[4]), [imm] "i" (g_shuffle_sci_h_4));
 
-  check_uint32(result, "shuffle_h", res, g_shuffle_sci_h_exp[4]);
+  check_uint32(result, "shuffle_h_sci", res, g_shuffle_sci_h_exp[4]);
 
   asm volatile (SHUFFLE_H_SCI " %[c], %[a], %[imm]\n"
               : [c] "+r" (res)
               : [a] "r"  (g_shuffle_sci_h_a[5]), [imm] "i" (g_shuffle_sci_h_5));
 
-  check_uint32(result, "shuffle_h", res, g_shuffle_sci_h_exp[5]);
+  check_uint32(result, "shuffle_h_sci", res, g_shuffle_sci_h_exp[5]);
 
   asm volatile (SHUFFLE_H_SCI " %[c], %[a], %[imm]\n"
               : [c] "+r" (res)
               : [a] "r"  (g_shuffle_sci_h_a[6]), [imm] "i" (g_shuffle_sci_h_6));
 
-  check_uint32(result, "shuffle_h", res, g_shuffle_sci_h_exp[6]);
+  check_uint32(result, "shuffle_h_sci", res, g_shuffle_sci_h_exp[6]);
 
   asm volatile (SHUFFLE_H_SCI " %[c], %[a], %[imm]\n"
               : [c] "+r" (res)
               : [a] "r"  (g_shuffle_sci_h_a[7]), [imm] "i" (g_shuffle_sci_h_7));
 
-  check_uint32(result, "shuffle_h", res, g_shuffle_sci_h_exp[7]);
+  check_uint32(result, "shuffle_h_sci", res, g_shuffle_sci_h_exp[7]);
 
   asm volatile (SHUFFLE_H_SCI " %[c], %[a], %[imm]\n"
               : [c] "+r" (res)
               : [a] "r"  (g_shuffle_sci_h_a[8]), [imm] "i" (g_shuffle_sci_h_8));
 
-  check_uint32(result, "shuffle_h", res, g_shuffle_sci_h_exp[8]);
+  check_uint32(result, "shuffle_h_sci", res, g_shuffle_sci_h_exp[8]);
 
   asm volatile (SHUFFLE_H_SCI " %[c], %[a], %[imm]\n"
               : [c] "+r" (res)
               : [a] "r"  (g_shuffle_sci_h_a[9]), [imm] "i" (g_shuffle_sci_h_9));
 
-  check_uint32(result, "shuffle_h", res, g_shuffle_sci_h_exp[9]);
+  check_uint32(result, "shuffle_h_sci", res, g_shuffle_sci_h_exp[9]);
 }
 
 void check_shuffle_b(testresult_t *result, void (*start)(), void (*stop) ()) {
@@ -199,6 +199,36 @@ void check_shuffle_b(testresult_t *result, void (*start)(), void (*stop) ()) {
   shuffle_b_sci(g_shuffle_sci_b_a[7], g_shuffle_sci_b_7, g_shuffle_sci_b_exp[7])
   shuffle_b_sci(g_shuffle_sci_b_a[8], g_shuffle_sci_b_8, g_shuffle_sci_b_exp[8])
   shuffle_b_sci(g_shuffle_sci_b_a[9], g_shuffle_sci_b_9, g_shuffle_sci_b_exp[9])
+  shuffle_b_sci(g_shuffle_sci_b_a[10], g_shuffle_sci_b_10, g_shuffle_sci_b_exp[10])
+  shuffle_b_sci(g_shuffle_sci_b_a[11], g_shuffle_sci_b_11, g_shuffle_sci_b_exp[11])
+  shuffle_b_sci(g_shuffle_sci_b_a[12], g_shuffle_sci_b_12, g_shuffle_sci_b_exp[12])
+  shuffle_b_sci(g_shuffle_sci_b_a[13], g_shuffle_sci_b_13, g_shuffle_sci_b_exp[13])
+  shuffle_b_sci(g_shuffle_sci_b_a[14], g_shuffle_sci_b_14, g_shuffle_sci_b_exp[14])
+  shuffle_b_sci(g_shuffle_sci_b_a[15], g_shuffle_sci_b_15, g_shuffle_sci_b_exp[15])
+  shuffle_b_sci(g_shuffle_sci_b_a[16], g_shuffle_sci_b_16, g_shuffle_sci_b_exp[16])
+  shuffle_b_sci(g_shuffle_sci_b_a[17], g_shuffle_sci_b_17, g_shuffle_sci_b_exp[17])
+  shuffle_b_sci(g_shuffle_sci_b_a[18], g_shuffle_sci_b_18, g_shuffle_sci_b_exp[18])
+  shuffle_b_sci(g_shuffle_sci_b_a[19], g_shuffle_sci_b_19, g_shuffle_sci_b_exp[19])
+  shuffle_b_sci(g_shuffle_sci_b_a[20], g_shuffle_sci_b_20, g_shuffle_sci_b_exp[20])
+  shuffle_b_sci(g_shuffle_sci_b_a[21], g_shuffle_sci_b_21, g_shuffle_sci_b_exp[21])
+  shuffle_b_sci(g_shuffle_sci_b_a[22], g_shuffle_sci_b_22, g_shuffle_sci_b_exp[22])
+  shuffle_b_sci(g_shuffle_sci_b_a[23], g_shuffle_sci_b_23, g_shuffle_sci_b_exp[23])
+  shuffle_b_sci(g_shuffle_sci_b_a[24], g_shuffle_sci_b_24, g_shuffle_sci_b_exp[24])
+  shuffle_b_sci(g_shuffle_sci_b_a[25], g_shuffle_sci_b_25, g_shuffle_sci_b_exp[25])
+  shuffle_b_sci(g_shuffle_sci_b_a[26], g_shuffle_sci_b_26, g_shuffle_sci_b_exp[26])
+  shuffle_b_sci(g_shuffle_sci_b_a[27], g_shuffle_sci_b_27, g_shuffle_sci_b_exp[27])
+  shuffle_b_sci(g_shuffle_sci_b_a[28], g_shuffle_sci_b_28, g_shuffle_sci_b_exp[28])
+  shuffle_b_sci(g_shuffle_sci_b_a[29], g_shuffle_sci_b_29, g_shuffle_sci_b_exp[29])
+  shuffle_b_sci(g_shuffle_sci_b_a[30], g_shuffle_sci_b_30, g_shuffle_sci_b_exp[30])
+  shuffle_b_sci(g_shuffle_sci_b_a[31], g_shuffle_sci_b_31, g_shuffle_sci_b_exp[31])
+  shuffle_b_sci(g_shuffle_sci_b_a[32], g_shuffle_sci_b_32, g_shuffle_sci_b_exp[32])
+  shuffle_b_sci(g_shuffle_sci_b_a[33], g_shuffle_sci_b_33, g_shuffle_sci_b_exp[33])
+  shuffle_b_sci(g_shuffle_sci_b_a[34], g_shuffle_sci_b_34, g_shuffle_sci_b_exp[34])
+  shuffle_b_sci(g_shuffle_sci_b_a[35], g_shuffle_sci_b_35, g_shuffle_sci_b_exp[35])
+  shuffle_b_sci(g_shuffle_sci_b_a[36], g_shuffle_sci_b_36, g_shuffle_sci_b_exp[36])
+  shuffle_b_sci(g_shuffle_sci_b_a[37], g_shuffle_sci_b_37, g_shuffle_sci_b_exp[37])
+  shuffle_b_sci(g_shuffle_sci_b_a[38], g_shuffle_sci_b_38, g_shuffle_sci_b_exp[38])
+  shuffle_b_sci(g_shuffle_sci_b_a[39], g_shuffle_sci_b_39, g_shuffle_sci_b_exp[39])
 }
 
 //################################################################################

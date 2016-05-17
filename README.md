@@ -40,6 +40,7 @@ PULPino has the following requirements
   RISC-V toolchain supported by Berkeley or the custom RISC-V toolchain from
   ETH. The ETH version supports all the ISA extensions that were incorporated
   into the RI5CY core.
+  Please make sure you are using the newlib version of the toolchain.
 - python2 >= 2.6
 
 ## Editions

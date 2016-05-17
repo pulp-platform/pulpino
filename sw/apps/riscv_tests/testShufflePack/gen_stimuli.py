@@ -61,16 +61,16 @@ def shuffle_16(prefix):
     ops_a    = []
     ops_b    = []
     exp_res  = []
-    
+
 
     for i in range(0,NumberOfStimuli):
-         
+
         a = random.randint(0, 2**32-1)
         b = random.randint(0, 2**32-1)
-              
+
         h = (b & 0x10000) >> 16
         l = (b & 0x1)
-        
+
 
         sel1  = (a & 0xffff0000) >> 16
         sel0  = a & 0x0000ffff
@@ -85,13 +85,13 @@ def shuffle_16(prefix):
           rl = sel1
         else:
           rl = sel0
-        
+
         r = (rh << 16) | rl;
 
         ops_a.append(a)
         ops_b.append(b)
         exp_res.append(r)
-    
+
     write_hex32_arr(f, '%s_a'   % prefix, ops_a)
     write_hex32_arr(f, '%s_b'   % prefix, ops_b)
     write_hex32_arr(f, '%s_exp' % prefix, exp_res)
@@ -102,19 +102,19 @@ def shuffle_sci_16(prefix):
     ops_a    = []
     ops_b    = []
     exp_res  = []
-    
+
     for i in range(0,10):
-         
+
         a   = random.randint(0, 2**32-1)
         if args.riscv: imm = random.randint(0, 2**5-1)
         else: imm = random.randint(0, 2**7-1)
-              
-        h = (imm & 0x2) >> 1
+
+        h = (imm & 0x10) >> 1
         l = (imm & 0x1)
-        
+
         sel1  = (a & 0xffff0000) >> 16
         sel0  = a & 0x0000ffff
-        
+
         r = 0
 
         if(h):
@@ -126,14 +126,14 @@ def shuffle_sci_16(prefix):
           rl = sel1
         else:
           rl = sel0
-        
+
         r = (rh << 16) | rl;
 
         ops_a.append(a)
         imm_name = prefix + '_' + str(i)
         write_define(f, imm_name, imm)
         exp_res.append(r)
-    
+
     write_hex32_arr(f, '%s_a'   % prefix, ops_a)
     write_hex32_arr(f, '%s_exp' % prefix, exp_res)
 
@@ -144,24 +144,24 @@ def shuffle_8(prefix):
     ops_a    = []
     ops_b    = []
     exp_res  = []
-    
+
 
     for i in range(0,NumberOfStimuli):
-    
+
         a = random.randint(0, 2**32-1)
         b = random.randint(0, 2**32-1)
-            
+
         hh = (b & 0x3000000) >> 24
         hl = (b & 0x0030000) >> 16
         lh = (b & 0x0000300) >> 8
         ll = (b & 0x0000003)
-        
+
         sel3 = (a & 0xff000000) >> 24
         sel2 = (a & 0x00ff0000) >> 16
         sel1 = (a & 0x0000ff00) >> 8
-        sel0 = (a & 0x000000ff) 
+        sel0 = (a & 0x000000ff)
 
-        
+
         r = 0
 
         rhh = switch_case8(hh,sel0,sel1,sel2,sel3)
@@ -171,14 +171,14 @@ def shuffle_8(prefix):
         rlh = switch_case8(lh,sel0,sel1,sel2,sel3)
 
         rll = switch_case8(ll,sel0,sel1,sel2,sel3)
-        
+
         r = (rhh << 24) | (rhl << 16) | (rlh << 8) | (rll);
-        
-      
+
+
         ops_a.append(a)
         ops_b.append(b)
         exp_res.append(r)
-    
+
     write_hex32_arr(f, '%s_a'   % prefix, ops_a)
     write_hex32_arr(f, '%s_b'   % prefix, ops_b)
     write_hex32_arr(f, '%s_exp' % prefix, exp_res)
@@ -189,24 +189,23 @@ def shuffle_sci_8(prefix):
     ops_a    = []
     ops_b    = []
     exp_res  = []
-    
 
-    for i in range(0,10):
-    
+
+    for i in range(0,40):
+
         a = random.randint(0, 2**32-1)
-        if args.riscv: imm = random.randint(0, 2**5-1)
-        else: imm = random.randint(0, 2**7-1)
-            
+        imm = random.randint(0, 2**7-1)
+
         hh = (imm & 0xC0) >> 6
         hl = (imm & 0x30) >> 4
         lh = (imm & 0x0C) >> 2
         ll = (imm & 0x3)
-        
+
         sel3 = (a & 0xff000000) >> 24
         sel2 = (a & 0x00ff0000) >> 16
         sel1 = (a & 0x0000ff00) >> 8
-        sel0 = (a & 0x000000ff) 
-        
+        sel0 = (a & 0x000000ff)
+
         r = 0
 
         rhh = switch_case8(hh,sel0,sel1,sel2,sel3)
@@ -216,15 +215,15 @@ def shuffle_sci_8(prefix):
         rlh = switch_case8(lh,sel0,sel1,sel2,sel3)
 
         rll = switch_case8(ll,sel0,sel1,sel2,sel3)
-        
+
         r = (rhh << 24) | (rhl << 16) | (rlh << 8) | (rll);
-        
-      
+
+
         ops_a.append(a)
         imm_name = prefix + '_' + str(i)
         write_define(f, imm_name, imm)
         exp_res.append(r)
-    
+
     write_hex32_arr(f, '%s_a'   % prefix, ops_a)
     write_hex32_arr(f, '%s_exp' % prefix, exp_res)
 
@@ -236,33 +235,33 @@ def shuffle2_16(prefix):
     ops_b    = []
     ops_c    = []
     exp_res  = []
-    
+
 
     for i in range(0,NumberOfStimuli):
-         
+
         a = random.randint(0, 2**32-1)
         b = random.randint(0, 2**32-1)
-        c = random.randint(0, 2**32-1)      
+        c = random.randint(0, 2**32-1)
 
-       
+
         h = (b & 0x10000) >> 16
         l = (b & 0x1)
-        
+
         AorD_h = b & 0x20000 #17
-        
+
         AorD_l = b & 0x2 #01
 
         if(AorD_h):
            oph  = c
         else:
            oph  = a
-        
-        
+
+
         if(AorD_l):
            opl  = c
         else:
            opl  = a
-        
+
         r = 0
 
         if(h):
@@ -274,14 +273,14 @@ def shuffle2_16(prefix):
           rl = (opl & 0xffff0000) >> 16
         else:
           rl = opl & 0x0000ffff
-        
+
         r = (rh << 16) | rl;
 
         ops_a.append(a)
         ops_b.append(b)
         ops_c.append(c)
         exp_res.append(r)
-    
+
     write_hex32_arr(f, '%s_a'   % prefix, ops_a)
     write_hex32_arr(f, '%s_b'   % prefix, ops_b)
     write_hex32_arr(f, '%s_c'   % prefix, ops_c)
@@ -294,14 +293,14 @@ def shuffle2_8(prefix):
     ops_b    = []
     ops_c    = []
     exp_res  = []
-    
+
 
     for i in range(0,NumberOfStimuli):
-    
+
         a = random.randint(0, 2**32-1)
         b = random.randint(0, 2**32-1)
-        c = random.randint(0, 2**32-1)      
-            
+        c = random.randint(0, 2**32-1)
+
         AorD_hh = b & 0x4000000 #26
         AorD_hl = b & 0x40000     #18
         AorD_lh = b & 0x400   #10
@@ -311,32 +310,32 @@ def shuffle2_8(prefix):
         hl = (b & 0x0030000) >> 16
         lh = (b & 0x0000300) >> 8
         ll = (b & 0x0000003)
-        
+
         if(AorD_hh):
           ophh = c
         else:
           ophh = a
 
         if(AorD_hl):
-          ophl = c 
+          ophl = c
         else:
-          ophl = a 
+          ophl = a
 
         if(AorD_lh):
-          oplh = c 
+          oplh = c
         else:
-          oplh = a 
-        
+          oplh = a
+
         if(AorD_ll):
-          opll = c  
+          opll = c
         else:
-          opll = a  
+          opll = a
 
         sel3 = (ophh & 0xff000000) >> 24
         sel2 = (ophh & 0x00ff0000) >> 16
         sel1 = (ophh & 0x0000ff00) >> 8
-        sel0 = (ophh & 0x000000ff) 
-        
+        sel0 = (ophh & 0x000000ff)
+
         r = 0
 
         rhh = switch_case8(hh,sel0,sel1,sel2,sel3)
@@ -344,32 +343,32 @@ def shuffle2_8(prefix):
         sel3 = (ophl & 0xff000000) >> 24
         sel2 = (ophl & 0x00ff0000) >> 16
         sel1 = (ophl & 0x0000ff00) >> 8
-        sel0 = (ophl & 0x000000ff) 
-        
+        sel0 = (ophl & 0x000000ff)
+
         rhl = switch_case8(hl,sel0,sel1,sel2,sel3)
 
         sel3 = (oplh & 0xff000000) >> 24
         sel2 = (oplh & 0x00ff0000) >> 16
         sel1 = (oplh & 0x0000ff00) >> 8
-        sel0 = (oplh & 0x000000ff) 
+        sel0 = (oplh & 0x000000ff)
 
         rlh = switch_case8(lh,sel0,sel1,sel2,sel3)
 
         sel3 = (opll & 0xff000000) >> 24
         sel2 = (opll & 0x00ff0000) >> 16
         sel1 = (opll & 0x0000ff00) >> 8
-        sel0 = (opll & 0x000000ff) 
+        sel0 = (opll & 0x000000ff)
 
         rll = switch_case8(ll,sel0,sel1,sel2,sel3)
-        
+
         r = (rhh << 24) | (rhl << 16) | (rlh << 8) | (rll);
-        
-      
+
+
         ops_a.append(a)
         ops_b.append(b)
         ops_c.append(c)
         exp_res.append(r)
-    
+
     write_hex32_arr(f, '%s_a'   % prefix, ops_a)
     write_hex32_arr(f, '%s_b'   % prefix, ops_b)
     write_hex32_arr(f, '%s_c'   % prefix, ops_c)
@@ -384,22 +383,22 @@ def pack_16(prefix):
     ops_a    = []
     ops_b    = []
     exp_res  = []
-    
+
 
     for i in range(0,NumberOfStimuli):
-         
+
         a = random.randint(0, 2**32-1)
         b = random.randint(0, 2**32-1)
 
         rh  = a & 0x0000ffff
         rl  = b & 0x0000ffff
-        
+
         r = (rh << 16) | rl;
 
         ops_a.append(a)
         ops_b.append(b)
         exp_res.append(r)
-    
+
     write_hex32_arr(f, '%s_a'   % prefix, ops_a)
     write_hex32_arr(f, '%s_b'   % prefix, ops_b)
     write_hex32_arr(f, '%s_exp' % prefix, exp_res)
@@ -411,29 +410,29 @@ def pack_8_hi(prefix):
     ops_b    = []
     ops_c    = []
     exp_res  = []
-    
+
 
     for i in range(0,NumberOfStimuli):
-         
+
         a = random.randint(0, 2**32-1)
         b = random.randint(0, 2**32-1)
         c = random.randint(0, 2**32-1)
-        
+
         rhh  = a & 0x000000ff
         rhl  = b & 0x000000ff
         rl   = c & 0x0000ffff
-        
+
         r = (rhh << 24) | (rhl << 16) | rl;
 
         ops_a.append(a)
         ops_b.append(b)
         ops_c.append(c)
         exp_res.append(r)
-    
+
     write_hex32_arr(f, '%s_a'   % prefix, ops_a)
     write_hex32_arr(f, '%s_b'   % prefix, ops_b)
     write_hex32_arr(f, '%s_c'   % prefix, ops_c)
-    write_hex32_arr(f, '%s_exp' % prefix, exp_res)    
+    write_hex32_arr(f, '%s_exp' % prefix, exp_res)
 
 def pack_8_lo(prefix):
     global f
@@ -442,29 +441,29 @@ def pack_8_lo(prefix):
     ops_b    = []
     ops_c    = []
     exp_res  = []
-    
+
 
     for i in range(0,NumberOfStimuli):
-         
+
         a = random.randint(0, 2**32-1)
         b = random.randint(0, 2**32-1)
         c = random.randint(0, 2**32-1)
-        
+
         rhh  = a & 0x000000ff
         rhl  = b & 0x000000ff
         rl   = c & 0xffff0000
-        
+
         r = (rhh << 8) | rhl | rl;
 
         ops_a.append(a)
         ops_b.append(b)
         ops_c.append(c)
         exp_res.append(r)
-    
+
     write_hex32_arr(f, '%s_a'   % prefix, ops_a)
     write_hex32_arr(f, '%s_b'   % prefix, ops_b)
     write_hex32_arr(f, '%s_c'   % prefix, ops_c)
-    write_hex32_arr(f, '%s_exp' % prefix, exp_res) 
+    write_hex32_arr(f, '%s_exp' % prefix, exp_res)
 
 ############################################################
 if args.riscv: f = open('testShufflePack_stimuli_riscv.h', 'w')
