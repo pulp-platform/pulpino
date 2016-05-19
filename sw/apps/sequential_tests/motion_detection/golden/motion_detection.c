@@ -5,9 +5,9 @@
 #include "background_80_60.h"
 #include "test_omino_80_60.h"
 
-#define PICTURE_HORIZONTAL_SIZE 5
-#define PICTURE_VERTICAL_SIZE 5
-#define PICTURE_HORIZONTAL_OFFSET 20
+#define PICTURE_HORIZONTAL_SIZE 10
+#define PICTURE_VERTICAL_SIZE 10
+#define PICTURE_HORIZONTAL_OFFSET 15
 #define KERNEL_SIZE 3
 
 pixel sobel1[9] = {1,2,1,0,0,0,-1,-2,-1};
@@ -244,7 +244,7 @@ void print_image_vect(pixel * test)
   for (y=0; y < PICTURE_VERTICAL_SIZE; y++)
     {
       for (x=0; x < PICTURE_HORIZONTAL_SIZE; x++){
-	printf("0x%x",(unsigned char)test[PICTURE_HORIZONTAL_SIZE*y+x]);
+	printf("0x%02x",(unsigned char)test[PICTURE_HORIZONTAL_SIZE*y+x]);
 	if ( (y != PICTURE_VERTICAL_SIZE-1) | (x != PICTURE_HORIZONTAL_SIZE-1) )
 	  printf(",");
       }

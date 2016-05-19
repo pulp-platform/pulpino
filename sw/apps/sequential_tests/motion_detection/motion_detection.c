@@ -2,17 +2,35 @@
 #include "string_lib.h"
 #include "bar.h"
 #include "timer.h"
+#include "motion_detection.h"
 
 #define KERNEL_SIZE 3
 
 //#define DEBUG
-#define PROFILING
-#define CHECK
+#define PROFILE
+
+#define DOTP
 
 typedef short pixel;
 
-//#include "test_5_5.h"
-#include "test_20_20.h"
+//#include "img_10_10.h"
+//#include "img_20_20.h"
+#include "img_40_40.h"
+
+void check_motion_detection         (testresult_t *result, void (*start)(), void (*stop)());
+void check_motion_detection_dotp    (testresult_t *result, void (*start)(), void (*stop)());
+void Conv3x3_fast(pixel*restrict out, pixel*restrict in, pixel*restrict kernel);
+
+
+testcase_t testcases[] = {
+  { .name = "motion_detection"      , .test = check_motion_detection       },
+#ifdef DOTP
+  { .name = "motion_detection_dotp" , .test = check_motion_detection_dotp  },
+#endif
+  {0, 0}
+};
+
+#include "conv_fast.c"
 
 static void val_abs(pixel *restrict image_in) {
   for (unsigned i = 0; i < IMG_HEIGHT; i++)
@@ -156,17 +174,14 @@ static void multiply(pixel *restrict image_in1, pixel *restrict image_in2) {
             image_in1[i*IMG_WIDTH + j] * image_in2[i*IMG_WIDTH + j];
 }
 
-static void check_image(pixel *restrict output, pixel *restrict golden) {
+int check_image(pixel *restrict output, pixel *restrict golden) {
   unsigned errors = 0;
-
+  
   for (unsigned i = 0; i < IMG_HEIGHT * IMG_WIDTH; i++)
     if (output[i] != golden[i])
       errors++;
-
-  if (errors == 0)
-    printf("OOOOOOK!!!!!!\n");
-  else
-    printf("ERROR!!!! %d\n", errors);
+  
+  return errors;
 }
 
 static void print_image(pixel *restrict test) {
@@ -190,10 +205,49 @@ __attribute__((section(".heapsram")))  pixel image_test_out[IMG_HEIGHT][IMG_WIDT
 __attribute__((section(".heapsram")))  pixel sobel1[9];
 __attribute__((section(".heapsram")))  pixel sobel2[9];
 
-int main(int argc, char *argv[]) {
-  int time = 0;
-  int max_pixel = 0;
+int main()
+{
+  return run_suite(testcases);
+}
 
+void check_motion_detection(testresult_t *result, void (*start)(), void (*stop)()) {
+
+init_motion_detection();
+
+#ifdef PROFILE
+  perf_reset();
+  perf_enable_id(EVENT_ID);
+#endif
+  start();
+  motion_detection(0);
+  stop();
+#ifdef PROFILE
+  perf_stop();
+  printf("Perf: %s: %d\n", SPR_PCER_NAME(EVENT_ID),  cpu_perf_get(EVENT_ID));
+#endif
+  result->errors = check_image((pixel*) image_test, (pixel*) Y_golden);
+  uart_wait_tx_done();
+}
+
+void check_motion_detection_dotp(testresult_t *result, void (*start)(), void (*stop)()) {
+
+  init_motion_detection();
+#ifdef PROFILE
+  perf_reset();
+  perf_enable_id(EVENT_ID);
+#endif
+  start();
+  motion_detection(1);
+  stop();
+#ifdef PROFILE
+  perf_stop();
+  printf("Perf: %s: %d\n", SPR_PCER_NAME(EVENT_ID),  cpu_perf_get(EVENT_ID));
+#endif
+  result->errors = check_image((pixel*) image_test, (pixel*) Y_golden);
+  uart_wait_tx_done();
+}
+
+void init_motion_detection(){
   printf("Initializing Motion Detection Application Data Structures... \n");
 
   // INITIALIZING SOBEL VECTORS
@@ -229,9 +283,16 @@ int main(int argc, char *argv[]) {
   print_image((pixel*) image_original);
 #endif
 
+}
+
+
+void motion_detection(int fast_conv) {
+  int time = 0;
+  int max_pixel = 0;
+
   printf("Starting Motion Detection Application \n");
 
-#ifdef PROFILING
+#ifdef PROFILE
   reset_timer();
   start_timer();
 #endif
@@ -272,10 +333,18 @@ int main(int argc, char *argv[]) {
   printf("Sobel Convolution \n");
 #endif
 
-  convolution_rect((pixel*) image_test_out, sobel1, (pixel*) image_test);
-  val_abs((pixel*) image_test);
+  if (fast_conv)
+    Conv3x3_fast((pixel*) image_test_out, (pixel*) image_test, sobel1);
+  else
+    convolution_rect((pixel*) image_test_out, sobel1, (pixel*) image_test);
 
-  convolution_rect((pixel*) image_test_out, sobel2, (pixel*) image_back);
+  val_abs((pixel*) image_test);
+ 
+  if (fast_conv)
+    Conv3x3_fast((pixel*) image_test_out, (pixel*) image_back, sobel2);
+  else
+    convolution_rect((pixel*) image_test_out, sobel2, (pixel*) image_back);
+
   val_abs((pixel*) image_back);
 
   sum_image((pixel*) image_test, (pixel*) image_back);
@@ -288,18 +357,11 @@ int main(int argc, char *argv[]) {
 
   multiply((pixel*) image_test, (pixel*) image_original);
 
-#ifdef PROFILING
+#ifdef PROFILE
   stop_timer();
   time = get_time();
 
   printf("Time: %d cycles\n", time);
 #endif
 
-#ifdef CHECK
-  check_image((pixel*) image_test, (pixel*) Y_golden);
-#endif
-
-  printf("Motion Detection Application Complete!!!\n");
-
-  return 0;
 }
