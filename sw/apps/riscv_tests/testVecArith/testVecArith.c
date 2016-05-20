@@ -74,20 +74,22 @@
 #define LV_AVG_B      "pv.avg.b"
 #define LV_AVG_B_SC   "pv.avg.sc.b"
 #define LV_AVG_B_SCI  "pv.avg.sci.b"
-#define AVGU           "p.avgu"
-#define LV_AVGU_H      "pv.avgu.h"
-#define LV_AVGU_H_SC   "pv.avgu.sc.h"
-#define LV_AVGU_H_SCI  "pv.avgu.sci.h"
-#define LV_AVGU_B      "pv.avgu.b"
-#define LV_AVGU_B_SC   "pv.avgu.sc.b"
-#define LV_AVGU_B_SCI  "pv.avgu.sci.b"
+#define AVGU          "p.avgu"
+#define LV_AVGU_H     "pv.avgu.h"
+#define LV_AVGU_H_SC  "pv.avgu.sc.h"
+#define LV_AVGU_H_SCI "pv.avgu.sci.h"
+#define LV_AVGU_B     "pv.avgu.b"
+#define LV_AVGU_B_SC  "pv.avgu.sc.b"
+#define LV_AVGU_B_SCI "pv.avgu.sci.b"
 #define ABS           "p.abs"
 #define LV_ABS_H      "pv.abs.h"
 #define LV_ABS_B      "pv.abs.b"
-#define LV_EXT_H       "pv.extract.h"
-#define LV_EXT_B       "pv.extract.b"
-#define LV_EXTU_H      "pv.extractu.h"
-#define LV_EXTU_B      "pv.extractu.b"
+#define LV_EXT_H      "pv.extract.h"
+#define LV_EXT_B      "pv.extract.b"
+#define LV_EXTU_H     "pv.extractu.h"
+#define LV_EXTU_B     "pv.extractu.b"
+#define LV_INS_H      "pv.insert.h"
+#define LV_INS_B      "pv.insert.b"
 #else
 #define SCI_IMM "111"
 #define ADD           "l.add"
@@ -133,13 +135,13 @@
 #include "testVecArith_stimuli.h"
 #endif
 
-void check_add (testresult_t *result, void (*start)(), void (*stop)());
-void check_sub (testresult_t *result, void (*start)(), void (*stop)());
-void check_avg (testresult_t *result, void (*start)(), void (*stop)());
-void check_abs (testresult_t *result, void (*start)(), void (*stop)());
-void check_ext (testresult_t *result, void (*start)(), void (*stop)());
-void check_extu(testresult_t *result, void (*start)(), void (*stop)());
-
+void check_add  (testresult_t *result, void (*start)(), void (*stop)());
+void check_sub  (testresult_t *result, void (*start)(), void (*stop)());
+void check_avg  (testresult_t *result, void (*start)(), void (*stop)());
+void check_abs  (testresult_t *result, void (*start)(), void (*stop)());
+void check_ext  (testresult_t *result, void (*start)(), void (*stop)());
+void check_extu (testresult_t *result, void (*start)(), void (*stop)());
+void check_ins  (testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
   { .name = "add"        , .test = check_add      },
@@ -148,6 +150,9 @@ testcase_t testcases[] = {
   { .name = "abs"        , .test = check_abs      },
   { .name = "ext"        , .test = check_ext      },
   { .name = "extu"       , .test = check_extu     },
+#ifdef __riscv
+  { .name = "ins"        , .test = check_ins      },
+#endif
   {0, 0}
 };
 
@@ -366,4 +371,21 @@ void check_extu(testresult_t *result, void (*start)(), void (*stop)()) {
   util_check_ri(result, LV_EXTU_B, i, g_extu_b1, 1);
   util_check_ri(result, LV_EXTU_B, i, g_extu_b2, 2);
   util_check_ri(result, LV_EXTU_B, i, g_extu_b3, 3);
+}
+
+void check_ins(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  unsigned int act;
+#ifdef __riscv
+  //-----------------------------------------------------------------
+  // Check pv.insert
+  //-----------------------------------------------------------------
+  util_check_rrr_sci(result, LV_INS_H, i, g_ins_h0, 0);
+  util_check_rrr_sci(result, LV_INS_H, i, g_ins_h1, 1);
+
+  util_check_rrr_sci(result, LV_INS_B, i, g_ins_b0, 0);
+  util_check_rrr_sci(result, LV_INS_B, i, g_ins_b1, 1);
+  util_check_rrr_sci(result, LV_INS_B, i, g_ins_b2, 2);
+  util_check_rrr_sci(result, LV_INS_B, i, g_ins_b3, 3);
+#endif
 }

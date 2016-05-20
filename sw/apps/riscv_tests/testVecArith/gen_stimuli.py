@@ -35,7 +35,7 @@ def write_hex32_arr(f, name, arr):
     return
 
 ################################################################################
-# instructions with two three registers
+# instructions with three registers
 ################################################################################
 
 def vec_16_rrr_base(f, prefix, func, mina, maxa, minb, maxb, mind, maxd):
@@ -581,6 +581,29 @@ def instr_32_rri(f, prefix, func, imm):
     write_hex32_arr(f, '%s_exp' % prefix, exp_res)
 
 ################################################################################
+# Instructions with two read register and one immediate, with overwriting 
+################################################################################
+def instr_32_rrri(f, prefix, func, imm):
+    
+    ops_a    = []
+    ops_d    = []
+    exp_res  = []
+    
+    for i in range(0,10):
+        a = random.randint(-2**31, 2**31-1)
+        d = random.randint(-2**31, 2**31-1)
+
+        r = func(a, imm, d)
+
+        ops_a.append(a)
+        ops_d.append(d)
+        exp_res.append(r)
+    
+    write_hex32_arr(f, '%s_a'   % prefix, ops_a)
+    write_hex32_arr(f, '%s_d'   % prefix, ops_d)
+    write_hex32_arr(f, '%s_exp' % prefix, exp_res)
+
+################################################################################
 # Instructions with one read register and one immediate
 ################################################################################
 def instr_32_ri(f, prefix, func, imm):
@@ -844,3 +867,40 @@ instr_32_ri(fa,'g_extu_b0', extu_8,  0)
 instr_32_ri(fa,'g_extu_b1', extu_8,  1)
 instr_32_ri(fa,'g_extu_b2', extu_8,  2)
 instr_32_ri(fa,'g_extu_b3', extu_8,  3)
+
+################################################################################
+# generate testdata for pv.insert - Only on riscv
+################################################################################
+
+def ins_16(a, L, d):
+    ins = (a & 0x0000FFFF)
+    if(L == 0):
+        r = (d & 0xFFFF0000) | ins
+    else:
+        r = (d & 0x0000FFFF) | (ins << 16)
+
+    r = r & 0xFFFFFFFF
+
+    return r
+
+def ins_8(a, L, d):
+    ins = (a & 0x000000FF)
+    if(L == 0):
+        r = (d & 0xFFFFFF00) | ins
+    elif(L == 1):
+        r = (d & 0xFFFF00FF) | (ins << 8)
+    elif(L == 2):
+        r = (d & 0xFF00FFFF) | (ins << 16)
+    else:
+        r = (d & 0x00FFFFFF) | (ins << 24)
+
+    r = r & 0xFFFFFFFF
+
+    return r
+
+instr_32_rrri(fa,'g_ins_h0', ins_16, 0)
+instr_32_rrri(fa,'g_ins_h1', ins_16, 1)
+instr_32_rrri(fa,'g_ins_b0', ins_8,  0)
+instr_32_rrri(fa,'g_ins_b1', ins_8,  1)
+instr_32_rrri(fa,'g_ins_b2', ins_8,  2)
+instr_32_rrri(fa,'g_ins_b3', ins_8,  3)
