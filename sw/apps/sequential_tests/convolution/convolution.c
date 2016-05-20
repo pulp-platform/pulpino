@@ -23,11 +23,7 @@ testcase_t testcases[] = {
 int main()
 {
    
-  run_suite(testcases);
-
-  synch_barrier();
-
-  return 0;
+  return run_suite(testcases);
 }
 
 void check_Conv5x5_Byte(testresult_t *result, void (*start)(), void (*stop)()) {
@@ -52,7 +48,6 @@ void check_Conv5x5_Byte(testresult_t *result, void (*start)(), void (*stop)()) {
 #endif
   result->errors = checkRes(1 ,Out+get_core_id()*COL*LINE, COL, LINE);
 
-  synch_barrier();
 
 }
 
@@ -79,7 +74,6 @@ void check_Conv5x5_Byte_Scalar(testresult_t *result, void (*start)(), void (*sto
 #endif
   result->errors = checkRes(1 ,Out+get_core_id()*COL*LINE, COL, LINE);
 
-synch_barrier();
 
 }
 
@@ -105,7 +99,7 @@ void check_Conv3x3_Byte(testresult_t *result, void (*start)(), void (*stop)()) {
   printf("Perf: %s: %d\n", SPR_PCER_NAME(EVENT_ID),  cpu_perf_get(EVENT_ID));
 #endif
   result->errors = checkRes(0 ,Out+get_core_id()*COL*LINE, COL, LINE);
-  synch_barrier();
+
 
 }    
     
@@ -131,7 +125,6 @@ void check_Conv3x3_Byte_Scalar(testresult_t *result, void (*start)(), void (*sto
   printf("Perf: %s: %d\n", SPR_PCER_NAME(EVENT_ID),  cpu_perf_get(EVENT_ID));
 #endif
   result->errors = checkRes(0 ,Out+get_core_id()*COL*LINE, COL, LINE);
-  synch_barrier();
 
 }
 

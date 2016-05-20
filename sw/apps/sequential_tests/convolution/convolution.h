@@ -48,7 +48,7 @@ void  __attribute__ ((noinline)) InitKernelScalar (Filtc *  __restrict__ Out, in
 
 
 // kernels
-static Filtc __attribute__ ((section(".heapsram"))) Out[LINE*COL*4];
+static Filtc  Out[LINE*COL*4];
 
 /*
 	The kernel we want to use:
