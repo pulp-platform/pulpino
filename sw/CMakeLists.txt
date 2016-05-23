@@ -31,7 +31,7 @@ if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
     set(CMAKE_OBJDUMP_FLAGS -Mmarch=IMXpulpv2 -d)
   else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=RV32IM -Wa,-march=RV32IM")
-    set(CMAKE_OBJDUMP_FLAGS -d)
+    set(CMAKE_OBJDUMP_FLAGS -Mmarch=RV32IM -d)
   endif()
 
   if(${RVC})
