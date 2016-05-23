@@ -18,12 +18,13 @@ testcase_t testcases[] = {
 
 int main()
 {
+  int errors;
   if(get_core_id() == 0){
-    run_suite(testcases);
+    errors = run_suite(testcases);
   }
   synch_barrier();
 
-  return 0;
+  return errors;
 }
 
 static Pixel __attribute__ ((section(".heapsram"))) Out[IMG_DIM];
@@ -127,6 +128,9 @@ int  __attribute__ ((noinline)) checkresult(Pixel * __restrict__ Out, Pixel * __
 
   for (i = 0; i<N; i++) {
     if (Out[i]!=OutGold[i]) {
+#ifdef DEBUG
+      printf("Is: %d: Expected: %d\n", Out[i],  OutGold[i]);
+#endif
       err++;
     }
   }

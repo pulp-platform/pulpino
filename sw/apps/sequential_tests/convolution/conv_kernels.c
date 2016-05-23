@@ -34,14 +34,14 @@ void  __attribute__ ((noinline)) Conv3x3_Byte_Scalar  (Pixel * In_Img, Pixel * O
                 w = (i+1)*FILT_WIN + (j+1);
                 coeff = Kernel[w];
                 S += (int)(coeff*data);
-                //saturation
-                S = S > 255 ? 255 : S;
-                S = S < 0   ?   0 : S;
-            }
-        }
+	    }
+	}
+	S          = S >> FILT_SHIFT; //divide by 2^FILT_SHIFT
+        //saturation
+	S = (S > 255) ? 255 : S;
+	S = (S < 0)   ?   0 : S;
 
-        S          = S >> FILT_SHIFT; //divide by 2^FILT_SHIFT
-        Out_Img[t] = (Pixel)(S);
+	Out_Img[t] = (Pixel)(S);
     }
   }
 }
