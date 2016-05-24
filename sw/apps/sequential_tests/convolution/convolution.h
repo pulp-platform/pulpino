@@ -11,6 +11,8 @@ typedef unsigned char   PixelV __attribute__((vector_size (4)));
 
 void __attribute__ ((noinline))  Conv3x3_Byte_Scalar    (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
 void __attribute__ ((noinline))  Conv3x3_Byte_Vector    (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
+void __attribute__ ((noinline))  Conv5x5_Byte_Scalar    (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
+void __attribute__ ((noinline))  Conv5x5_Byte_Vector    (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
 
 void __attribute__ ((noinline))  perf_enable_id         (int eventid);
 

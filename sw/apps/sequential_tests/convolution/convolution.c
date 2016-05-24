@@ -3,16 +3,21 @@
 #include "bar.h"
 #include "timer.h"
 #include "string_lib.h"
-
 #include "convolution.h"
 
 void check_Conv3x3_Byte_Scalar          (testresult_t *result, void (*start)(), void (*stop)());
 void check_Conv3x3_Byte_Vector          (testresult_t *result, void (*start)(), void (*stop)());
 void check_Conv5x5_Byte_Scalar          (testresult_t *result, void (*start)(), void (*stop)());
+void check_Conv5x5_Byte_Vector          (testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
+#if FILT_WIN == 3
   { .name = "Conv3x3_Byte_Vector"    , .test = check_Conv3x3_Byte_Vector    },
   { .name = "Conv3x3_Byte_Scalar"    , .test = check_Conv3x3_Byte_Scalar    },
+#else
+  { .name = "Conv5x5_Byte_Vector"    , .test = check_Conv5x5_Byte_Vector    },
+  { .name = "Conv5x5_Byte_Scalar"    , .test = check_Conv5x5_Byte_Scalar    },
+#endif
   {0, 0}
 };
 
@@ -60,10 +65,10 @@ void check_Conv3x3_Byte_Scalar(testresult_t *result, void (*start)(), void (*sto
 void check_Conv3x3_Byte_Vector(testresult_t *result, void (*start)(), void (*stop)()) {
 
   // start benchmark
-  Filtc Kernel3x3_Scalar[FILT_DIM];
+  Filtc Kernel3x3_Vector[FILT_DIM];
   Pixel In[IMG_DIM];
 
-  InitKernel(Kernel3x3_Scalar,3);
+  InitKernel(Kernel3x3_Vector,FILT_WIN);
   InitData(In, IMG_DIM);
   InitZero(Out, IMG_DIM);
 
@@ -73,7 +78,63 @@ void check_Conv3x3_Byte_Vector(testresult_t *result, void (*start)(), void (*sto
 #endif
 
   start();
-  Conv3x3_Byte_Vector(In, Out, IMG_ROW, IMG_COL, Kernel3x3_Scalar);
+  Conv3x3_Byte_Vector(In, Out, IMG_ROW, IMG_COL, Kernel3x3_Vector);
+  stop();
+
+#ifdef PROFILE
+  perf_stop();
+  printf("Perf: %s: %d\n", SPR_PCER_NAME(EVENT_ID),  cpu_perf_get(EVENT_ID));
+#endif
+
+  result->errors = checkresult(Out, Gold_Out_Img, IMG_DIM);
+
+}
+
+void check_Conv5x5_Byte_Scalar(testresult_t *result, void (*start)(), void (*stop)()) {
+
+  // start benchmark
+  Filtc Kernel5x5_Scalar[FILT_DIM];
+  Pixel In[IMG_DIM];
+
+  InitKernel(Kernel5x5_Scalar,FILT_WIN);
+  InitData(In, IMG_DIM);
+  InitZero(Out, IMG_DIM);
+
+#ifdef PROFILE
+  perf_reset();
+  perf_enable_id(EVENT_ID);
+#endif
+
+  start();
+  Conv5x5_Byte_Scalar(In, Out, IMG_ROW, IMG_COL, Kernel5x5_Scalar);
+  stop();
+
+#ifdef PROFILE
+  perf_stop();
+  printf("Perf: %s: %d\n", SPR_PCER_NAME(EVENT_ID),  cpu_perf_get(EVENT_ID));
+#endif
+
+  result->errors = checkresult(Out, Gold_Out_Img, IMG_DIM);
+
+}
+
+void check_Conv5x5_Byte_Vector(testresult_t *result, void (*start)(), void (*stop)()) {
+
+  // start benchmark
+  Filtc Kernel5x5_Vector[FILT_DIM];
+  Pixel In[IMG_DIM];
+
+  InitKernel(Kernel5x5_Vector,FILT_WIN);
+  InitData(In, IMG_DIM);
+  InitZero(Out, IMG_DIM);
+
+#ifdef PROFILE
+  perf_reset();
+  perf_enable_id(EVENT_ID);
+#endif
+
+  start();
+  Conv5x5_Byte_Vector(In, Out, IMG_ROW, IMG_COL, Kernel5x5_Vector);
   stop();
 
 #ifdef PROFILE
@@ -129,7 +190,7 @@ int  __attribute__ ((noinline)) checkresult(Pixel * __restrict__ Out, Pixel * __
   for (i = 0; i<N; i++) {
     if (Out[i]!=OutGold[i]) {
 #ifdef DEBUG
-      printf("Is: %d: Expected: %d\n", Out[i],  OutGold[i]);
+      printf("At index %d: Actual value: %d: Expected: %d\n", i, Out[i],  OutGold[i]);
 #endif
       err++;
     }
