@@ -37,8 +37,9 @@ void  __attribute__ ((noinline)) Conv3x3_Byte_Scalar  (Pixel * In_Img, Pixel * O
             }
         }
         S = S >> FILT_SHIFT; //divide by 2^FILT_SHIFT
-        //saturation TODO: FIX IT
-        S = clipu(S,0,127);
+        //saturation
+        S = S > 255 ? 255 : S;
+        S = S <   0 ?   0 : S;
         Out_Img[t] = (Pixel)(S);
     }
   }
@@ -76,8 +77,9 @@ void  __attribute__ ((noinline)) Conv5x5_Byte_Scalar  (Pixel * In_Img, Pixel * O
             }
         }
         S = S >> FILT_SHIFT; //divide by 2^FILT_SHIFT
-        //saturation TODO: FIX IT
-        S = clipu(S,0,127);
+        //saturation
+        S = S > 255 ? 255 : S;
+        S = S <   0 ?   0 : S;
         Out_Img[t] = (Pixel)S;
     }
   }
@@ -117,8 +119,8 @@ void  __attribute__ ((noinline)) Conv3x3_Byte_Vector  (Pixel * In_Img, Pixel * O
         S = SumDotp(Img_2,coeff_2, S);
 
         S = S >> FILT_SHIFT; //divide by 2^FILT_SHIFT
-        //saturation, S in (0, 2^(9-1) -1) -> (0,255) TODO: FIX IT use 255 instead of 255
-        S = clipu(S,0,127);
+        //saturation, S in (0, 2^(9-1) -1) -> (0,255)
+        S = clipu(S,0,255);
 
         t = r*R + c+1;
         Out_Img[t] = (Pixel)S;
@@ -165,7 +167,7 @@ void  __attribute__ ((noinline)) Conv3x3_Byte_Vector  (Pixel * In_Img, Pixel * O
     S = SumDotp(Img_2,coeff_2, S);
     S = S >> FILT_SHIFT; //divide by 2^FILT_SHIFT
     //saturation, S in (0, 2^(9-1) -1) -> (0,255)
-    S = clipu(S,0,127);
+    S = clipu(S,0,255);
     t = r*R + c+1;
     Out_Img[t] = (Pixel)S;
   }
@@ -215,7 +217,7 @@ void  __attribute__ ((noinline)) Conv5x5_Byte_Vector  (Pixel * In_Img, Pixel * O
         S = SumDotp(Img_6,coeff_6, S);
         S = S >> FILT_SHIFT; //divide by 2^FILT_SHIFT
         //saturation, S in (0, 2^(9-1) -1) -> (0,255)
-        S = clipu(S,0,127);
+        S = clipu(S,0,255);
 
         t = (r+1)*R + c+2;
         Out_Img[t] = (Pixel)S;
@@ -282,7 +284,7 @@ void  __attribute__ ((noinline)) Conv5x5_Byte_Vector  (Pixel * In_Img, Pixel * O
     S = SumDotp(Img_6,coeff_6, S);
     S = S >> FILT_SHIFT; //divide by 2^FILT_SHIFT
     //saturation, S in (0, 2^(9-1) -1) -> (0,255)
-    S = clipu(S,0,127);
+    S = clipu(S,0,255);
     t = (r+1)*R + c+2;
     Out_Img[t] = (Pixel)S;
   }
