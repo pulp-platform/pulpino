@@ -8,6 +8,7 @@ golden output value.
 
 ## Setup
 
+Set `DATA_WIDTH` equal to 16 to have "short" values or 8 to have "char" ones.
 Set `RANDOM` equal to 1 to generate a random image.
 Modify `COL` and `ROW` to change the image size.
 Set `WRITE_FILE` equal to 1 to generate the `data_image.h` header file for RISC-V.

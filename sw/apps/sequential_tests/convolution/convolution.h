@@ -1,18 +1,40 @@
 #ifndef _CONF_HEADER_
 #define _CONF_HEADER_
 
-typedef signed char     Filtc;
-typedef signed char     FiltcV __attribute__((vector_size (4)));
+#include "config.h" //generate by matlab
 
-typedef unsigned char   Pixel;
-typedef unsigned char   PixelV __attribute__((vector_size (4)));
+#if DATA_WIDTH == 8
+
+    typedef signed char      Filtc;
+    typedef unsigned char    Pixel;
+    typedef signed char      FiltcV     __attribute__((vector_size (4)));
+    typedef unsigned char    PixelV     __attribute__((vector_size (4)));
+
+
+    #define SumDotp(a, b, c)            __builtin_pulp_sdotusp4(a, b, c)
+    #define Dotp(a, b)                  __builtin_pulp_dotusp4(a, b)
+    #define shuffle(a, b, c)            __builtin_pulp_shuffle2b(a, b, c)
+
+#else
+
+    typedef signed short      Filtc;
+    typedef unsigned short    Pixel;
+    typedef signed short      FiltcV    __attribute__((vector_size (4)));
+    typedef unsigned short    PixelV    __attribute__((vector_size (4)));
+
+    #define SumDotp(a, b, c)            __builtin_pulp_sdotusp2(a, b, c)
+    #define Dotp(a, b)                  __builtin_pulp_dotusp2(a, b)
+    #define shuffle(a, b, c)            __builtin_pulp_shuffle2h(a, b, c)
+#endif
 
 #include "data_image.h" //generate by matlab
 
-void __attribute__ ((noinline))  Conv3x3_Byte_Scalar    (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
-void __attribute__ ((noinline))  Conv3x3_Byte_Vector    (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
-void __attribute__ ((noinline))  Conv5x5_Byte_Scalar    (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
-void __attribute__ ((noinline))  Conv5x5_Byte_Vector    (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
+#define clipu(a, zero, max)  __builtin_pulp_clipu(a, zero, max)
+
+void __attribute__ ((noinline))  Conv3x3_Scalar     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
+void __attribute__ ((noinline))  Conv3x3_Vector     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
+void __attribute__ ((noinline))  Conv5x5_Scalar     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
+void __attribute__ ((noinline))  Conv5x5_Vector     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
 
 void __attribute__ ((noinline))  perf_enable_id         (int eventid);
 

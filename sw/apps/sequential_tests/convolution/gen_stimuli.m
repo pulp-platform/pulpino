@@ -1,12 +1,13 @@
 clear all
 close all
 
-COL        = 64;
-ROW        = 64;
+DATA_WIDTH = 8;
+COL        = 32;
+ROW        = 32;
 RANDOM     = 1;
 WRITE_FILE = 1;
 FILT       = 0;
-WIN        = 3;
+WIN        = 5;
 
 
 path_img = 'INSERT YOUR PATH HERE';
@@ -100,10 +101,10 @@ figure(3), imshow( double(image_conv_appr)./ double(max(max(image_conv_appr))) )
 
 
 if WRITE_FILE == 1
-    fileID = fopen('data_image.h','w');
 
-    fprintf(fileID,'#ifndef _INPUT_IMAGE_\n#define _INPUT_IMAGE_\n\n');
-
+    fileID = fopen('config.h','w');
+    fprintf(fileID,'#ifndef _CONFIG_CONV_\n#define _CONFIG_CONV_\n\n');
+    fprintf(fileID,'#define DATA_WIDTH %d\n', DATA_WIDTH);
     fprintf(fileID,'#define IMG_ROW %d\n', R_img);
     fprintf(fileID,'#define IMG_COL %d\n', C_img);
     fprintf(fileID,'#define IMG_DIM IMG_ROW*IMG_COL\n\n');
@@ -111,6 +112,15 @@ if WRITE_FILE == 1
     fprintf(fileID,'#define FILT_WIN %d\n', WIN);
     fprintf(fileID,'#define FILT_SHIFT %d\n', shift);
     fprintf(fileID,'#define FILT_DIM FILT_WIN*FILT_WIN\n\n');
+
+    fprintf(fileID,'#endif');
+    fclose(fileID);
+
+    fileID = fopen('data_image.h','w');
+
+    fprintf(fileID,'#ifndef _INPUT_IMAGE_\n#define _INPUT_IMAGE_\n\n');
+
+
 
     fprintf(fileID,'static Pixel In_Img[%d] = { ', R_img*C_img);
     for R = 1:R_img

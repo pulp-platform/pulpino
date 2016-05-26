@@ -5,18 +5,18 @@
 #include "string_lib.h"
 #include "convolution.h"
 
-void check_Conv3x3_Byte_Scalar          (testresult_t *result, void (*start)(), void (*stop)());
-void check_Conv3x3_Byte_Vector          (testresult_t *result, void (*start)(), void (*stop)());
-void check_Conv5x5_Byte_Scalar          (testresult_t *result, void (*start)(), void (*stop)());
-void check_Conv5x5_Byte_Vector          (testresult_t *result, void (*start)(), void (*stop)());
+void check_Conv3x3_Scalar          (testresult_t *result, void (*start)(), void (*stop)());
+void check_Conv3x3_Vector          (testresult_t *result, void (*start)(), void (*stop)());
+void check_Conv5x5_Scalar          (testresult_t *result, void (*start)(), void (*stop)());
+void check_Conv5x5_Vector          (testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
 #if FILT_WIN == 3
-  { .name = "Conv3x3_Byte_Vector"    , .test = check_Conv3x3_Byte_Vector    },
-  { .name = "Conv3x3_Byte_Scalar"    , .test = check_Conv3x3_Byte_Scalar    },
+  { .name = "Conv3x3_Vector"    , .test = check_Conv3x3_Vector    },
+  { .name = "Conv3x3_Scalar"    , .test = check_Conv3x3_Scalar    },
 #else
-  { .name = "Conv5x5_Byte_Vector"    , .test = check_Conv5x5_Byte_Vector    },
-  { .name = "Conv5x5_Byte_Scalar"    , .test = check_Conv5x5_Byte_Scalar    },
+  { .name = "Conv5x5_Vector"    , .test = check_Conv5x5_Vector    },
+  { .name = "Conv5x5_Scalar"    , .test = check_Conv5x5_Scalar    },
 #endif
   {0, 0}
 };
@@ -34,12 +34,14 @@ int main()
 
 static Pixel __attribute__ ((section(".heapsram"))) Out[IMG_DIM];
 
-void check_Conv3x3_Byte_Scalar(testresult_t *result, void (*start)(), void (*stop)()) {
+void check_Conv3x3_Scalar(testresult_t *result, void (*start)(), void (*stop)()) {
 
   // start benchmark
   Filtc Kernel3x3_Scalar[FILT_DIM];
   Pixel In[IMG_DIM];
 
+
+  printf("2D Convolution WINDOW=%d, DATA_WIDTH=%d\n",FILT_WIN,DATA_WIDTH);
   InitKernel(Kernel3x3_Scalar,FILT_WIN);
   InitData(In, IMG_DIM);
   InitZero(Out, IMG_DIM);
@@ -50,7 +52,7 @@ void check_Conv3x3_Byte_Scalar(testresult_t *result, void (*start)(), void (*sto
 #endif
 
   start();
-  Conv3x3_Byte_Scalar(In, Out, IMG_ROW, IMG_COL, Kernel3x3_Scalar);
+  Conv3x3_Scalar(In, Out, IMG_ROW, IMG_COL, Kernel3x3_Scalar);
   stop();
 
 #ifdef PROFILE
@@ -62,12 +64,14 @@ void check_Conv3x3_Byte_Scalar(testresult_t *result, void (*start)(), void (*sto
 
 }
 
-void check_Conv3x3_Byte_Vector(testresult_t *result, void (*start)(), void (*stop)()) {
+void check_Conv3x3_Vector(testresult_t *result, void (*start)(), void (*stop)()) {
 
   // start benchmark
   Filtc Kernel3x3_Vector[FILT_DIM];
   Pixel In[IMG_DIM];
 
+
+  printf("2D Convolution WINDOW=%d, DATA_WIDTH=%d\n",FILT_WIN,DATA_WIDTH);
   InitKernel(Kernel3x3_Vector,FILT_WIN);
   InitData(In, IMG_DIM);
   InitZero(Out, IMG_DIM);
@@ -78,7 +82,7 @@ void check_Conv3x3_Byte_Vector(testresult_t *result, void (*start)(), void (*sto
 #endif
 
   start();
-  Conv3x3_Byte_Vector(In, Out, IMG_ROW, IMG_COL, Kernel3x3_Vector);
+  Conv3x3_Vector(In, Out, IMG_ROW, IMG_COL, Kernel3x3_Vector);
   stop();
 
 #ifdef PROFILE
@@ -87,15 +91,16 @@ void check_Conv3x3_Byte_Vector(testresult_t *result, void (*start)(), void (*sto
 #endif
 
   result->errors = checkresult(Out, Gold_Out_Img, IMG_DIM);
-
 }
 
-void check_Conv5x5_Byte_Scalar(testresult_t *result, void (*start)(), void (*stop)()) {
+void check_Conv5x5_Scalar(testresult_t *result, void (*start)(), void (*stop)()) {
 
   // start benchmark
   Filtc Kernel5x5_Scalar[FILT_DIM];
   Pixel In[IMG_DIM];
 
+
+  printf("2D Convolution WINDOW=%d, DATA_WIDTH=%d\n",FILT_WIN,DATA_WIDTH);
   InitKernel(Kernel5x5_Scalar,FILT_WIN);
   InitData(In, IMG_DIM);
   InitZero(Out, IMG_DIM);
@@ -106,7 +111,7 @@ void check_Conv5x5_Byte_Scalar(testresult_t *result, void (*start)(), void (*sto
 #endif
 
   start();
-  Conv5x5_Byte_Scalar(In, Out, IMG_ROW, IMG_COL, Kernel5x5_Scalar);
+  Conv5x5_Scalar(In, Out, IMG_ROW, IMG_COL, Kernel5x5_Scalar);
   stop();
 
 #ifdef PROFILE
@@ -115,15 +120,16 @@ void check_Conv5x5_Byte_Scalar(testresult_t *result, void (*start)(), void (*sto
 #endif
 
   result->errors = checkresult(Out, Gold_Out_Img, IMG_DIM);
-
 }
 
-void check_Conv5x5_Byte_Vector(testresult_t *result, void (*start)(), void (*stop)()) {
+void check_Conv5x5_Vector(testresult_t *result, void (*start)(), void (*stop)()) {
 
   // start benchmark
   Filtc Kernel5x5_Vector[FILT_DIM];
   Pixel In[IMG_DIM];
 
+
+  printf("2D Convolution WINDOW=%d, DATA_WIDTH=%d\n",FILT_WIN,DATA_WIDTH);
   InitKernel(Kernel5x5_Vector,FILT_WIN);
   InitData(In, IMG_DIM);
   InitZero(Out, IMG_DIM);
@@ -134,7 +140,7 @@ void check_Conv5x5_Byte_Vector(testresult_t *result, void (*start)(), void (*sto
 #endif
 
   start();
-  Conv5x5_Byte_Vector(In, Out, IMG_ROW, IMG_COL, Kernel5x5_Vector);
+  Conv5x5_Vector(In, Out, IMG_ROW, IMG_COL, Kernel5x5_Vector);
   stop();
 
 #ifdef PROFILE
@@ -143,7 +149,6 @@ void check_Conv5x5_Byte_Vector(testresult_t *result, void (*start)(), void (*sto
 #endif
 
   result->errors = checkresult(Out, Gold_Out_Img, IMG_DIM);
-
 }
 
 // load kernel to TCDM
