@@ -41,7 +41,7 @@ testcase_t testcases[] = {
 int main()
 {
   if(get_core_id() == 0) {
-    run_suite(testcases);
+    return run_suite(testcases);
   }
 
   return 0;
