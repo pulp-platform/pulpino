@@ -25,6 +25,7 @@ void test_illegal(testresult_t *result, void (*start)(), void (*stop)());
 void test_single_step(testresult_t *result, void (*start)(), void (*stop)());
 void test_jumps(testresult_t *result, void (*start)(), void (*stop)());
 void test_jumps_after_branch(testresult_t *result, void (*start)(), void (*stop)());
+void test_branch(testresult_t *result, void (*start)(), void (*stop)());
 void test_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_nested_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
@@ -45,12 +46,13 @@ testcase_t testcases[] = {
   { .name = " 9. test_single_step",           .test = test_single_step           },
   { .name = "10. test_jumps",                 .test = test_jumps                 },
   { .name = "11. test_jumps_after_branch",    .test = test_jumps_after_branch    },
-  { .name = "12. test_hardware_loop",         .test = test_hardware_loop         },
-  { .name = "13. test_nested_hardware_loop",  .test = test_nested_hardware_loop  },
-  { .name = "14. test_illegal_hardware_loop", .test = test_illegal_hardware_loop },
-  { .name = "15. test_ss_hardware_loop",      .test = test_ss_hardware_loop      },
-  { .name = "16. test_wfi_sleep",             .test = test_wfi_sleep             },
-  { .name = "17. test_access_while_sleep",    .test = test_access_while_sleep    },
+  { .name = "12. test_branch",                .test = test_branch                },
+  { .name = "13. test_hardware_loop",         .test = test_hardware_loop         },
+  { .name = "14. test_nested_hardware_loop",  .test = test_nested_hardware_loop  },
+  { .name = "15. test_illegal_hardware_loop", .test = test_illegal_hardware_loop },
+  { .name = "16. test_ss_hardware_loop",      .test = test_ss_hardware_loop      },
+  { .name = "17. test_wfi_sleep",             .test = test_wfi_sleep             },
+  { .name = "18. test_access_while_sleep",    .test = test_access_while_sleep    },
 
   { .name = "finish",                         .test = test_finish                },
   {0, 0}
@@ -328,13 +330,89 @@ void test_jumps_after_branch(testresult_t *result, void (*start)(), void (*stop)
   check_uint32(result, "branch_aft_jmp_nt", act, 4);
 }
 
+//----------------------------------------------------------------------------
+// 12. Branch Taken and not taken, in single-stepping mode
+//----------------------------------------------------------------------------
+void test_branch(testresult_t *result, void (*start)(), void (*stop)()) {
+  uint32_t act = 0;
+  testcase_current = 12;
+
+  // check branch taken toward
+  asm volatile ("         la  x16, pc_btt_0;"
+                "         la  x17, pc_btt_1;"
+                "         la  x18, pc_btt_2;"
+                "         la  x19, pc_btt_3;"
+                "         ebreak;"
+                "pc_btt_0: addi %[a], %[a], 4;"
+                "pc_btt_1: beq x0, x0, pc_btt_2;"
+                "         j pc_btt_0;"
+                "pc_btt_2: addi %[a], %[a], 2;"
+                "pc_btt_3: nop;"
+                : [a] "+r" (act)
+                ::  "x16", "x17", "x18", "x19");
+
+  check_uint32(result, "branch_taken_toward", act, 4+2);
+
+  act = 0;
+  // check branch not taken toward
+  asm volatile ("         la  x16, pc_bnt_0;"
+                "         la  x17, pc_bnt_1;"
+                "         la  x18, pc_bnt_2;"
+                "         la  x19, pc_bnt_3;"
+                "         addi %[a], %[a], 4;"
+                "         ebreak;"
+                "pc_bnt_0: bne x0, x0, pc_bnt_2;"
+                "pc_bnt_1: j pc_bnt_3;"
+                "pc_bnt_2: addi %[a], %[a], 2;"
+                "pc_bnt_3: nop;"
+                : [a] "+r" (act)
+                ::  "x16", "x17", "x18", "x19");
+
+  check_uint32(result, "branch_not_taken_toward", act, 4);
+
+  act = 0;
+  // check branch taken backward
+  asm volatile ("         la  x16, pc_btb_0;"
+                "         la  x17, pc_btb_1;"
+                "         la  x18, pc_btb_2;"
+                "         la  x19, pc_btb_3;"
+                "         ebreak;"
+                "pc_btb_0: addi %[a], %[a], 1;"
+                "pc_btb_1: bne %[k], %[a], pc_btb_0;"
+                "pc_btb_2: j pc_btb_3;"
+                "         addi %[a], %[a], 2;"
+                "pc_btb_3: nop;"
+                : [a] "+r" (act)
+                : [k] "r"  (10)
+                :  "x16", "x17", "x18", "x19");
+
+  check_uint32(result, "branch_taken_backward", act, 10);
+
+  act = 0;
+  // check branch not taken backward
+  asm volatile ("         la  x16, pc_bnb_0;"
+                "         la  x17, pc_bnb_1;"
+                "         la  x18, pc_bnb_2;"
+                "         la  x19, pc_bnb_3;"
+                "         ebreak;"
+                "pc_bnb_0: addi %[a], %[a], 1;"
+                "pc_bnb_1: beq %[k], %[a], pc_bnb_0;"
+                "pc_bnb_2: j pc_bnb_3;"
+                "pc_bnb_3: addi %[a], %[a], 2;"
+                : [a] "+r" (act)
+                : [k] "r"  (10)
+                :  "x16", "x17", "x18", "x19");
+
+  check_uint32(result, "branch_not_taken_backward", act, 1+2);
+}
+
 #define HWLP_COUNTI 10
 //----------------------------------------------------------------------------
-// 12. Hardware Loop
+// 13. Hardware Loop
 //----------------------------------------------------------------------------
 void test_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
   uint32_t act = 0;
-  testcase_current = 12;
+  testcase_current = 13;
 
   // check hardware loop size 4, loop#0
   asm volatile ("lp.counti x0, %[N];"
@@ -428,11 +506,11 @@ void test_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 }
 
 //----------------------------------------------------------------------------
-// 13. Nested Hardware Loop
+// 14. Nested Hardware Loop
 //----------------------------------------------------------------------------
 void test_nested_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
   uint32_t act = 0;
-  testcase_current = 13;
+  testcase_current = 14;
 
   asm volatile ("la x16, %[N];"
                 "la x17, start_HWLP_7;"
@@ -461,11 +539,11 @@ void test_nested_hardware_loop(testresult_t *result, void (*start)(), void (*sto
 }
 
 //----------------------------------------------------------------------------
-// 14. Illegal Hardware Loop
+// 15. Illegal Hardware Loop
 //----------------------------------------------------------------------------
 void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
   uint32_t act = 0;
-  testcase_current = 14;
+  testcase_current = 15;
 
   // Illegal instruction is the last one, a patch in the debugger in order to
   // decrement the hwlp counter is needed
@@ -511,13 +589,13 @@ void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*st
 }
 
 //----------------------------------------------------------------------------
-// 15. Hardware Loop Single Step
+// 16. Hardware Loop Single Step
 //----------------------------------------------------------------------------
 void test_ss_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()) {
   volatile uint32_t act = 0;
   uint32_t act_add = (uint32_t)&act;
 
-  testcase_current = 15;
+  testcase_current = 16;
 
   act = 0;
   asm volatile ("la x16, start_HWLP_10;"
@@ -546,11 +624,11 @@ void test_ss_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()
 }
 
 //----------------------------------------------------------------------------
-// 16. WFI and sleep
+// 17. WFI and sleep
 //----------------------------------------------------------------------------
 void test_wfi_sleep(testresult_t *result, void (*start)(), void (*stop)()) {
   uint32_t act = 0;
-  testcase_current = 16;
+  testcase_current = 17;
 
   //----------------------------------------------------------------------------
   // single step mode
@@ -611,12 +689,12 @@ void test_wfi_sleep(testresult_t *result, void (*start)(), void (*stop)()) {
 }
 
 //----------------------------------------------------------------------------
-// 17. Access while sleep
+// 18. Access while sleep
 //----------------------------------------------------------------------------
 void test_access_while_sleep(testresult_t *result, void (*start)(), void (*stop)()) {
   uint32_t gpr = 0;
   uint32_t csr = 0xB15B00B5;
-  testcase_current = 17;
+  testcase_current = 18;
 
   // check if we can access internal registers while the core is sleeping
   // This includes GPR, CSR and Debug Registers
