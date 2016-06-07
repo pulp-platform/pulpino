@@ -6,30 +6,31 @@
 #if DATA_WIDTH == 8
 
     typedef signed char      Filtc;
-    typedef unsigned char    Pixel;
+    typedef signed char      Pixel;
     typedef signed char      FiltcV     __attribute__((vector_size (4)));
-    typedef unsigned char    PixelV     __attribute__((vector_size (4)));
+    typedef signed char      PixelV     __attribute__((vector_size (4)));
 
 
-    #define SumDotp(a, b, c)            __builtin_pulp_sdotusp4(a, b, c)
-    #define Dotp(a, b)                  __builtin_pulp_dotusp4(a, b)
+    #define sumdotp(a, b, c)            __builtin_pulp_sdotsp4(a, b, c)
+    #define dotp(a, b)                  __builtin_pulp_dotsp4(a, b)
     #define shuffle(a, b, c)            __builtin_pulp_shuffle2b(a, b, c)
 
 #else
 
     typedef signed short      Filtc;
-    typedef unsigned short    Pixel;
+    typedef signed short      Pixel;
     typedef signed short      FiltcV    __attribute__((vector_size (4)));
-    typedef unsigned short    PixelV    __attribute__((vector_size (4)));
+    typedef signed short      PixelV    __attribute__((vector_size (4)));
 
-    #define SumDotp(a, b, c)            __builtin_pulp_sdotusp2(a, b, c)
-    #define Dotp(a, b)                  __builtin_pulp_dotusp2(a, b)
+    #define sumdotp(a, b, c)            __builtin_pulp_sdotsp2(a, b, c)
+    #define dotp(a, b)                  __builtin_pulp_dotsp2(a, b)
     #define shuffle(a, b, c)            __builtin_pulp_shuffle2h(a, b, c)
 #endif
 
 #include "data_image.h" //generate by matlab
 
-#define clipu(a, zero, max)  __builtin_pulp_clipu(a, zero, max)
+#define clipu(a, zero, max)         __builtin_pulp_clipu(a, zero, max)
+#define addnr(S, Norm, Round)       __builtin_pulp_addRN(S, 0, Norm, Round);
 
 void __attribute__ ((noinline))  Conv3x3_Scalar     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
 void __attribute__ ((noinline))  Conv3x3_Vector     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);

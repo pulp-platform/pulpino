@@ -151,7 +151,7 @@ void check_Conv5x5_Vector(testresult_t *result, void (*start)(), void (*stop)())
   result->errors = checkresult(Out, Gold_Out_Img, IMG_DIM);
 }
 
-// load kernel to TCDM
+// load kernel
 void __attribute__ ((noinline)) InitKernel(Filtc * __restrict__ Kernel, int size)
 {
   int i;
@@ -161,7 +161,7 @@ void __attribute__ ((noinline)) InitKernel(Filtc * __restrict__ Kernel, int size
   }
 }
 
-// load input img to TCDM
+// load input img
 void __attribute__ ((noinline)) InitData(Pixel * __restrict__ Img, int size)
 {
   int i;
@@ -195,7 +195,7 @@ int  __attribute__ ((noinline)) checkresult(Pixel * __restrict__ Out, Pixel * __
   for (i = 0; i<N; i++) {
     if (Out[i]!=OutGold[i]) {
 #ifdef DEBUG
-      printf("At index %d: Actual value: %d: Expected: %d\n", i, Out[i],  OutGold[i]);
+      printf("At index %d: Actual value: %x: Expected: %x\n", i, Out[i],  OutGold[i]);
 #endif
       err++;
     }

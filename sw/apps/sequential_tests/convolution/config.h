@@ -7,7 +7,6 @@
 #define IMG_DIM IMG_ROW*IMG_COL
 
 #define FILT_WIN 5
-#define FILT_SHIFT 8
 #define FILT_DIM FILT_WIN*FILT_WIN
 
 #endif
