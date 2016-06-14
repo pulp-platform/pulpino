@@ -40,7 +40,7 @@
 extern "C"{
 #endif
 
-void yield(void);
+//void yield(void);	// ###check later###
 
 #define HIGH 0x1
 #define LOW  0x0
@@ -149,6 +149,10 @@ typedef unsigned int word;
 typedef bool boolean;
 typedef uint8_t byte;
 
+void pinMode(uint8_t, uint8_t);
+void digitalWrite(uint8_t, uint8_t);
+int digitalRead(uint8_t);
+
 //////////////////////// Supression///////////////////////
 /*
 void init(void);	// ###check later###
@@ -156,9 +160,7 @@ void initVariant(void);	// ###check later###
 
 int atexit(void (*func)()) __attribute__((weak));	// ###check later###
 
-void pinMode(uint8_t, uint8_t);
-void digitalWrite(uint8_t, uint8_t);
-int digitalRead(uint8_t);
+
 int analogRead(uint8_t);	// ###check later###
 void analogReference(uint8_t mode);	// ###check later###
 void analogWrite(uint8_t, int);	// ###check later###
