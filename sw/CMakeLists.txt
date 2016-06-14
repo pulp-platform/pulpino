@@ -17,7 +17,7 @@ set(UNIX TRUE CACHE STRING "" FORCE)
 # We should probably create a custom system name
 set(CMAKE_SYSTEM_NAME "Linux-CXX")
 
-enable_language(C ASM)
+enable_language(C CXX ASM)
 project (pulp_software C)
 
 enable_testing()
@@ -69,6 +69,9 @@ set(PULP_PC_ANALYZE "pulp-pc-analyze" CACHE PATH "path to pulp pc analyze binary
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra -Wall -Wno-unused-parameter -Wno-unused-variable -Wno-unused-function -fdata-sections -ffunction-sections -fdiagnostics-color=always")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT} -nostartfiles -Wl,--gc-sections")
 set(BOOT_LINKER_FLAGS      "-L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT_BOOT} -nostartfiles -Wl,--gc-sections")
+
+set(CMAKE_CXX_COMPILER "${CMAKE_C_COMPILER}")
+set(CMAKE_CXX_FLAGS    "${CMAKE_C_FLAGS}")
 
 set(CMAKE_ASM_COMPILER "${CMAKE_C_COMPILER}")
 set(CMAKE_ASM_FLAGS    "${CMAKE_C_FLAGS}")
