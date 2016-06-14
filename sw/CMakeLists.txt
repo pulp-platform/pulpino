@@ -90,6 +90,8 @@ else()
 endif()
 
 include_directories(libs/sys_lib/inc)
+include_directories(libs/Arduino_lib/inc)
+
 set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
 add_library(crt0 OBJECT ${crt0})
 
@@ -133,6 +135,7 @@ add_custom_target(vcompile.core
 
 add_subdirectory(libs/string_lib)
 add_subdirectory(libs/sys_lib)
+add_subdirectory(libs/Arduino_lib)
 add_subdirectory(libs/bench_lib)
 
 add_subdirectory(apps)
