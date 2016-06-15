@@ -42,6 +42,7 @@ PULPino has the following requirements
   into the RI5CY core.
   Please make sure you are using the newlib version of the toolchain.
 - python2 >= 2.6
+- verilator 3.884 only necessary if you want to use Verilator to evaluate PULPino.
 
 ## Editions
 
@@ -116,6 +117,11 @@ This is intended for batch processing of a large number of tests.
 
 Replace helloworld with the test/application you want to run.
 
+### Using Verilator
+
+To evaluate PULPino using Verilator you need to compile all the HDL and the testbench first using:
+
+    make vericompile
 
 ### Using ninja instead of make
 

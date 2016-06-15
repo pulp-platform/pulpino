@@ -125,12 +125,13 @@ add_custom_target(vcompile.core
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
-add_custom_target(verilate
+add_custom_target(vericompile
   COMMAND tcsh -c "env TOP_PATH=${PULP_MODELSIM_DIRECTORY}/.. ./verilator/verilator_compile.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   COMMAND cd verilator_libs
   COMMAND make -j -f Vtop.mk Vtop
   ${USES_TERMINAL})
+
 ################################################################################
 
 add_subdirectory(libs/string_lib)
