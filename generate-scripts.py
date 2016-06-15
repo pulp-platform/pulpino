@@ -56,6 +56,6 @@ ipdb.generate_vivado_add_files("fpga/pulpino/tcl/ips_add_files.tcl", alternative
 ipdb.generate_vivado_inc_dirs("fpga/pulpino/tcl/ips_inc_dirs.tcl", alternatives=['riscv'])
 # generate verilator compilation scripts
 ipdb.export_verilator(script_path="vsim/verilator/verilator_compile.csh",
-    more_opts="${TOP_PATH}/rtl/top.sv -v ${TOP_PATH}/ips/riscv/include/riscv_defines.sv -I${TOP_PATH}/rtl/includes -I${TOP_PATH}/rtl -I${TOP_PATH}/rtl/components")
+    more_opts="${TOP_PATH}/rtl/top.sv --exe ${TOP_PATH}/tb/tb.cpp -v ${TOP_PATH}/ips/riscv/include/riscv_defines.sv -I${TOP_PATH}/rtl/includes -I${TOP_PATH}/rtl -I${TOP_PATH}/rtl/components")
 
 print tcolors.OK + "Generated new scripts for IPs!" + tcolors.ENDC
