@@ -236,7 +236,7 @@ module peripherals
   /// APB Slave 0: APB UART interface                            ///
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
-
+  `ifndef VERILATOR
   apb_uart i_apb_uart
   (
     .CLK      ( clk_int[1]   ),
@@ -264,7 +264,7 @@ module peripherals
     .SIN      ( uart_rx     ),
     .SOUT     ( uart_tx     )
   );
-
+  `endif
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
   /// APB Slave 1: APB GPIO interface                            ///
