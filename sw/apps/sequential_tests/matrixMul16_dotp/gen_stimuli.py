@@ -5,7 +5,7 @@ import random
 
 
 def write_arr(f, name, arr):
-    f.write('const char %s[] = {\n' % name)
+    f.write('const short %s[] = {\n' % name)
     for v in arr:
         f.write('%d,\n' % (v))
     f.write('};\n\n')
@@ -19,13 +19,13 @@ def write_arr2(f, name, arr):
     return
 
 ################################################################################
-f = open('dotMatrixMul8_stimuli.h', 'w')
-f.write('#ifndef _DOTMATMUL8_\n')
-f.write('#define _DOTMATMUL8_\n')
+f = open('dotMatrixMul16_stimuli.h', 'w')
+f.write('#ifndef _DOTMATMUL16_\n')
+f.write('#define _DOTMATMUL16_\n')
 
 
 SIZE = 8
-RANGE = 4
+RANGE = 8
 
 m_a   = []
 m_b   = []
@@ -56,8 +56,8 @@ write_arr2(f, 'm_exp', m_exp)
 f.write('#define SIZE %d\n' % SIZE)
 
 
-f.write('char g_mA[SIZE][SIZE];\n')
-f.write('char g_mB[SIZE][SIZE];\n')
+f.write('short g_mA[SIZE][SIZE];\n')
+f.write('short g_mB[SIZE][SIZE];\n')
 f.write('int g_mC[SIZE][SIZE];\n')
 f.write('#endif')
 
