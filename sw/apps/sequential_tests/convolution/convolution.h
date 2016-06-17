@@ -3,13 +3,12 @@
 
 #include "config.h" //generate by matlab
 
-#if DATA_WIDTH == 8
+#if DATA_TYPE == _PIXEL_CHAR_
 
     typedef signed char      Filtc;
     typedef signed char      Pixel;
     typedef signed char      FiltcV     __attribute__((vector_size (4)));
     typedef signed char      PixelV     __attribute__((vector_size (4)));
-
 
     #define sumdotp(a, b, c)            __builtin_pulp_sdotsp4(a, b, c)
     #define dotp(a, b)                  __builtin_pulp_dotsp4(a, b)
