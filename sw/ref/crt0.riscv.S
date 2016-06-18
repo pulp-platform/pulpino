@@ -189,10 +189,10 @@ end_except:
   jal x0, interrupt_handler // 25: gpio
   jal x0, interrupt_handler // 26: spim
   jal x0, interrupt_handler // 27: spim
-  nop                       // 28: timer
-  jal x0, int_time_cmp      // 29: timer
-  nop                       // 30: timer
-  nop                       // 31: timer
+  nop                       // 28: timer A overflow
+  jal x0, int_time_cmp      // 29: timer A cmp
+  nop                       // 30: timer B overflow
+  nop                       // 31: timer B cmp
 
   // reset vector
   .org 0x80
