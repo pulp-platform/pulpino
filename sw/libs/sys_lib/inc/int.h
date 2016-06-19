@@ -86,10 +86,10 @@ void ISR_UART (void); 	// 24: uart
 void ISR_GPIO (void); 	// 25: gpio
 void ISR_SPIM0 (void);  // 26: spim end of transmission
 void ISR_SPIM1 (void);  // 27: spim R/T finished
-void ISR_TA_CMP (void); // 28: timer A compare
-void ISR_TA_OVF (void); // 29: timer A overflow
-void ISR_TB_CMP (void); // 30: timer B compare
-void ISR_TB_OVF (void); // 31: timer B overflow
+void ISR_TA_OVF (void); // 28: timer A overflow
+void ISR_TA_CMP (void); // 29: timer A compare
+void ISR_TB_OVR (void); // 30: timer B overflow
+void ISR_TB_CMP (void); // 31: timer B compare
 
 
 

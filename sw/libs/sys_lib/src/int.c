@@ -38,20 +38,19 @@ void ISR_SPIM0 (void){ for(;;); }
 __attribute__ ((weak))
 void ISR_SPIM1 (void){ for(;;); }  
 
-// 28: timer A compare
-__attribute__ ((weak))
-void ISR_TA_CMP (void){ for(;;); } 
-
-// 29: timer A overflow
+// 28: timer A overflow
 __attribute__ ((weak))
 void ISR_TA_OVF (void){ for(;;); } 
 
-// 30: timer B compare
+// 29: timer A compare
 __attribute__ ((weak))
-void ISR_TB_CMP (void){ for(;;); }
+void ISR_TA_CMP (void){ for(;;); } 
 
-// 31: timer B overflow
+// 30: timer B overflow
 __attribute__ ((weak))
 void ISR_TB_OVF (void){ for(;;); } 
 
+// 31: timer B compare
+__attribute__ ((weak))
+void ISR_TB_CMP (void){ for(;;); }
 

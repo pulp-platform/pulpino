@@ -123,7 +123,7 @@ void check_sleep_irq(testresult_t *result, void (*start)(), void (*stop)()) {
 }
 
 
-void ISR_TA_OVF(void) {
+void ISR_TA_CMP(void) {
   ICP = (1 << 29);
 
   switch (g_sleep_irq_global) {

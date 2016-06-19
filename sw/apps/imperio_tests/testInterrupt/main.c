@@ -20,7 +20,7 @@
 volatile int timer_triggered = 0;
 
 
-void ISR_TA_OVF(void) {
+void ISR_TA_CMP(void) {
   ICP = (1 << 29);
   // if (timer_triggered == 1) {
   //   set_gpio_pin_direction(0, DIR_OUT);

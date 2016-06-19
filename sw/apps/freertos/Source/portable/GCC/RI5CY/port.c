@@ -324,7 +324,7 @@ static void prvSetupTimerInterrupt( void )
  * count is incremented after the context is saved.
  */
 
-void ISR_TA_OVF(void)
+void ISR_TA_CMP(void)
 {
     /* interrupts are disabled until eret */
     vPortYieldFromTick();
@@ -337,7 +337,7 @@ void ISR_TA_OVF(void)
  * manual calls to taskYIELD();
  */
 
-void ISR_TA_OVF(void)
+void ISR_TA_CMP(void)
 {
     int mcause;
     csrr(mcause, mcause);

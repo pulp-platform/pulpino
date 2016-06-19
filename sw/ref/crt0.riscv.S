@@ -253,10 +253,10 @@ end_except:
   jal x0, ISR_GPIO_ASM 	    // 25: gpio
   jal x0, ISR_SPIM0_ASM     // 26: spim	end of transmission
   jal x0, ISR_SPIM1_ASM     // 27: spim R/T finished
-  jal x0, ISR_TA_CMP_ASM    // 28: timer A compare
-  jal x0, ISR_TA_OVF_ASM    // 29: timer A overflow
-  jal x0, ISR_TB_CMP_ASM    // 30: timer B compare
-  jal x0, ISR_TB_OVF_ASM    // 31: timer B overflow
+  jal x0, ISR_TA_OVF_ASM    // 28: timer A overflow
+  jal x0, ISR_TA_CMP_ASM    // 29: timer A compare
+  jal x0, ISR_TB_OVF_ASM    // 30: timer B overflow
+  jal x0, ISR_TB_CMP_ASM    // 31: timer B compare
 
   // reset vector
   .org 0x80
