@@ -3,7 +3,7 @@
 
 #include "config.h" //generate by matlab
 
-#if DATA_TYPE == _PIXEL_CHAR_
+#if DATA_TYPE == 8
 
     typedef signed char      Filtc;
     typedef signed char      Pixel;

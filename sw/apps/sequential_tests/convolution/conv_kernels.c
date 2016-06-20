@@ -91,7 +91,7 @@ void __attribute__ ((noinline)) Conv5x5_Scalar  (Pixel * In_Img, Pixel * Out_Img
   }
 }
 
-#if DATA_TYPE == _PIXEL_CHAR_
+#if DATA_TYPE == 8
 
 void __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
@@ -192,7 +192,7 @@ void __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img
   coeff_4 = *((FiltcV *) (&Kernel[20]));
   coeff_5 = (FiltcV)     { Kernel[4],  Kernel[9], Kernel[14], Kernel[19] };
   coeff_6 = (FiltcV)     { Kernel[24], 0,         0,          0 };
-  mask0 = (PixelV){5, 6, 7, 0};
+  mask0 = (PixelV){1, 2, 3, 4};
 
   //image board is black
   for (c=0; c < C-4; c++) {
@@ -310,7 +310,7 @@ void __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Img
   coeff_3 = (FiltcV)     { Kernel[2], Kernel[5] };
   coeff_4 = (FiltcV)     { Kernel[8], 0 };
 
-  mask0 = (PixelV){3, 0};
+  mask0 = (PixelV){1, 2};
 
   //image board is black
   for (c=0; c < C-2; c++) {
@@ -418,7 +418,7 @@ void __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img
   coeff_11 = (FiltcV)     { Kernel[14], Kernel[19] };
   coeff_12 = (FiltcV)     { Kernel[24], 0 };
 
-  mask0 = (PixelV){3, 0};
+  mask0 = (PixelV){1, 2};
 
   //image board is black
   for (c=0; c < C-4; c++) {

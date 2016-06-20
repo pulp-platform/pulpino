@@ -32,7 +32,7 @@ int main()
   return errors;
 }
 
-static Pixel __attribute__ ((section(".heapsram"))) Out[IMG_DIM];
+static Pixel __attribute__ ((section(".heapsram")))  Out[IMG_DIM];
 static Pixel __attribute__ ((section(".heapsram")))  In[IMG_DIM];
 static Filtc __attribute__ ((section(".heapsram")))  Kernel[FILT_DIM];
 

@@ -243,24 +243,23 @@ def shuffle2_16(prefix):
         b = random.randint(0, 2**32-1)
         c = random.randint(0, 2**32-1)
 
-
         h = (b & 0x10000) >> 16
         l = (b & 0x1)
 
         AorD_h = b & 0x20000 #17
-
         AorD_l = b & 0x2 #01
 
+        #RTL GCC misalignemnt on orion
         if(AorD_h):
-           oph  = c
+           oph  = a if args.riscv else c
         else:
-           oph  = a
+           oph  = c if args.riscv else a
 
 
         if(AorD_l):
-           opl  = c
+           opl  = a if args.riscv else c
         else:
-           opl  = a
+           opl  = c if args.riscv else a
 
         r = 0
 
@@ -311,25 +310,26 @@ def shuffle2_8(prefix):
         lh = (b & 0x0000300) >> 8
         ll = (b & 0x0000003)
 
+        #RTL GCC misalignemnt on orion
         if(AorD_hh):
-          ophh = c
+          ophh = a if args.riscv else c
         else:
-          ophh = a
+          ophh = c if args.riscv else a
 
         if(AorD_hl):
-          ophl = c
+          ophl = a if args.riscv else c
         else:
-          ophl = a
+          ophl = c if args.riscv else a
 
         if(AorD_lh):
-          oplh = c
+          oplh = a if args.riscv else c
         else:
-          oplh = a
+          oplh = c if args.riscv else a
 
         if(AorD_ll):
-          opll = c
+          opll = a if args.riscv else c
         else:
-          opll = a
+          opll = c if args.riscv else a
 
         sel3 = (ophh & 0xff000000) >> 24
         sel2 = (ophh & 0x00ff0000) >> 16

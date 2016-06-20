@@ -129,7 +129,7 @@ if WRITE_FILE == 1
     fileID = fopen('config.h','w');
     fprintf(fileID,'#ifndef _CONFIG_CONV_\n#define _CONFIG_CONV_\n\n');
     fprintf(fileID,'#define DATA_WIDTH %d\n', DATA_WIDTH);
-    if DATA_WIDTH < 8
+    if DATA_WIDTH <= 8
         fprintf(fileID,'#define DATA_TYPE %d\n',8);
     else
         fprintf(fileID,'#define DATA_TYPE %d\n',16);
