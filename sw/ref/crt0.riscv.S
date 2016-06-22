@@ -248,6 +248,7 @@ end_except:
   .rept 23
   nop                       // unused
   .endr
+
   jal x0, ISR_I2C_ASM 	    // 23: i2c
   jal x0, ISR_UART_ASM 	    // 24: uart
   jal x0, ISR_GPIO_ASM 	    // 25: gpio
@@ -257,6 +258,7 @@ end_except:
   jal x0, ISR_TA_CMP_ASM    // 29: timer A compare
   jal x0, ISR_TB_OVF_ASM    // 30: timer B overflow
   jal x0, ISR_TB_CMP_ASM    // 31: timer B compare
+
 
   // reset vector
   .org 0x80

@@ -54,13 +54,17 @@ The IVT of PULPino follows the definition given for the \rvcore core.
     Interrupt Line 25: GPIO IRQ           & \signal{0x00000064} \\ \hline
     Interrupt Line 26: SPI Master 0       & \signal{0x00000068} \\ \hline
     Interrupt Line 27: SPI Master 1       & \signal{0x0000006C} \\ \hline
-    Interrupt Line 28: Timer A Output Cmp & \signal{0x00000070} \\ \hline
-    Interrupt Line 29: Timer A Overflow   & \signal{0x00000074} \\ \hline
-    Interrupt Line 30: Timer B Output Cmp & \signal{0x00000078} \\ \hline
-    Interrupt Line 31: Timer B Overflow   & \signal{0x0000007C} \\ \hline
+    Interrupt Line 28: Timer A Overflow   & \signal{0x00000070} \\ \hline
+    Interrupt Line 29: Timer A Output Cmp & \signal{0x00000074} \\ \hline
+    Interrupt Line 30: Timer B Overflow   & \signal{0x00000078} \\ \hline
+    Interrupt Line 31: Timer B Output Cmp & \signal{0x0000007C} \\ \hline
     RESET                                 & \signal{0x00000080} \\ \hline
     Illegal Instruction Exception         & \signal{0x00000084} \\ \hline
     \texttt{ECALL} Instruction            & \signal{0x00000088} \\ \hline
     Invalid Memory Access                 & \signal{0x0000008C} \\ \bottomrule
   \end{tabular}
 \end{table}
+
+The entries in the IVT have to be either one 32-bit, or one or two 16-bit
+instructions that tell the core how to handle the interrupt. In most cases, this
+means the core will execute a jump to a real interrupt handler.
