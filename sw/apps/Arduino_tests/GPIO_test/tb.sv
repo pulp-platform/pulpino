@@ -203,7 +203,7 @@ module tb;
       mem_dpi(4567);
     end
 
-/*
+
     // Here  test for GPIO Starts
     #50000ns;
     gpio_in[4]=1'b1;
@@ -214,7 +214,7 @@ module tb;
     #20000ns;
     $stop();
     // Here  test for GPIO Ends
-*/
+
 
     // end of computation
     wait(top_i.gpio_out[8]);
