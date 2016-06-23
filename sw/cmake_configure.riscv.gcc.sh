@@ -1,9 +1,12 @@
 #!/bin/bash
 
+PATH=/Users/florianzaruba/Library/riscv_gcc/2.2.14/bin/:$PATH
+
 OBJDUMP=`which riscv32-unknown-elf-objdump`
 OBJCOPY=`which riscv32-unknown-elf-objcopy`
 
 COMPILER=`which riscv32-unknown-elf-gcc`
+RANLIB=`which riscv32-unknown-elf-ranlib`
 
 TARGET_C_FLAGS="-O3 -m32 -g"
 
@@ -19,7 +22,7 @@ RVC=0
 PULP_GIT_DIRECTORY=../../
 SIM_DIRECTORY="$PULP_GIT_DIRECTORY/vsim"
 
-cmake-3.3.0 "$PULP_GIT_DIRECTORY"/sw/ \
+cmake "$PULP_GIT_DIRECTORY"/sw/ \
     -DPULP_MODELSIM_DIRECTORY="$SIM_DIRECTORY" \
     -DCMAKE_C_COMPILER="$COMPILER" \
     -DVSIM="$VSIM" \
@@ -28,6 +31,7 @@ cmake-3.3.0 "$PULP_GIT_DIRECTORY"/sw/ \
     -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
     -DCMAKE_OBJDUMP="$OBJDUMP" \
+    -DCMAKE_RANLUB="$RANLIB" \
     -G "Ninja"
 
 # Add -G "Ninja" to the cmake call above to use ninja instead of make

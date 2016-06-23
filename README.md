@@ -123,6 +123,10 @@ To evaluate PULPino using Verilator you need to compile all the HDL and the test
 
     make vericompile
 
+After compilation succeeded you can call any program with:
+
+    make helloworld.verilate
+
 ### Using ninja instead of make
 
 You can use ninja instead make to build software for PULPino, just replace all

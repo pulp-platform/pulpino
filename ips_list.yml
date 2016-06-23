@@ -26,11 +26,11 @@ apb/apb_event_unit:
 apb/apb_fll_if:
   commit: master
 apb/apb_gpio:
-  commit: master
+  commit: verilator
 apb/apb_i2c:
   commit: master
 apb/apb_pulpino:
-  commit: master
+  commit: verilator
 apb/apb_spi_master:
   commit: master
 apb/apb_timer:
@@ -56,13 +56,13 @@ axi/axi_spi_master:
 axi/axi_spi_slave:
   commit: master
 axi/core2axi:
-  commit: master
+  commit: verilator
 
 adv_dbg_if:
   commit: master
 
 riscv:
-  commit: master
+  commit: verilator
   alternatives: [or10n,riscv]
 #or10n:
 #  commit: master
