@@ -202,7 +202,4 @@ const int m_exp[] = {
 };
 
 #define SIZE 8
-char g_mA[SIZE][SIZE];
-char g_mB[SIZE][SIZE];
-int g_mC[SIZE][SIZE];
 #endif

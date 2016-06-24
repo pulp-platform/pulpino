@@ -56,8 +56,5 @@ write_arr2(f, 'm_exp', m_exp)
 f.write('#define SIZE %d\n' % SIZE)
 
 
-f.write('char g_mA[SIZE][SIZE];\n')
-f.write('char g_mB[SIZE][SIZE];\n')
-f.write('int g_mC[SIZE][SIZE];\n')
 f.write('#endif')
 

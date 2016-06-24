@@ -25,7 +25,7 @@ int main() {
 
 void check(testresult_t *result, void (*start)(), void (*stop)()) {
   printf("Start sudokusolver\n");
-
+  start();
   // store sudoku to solve in grid_init
   for (int i = 0; i < 9; i++) {
     for (int j = 0; j < 9; j++) {
@@ -58,7 +58,7 @@ void check(testresult_t *result, void (*start)(), void (*stop)()) {
     sudokusolver(grid_solved, solved);
     //printf("Iteration %d completed\n",k);
   }
-
+  stop();
   // print solution
   printf("Solution:\n");
 
