@@ -247,7 +247,13 @@ void init()
 	TOCRA= 0x4000;	//set the compare value to be 16834 to be compatible with Arduino cycles for interrupt
 	TPRA  = 0x05;	//enable timer, enable output compare, set prescaler to be 1
  
+	
 
+	IER |= (1<<31);	//enable Timer B compare match interrupt
+	TIRB = 0;	//reset Timer B
+	TOCRB= F_CPU/(PWM_FREQ*(1<<PWM_PRE));	//set the compare value to match the predifined PWM frequency and precision
+	TPRB  = 0x05;	//enable timer, enable output compare, set prescaler to be 1
+ 
 	//###check later###
 	// intialize ADC
 

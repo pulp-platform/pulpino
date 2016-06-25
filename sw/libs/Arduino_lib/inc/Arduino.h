@@ -154,6 +154,7 @@ unsigned long micros(void);
 void delay(unsigned long);	
 void delayMicroseconds(unsigned int us);	
 
+void analogWrite(uint8_t, int);	
 
 //////////////////////// Supression///////////////////////
 /*
@@ -164,7 +165,6 @@ int atexit(void (*func)()) __attribute__((weak));	// ###check later###
 
 int analogRead(uint8_t);	// ###check later###
 void analogReference(uint8_t mode);	// ###check later###
-void analogWrite(uint8_t, int);	// ###check later###
 
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout);	// ###check later###
 unsigned long pulseInLong(uint8_t pin, uint8_t state, unsigned long timeout);	// ###check later###

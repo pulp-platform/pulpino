@@ -3,6 +3,7 @@ set(SOURCES
     src/WInterrupts.c
     src/hooks.c
     src/wiring.c
+    src/wiring_analog.c
     )
 
 set(HEADERS
