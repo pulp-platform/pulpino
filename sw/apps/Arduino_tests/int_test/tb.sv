@@ -204,16 +204,16 @@ module tb;
     end
 
 
-    // Here  test for GPIO Starts
+    // Here  test for Interrrupts Starts
     #50000ns;
-    gpio_in[4]=1'b1;
+    gpio_in[2]=1'b1;
     #10000ns;
-    gpio_in[4]=1'b0;
+    gpio_in[2]=1'b0;
     #10000ns;
-    gpio_in[4]=1'b1;
+    gpio_in[2]=1'b1;
     #20000ns;
     $stop();
-    // Here  test for GPIO Ends
+    // Here  test for Interrupts Ends
 
 
     // end of computation
