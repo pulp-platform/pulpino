@@ -175,10 +175,11 @@ unsigned long pulseInLong(uint8_t pin, uint8_t state, unsigned long timeout);	//
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);	// ###check later###
 uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);	// ###check later###
 
-void attachInterrupt(uint8_t, void (*)(void), int mode);	// ###check later###
-void detachInterrupt(uint8_t);	// ###check later###
 */
 ///////////////////////End///////////////////////
+
+void attachInterrupt(uint8_t, void (*)(void), int mode);
+void detachInterrupt(uint8_t);
 
 void setup(void);
 void loop(void);
@@ -188,7 +189,17 @@ void loop(void);
 //#define digitalPinToTimer(P) ( pgm_read_byte( digital_pin_to_timer_PGM + (P) ) )	// ###check later###
 //#define analogInPinToBit(P) (P)	// ###check later###
 
-#define digitalPinToBitMask(P) ( 1<< (P) )	// ###check later###
+#define digitalPinToBitMask(P) ( 1<< (P) )
+
+static inline int BitMaskToDigitalPin(uint32_t mask){
+int pin =0;
+while(mask!=0){
+	mask>>=1;
+	pin++;
+	}
+return pin;
+}
+
 
 #define NOT_A_PIN 0
 

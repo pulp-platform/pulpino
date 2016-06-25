@@ -75,7 +75,7 @@ extern "C"{
 */
 ////////////////////////end///////////////////////
 
-//typedef void (*voidFuncPtr)(void);
+typedef void (*voidFuncPtr)(void);
 
 #ifdef __cplusplus
 } // extern "C"
