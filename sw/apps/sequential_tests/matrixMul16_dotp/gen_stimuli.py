@@ -54,10 +54,5 @@ write_arr(f, 'm_b',   m_b)
 write_arr2(f, 'm_exp', m_exp)
 
 f.write('#define SIZE %d\n' % SIZE)
-
-
-f.write('short g_mA[SIZE][SIZE];\n')
-f.write('short g_mB[SIZE][SIZE];\n')
-f.write('int g_mC[SIZE][SIZE];\n')
 f.write('#endif')
 

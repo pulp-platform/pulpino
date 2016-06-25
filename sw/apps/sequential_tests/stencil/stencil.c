@@ -15,13 +15,25 @@ __attribute__ ((section(".heapsram"))) int W[N];
 __attribute__ ((section(".heapsram"))) int neighbors[4];
 __attribute__ ((section(".heapsram"))) int weights[4];
 
+void check(testresult_t *result, void (*start)(), void (*stop)());
 
+testcase_t testcases[] = {
+  { .name = "stencil",   .test = check       },
+  {0, 0}
+};
 
 int main()
 {
+  int error = 0;
+  if(get_core_id()==0){
+    error = run_suite(testcases);
+  }
+  return error;
+}
+
+void check(testresult_t *result, void (*start)(), void (*stop)()) {
   int i,j,k;
   int error = 0;
-
 
   printf("Start stencil\n");
 
@@ -31,26 +43,19 @@ int main()
       W[i] = i+2;
   }
 
-  for (j = 0; j<2; j++) {
-
-    stencil(A, h_R, W);
-  }
+  start();
+  stencil(A, h_R, W);
+  stop();
 
   for (i=0;i<N;i++) {
     for (k=0;k<M;k++) {
       if (RESULT_STENCIL[i*M+k] != h_R[i*M+k]) {
-        error = error + 1;
+        result->errors++;
         printf("Error occurred at i=%d k=%d; Computed result R=%d does not match expected Result=%d\n",i,k,h_R[i*M+k],RESULT_STENCIL[i*M+k]);
       }
     }
   }
-
-  print_summary(error);
-
-  return error;
 }
-
-
 void stencil(int* A, int* h_R, int* W)
 {
 

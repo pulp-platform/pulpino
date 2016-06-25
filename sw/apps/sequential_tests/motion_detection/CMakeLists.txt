@@ -1,3 +1,3 @@
-if (${GCC_ETH})
+#if (${GCC_ETH})
 add_application(motion_detection motion_detection.c FLAGS LABELS "sequential_tests")
-endif()
+#endif()
