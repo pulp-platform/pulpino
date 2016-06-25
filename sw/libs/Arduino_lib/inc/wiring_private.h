@@ -30,6 +30,9 @@
 //#include <stdarg.h>
 
 #include "Arduino.h"
+#include "int.h"
+#include "timer.h"
+#include "utils.h"
 
 #ifdef __cplusplus
 extern "C"{

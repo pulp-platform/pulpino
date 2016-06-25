@@ -29,7 +29,7 @@
 
 int main(void)
 {
-//	init();
+	init();
 
 //	initVariant();
 /*

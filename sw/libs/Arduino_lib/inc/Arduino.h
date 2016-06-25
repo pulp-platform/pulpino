@@ -21,6 +21,7 @@
 #ifndef Arduino_h
 #define Arduino_h
 
+#define F_CPU 5000000U	// Put here temporarily but later IDE should put it
 
 // ###check later###
 #include <stdlib.h>
@@ -40,7 +41,7 @@
 extern "C"{
 #endif
 
-//void yield(void);	// ###check later###
+void yield(void);	// an empty function unless overwritten for multi threading
 
 #define HIGH 0x1
 #define LOW  0x0
@@ -113,15 +114,9 @@ extern "C"{
 ////////////////////////End///////////////////////
 
 
-////////////////////////Mohr Supression///////////////////////
-//these are Macros that use F_CPU that needs to be considered for PULPino, ###check later###
-/*
 #define clockCyclesPerMicrosecond() ( F_CPU / 1000000L )
 #define clockCyclesToMicroseconds(a) ( (a) / clockCyclesPerMicrosecond() )
 #define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )
-*/
-////////////////////////End///////////////////////
-
 
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
 #define highByte(w) ((uint8_t) ((w) >> 24))	//changed to be 24 insteadof 8, we may need the middle bytes too ###check later###
@@ -153,9 +148,15 @@ void pinMode(uint8_t, uint8_t);
 void digitalWrite(uint8_t, uint8_t);
 int digitalRead(uint8_t);
 
+void init(void);	
+unsigned long millis(void);	
+unsigned long micros(void);	
+void delay(unsigned long);	
+void delayMicroseconds(unsigned int us);	
+
+
 //////////////////////// Supression///////////////////////
 /*
-void init(void);	// ###check later###
 void initVariant(void);	// ###check later###
 
 int atexit(void (*func)()) __attribute__((weak));	// ###check later###
@@ -165,10 +166,6 @@ int analogRead(uint8_t);	// ###check later###
 void analogReference(uint8_t mode);	// ###check later###
 void analogWrite(uint8_t, int);	// ###check later###
 
-unsigned long millis(void);	// ###check later###
-unsigned long micros(void);	// ###check later###
-void delay(unsigned long);	// ###check later###
-void delayMicroseconds(unsigned int us);	// ###check later###
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout);	// ###check later###
 unsigned long pulseInLong(uint8_t pin, uint8_t state, unsigned long timeout);	// ###check later###
 

@@ -1,6 +1,8 @@
 set(SOURCES
     src/wiring_digital.c
     src/WInterrupts.c
+    src/hooks.c
+    src/wiring.c
     )
 
 set(HEADERS
