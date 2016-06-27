@@ -109,7 +109,7 @@ def shuffle_sci_16(prefix):
         if args.riscv: imm = random.randint(0, 2**5-1)
         else: imm = random.randint(0, 2**7-1)
 
-        h = (imm & 0x10) >> 1
+        h = (imm & 0x2) >> 1
         l = (imm & 0x1)
 
         sel1  = (a & 0xffff0000) >> 16
