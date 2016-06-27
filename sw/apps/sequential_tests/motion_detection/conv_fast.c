@@ -20,7 +20,7 @@ void  __attribute__ ((noinline)) Conv3x3_fast(pixel * __restrict__ In, pixel * _
   //pixelV C4 = {0,        Coeff[8]};
 
   // define mask for shuffling
-    pixelV Mask  = {0,2};
+    pixelV Mask  = {2,0};
     //pixelV Mask  = {3,0};
 
   /* For fresh data */
