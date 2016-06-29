@@ -8,7 +8,7 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-// #define TRACE
+#define TRACE
 #define PRELOAD
 
 #include "Vtop.h"
@@ -20,6 +20,7 @@
 #ifdef TRACE
   #include "verilated_vcd_c.h"
 #endif
+
 
 vluint64_t main_time = 0;       // Current simulation time
 int return_code = 1;
@@ -55,34 +56,39 @@ int main(int argc, char **argv, char **env) {
   pulpino->top->rst_n = 0;
   pulpino->top->fetch_enable_i = 0;
 
+  // main simulation
   while (!Verilated::gotFinish()) {
 
+    pulpino->top->spi_cs_i = 1;
+
     if (main_time > 10) {
-        if (main_time == 11) {
-            cout << "Deasserting hard reset" << endl;
-        }
-        pulpino->top->rst_n = 1;   // Deassert reset
-        // writing to boot register -> boot from internal memory
-        pulpino->set_boot_reg(0x00);
+      if (main_time == 11) {
+          cout << "Deasserting hard reset" << endl;
+      }
+      pulpino->top->rst_n = 1;   // Deassert reset
+      // writing to boot register -> boot from internal memory
+      pulpino->set_boot_reg(0x00);
     }
 
     if (main_time > 100) {
-        pulpino->top->fetch_enable_i = 1;
+      pulpino->top->fetch_enable_i = 1;
     }
 
     if ((main_time % 10) == 1) {
-        pulpino->top->clk = 1;       // Toggle clock
-        pulpino->top->spi_clk_i = 1;
+      pulpino->top->clk = 1;       // Toggle clock
     }
 
     if ((main_time % 10) == 6) {
-        pulpino->top->clk = 0;
-        pulpino->top->spi_clk_i = 0;
+      pulpino->top->clk = 0;
+    }
+
+    if ((main_time % 10) == 0) {
+      pulpino->top->spi_clk_i ^= 1; // toggle spi_clk but keep csn high
     }
 
     if ((pulpino->top->gpio_out & (1 << 8)) != 0) {
-        cout << "Received EOC (End of Computation)" << endl;
-        break;
+      cout << "Received EOC (End of Computation)" << endl;
+      break;
     }
 
     #ifdef TRACE

@@ -236,35 +236,41 @@ module peripherals
   /// APB Slave 0: APB UART interface                            ///
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
-  `ifndef VERILATOR
-  apb_uart i_apb_uart
-  (
-    .CLK      ( clk_int[1]   ),
-    .RSTN     ( rst_n        ),
 
-    .PSEL     ( s_uart_bus.psel    ),
+  `ifndef VERILATOR
+    apb_uart
+  `else
+    apb_mock_uart
+  `endif
+  i_apb_uart1
+  (
+    .HCLK     ( clk_int[1]            ),
+    .HRESETn  ( rst_n                 ),
+
+    .PSEL     ( s_uart_bus.psel       ),
     .PENABLE  ( s_uart_bus.penable    ),
     .PWRITE   ( s_uart_bus.pwrite     ),
     .PADDR    ( s_uart_bus.paddr[4:2] ),
     .PWDATA   ( s_uart_bus.pwdata     ),
-    .PRDATA   ( s_uart_bus.prdata  ),
-    .PREADY   ( s_uart_bus.pready  ),
-    .PSLVERR  ( s_uart_bus.pslverr ),
+    .PRDATA   ( s_uart_bus.prdata     ),
+    .PREADY   ( s_uart_bus.pready     ),
+    .PSLVERR  ( s_uart_bus.pslverr    ),
 
-    .INT      ( s_uart_event ),   //Interrupt output
+    .INT      ( s_uart_event          ),   // Interrupt output
 
-    .OUT1N    (),                    //Output 1
-    .OUT2N    (),                    //Output 2
-    .RTSN     ( uart_rts    ),       //RTS output
-    .DTRN     ( uart_dtr    ),       //DTR output
-    .CTSN     ( uart_cts    ),       //CTS input
-    .DSRN     ( uart_dsr    ),       //DSR input
-    .DCDN     ( 1'b1        ),       //DCD input
-    .RIN      ( 1'b1        ),       //RI input
-    .SIN      ( uart_rx     ),
-    .SOUT     ( uart_tx     )
+    .OUT1N    (                       ),   // Output 1
+    .OUT2N    (                       ),   // Output 2
+    .RTSN     ( uart_rts              ),   // RTS output
+    .DTRN     ( uart_dtr              ),   // DTR output
+    .CTSN     ( uart_cts              ),   // CTS input
+    .DSRN     ( uart_dsr              ),   // DSR input
+    .DCDN     ( 1'b1                  ),   // DCD input
+    .RIN      ( 1'b1                  ),   // RI input
+    .SIN      ( uart_rx               ),
+    .SOUT     ( uart_tx               )
   );
-  `endif
+
+
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
   /// APB Slave 1: APB GPIO interface                            ///
