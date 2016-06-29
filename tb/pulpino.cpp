@@ -9,6 +9,7 @@
 // specific language governing permissions and limitations under the License.
 
 #include "pulpino.h"
+#include <iostream>
 
 PULPino::PULPino() {
     top = new Vtop;

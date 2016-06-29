@@ -8,11 +8,18 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
+#define TRACE
+#define PRELOAD
+
 #include "Vtop.h"
 #include "verilated.h"
 #include <iostream>
 #include <fstream>
 #include "pulpino.h"
+
+#ifdef TRACE
+  #include "verilated_vcd_c.h"
+#endif
 
 vluint64_t main_time = 0;       // Current simulation time
 
@@ -23,6 +30,8 @@ double sc_time_stamp () {       // Called by $time in Verilog
 
 int main(int argc, char **argv, char **env) {
   Verilated::commandArgs(argc, argv);
+  Verilated::traceEverOn(true);
+  VerilatedVcdC* tfp = new VerilatedVcdC;
 
   if (argc < 2) {
     cout << "Please pass preload files" << endl;
@@ -31,20 +40,29 @@ int main(int argc, char **argv, char **env) {
 
   PULPino* pulpino = new PULPino();
 
-  pulpino->preload_memories(argv[1], argv[1]);
+  #ifdef TRACE
+    pulpino->top->trace(tfp, 99);
+    tfp->open ("simx.vcd");
+  #endif
+
+  #ifdef PRELOAD
+    pulpino->preload_memories(argv[1], argv[1]);
+  #endif
 
   cout << "Asserting hard reset" << endl;
   pulpino->top->rst_n = 0;
   pulpino->top->fetch_enable_i = 0;
 
   while (!Verilated::gotFinish()) {
+    // pulpino->preload_memories(argv[1], argv[1]);
+    pulpino->top->spi_cs_i = 1;
+
     if (main_time > 10) {
         if (main_time == 11) {
             cout << "Deasserting hard reset" << endl;
             cout << "Preloading memories" << endl;
         }
         pulpino->top->rst_n = 1;   // Deassert reset
-
         // writing to boot register -> boot from internal memory
         pulpino->set_boot_reg(0x00);
     }
@@ -53,12 +71,14 @@ int main(int argc, char **argv, char **env) {
         pulpino->top->fetch_enable_i = 1;
     }
 
-    if ((main_time % 10) == 1) {
+    if ((main_time % 100) == 1) {
         pulpino->top->clk = 1;       // Toggle clock
+        pulpino->top->spi_clk_i = 1;
     }
 
-    if ((main_time % 10) == 6) {
+    if ((main_time % 100) == 60) {
         pulpino->top->clk = 0;
+        pulpino->top->spi_clk_i = 0;
     }
 
     if ((pulpino->top->gpio_out & (1 << 8)) != 0) {
@@ -66,9 +86,17 @@ int main(int argc, char **argv, char **env) {
         break;
     }
 
+    #ifdef TRACE
+      tfp->dump (main_time);
+    #endif
+
     pulpino->top->eval();
     main_time++;
   }
+
+  #ifdef TRACE
+    tfp->close();
+  #endif
 
   delete pulpino;
   exit(0);

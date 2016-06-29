@@ -71,16 +71,16 @@ zero_loop_end:
 
 
 main_entry:
-  # addi   x10, x0, 0
-  # addi   x11, x0, 1
-  # jal  uart_set_cfg;
+  addi   x10, x0, 0
+  addi   x11, x0, 1
+  jal  uart_set_cfg;
 
   /* jump to main program entry point (argc = argv = 0) */
   addi x10, x0, 0
   addi x11, x0, 0
   jal x1, main
 
-  # jal  uart_wait_tx_done;
+  jal  uart_wait_tx_done;
 
   /* if program exits call exit routine from library */
   jal  x1, exit
