@@ -3,8 +3,8 @@ module apb_mock_uart
     parameter APB_ADDR_WIDTH = 12  //APB slaves are 4KB by default
 )
 (
-    input  logic                      HCLK,
-    input  logic                      HRESETn,
+    input  logic                      CLK,
+    input  logic                      RSTN,
     input  logic [APB_ADDR_WIDTH-1:0] PADDR,
     input  logic               [31:0] PWDATA,
     input  logic                      PWRITE,
@@ -60,9 +60,9 @@ module apb_mock_uart
     end
 
     // synchronouse part
-    always_ff @(posedge HCLK, negedge HRESETn)
+    always_ff @(posedge CLK, negedge RSTN)
     begin
-        if(~HRESETn)
+        if(~RSTN)
         begin
             regs_q <= '{8{8'b0}};
         end

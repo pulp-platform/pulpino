@@ -242,10 +242,10 @@ module peripherals
   `else
     apb_mock_uart
   `endif
-  i_apb_uart1
+  i_apb_uart
   (
-    .HCLK     ( clk_int[1]            ),
-    .HRESETn  ( rst_n                 ),
+    .CLK      ( clk_int[1]            ),
+    .RSTN     ( rst_n                 ),
 
     .PSEL     ( s_uart_bus.psel       ),
     .PENABLE  ( s_uart_bus.penable    ),
