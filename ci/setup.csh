@@ -1,6 +1,6 @@
 #!/bin/tcsh
 
-setenv PATH /usr/scratch2/larain/haugoug/artefacts/riscv_gcc/2.2.14/bin/:${PWD}/verilator-verilator_3_882/build/bin:$PATH
+setenv PATH /usr/scratch2/larain/haugoug/artefacts/riscv_gcc/2.2.14/bin/:${PWD}/verilator-3.884/build/bin:$PATH
 
 ./update-ips.py git@iis-git.ee.ethz.ch   || exit 1
 
