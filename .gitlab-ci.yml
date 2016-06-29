@@ -3,6 +3,7 @@ stages:
   - test
 
 before_script:
+  - ./ci/install-verilator.csh
   - ./ci/setup.csh
 
 rtl_riscv:

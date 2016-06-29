@@ -66,6 +66,7 @@ macro(add_application NAME SOURCE_FILES)
   # if there are labels available for testing
   if(ARG_LABELS)
     set_tests_properties(${NAME}.test PROPERTIES LABELS "${ARG_LABELS}")
+    set_tests_properties(${NAME}.verilate PROPERTIES LABELS "${ARG_LABELS}")
   endif()
 
 endmacro()
@@ -145,6 +146,7 @@ macro(add_boot_code NAME SOURCE_FILES)
   # if there are labels available for testing
   if(ARG_LABELS)
     set_tests_properties(${NAME}.test PROPERTIES LABELS "${ARG_LABELS}")
+    set_tests_properties(${NAME}.verilate PROPERTIES LABELS "${ARG_LABELS}")
   endif()
 
 endmacro()
