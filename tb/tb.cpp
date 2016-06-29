@@ -8,7 +8,7 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#define TRACE
+// #define TRACE
 #define PRELOAD
 
 #include "Vtop.h"
@@ -30,8 +30,6 @@ double sc_time_stamp () {       // Called by $time in Verilog
 
 int main(int argc, char **argv, char **env) {
   Verilated::commandArgs(argc, argv);
-  Verilated::traceEverOn(true);
-  VerilatedVcdC* tfp = new VerilatedVcdC;
 
   if (argc < 2) {
     cout << "Please pass preload files" << endl;
@@ -41,12 +39,15 @@ int main(int argc, char **argv, char **env) {
   PULPino* pulpino = new PULPino();
 
   #ifdef TRACE
+    Verilated::traceEverOn(true);
+    VerilatedVcdC* tfp = new VerilatedVcdC;
     pulpino->top->trace(tfp, 99);
     tfp->open ("simx.vcd");
   #endif
 
   #ifdef PRELOAD
-    pulpino->preload_memories(argv[1], argv[1]);
+    cout << "Preloading memories" << endl;
+    pulpino->preload_memories(argv[1], argv[2]);
   #endif
 
   cout << "Asserting hard reset" << endl;
@@ -60,7 +61,6 @@ int main(int argc, char **argv, char **env) {
     if (main_time > 10) {
         if (main_time == 11) {
             cout << "Deasserting hard reset" << endl;
-            cout << "Preloading memories" << endl;
         }
         pulpino->top->rst_n = 1;   // Deassert reset
         // writing to boot register -> boot from internal memory
@@ -71,12 +71,12 @@ int main(int argc, char **argv, char **env) {
         pulpino->top->fetch_enable_i = 1;
     }
 
-    if ((main_time % 100) == 1) {
+    if ((main_time % 10) == 1) {
         pulpino->top->clk = 1;       // Toggle clock
         pulpino->top->spi_clk_i = 1;
     }
 
-    if ((main_time % 100) == 60) {
+    if ((main_time % 10) == 6) {
         pulpino->top->clk = 0;
         pulpino->top->spi_clk_i = 0;
     }
