@@ -6,4 +6,3 @@ vcompile/ips/
 vcompile/vcompile_ips.csh
 tcl_files/config/vsim_ips.tcl
 verilator_libs/
-verilator/
