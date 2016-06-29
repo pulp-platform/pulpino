@@ -22,6 +22,7 @@
 #endif
 
 vluint64_t main_time = 0;       // Current simulation time
+int return_code = 1;
 
 double sc_time_stamp () {       // Called by $time in Verilog
     return main_time;           // converts to double, to match
@@ -55,8 +56,6 @@ int main(int argc, char **argv, char **env) {
   pulpino->top->fetch_enable_i = 0;
 
   while (!Verilated::gotFinish()) {
-    // pulpino->preload_memories(argv[1], argv[1]);
-    pulpino->top->spi_cs_i = 1;
 
     if (main_time > 10) {
         if (main_time == 11) {
@@ -98,6 +97,11 @@ int main(int argc, char **argv, char **env) {
     tfp->close();
   #endif
 
+  #ifdef PRELOAD
+    return_code = pulpino->get_return_code();
+  #endif
+
   delete pulpino;
-  exit(0);
+
+  exit(return_code);
 }
