@@ -40,6 +40,10 @@ void PULPino::preload_memories(std::string instr_file, std::string data_file) {
   }
 }
 
+int PULPino::get_return_code(void) {
+  return top->pulpino_top__DOT__peripherals_i__DOT__apb_pulpino_i__DOT__status_q;
+}
+
 vector<string> PULPino::split(string str, char delimiter) {
   vector<string> internal;
   stringstream ss(str); // Turn the string into a stream.

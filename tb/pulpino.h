@@ -24,6 +24,7 @@ public:
     ~PULPino();
     void preload_memories(std::string instr_file, std::string data_file);
     void set_boot_reg(unsigned int boot_address);
+    int get_return_code();
 
     Vtop* top;
 private:
