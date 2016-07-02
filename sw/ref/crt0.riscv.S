@@ -97,7 +97,7 @@ ISR_I2C_ASM:
 /* ========================================== [ UART handler ] === */
 ISR_UART_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, ISR_UART
@@ -105,7 +105,7 @@ ISR_UART_ASM:
 /* ========================================== [ GPIO handler ] === */
 ISR_GPIO_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, ISR_GPIO
@@ -113,7 +113,7 @@ ISR_GPIO_ASM:
 /* ========================================== [ SPI Master end of transmission handler ] === */
 ISR_SPIM0_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, ISR_SPIM0
@@ -121,7 +121,7 @@ ISR_SPIM0_ASM:
 /* ========================================== [ SPI Master recieve/transmit finish handler ] === */
 ISR_SPIM1_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, ISR_SPIM1
@@ -129,7 +129,7 @@ ISR_SPIM1_ASM:
 /* ========================================== [ Timer A compare handler ] === */
 ISR_TA_CMP_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, ISR_TA_CMP
@@ -137,7 +137,7 @@ ISR_TA_CMP_ASM:
 /* ========================================== [ Timer A overflow handler ] === */
 ISR_TA_OVF_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, ISR_TA_OVF
@@ -145,7 +145,7 @@ ISR_TA_OVF_ASM:
 /* ========================================== [ Timer B Compare handler ] === */
 ISR_TB_CMP_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, ISR_TB_CMP
@@ -153,7 +153,7 @@ ISR_TB_CMP_ASM:
 /* ========================================== [ Timer B overflow handler ] === */
 ISR_TB_OVF_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, ISR_TB_OVF
