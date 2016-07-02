@@ -5,6 +5,7 @@ set(SOURCES
     src/wiring.c
     src/wiring_analog.c
     src/WString.cpp
+    src/Print.cpp
     )
 
 set(HEADERS
@@ -13,6 +14,8 @@ set(HEADERS
     inc/pins_arduino.h
     inc/wiring_private.h
     inc/WString.h
+    inc/Printable.h
+    inc/Print.h
     )
 
 include_directories(inc/)
