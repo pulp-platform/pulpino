@@ -1,42 +1,49 @@
-
 # Status
 
 ## GPIO
-	Done
+Done
 - implementation 
 - test
-	postponed
+
+postponed
 - pad mux
 - input_pullup (for imperio)
 - interrupt disable (SREG issue in AVR)
-	Problems
+
+Problems
 - None
 
 ## Interrupt
-	Done
+Done
 - implementation
-	Postponed
+
+Postponed
 - minimizing function calls inside interrupt functions
 - using interrupt atribute instead of crt0 approach
-	problems
+
+problems
 - test doesnt respond even for already implemented tests (seems problem in my machine)
 - ETH's compiler doesn't accept function calls in interupt attributed functions
 
 ## Timer
-	Done
+Done
 - implementation
 - software PWM
-	Postponed
+
+Postponed
 - delay_microseconds() function because it depends on counting cycles for each instruction
 - test untill interrupt test passes
-	Problems
+
+Problems
 - software PWM utilizes CPU otherwise would have low frequency
 - when we implement servos later we would face the problem that the 2 timers are already used
 
 ## UART
-	Implemented
+
+Implemented
 - Auxiliary classes (String, Print and Stream0
-	Ongoing
+
+Ongoing
 - Harware porting
 
 ## I2C
