@@ -89,7 +89,7 @@ main_entry:
 /* ========================================== [ I2C handler ] === */
 ISR_I2C_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, ISR_I2C
@@ -161,7 +161,7 @@ ISR_TB_OVF_ASM:
 /* ================================= [ illegal instruction handler] === */
 illegal_insn_handler:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, illegal_insn_handler_c
@@ -231,7 +231,7 @@ end_except:
   lw x29, 0x38(x2)
   lw x30, 0x3c(x2)
   lw x31, 0x40(x2)
-  lw  x1, 0x44(x2)
+  lw  x1, 0x5C(x2)
   addi x2, x2, EXCEPTION_STACK_SIZE
   eret
 
