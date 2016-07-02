@@ -4,6 +4,7 @@ set(SOURCES
     src/hooks.c
     src/wiring.c
     src/wiring_analog.c
+    src/WString.cpp
     )
 
 set(HEADERS
@@ -11,6 +12,7 @@ set(HEADERS
     inc/Arduino.h
     inc/pins_arduino.h
     inc/wiring_private.h
+    inc/WString.h
     )
 
 include_directories(inc/)
