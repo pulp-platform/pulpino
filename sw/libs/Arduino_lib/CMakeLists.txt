@@ -6,6 +6,7 @@ set(SOURCES
     src/wiring_analog.c
     src/WString.cpp
     src/Print.cpp
+    src/Stream.cpp
     )
 
 set(HEADERS
@@ -16,6 +17,7 @@ set(HEADERS
     inc/WString.h
     inc/Printable.h
     inc/Print.h
+    inc/Stream.h
     )
 
 include_directories(inc/)
