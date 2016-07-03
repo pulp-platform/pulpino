@@ -36,7 +36,32 @@
 #define UART_REG_MSR ( UART_BASE_ADDR + 0x18) // MODEM Status Register
 #define UART_REG_SCR ( UART_BASE_ADDR + 0x1C) // Scratch Register
 
+#define REG_8(x) (*((volatile uint8_t*)(x)))
+
+
+#define RBR REG_8(UART_REG_RBR) 
+#define DLL REG_8(UART_REG_DLL) 
+#define THR REG_8(UART_REG_THR)
+#define DLM REG_8(UART_REG_DLM)
+#define IER REG_8(UART_REG_IER) 
+#define IIR REG_8(UART_REG_IIR) 
+#define FCR REG_8(UART_REG_FCR) 
+#define LCR REG_8(UART_REG_LCR) 
+#define MCR REG_8(UART_REG_MCR) 
+#define LSR REG_8(UART_REG_LSR) 
+#define MSR REG_8(UART_REG_MSR) 
+#define SCR REG_8(UART_REG_SCR) 
+
+
+
+
+
+
 #define UART_FIFO_DEPTH 64
+
+//UART_FIFO_DEPTH but to be compatible with Arduino_libs and also if in future designs it differed
+#define SERIAL_RX_BUFFER_SIZE UART_FIFO_DEPTH 	
+#define SERIAL_TX_BUFFER_SIZE UART_FIFO_DEPTH
 
 void uart_set_cfg(int parity, uint16_t clk_counter);
 
