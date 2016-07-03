@@ -30,8 +30,10 @@
 
 # if defined(Imperio)
 #define NUM_DIGITAL_PINS            19	//GPIO for Imperio
-#else	
+#elif defined(Zed)	
 #define NUM_DIGITAL_PINS            30	//GPIO for ZedBoard
+#else
+#define NUM_DIGITAL_PINS            32	//GPIO for Simulation
 #endif
 
 

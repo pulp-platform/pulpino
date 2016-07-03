@@ -18,6 +18,8 @@ set(HEADERS
     inc/Printable.h
     inc/Print.h
     inc/Stream.h
+    inc/HardwareSerial_private.h
+    inc/HardwareSerial.h
     )
 
 include_directories(inc/)
