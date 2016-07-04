@@ -36,25 +36,29 @@
 #define UART_REG_MSR ( UART_BASE_ADDR + 0x18) // MODEM Status Register
 #define UART_REG_SCR ( UART_BASE_ADDR + 0x1C) // Scratch Register
 
-#define REG_8(x) (*((volatile uint8_t*)(x)))
+#define REG_8(x) (((volatile uint8_t*)(x)))
 
 
-#define RBR REG_8(UART_REG_RBR) 
-#define DLL REG_8(UART_REG_DLL) 
-#define THR REG_8(UART_REG_THR)
-#define DLM REG_8(UART_REG_DLM)
-#define IER REG_8(UART_REG_IER) 
-#define IIR REG_8(UART_REG_IIR) 
-#define FCR REG_8(UART_REG_FCR) 
-#define LCR REG_8(UART_REG_LCR) 
-#define MCR REG_8(UART_REG_MCR) 
-#define LSR REG_8(UART_REG_LSR) 
-#define MSR REG_8(UART_REG_MSR) 
-#define SCR REG_8(UART_REG_SCR) 
+#define RBR_UART REG_8(UART_REG_RBR) 
+#define DLL_UART REG_8(UART_REG_DLL) 
+#define THR_UART REG_8(UART_REG_THR)
+#define DLM_UART REG_8(UART_REG_DLM)
+#define IER_UART REG_8(UART_REG_IER) 
+#define IIR_UART REG_8(UART_REG_IIR) 
+#define FCR_UART REG_8(UART_REG_FCR) 
+#define LCR_UART REG_8(UART_REG_LCR) 
+#define MCR_UART REG_8(UART_REG_MCR) 
+#define LSR_UART REG_8(UART_REG_LSR) 
+#define MSR_UART REG_8(UART_REG_MSR) 
+#define SCR_UART REG_8(UART_REG_SCR) 
 
 
 
-
+#define DLAB 1<<7 	//DLAB bit in LCR reg
+#define ERBFI 1 	//ERBFI bit in IER reg
+#define ETBEI 1<<1 	//ETBEI bit in IER reg
+#define PE 1<<2 	//PE bit in LSR reg
+#define THRE 1<<5 	//THRE bit in LSR reg
 
 
 #define UART_FIFO_DEPTH 64

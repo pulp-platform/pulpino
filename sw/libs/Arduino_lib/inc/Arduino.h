@@ -235,12 +235,13 @@ return pin;
 
 #ifdef __cplusplus
 
+#include "WString.h"
+#include "HardwareSerial.h"
+
 ////////////////////////Supression///////////////////////
 //Don't need to include other libraries now, ###check later###
 /*
 #include "WCharacter.h"
-#include "WString.h"
-#include "HardwareSerial.h"
 #include "USBAPI.h"
 */
 ////////////////////////End///////////////////////

@@ -42,9 +42,9 @@ Problems
 
 Implemented
 - Auxiliary classes (String, Print and Stream0
-
-Ongoing
-- Harware porting
+- Hardware porting
+Postponed
+- Testing (until interrupt works)
 
 ## I2C
 Not yet

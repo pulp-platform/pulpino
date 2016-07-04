@@ -29,6 +29,7 @@
 #include "Stream.h"
 #include "uart.h"
 
+
 // Define constants and variables for buffering incoming serial data.  We're
 // using a ring buffer (I think), in which head is the index of the location
 // to which to write the next incoming character and tail is the index of the
@@ -126,16 +127,16 @@ class HardwareSerial : public Stream
     operator bool() { return true; }
 
     // Interrupt handlers - Not intended to be called externally
-    inline void _rx_complete_irq(void);
-    void _tx_udr_empty_irq(void);
+    inline void _rx_available_irq(void);
+    void _tx_thr_empty_irq(void);
 };
 
 // If in the future Pulpino may have many UARTs or none at all 
-#if defined(RBR) || defined(RBR0)
+#if defined(RBR_UART) || defined(RBR_UART0)
   extern HardwareSerial Serial;
   #define HAVE_HWSERIAL0
 #endif
-#if defined(RBR1)
+#if defined(RBR_UART1)
   extern HardwareSerial Serial1;
   #define HAVE_HWSERIAL1
 #endif

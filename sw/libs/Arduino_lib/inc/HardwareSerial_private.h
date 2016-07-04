@@ -25,26 +25,26 @@
 
 // this is so I can support Attiny series and any other chip without a uart
 #if defined(HAVE_HWSERIAL0) || defined(HAVE_HWSERIAL1) 
-#if !defined(RBR0)
-#if defined(RBR)
+#if !defined(RBR_UART0)
+#if defined(RBR_UART)
 // If there is only one UART name all registers with 0 at the end.
-#define RBR0 RBR 
-#define DLL0 DLL 
-#define THR0 THR 
-#define DLM0 DLM
-#define IER0 IER 
-#define IIR0 IIR 
-#define FCR0 FCR
-#define LCR0 LCR
-#define MCR0 MCR
-#define LSR0 LSR
-#define MSR0 MSR
-#define SCR0 SCR
+#define RBR_UART0 RBR_UART 
+#define DLL_UART0 DLL_UART 
+#define THR_UART0 THR_UART 
+#define DLM_UART0 DLM_UART
+#define IER0_UART IER_UART 
+#define IIR0_UART IIR_UART 
+#define FCR0_UART FCR_UART
+#define LCR0_UART LCR_UART
+#define MCR0_UART MCR_UART
+#define LSR0_UART LSR_UART
+#define MSR0_UART MSR_UART
+#define SCR0_UART SCR_UART
 #else
 #error No UART found in HardwareSerial.cpp
 #endif //defined RBR
 #endif // !defined RBR0
-#endif
+
 
 // Constructors ////////////////////////////////////////////////////////////////
 
@@ -66,12 +66,12 @@ HardwareSerial::HardwareSerial(
 
 // Actual interrupt handlers //////////////////////////////////////////////////////////////
 
-void HardwareSerial::_rx_complete_irq(void)
+void HardwareSerial::_rx_available_irq(void)
 {
-  if (bit_is_clear(*_ucsra, UPE0)) {
+  if (bit_is_clear(*_lsr, PE)) {
     // No Parity error, read byte and store it in the buffer if there is
     // room
-    unsigned char c = *_udr;
+    unsigned char c = *_rbr;
     rx_buffer_index_t i = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
 
     // if we should be storing the received character into the location
@@ -84,7 +84,7 @@ void HardwareSerial::_rx_complete_irq(void)
     }
   } else {
     // Parity error, read byte but discard it
-    *_udr;
+    *_rbr;
   };
 }
 

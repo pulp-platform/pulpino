@@ -7,6 +7,8 @@ set(SOURCES
     src/WString.cpp
     src/Print.cpp
     src/Stream.cpp
+    src/HardwareSerial.cpp
+    src/HardwareSerial0.cpp
     )
 
 set(HEADERS
