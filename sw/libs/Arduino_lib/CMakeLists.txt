@@ -12,6 +12,7 @@ set(SOURCES
     src/abi.cpp
     src/new.cpp
     src/WMath.cpp
+    src/wiring_shift.c
     )
 
 set(HEADERS
