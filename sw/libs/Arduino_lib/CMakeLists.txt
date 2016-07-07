@@ -9,6 +9,7 @@ set(SOURCES
     src/Stream.cpp
     src/HardwareSerial.cpp
     src/HardwareSerial0.cpp
+    src/abi.cpp
     )
 
 set(HEADERS
