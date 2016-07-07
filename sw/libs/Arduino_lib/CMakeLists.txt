@@ -11,6 +11,7 @@ set(SOURCES
     src/HardwareSerial0.cpp
     src/abi.cpp
     src/new.cpp
+    src/WMath.cpp
     )
 
 set(HEADERS

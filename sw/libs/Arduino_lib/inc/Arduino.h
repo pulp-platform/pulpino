@@ -29,13 +29,9 @@
 #include <string.h>
 #include <math.h>
 
-
 #include<stdint.h>	//Added for uint_t
 
-
-
-
-//#include "binary.h"	// ###check later###
+#include "binary.h"	
 
 #ifdef __cplusplus
 extern "C"{
@@ -237,11 +233,22 @@ return pin;
 
 #include "WString.h"
 #include "HardwareSerial.h"
+#include "WCharacter.h"
+
+uint16_t makeWord(uint16_t w);	//word here is 16 bit for compatibility with arduino
+uint16_t makeWord(byte h, byte l);	//###check later###
+#define word(...) makeWord(__VA_ARGS__)	//###check later###
+
+
+// WMath prototypes
+int random(int);
+int random(int, int);
+int randomSeed(unsigned int);
+int map(int, int, int, int, int);
 
 ////////////////////////Supression///////////////////////
 //Don't need to include other libraries now, ###check later###
 /*
-#include "WCharacter.h"
 #include "USBAPI.h"
 */
 ////////////////////////End///////////////////////
@@ -253,23 +260,12 @@ return pin;
 #error "Targets with both UART0 and CDC serial not supported"
 #endif
 
-
-uint16_t makeWord(uint16_t w);	//###check later###
-uint16_t makeWord(byte h, byte l);	//###check later###
-
-#define word(...) makeWord(__VA_ARGS__)	//###check later###
-
 unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout = 1000000L);	//###check later###
 unsigned long pulseInLong(uint8_t pin, uint8_t state, unsigned long timeout = 1000000L);	//###check later###
 
 void tone(uint8_t _pin, unsigned int frequency, unsigned long duration = 0);	//###check later###
 void noTone(uint8_t _pin);	//###check later###
 
-// WMath prototypes
-long random(long);
-long random(long, long);
-void randomSeed(unsigned long);
-long map(long, long, long, long, long);
 */
 ////////////////////////End///////////////////////
 #endif
