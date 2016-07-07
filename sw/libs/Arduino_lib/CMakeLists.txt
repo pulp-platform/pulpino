@@ -26,6 +26,7 @@ set(HEADERS
     inc/HardwareSerial.h
     inc/binary.h
     inc/new.h
+    inc/WCharacter.h
     )
 
 include_directories(inc/)
