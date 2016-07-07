@@ -23,6 +23,7 @@ set(HEADERS
     inc/Stream.h
     inc/HardwareSerial_private.h
     inc/HardwareSerial.h
+    inc/binary.h
     )
 
 include_directories(inc/)
