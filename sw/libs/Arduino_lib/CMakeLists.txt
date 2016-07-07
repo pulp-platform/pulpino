@@ -10,6 +10,7 @@ set(SOURCES
     src/HardwareSerial.cpp
     src/HardwareSerial0.cpp
     src/abi.cpp
+    src/new.cpp
     )
 
 set(HEADERS
@@ -24,6 +25,7 @@ set(HEADERS
     inc/HardwareSerial_private.h
     inc/HardwareSerial.h
     inc/binary.h
+    inc/new.h
     )
 
 include_directories(inc/)
