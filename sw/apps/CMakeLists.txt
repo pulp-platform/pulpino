@@ -64,8 +64,9 @@ macro(add_application NAME SOURCE_FILES)
   add_sim_targets(${NAME})
 
   # if there are labels available for testing
-  if(ARG_LABELS)
+  if(ARG_LABELS AND NOT ARG_LABELS STREQUAL "verilator_tests")
     set_tests_properties(${NAME}.test PROPERTIES LABELS "${ARG_LABELS}")
+  elseif (ARG_LABELS)
     set_tests_properties(${NAME}.verilate PROPERTIES LABELS "${ARG_LABELS}")
   endif()
 

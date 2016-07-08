@@ -17,7 +17,7 @@ RVC=0
 # of RI5CY, set this to 1
 # Otherwise it is assumed that the official riscv compiler is used and no special
 # instructions are inserted
-
+GCC_ETH=1
 
 PULP_GIT_DIRECTORY=../../
 SIM_DIRECTORY="$PULP_GIT_DIRECTORY/vsim"

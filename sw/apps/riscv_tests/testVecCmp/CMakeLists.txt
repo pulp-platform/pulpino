@@ -1,3 +1,3 @@
 if (${GCC_ETH})
-  add_application(testVecCmp testVecCmp.c LABELS "riscv_tests")
+  add_application(testVecCmp testVecCmp.c LABELS "riscv_tests" LABELS "verilator_tests")
 endif()

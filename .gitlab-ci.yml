@@ -25,3 +25,13 @@ rtl_sequential_rvc:
   stage: test
   script:
     - ./ci/rtl-sequential-rvc.csh
+
+verilator:
+  stage: test
+  script:
+    - ./ci/verilator.csh
+
+verilator-rvc:
+  stage: test
+  script:
+    - ./ci/verilator-rvc.csh

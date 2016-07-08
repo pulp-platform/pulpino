@@ -1,1 +1,1 @@
-add_application(matrixMul16 matrixMul.c LABELS "sequential_tests")
+add_application(matrixMul16 matrixMul.c LABELS "sequential_tests" LABELS "verilator_tests")
