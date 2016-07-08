@@ -13,8 +13,8 @@ include(CMakeSim.txt)
 ################################################################################
 macro(add_application NAME SOURCE_FILES)
   # optional argument parsing
-  set(oneValueArgs SUBDIR TB LABELS FLAGS)
-  set(multiValueArgs LIBS)
+  set(oneValueArgs SUBDIR TB FLAGS)
+  set(multiValueArgs LABELS LIBS)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   set(SUBDIR ${ARG_SUBDIR})
 
@@ -64,10 +64,13 @@ macro(add_application NAME SOURCE_FILES)
   add_sim_targets(${NAME})
 
   # if there are labels available for testing
-  if(ARG_LABELS AND NOT ARG_LABELS STREQUAL "verilator_tests")
-    set_tests_properties(${NAME}.test PROPERTIES LABELS "${ARG_LABELS}")
-  elseif (ARG_LABELS)
-    set_tests_properties(${NAME}.verilate PROPERTIES LABELS "${ARG_LABELS}")
+  if(ARG_LABELS)
+    set(TEST_LABELS, "")
+    string(REPLACE "verilator_tests" "" TEST_LABELS "${ARG_LABELS}")
+    set_tests_properties(${NAME}.test PROPERTIES LABELS "${TEST_LABELS}")
+  endif()
+  if(ARG_LABELS AND ARG_LABELS MATCHES "verilator_tests")
+    set_tests_properties(${NAME}.verilate PROPERTIES LABELS "verilator_tests")
   endif()
 
 endmacro()

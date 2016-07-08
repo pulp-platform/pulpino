@@ -4,4 +4,4 @@ if(!${RISCV})
     PROPERTIES COMPILE_FLAGS "-mfbit")
 endif()
 
-add_application(bitDescriptor bitDescriptor.c LABELS "sequential_tests" LABELS "verilator_tests")
+add_application(bitDescriptor bitDescriptor.c LABELS "sequential_tests" "verilator_tests")

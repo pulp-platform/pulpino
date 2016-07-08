@@ -1,1 +1,1 @@
-add_application(bubblesort bubblesort.c LABELS "sequential_tests" LABELS "verilator_tests")
+add_application(bubblesort bubblesort.c LABELS "sequential_tests" "verilator_tests")

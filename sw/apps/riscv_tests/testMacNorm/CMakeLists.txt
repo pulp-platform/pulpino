@@ -1,3 +1,3 @@
 if (${GCC_ETH})
-  add_application(testMacNorm testMacNorm.c LABELS "riscv_tests" LABELS "verilator_tests")
+  add_application(testMacNorm testMacNorm.c LABELS "riscv_tests" "verilator_tests")
 endif()
