@@ -49,25 +49,25 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
     switch(mode) {
 
         case LOW  :
-        REG(GPIO_REG_INTTYPE1) &= ~bit;
-        REG(GPIO_REG_INTTYPE0) &= ~bit;
+        *INTTYPE1 &= ~bit;
+        *INTTYPE0 &= ~bit;
         break; 
 	case HIGH  :
-        REG(GPIO_REG_INTTYPE1) &= ~bit;
-        REG(GPIO_REG_INTTYPE0) |= bit;
+        *INTTYPE1 &= ~bit;
+        *INTTYPE0 |= bit;
         break;
         case FALLING  :
-        REG(GPIO_REG_INTTYPE1) |= bit;
-        REG(GPIO_REG_INTTYPE0) |= bit;
+        *INTTYPE1 |= bit;
+        *INTTYPE0 |= bit;
         break;
         default  :      //Rising is the default
-        REG(GPIO_REG_INTTYPE1) |= bit;
-        REG(GPIO_REG_INTTYPE0) &= ~bit;
+        *INTTYPE1 |= bit;
+        *INTTYPE0 &= ~bit;
         break;  
 }
 
 	
-	REG(GPIO_REG_INTEN) |= bit;     //Enable the specific GPIO pin interrupt
+	*INTEN |= bit;     //Enable the specific GPIO pin interrupt
         IER |= (1<<25);                 //Enable Global GPIO interrupt
   }
 }
@@ -77,7 +77,7 @@ void detachInterrupt(uint8_t interruptNum) {
     // Disable the interrupt.  (We can't assume that interruptNum is equal
     // to the number of the EIMSK bit to clear, as this isn't true on the 
     // ATmega8.  There, INT0 is 6 and INT1 is 7.)
-        REG(GPIO_REG_INTEN) &= ~(1<<interruptNum);      //Disable the specific GPIO pin interrupt
+        *INTEN &= ~(1<<interruptNum);      //Disable the specific GPIO pin interrupt
         intFunc[interruptNum] = NULL;
   }
 }
@@ -85,7 +85,7 @@ void detachInterrupt(uint8_t interruptNum) {
 
 //redefining the GPIO handler
 void ISR_GPIO (void) {
-        intFunc[BitMaskToDigitalPin(REG(GPIO_REG_INTSTATUS))]();
+        intFunc[BitMaskToDigitalPin(*INTSTATUS)]();
         ICP |= (1<<25);         //clear interrupt pending for GPIO
 }
 

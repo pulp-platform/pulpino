@@ -42,7 +42,7 @@ void pinMode(uint8_t pin, uint8_t mode)
 	if (pin >= NUM_DIGITAL_PINS) return;	//check for number of pin
 
 	// JWS: can I let the optimizer do this?
-	reg = REGP(GPIO_REG_PADDIR);	//not the best practice, ### check later###
+	reg = PADDIR;	//not the best practice, ### check later###
 
 	if (mode == INPUT) { 
 		//uint8_t oldSREG = SREG;	//interrupt ##check later###
@@ -169,7 +169,7 @@ void digitalWrite(uint8_t pin, uint8_t val)
 	// before doing a digital write.
 	//if (timer != NOT_ON_TIMER) turnOffPWM(timer);	//timer ##check later###
 
-	out = REGP(GPIO_REG_PADOUT);	//not the best practice, ### check later###	
+	out = PADOUT;	//not the best practice, ### check later###	
 
 	//uint8_t oldSREG = SREG;	//interrupt ##check later###
 	//cli();	//interrupt ##check later###
@@ -196,6 +196,6 @@ int digitalRead(uint8_t pin)
 	// before getting a digital reading.
 	//if (timer != NOT_ON_TIMER) turnOffPWM(timer);	//timer ##check later###
 
-	if (*REGP(GPIO_REG_PADIN) & bit) return HIGH;	//not the best practice, ###Check late###
+	if (*PADIN & bit) return HIGH;	//not the best practice, ###Check late###
 	return LOW;
 }
