@@ -97,8 +97,6 @@ module pulpemu_top(
   wire        FIXED_IO_ps_porb;
   wire        FIXED_IO_ps_srstb;
 
-  wire [31:0] end_of_operation;
-  wire [31:0] fetch_enable;
   wire        ps7_clk;
   wire        ps7_rst_n;
   wire        ps7_rst_clking_n;
@@ -106,6 +104,8 @@ module pulpemu_top(
   wire        ref_clk_i;               // input
   wire        rst_ni;                  // input
   wire        fetch_en;                // input
+
+  wire [31:0] fetch_enable;
 
   wire [31:0] jtag_emu_i; // input to PS
   wire [31:0] jtag_emu_o; // output from PS
@@ -173,17 +173,6 @@ module pulpemu_top(
   reg fetch_en_r;
 
   assign fetch_en = fetch_en_r;
-
-  reg [31:0] end_of_operation_r;
-  always @(posedge ps7_clk or negedge ps7_rst_n)
-  begin
-    if(ps7_rst_n == 1'b0)
-      end_of_operation_r = 32'b0;
-    else begin
-      end_of_operation_r = gpio_out;
-    end
-  end
-  assign end_of_operation = end_of_operation_r;
 
   always @(posedge ps7_clk or negedge ps7_rst_n)
   begin
@@ -286,7 +275,6 @@ module pulpemu_top(
     .clking_axi_rvalid  ( clking_axi_rvalid  ),
     .clking_axi_rready  ( clking_axi_rready  ),
 
-    .end_of_operation   ( end_of_operation   ),
     .fetch_enable       ( fetch_enable       ),
     .ps7_clk            ( ps7_clk            ),
     .ps7_rst_n          ( ps7_rst_n          ),

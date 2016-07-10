@@ -1,11 +1,6 @@
-# set default core to RI5CY
-if { ! [info exists ::env(PULP_CORE)] } {
-  set core "RI5CY"
-} else {
-  set core $::env(PULP_CORE)
+if { ![info exists ::env(BOARD) ]} {
+  set ::env(BOARD) "zedboard"
 }
-puts "Set PULP core to $core"
-
 
 if { ![info exists ::env(XILINX_PART)] } {
   set ::env(XILINX_PART) "xc7z020clg484-1"
@@ -48,22 +43,16 @@ update_compile_order -fileset sim_1
 
 add_files -fileset constrs_1 -norecurse constraints.xdc
 
+# save area
+set_property strategy Flow_AreaOptimized_High [get_runs synth_1]
+
 # run synthesis
-if { $core == "OR10N" } {
-  # first try will fail
-  catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1}
-} else {
-  # first try will fail
-  catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1}
-}
+# first try will fail
+catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1}
 
 update_compile_order -fileset sources_1
 
-if { $core == "OR10N" } {
-  synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1
-} else {
-  synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1
-}
+synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1
 
 #set_property STEPS.SYNTH_DESIGN.ARGS.KEEP_EQUIVALENT_REGISTERS true [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.RESOURCE_SHARING off [get_runs synth_1]

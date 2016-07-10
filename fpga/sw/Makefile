@@ -35,12 +35,21 @@ linux: sd_image/uImage
 
 u-boot-xlnx:
 	git clone git://github.com/Xilinx/u-boot-xlnx.git
+ifeq ($(BOARD),zybo)
+	cd u-boot-xlnx && git checkout 84f81e5b8950748fd7ca967ecf0428affef7ecea
+else
 	cd u-boot-xlnx && git checkout tags/xilinx-v2015.1
+endif
 	cd u-boot-xlnx && patch -p1 < ../u-boot-xlnx-def-env.patch
 
 u-boot-xlnx/.config: $(filter-out $(wildcard u-boot-xlnx), u-boot-xlnx)
+ifeq ($(BOARD),zybo)
+	cd u-boot-xlnx && make CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
+	cp ./u-boot.config.zybo ./u-boot-xlnx/.config
+else
 	cd u-boot-xlnx && make CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
 	cp ./u-boot.config ./u-boot-xlnx/.config
+endif
 
 u-boot-xlnx/u-boot: u-boot-xlnx/.config
 	cd u-boot-xlnx && make CROSS_COMPILE=arm-xilinx-linux-gnueabi-
