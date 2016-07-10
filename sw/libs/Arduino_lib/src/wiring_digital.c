@@ -37,18 +37,18 @@ void pinMode(uint8_t pin, uint8_t mode)
 	uint32_t bit = digitalPinToBitMask(pin);	//changed to be 32bits instead of 8bits 
 	//uint8_t port = digitalPinToPort(pin);	//no ports
 	volatile uint32_t *reg;	//changed to be 32bits instead of 8bits 
+	uint32_t oldMstatus;
 
 	//if (port == NOT_A_PIN) return;
 	if (pin >= NUM_DIGITAL_PINS) return;	//check for number of pin
 
-	// JWS: can I let the optimizer do this?
-	reg = PADDIR;	//not the best practice, ### check later###
+	reg = PADDIR;
 
-	if (mode == INPUT) { 
-		//uint8_t oldSREG = SREG;	//interrupt ##check later###
-                //cli();	//interrupt ##check later###
+	if (mode == INPUT) { 	
+		csrr(mstatus, oldMstatus);
+		int_disable(); 		//disable interrupt as the next instruction is not atomic
 		*reg &= ~bit;
-		//SREG = oldSREG;	//interrupt ##check later###
+		csrw(mstatus, oldMstatus);
 	}
 //////////////////////// Supression///////////////////////
 //We don't have pullup and pulldown for FPGA but have it for imperio, ###check later###
@@ -63,10 +63,10 @@ void pinMode(uint8_t pin, uint8_t mode)
 */
 /////////////////////////////End////////////////////////////	
 	else {
-		//uint8_t oldSREG = SREG;	//interrupt ##check later###
-                //cli();	//interrupt ##check later###
+		csrr(mstatus, oldMstatus);
+		int_disable(); 		//disable interrupt as the next instruction is not atomic
 		*reg |= bit;
-		//SREG = oldSREG;	//interrupt ##check later###
+		csrw(mstatus, oldMstatus);
 	}
 }
 
@@ -159,28 +159,24 @@ void digitalWrite(uint8_t pin, uint8_t val)
 {
 	//uint8_t timer = digitalPinToTimer(pin);	//timer ##check later###
 	uint32_t bit = digitalPinToBitMask(pin);	//changed to be 32bits instead of 8bits
-	//uint8_t port = digitalPinToPort(pin);	// no ports
 	volatile uint32_t *out;
-
+      	uint32_t oldMstatus;
 	//if (port == NOT_A_PIN) return;
 	if (pin >= NUM_DIGITAL_PINS) return;	//check for number of pin
 
 	// If the pin that support PWM output, we need to turn it off
 	// before doing a digital write.
 	//if (timer != NOT_ON_TIMER) turnOffPWM(timer);	//timer ##check later###
-
-	out = PADOUT;	//not the best practice, ### check later###	
-
-	//uint8_t oldSREG = SREG;	//interrupt ##check later###
-	//cli();	//interrupt ##check later###
-
+	
+	out = PADOUT;	
+	csrr(mstatus, oldMstatus);
+	int_disable(); 		//disable interrupt as the next instruction is not atomic	
 	if (val == LOW) {
 		*out &= ~bit;
 	} else {
 		*out |= bit;
 	}
-
-	//SREG = oldSREG;	//interrupt ##check later###
+	csrw(mstatus, oldMstatus);
 }
 
 int digitalRead(uint8_t pin)
@@ -196,6 +192,6 @@ int digitalRead(uint8_t pin)
 	// before getting a digital reading.
 	//if (timer != NOT_ON_TIMER) turnOffPWM(timer);	//timer ##check later###
 
-	if (*PADIN & bit) return HIGH;	//not the best practice, ###Check late###
+	if (*PADIN & bit) return HIGH;
 	return LOW;
 }

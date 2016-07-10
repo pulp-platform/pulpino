@@ -153,6 +153,7 @@ module tb;
 
   initial
   begin
+    gpio_in=32'b0;
 
     if(!$value$plusargs("MEMLOAD=%s", memload))
       memload = "PRELOAD";
