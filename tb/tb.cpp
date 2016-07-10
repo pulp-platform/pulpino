@@ -8,10 +8,10 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-// #define TRACE
+#define TRACE
 #define PRELOAD
 
-#include "Vtop.h"
+#include "Vtb_verilator.h"
 #include "verilated.h"
 #include <iostream>
 #include <fstream>
@@ -86,7 +86,8 @@ int main(int argc, char **argv, char **env) {
       pulpino->top->spi_clk_i ^= 1; // toggle spi_clk but keep csn high
     }
 
-    if ((pulpino->top->gpio_out & (1 << 8)) != 0) {
+    // wait on last char
+    if ((pulpino->top->gpio_out & (1 << 8)) != 0 && !pulpino->top->uart_busy) {
       cout << "Received EOC (End of Computation)" << endl;
       break;
     }

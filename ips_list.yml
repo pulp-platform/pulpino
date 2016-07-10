@@ -40,6 +40,9 @@ apb/apb_uart:
 apb/apb2per:
   commit: master
 
+apb/apb_uart_sv:
+  commit: master
+
 # AXI IPs
 axi/axi2apb:
   commit: master

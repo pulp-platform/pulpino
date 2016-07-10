@@ -78,7 +78,7 @@ macro(add_sim_targets NAME)
   add_custom_target(${NAME}.verilate
     WORKING_DIRECTORY ./${SUBDIR}
     DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links_verilator
-    COMMAND ./verilator_libs/Vtop ./slm_files/l2_stim.slm ./slm_files/tcdm_bank0.slm
+    COMMAND ./verilator_libs/Vtb_verilator ./slm_files/l2_stim.slm ./slm_files/tcdm_bank0.slm
     COMMENT "Running ${NAME} with Verilator"
     ${USES_TERMINAL})
 

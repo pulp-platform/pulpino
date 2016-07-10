@@ -12,7 +12,7 @@
 #include <iostream>
 
 PULPino::PULPino() {
-    top = new Vtop;
+    top = new Vtb_verilator;
 }
 
 PULPino::~PULPino(void) {
@@ -20,7 +20,7 @@ PULPino::~PULPino(void) {
 }
 
 void PULPino::set_boot_reg(unsigned int boot_address) {
-    top->pulpino_top__DOT__peripherals_i__DOT__apb_pulpino_i__DOT__boot_adr_q = boot_address;
+    top->tb_verilator__DOT__top_i__DOT__peripherals_i__DOT__apb_pulpino_i__DOT__boot_adr_q = boot_address;
 }
 
 void PULPino::preload_memories(std::string instr_file, std::string data_file) {
@@ -29,19 +29,19 @@ void PULPino::preload_memories(std::string instr_file, std::string data_file) {
   int i = 0;
   // preload instruction memory
   for (std::string instr; std::getline(instruction_stream, instr);) {
-   top->pulpino_top__DOT__core_region_i__DOT__instr_mem__DOT__sp_ram_wrap_i__DOT__sp_ram_i__DOT__mem[i] = std::stoul(split(instr, ' ').at(1), 0, 16);
+   top->tb_verilator__DOT__top_i__DOT__core_region_i__DOT__instr_mem__DOT__sp_ram_wrap_i__DOT__sp_ram_i__DOT__mem[i] = std::stoul(split(instr, ' ').at(1), 0, 16);
    i++;
   }
   // preload data memory
   i = 0;
   for (std::string data; std::getline(data_stream, data);) {
-   top->pulpino_top__DOT__core_region_i__DOT__data_mem__DOT__sp_ram_i__DOT__mem[i] = std::stoul(split(data, ' ').at(1), 0, 16);
+   top->tb_verilator__DOT__top_i__DOT__core_region_i__DOT__data_mem__DOT__sp_ram_i__DOT__mem[i] = std::stoul(split(data, ' ').at(1), 0, 16);
    i++;
   }
 }
 
 int PULPino::get_return_code(void) {
-  return top->pulpino_top__DOT__peripherals_i__DOT__apb_pulpino_i__DOT__status_q;
+  return top->tb_verilator__DOT__top_i__DOT__peripherals_i__DOT__apb_pulpino_i__DOT__status_q;
 }
 
 vector<string> PULPino::split(string str, char delimiter) {

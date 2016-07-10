@@ -11,7 +11,7 @@
 #ifndef PULPINO_H
 #define PULPINO_H
 
-#include "Vtop.h"
+#include "Vtb_verilator.h"
 #include "verilated.h"
 #include <fstream>
 #include <vector>
@@ -26,7 +26,7 @@ public:
     void set_boot_reg(unsigned int boot_address);
     int get_return_code();
 
-    Vtop* top;
+    Vtb_verilator* top;
 private:
 
     vector<string> split(string str, char delimiter);

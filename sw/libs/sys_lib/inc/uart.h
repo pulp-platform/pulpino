@@ -36,7 +36,7 @@
 #define UART_REG_MSR ( UART_BASE_ADDR + 0x18) // MODEM Status Register
 #define UART_REG_SCR ( UART_BASE_ADDR + 0x1C) // Scratch Register
 
-#define UART_FIFO_DEPTH 64
+#define UART_FIFO_DEPTH 16
 
 void uart_set_cfg(int parity, uint16_t clk_counter);
 

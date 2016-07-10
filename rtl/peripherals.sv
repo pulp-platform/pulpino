@@ -237,12 +237,7 @@ module peripherals
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
 
-  `ifndef VERILATOR
-    apb_uart
-  `else
-    apb_mock_uart
-  `endif
-  i_apb_uart
+  apb_uart_sv i_apb_uart
   (
     .CLK      ( clk_int[1]            ),
     .RSTN     ( rst_n                 ),
@@ -256,20 +251,10 @@ module peripherals
     .PREADY   ( s_uart_bus.pready     ),
     .PSLVERR  ( s_uart_bus.pslverr    ),
 
-    .INT      ( s_uart_event          ),   // Interrupt output
-
-    .OUT1N    (                       ),   // Output 1
-    .OUT2N    (                       ),   // Output 2
-    .RTSN     ( uart_rts              ),   // RTS output
-    .DTRN     ( uart_dtr              ),   // DTR output
-    .CTSN     ( uart_cts              ),   // CTS input
-    .DSRN     ( uart_dsr              ),   // DSR input
-    .DCDN     ( 1'b1                  ),   // DCD input
-    .RIN      ( 1'b1                  ),   // RI input
-    .SIN      ( uart_rx               ),
-    .SOUT     ( uart_tx               )
+    .rx_i     ( uart_rx               ),
+    .tx_o     ( uart_tx               ),
+    .event_o  ( s_uart_event          )
   );
-
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
