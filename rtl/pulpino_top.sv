@@ -67,10 +67,6 @@ module pulpino_top
 
     output logic              uart_tx,
     input  logic              uart_rx,
-    output logic              uart_rts,
-    output logic              uart_dtr,
-    input  logic              uart_cts,
-    input  logic              uart_dsr,
 
     input  logic       [31:0] gpio_in,
     output logic       [31:0] gpio_out,
@@ -228,10 +224,6 @@ module pulpino_top
 
     .uart_tx         ( uart_tx           ),
     .uart_rx         ( uart_rx           ),
-    .uart_rts        ( uart_rts          ),
-    .uart_dtr        ( uart_dtr          ),
-    .uart_cts        ( uart_cts          ),
-    .uart_dsr        ( uart_dsr          ),
 
     .spi_master_clk  ( spi_master_clk_o  ),
     .spi_master_csn0 ( spi_master_csn0_o ),

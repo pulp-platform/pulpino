@@ -74,10 +74,6 @@ module tb_verilator
 
     .uart_tx           ( uart_rx      ),
     .uart_rx           ( uart_rx      ),
-    .uart_rts          (              ),
-    .uart_dtr          (              ),
-    .uart_cts          ( 1'b0         ),
-    .uart_dsr          ( 1'b0         ),
 
     .gpio_in           (              ),
     .gpio_out          ( gpio_out     ),

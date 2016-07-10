@@ -48,10 +48,6 @@ module peripherals
 
     output logic              uart_tx,
     input  logic              uart_rx,
-    output logic              uart_rts,
-    output logic              uart_dtr,
-    input  logic              uart_cts,
-    input  logic              uart_dsr,
 
     output logic              spi_master_clk,
     output logic              spi_master_csn0,
@@ -237,7 +233,7 @@ module peripherals
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
 
-  apb_uart_sv i_apb_uart
+  apb_uart apb_uart_i
   (
     .CLK      ( clk_int[1]            ),
     .RSTN     ( rst_n                 ),
