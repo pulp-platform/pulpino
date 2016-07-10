@@ -236,7 +236,7 @@ macro(add_sim_targets NAME)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
 
   add_test(NAME ${NAME}.verilate
-    COMMAND ./verilator_libs/Vtop ./slm_files/l2_stim.slm ./slm_files/tcdm_bank0.slm
+    COMMAND ./verilator_libs/Vtb_verilator ./slm_files/l2_stim.slm ./slm_files/tcdm_bank0.slm
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
   ##############################################################################
   # Convenience
