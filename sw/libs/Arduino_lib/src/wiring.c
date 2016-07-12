@@ -64,8 +64,7 @@ void ISR_TA_CMP(void)
 
 unsigned int millis()
 {
-	unsigned int m;
-	uint32_t oldMstatus;
+	unsigned int m,oldMstatus;
 	csrr(mstatus, oldMstatus);
 
 	// disable interrupts while we read timerA_millis or we might get an
@@ -78,8 +77,7 @@ unsigned int millis()
 }
 
 unsigned int micros() {
-	unsigned int m;
-	uint32_t oldMstatus, t;
+	unsigned int m, t, oldMstatus;
 	csrr(mstatus, oldMstatus);
 	int_disable();
 
@@ -88,7 +86,7 @@ unsigned int micros() {
 
 	csrw(mstatus, oldMstatus);
 	
-	return ((m << 14) + t) * (1 / clockCyclesPerMicrosecond());
+	return ((m << 14) + t) * (1.0 / clockCyclesPerMicrosecond());
 }
 
 void delay(unsigned int ms)

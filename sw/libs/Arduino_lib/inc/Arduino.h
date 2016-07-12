@@ -21,7 +21,7 @@
 #ifndef Arduino_h
 #define Arduino_h
 
-#define F_CPU 5000000U	// Put here temporarily but later IDE should put it
+#define F_CPU 25000000U	// Put here temporarily but later IDE should put it
 
 // ###check later###
 #include <stdlib.h>
