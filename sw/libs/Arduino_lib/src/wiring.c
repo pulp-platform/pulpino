@@ -36,8 +36,8 @@
 #define FRACT_INC ((MICROSECONDS_PER_TIMERA_COMPARE % 1000) >> 3)
 #define FRACT_MAX (1000 >> 3)
 
-volatile unsigned long timerA_cmp_count = 0;
-volatile unsigned long timerA_millis = 0;
+volatile unsigned int timerA_cmp_count = 0;
+volatile unsigned int timerA_millis = 0;
 static unsigned char timerA_fract = 0;
 
 
@@ -45,7 +45,7 @@ void ISR_TA_CMP(void)
 {
 	// copy these to local variables so they can be stored in registers
 	// (volatile variables must be read from memory on every access)
-	unsigned long m = timerA_millis;
+	unsigned int m = timerA_millis;
 	unsigned char f = timerA_fract;
 
 	m += MILLIS_INC;
@@ -62,9 +62,9 @@ void ISR_TA_CMP(void)
 	ICP|= (1<<29);		//clear Timer A compare match interrupt pending
 }
 
-unsigned long millis()
+unsigned int millis()
 {
-	unsigned long m;
+	unsigned int m;
 	uint32_t oldMstatus;
 	csrr(mstatus, oldMstatus);
 
@@ -77,8 +77,8 @@ unsigned long millis()
 	return m;
 }
 
-unsigned long micros() {
-	unsigned long m;
+unsigned int micros() {
+	unsigned int m;
 	uint32_t oldMstatus, t;
 	csrr(mstatus, oldMstatus);
 	int_disable();
@@ -91,9 +91,9 @@ unsigned long micros() {
 	return ((m << 14) + t) * (1 / clockCyclesPerMicrosecond());
 }
 
-void delay(unsigned long ms)
+void delay(unsigned int ms)
 {
-	unsigned long start = micros();
+	unsigned int start = micros();
 
 	while (ms > 0) {
 		yield();

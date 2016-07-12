@@ -34,10 +34,10 @@
 
 void pinMode(uint8_t pin, uint8_t mode)
 {
-	uint32_t bit = digitalPinToBitMask(pin);	//changed to be 32bits instead of 8bits 
+	unsigned int bit = digitalPinToBitMask(pin);	//changed to be 32bits instead of 8bits 
 	//uint8_t port = digitalPinToPort(pin);	//no ports
-	volatile uint32_t *reg;	//changed to be 32bits instead of 8bits 
-	uint32_t oldMstatus;
+	volatile unsigned int *reg;	//changed to be 32bits instead of 8bits 
+	unsigned int oldMstatus;
 
 	//if (port == NOT_A_PIN) return;
 	if (pin >= NUM_DIGITAL_PINS) return;	//check for number of pin
@@ -158,9 +158,9 @@ static void turnOffPWM(uint8_t timer)
 void digitalWrite(uint8_t pin, uint8_t val)
 {
 	//uint8_t timer = digitalPinToTimer(pin);	//timer ##check later###
-	uint32_t bit = digitalPinToBitMask(pin);	//changed to be 32bits instead of 8bits
-	volatile uint32_t *out;
-      	uint32_t oldMstatus;
+	unsigned int bit = digitalPinToBitMask(pin);	//changed to be 32bits instead of 8bits
+	volatile unsigned int *out;
+      	unsigned int oldMstatus;
 	//if (port == NOT_A_PIN) return;
 	if (pin >= NUM_DIGITAL_PINS) return;	//check for number of pin
 
@@ -182,7 +182,7 @@ void digitalWrite(uint8_t pin, uint8_t val)
 int digitalRead(uint8_t pin)
 {
 	//uint8_t timer = digitalPinToTimer(pin);	//timer ##check later###
-	uint32_t bit = digitalPinToBitMask(pin);	//changed to be 32bits instead of 8bits
+	unsigned int bit = digitalPinToBitMask(pin);	//changed to be 32bits instead of 8bits
 	//uint8_t port = digitalPinToPort(pin);	// no ports
 
 	//if (port == NOT_A_PIN) return LOW;

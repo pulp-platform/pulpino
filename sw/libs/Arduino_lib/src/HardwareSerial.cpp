@@ -84,7 +84,7 @@ void HardwareSerial::_tx_thr_empty_irq(void)
 
 // Public Methods //////////////////////////////////////////////////////////////
 
-void HardwareSerial::begin(unsigned long baud, byte config)
+void HardwareSerial::begin(unsigned int baud, byte config)
 {
   // calculating divisor for baud rate
   uint16_t baud_setting = (F_CPU / 16* baud);	//we may add -1 accoring to int.c

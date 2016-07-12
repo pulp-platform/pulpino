@@ -96,7 +96,7 @@ void yield(void);	// an empty function unless overwritten for multi threading
 #define max(a,b) ((a)>(b)?(a):(b))
 #define abs(x) ((x)>0?(x):-(x))
 #define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
-#define round(x)     ((x)>=0?(long)((x)+0.5):(long)((x)-0.5))
+#define round(x)     ((x)>=0?(int)((x)+0.5):(int)((x)-0.5))
 #define radians(deg) ((deg)*DEG_TO_RAD)
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 #define sq(x) ((x)*(x))
@@ -145,9 +145,9 @@ void digitalWrite(uint8_t, uint8_t);
 int digitalRead(uint8_t);
 
 void init(void);	
-unsigned long millis(void);	
-unsigned long micros(void);	
-void delay(unsigned long);	
+unsigned int millis(void);	
+unsigned int micros(void);	
+void delay(unsigned int);	
 void delayMicroseconds(unsigned int us);	
 
 void analogWrite(uint8_t, int);	
@@ -162,8 +162,8 @@ int atexit(void (*func)()) __attribute__((weak));	// ###check later###
 int analogRead(uint8_t);	// ###check later###
 void analogReference(uint8_t mode);	// ###check later###
 
-unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout);	// ###check later###
-unsigned long pulseInLong(uint8_t pin, uint8_t state, unsigned long timeout);	// ###check later###
+unsigned int pulseIn(uint8_t pin, uint8_t state, unsigned int timeout);	// ###check later###
+unsigned int pulseInLong(uint8_t pin, uint8_t state, unsigned int timeout);	// ###check later###
 
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);	// ###check later###
 uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);	// ###check later###
@@ -184,7 +184,7 @@ void loop(void);
 
 #define digitalPinToBitMask(P) ( 1<< (P) )
 
-static inline int BitMaskToDigitalPin(uint32_t mask){
+static inline int BitMaskToDigitalPin(unsigned int mask){
 int pin =0;
 while(mask!=1){
 	mask>>=1;
@@ -260,10 +260,10 @@ int map(int, int, int, int, int);
 #error "Targets with both UART0 and CDC serial not supported"
 #endif
 
-unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout = 1000000L);	//###check later###
-unsigned long pulseInLong(uint8_t pin, uint8_t state, unsigned long timeout = 1000000L);	//###check later###
+unsigned int pulseIn(uint8_t pin, uint8_t state, unsigned int timeout = 1000000L);	//###check later###
+unsigned int pulseInLong(uint8_t pin, uint8_t state, unsigned int timeout = 1000000L);	//###check later###
 
-void tone(uint8_t _pin, unsigned int frequency, unsigned long duration = 0);	//###check later###
+void tone(uint8_t _pin, unsigned int frequency, unsigned int duration = 0);	//###check later###
 void noTone(uint8_t _pin);	//###check later###
 
 */

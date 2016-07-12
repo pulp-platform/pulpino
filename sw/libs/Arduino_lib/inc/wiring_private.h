@@ -55,7 +55,7 @@ extern "C"{
 	((sfr) & (bit)) 
 
 // ###check later###
-//uint32_t countPulseASM(volatile uint8_t *port, uint8_t bit, uint8_t stateMask, unsigned long maxloops);
+//unsigned int countPulseASM(volatile uint8_t *port, uint8_t bit, uint8_t stateMask, unsigned int maxloops);
 
 // we have all GPIOs with interrupts, ###check later###
 /*

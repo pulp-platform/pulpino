@@ -84,7 +84,7 @@ int Stream::peekNextDigit(LookaheadMode lookahead, bool detectDecimal)
 // Public Methods
 //////////////////////////////////////////////////////////////
 
-void Stream::setTimeout(unsigned long timeout)  // sets the maximum number of milliseconds to wait
+void Stream::setTimeout(unsigned int timeout)  // sets the maximum number of milliseconds to wait
 {
   _timeout = timeout;
 }
@@ -122,15 +122,15 @@ bool Stream::findUntil(char *target, size_t targetLen, char *terminator, size_t 
   }
 }
 
-// returns the first valid (long) integer value from the current position.
+// returns the first valid (int) integer value from the current position.
 // lookahead determines how parseInt looks ahead in the stream.
 // See LookaheadMode enumeration at the top of the file.
 // Lookahead is terminated by the first character that is not a valid part of an integer.
 // Once parsing commences, 'ignore' will be skipped in the stream.
-long Stream::parseInt(LookaheadMode lookahead, char ignore)
+int Stream::parseInt(LookaheadMode lookahead, char ignore)
 {
   bool isNegative = false;
-  long value = 0;
+  int value = 0;
   int c;
 
   c = peekNextDigit(lookahead, false);
@@ -160,7 +160,7 @@ float Stream::parseFloat(LookaheadMode lookahead, char ignore)
 {
   bool isNegative = false;
   bool isFraction = false;
-  long value = 0;
+  int value = 0;
   int c;
   float fraction = 1.0;
 

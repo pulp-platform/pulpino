@@ -35,7 +35,7 @@ static volatile voidFuncPtr intFunc[NUM_DIGITAL_PINS];
 // volatile static voidFuncPtr twiIntFunc;
 
 void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
-  uint32_t bit = digitalPinToBitMask(interruptNum);
+  unsigned int bit = digitalPinToBitMask(interruptNum);
   if(interruptNum < NUM_DIGITAL_PINS) {
     intFunc[interruptNum] = userFunc;
     

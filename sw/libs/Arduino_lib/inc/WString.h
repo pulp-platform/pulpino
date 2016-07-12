@@ -186,7 +186,7 @@ public:
 	void trim(void);
 
 	// parsing/conversion
-	long toInt(void) const;
+	int toInt(void) const;		//it was originally long 
 	float toFloat(void) const;
 
 protected:

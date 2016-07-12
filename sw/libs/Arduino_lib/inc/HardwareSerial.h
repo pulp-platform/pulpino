@@ -110,8 +110,8 @@ class HardwareSerial : public Stream
       volatile uint8_t *mcr, volatile uint8_t *lsr,
       volatile uint8_t *msr, volatile uint8_t *scr);
 
-    void begin(unsigned long baud) { begin(baud, SERIAL_8N1); }
-    void begin(unsigned long, uint8_t);
+    void begin(unsigned int baud) { begin(baud, SERIAL_8N1); }
+    void begin(unsigned int, uint8_t);
     void end();
     virtual int available(void);
     virtual int peek(void);

@@ -8,7 +8,6 @@ Done
 postponed
 - pad mux
 - input_pullup (for imperio)
-- interrupt disable (SREG issue in AVR)
 
 Problems
 - None
@@ -16,14 +15,14 @@ Problems
 ## Interrupt
 Done
 - implementation
+- test
 
 Postponed
 - minimizing function calls inside interrupt functions
 - using interrupt atribute instead of crt0 approach
 
 problems
-- test doesnt respond even for already implemented tests (seems problem in my machine)
-- ETH's compiler doesn't accept function calls in interupt attributed functions
+- when two GPIO interrupts are attached, assertion errors occur and the GPIO_ISR is not entered when any event happens
 
 ## Timer
 Done
@@ -53,7 +52,8 @@ Not yet
 Not yet
 
 ## General Problems
-- WFI (wait for inteerupt) instruction associated with sleep() function causes an illegal instruction exception
-- ETH compiler don't work on my machine (32 bit machines compatibility issue)
+- WFI (wait for inteerupt) instruction associated with sleep() function causes an illegal instruction exception (in Berkeley's comppiler only)
+- ETH compiler don't work on 32 bit machines (could be solved by later commit by Berkeley's compiler)
 - FPGA scripts should be ported to ZYBO
+- compiler doesn't handle long specifier (I changed all long variables to int unlesss the function is overwritten by another function that uses int)
 

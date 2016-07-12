@@ -49,8 +49,8 @@ enum LookaheadMode{
 class Stream : public Print
 {
   protected:
-    unsigned long _timeout;      // number of milliseconds to wait for the next char before aborting timed read
-    unsigned long _startMillis;  // used for timeout measurement
+    unsigned int _timeout;      // number of milliseconds to wait for the next char before aborting timed read
+    unsigned int _startMillis;  // used for timeout measurement
     int timedRead();    // private method to read stream with timeout
     int timedPeek();    // private method to peek stream with timeout
     int peekNextDigit(LookaheadMode lookahead, bool detectDecimal); // returns the next numeric digit in the stream or -1 if timeout
@@ -65,7 +65,7 @@ class Stream : public Print
 
 // parsing methods
 
-  void setTimeout(unsigned long timeout);  // sets maximum milliseconds to wait for stream data, default is 1 second
+  void setTimeout(unsigned int timeout);  // sets maximum milliseconds to wait for stream data, default is 1 second
 
   bool find(char *target);   // reads data from the stream until the target string is found
   bool find(uint8_t *target) { return find ((char *)target); }
@@ -83,8 +83,8 @@ class Stream : public Print
   bool findUntil(char *target, size_t targetLen, char *terminate, size_t termLen);   // as above but search ends if the terminate string is found
   bool findUntil(uint8_t *target, size_t targetLen, char *terminate, size_t termLen) {return findUntil((char *)target, targetLen, terminate, termLen); }
 
-  long parseInt(LookaheadMode lookahead = SKIP_ALL, char ignore = NO_IGNORE_CHAR);
-  // returns the first valid (long) integer value from the current position.
+  int parseInt(LookaheadMode lookahead = SKIP_ALL, char ignore = NO_IGNORE_CHAR);
+  // returns the first valid (int) integer value from the current position.
   // lookahead determines how parseInt looks ahead in the stream.
   // See LookaheadMode enumeration at the top of the file.
   // Lookahead is terminated by the first character that is not a valid part of an integer.
@@ -108,7 +108,7 @@ class Stream : public Print
   String readStringUntil(char terminator);
 
   protected:
-  long parseInt(char ignore) { return parseInt(SKIP_ALL, ignore); }
+  int parseInt(char ignore) { return parseInt(SKIP_ALL, ignore); }
   float parseFloat(char ignore) { return parseFloat(SKIP_ALL, ignore); }
   // These overload exists for compatibility with any class that has derived
   // Stream and used parseFloat/Int with a custom ignore character. To keep

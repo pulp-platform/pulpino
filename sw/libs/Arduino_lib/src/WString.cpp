@@ -754,7 +754,7 @@ void String::trim(void)
 /*  Parsing / Conversion                     */
 /*********************************************/
 
-long String::toInt(void) const
+int String::toInt(void) const	//it was originally long 
 {
 	if (buffer) return atol(buffer);
 	return 0;
