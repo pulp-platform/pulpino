@@ -35,7 +35,7 @@ static volatile voidFuncPtr intFunc[NUM_DIGITAL_PINS];
 // volatile static voidFuncPtr twiIntFunc;
 
 void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
-  uint32_t bit = digitalPinToBitMask(mode);
+  uint32_t bit = digitalPinToBitMask(interruptNum);
   if(interruptNum < NUM_DIGITAL_PINS) {
     intFunc[interruptNum] = userFunc;
     
@@ -49,24 +49,23 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
     switch(mode) {
 
         case LOW  :
-        *INTTYPE1 &= ~bit;
-        *INTTYPE0 &= ~bit;
-        break; 
+                *INTTYPE1 &= ~bit;
+                *INTTYPE0 |= bit;
+                break; 
 	case HIGH  :
-        *INTTYPE1 &= ~bit;
-        *INTTYPE0 |= bit;
-        break;
+                *INTTYPE1 &= ~bit;
+                *INTTYPE0 &= ~bit; 
+                break;
         case FALLING  :
-        *INTTYPE1 |= bit;
-        *INTTYPE0 |= bit;
-        break;
+                *INTTYPE1 |= bit;
+                *INTTYPE0 |= bit;
+                break;
         default  :      //Rising is the default
-        *INTTYPE1 |= bit;
-        *INTTYPE0 &= ~bit;
-        break;  
+                *INTTYPE1 |= bit;
+                *INTTYPE0 &= ~bit;
+                break;  
 }
 
-	
 	*INTEN |= bit;     //Enable the specific GPIO pin interrupt
         IER |= (1<<25);                 //Enable Global GPIO interrupt
   }
@@ -85,8 +84,9 @@ void detachInterrupt(uint8_t interruptNum) {
 
 //redefining the GPIO handler
 void ISR_GPIO (void) {
-        intFunc[BitMaskToDigitalPin(*INTSTATUS)]();
+        voidFuncPtr func = intFunc[BitMaskToDigitalPin(*INTSTATUS)]; 
+        if (func != NULL)
+                func();
         ICP |= (1<<25);         //clear interrupt pending for GPIO
 }
-
 
