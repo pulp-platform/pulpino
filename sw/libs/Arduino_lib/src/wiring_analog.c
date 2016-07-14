@@ -58,7 +58,7 @@ void analogWrite(uint8_t pin, int val)
 	else
 	{
 		PWM_status_arr[pin].PWM_enabled=1;
-		PWM_status_arr[pin].PWM_value=val<<PWM_PRE;
+		PWM_status_arr[pin].PWM_value=val>>PWM_PRE;
 	}			
 }
 

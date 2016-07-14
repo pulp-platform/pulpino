@@ -249,7 +249,7 @@ void init()
 
 	IER |= (1<<31);	//enable Timer B compare match interrupt
 	TIRB = 0;	//reset Timer B
-	TOCRB= F_CPU/(PWM_FREQ*(1<<PWM_PRE));	//set the compare value to match the predifined PWM frequency and precision
+	TOCRB= F_CPU/(PWM_FREQ*(256>>PWM_PRE));	//set the compare value to match the predifined PWM frequency and precision
 	TPRB  = 0x05;	//enable timer, enable output compare, set prescaler to be 1
  
 	//###check later###

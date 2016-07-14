@@ -28,14 +28,18 @@ problems
 Done
 - implementation
 - software PWM
+- test
 
 Postponed
 - delay_microseconds() function because it depends on counting cycles for each instruction
-- test untill interrupt test passes
+
 
 Problems
-- software PWM utilizes CPU otherwise would have low frequency
+- software PWM utilizes CPU otherwise would have low frequency 
 - when we implement servos later we would face the problem that the 2 timers are already used
+
+Comment
+- we can merge PWM timer with millis timer in one timer (frequency should suit some devices like motors)
 
 ## UART
 
@@ -56,4 +60,5 @@ Not yet
 - ETH compiler don't work on 32 bit machines (could be solved by later commit by Berkeley's compiler)
 - FPGA scripts should be ported to ZYBO
 - compiler doesn't handle long specifier (I changed all long variables to int unlesss the function is overwritten by another function that uses int)
+- Regression tests on Gitlab fail for  testDivRem.test (even for commits that has passed before)
 
