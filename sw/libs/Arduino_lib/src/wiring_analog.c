@@ -27,12 +27,9 @@
 #include "wiring_private.h"
 #include "pins_arduino.h"
 
+PWM_status PWM_status_arr[NUM_DIGITAL_PINS];
+uint8_t PWM_global_en;
 uint8_t PWM_count;
-struct{
-uint8_t PWM_enabled;
-uint8_t PWM_value;
-}PWM_status_arr[NUM_DIGITAL_PINS];
-
 
 
 //AnalogRead is not existed in this version as PULPino currently doesn't have Analog to digital converter
@@ -46,42 +43,43 @@ void analogWrite(uint8_t pin, int val)
 	// writing with them.
 	pinMode(pin, OUTPUT);
 	if (val <= 0)
-	{
-		PWM_status_arr[pin].PWM_enabled=0;	
+	{	
 		digitalWrite(pin, LOW);
 	}
 	else if (val >= 255)
 	{
-		PWM_status_arr[pin].PWM_enabled=0;
 		digitalWrite(pin, HIGH);
 	}
 	else
 	{
-		PWM_status_arr[pin].PWM_enabled=1;
+		if (PWM_status_arr[pin].PWM_enabled==0){ 		
+			PWM_status_arr[pin].PWM_enabled=1;
+			PWM_global_en++;
+                	IER |= (1<<31);	//enable Timer B compare match interrupt
+		}
 		PWM_status_arr[pin].PWM_value=val>>PWM_PRE;
-	}			
+	}		
 }
 
 
 
 void ISR_TB_CMP(void) 
-{
+{ 
 	uint8_t pin;
 	if (PWM_count==PWM_MAX_COUNT)
 	{
 		for(pin=0; pin<NUM_DIGITAL_PINS; pin++)
 			if(PWM_status_arr[pin].PWM_enabled)
-				digitalWrite(pin, HIGH);
+				*PADOUT |= digitalPinToBitMask(pin);
 		PWM_count=0;	
 	}
 	else
 	{
-		for(pin=0; pin<NUM_DIGITAL_PINS; pin++)		
+		for(pin=0; pin<NUM_DIGITAL_PINS; pin++)	
 			if((PWM_status_arr[pin].PWM_enabled) && (PWM_status_arr[pin].PWM_value==PWM_count))
-				digitalWrite(pin, LOW);
+				*PADOUT &= ~digitalPinToBitMask(pin);
 		PWM_count++;
 	}
-
 	ICP|= (1<<31);		//clear Timer B compare match interrupt pending
 }
 

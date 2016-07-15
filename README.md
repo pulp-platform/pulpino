@@ -31,15 +31,16 @@ Done
 - test
 
 Postponed
-- delay_microseconds() function because it depends on counting cycles for each instruction
+- delay_microseconds() function because it should be hardcoded depending on the frequency used
 
 
 Problems
 - software PWM utilizes CPU otherwise would have low frequency 
+- software PWM is not accurate as the other timer interrupts it sometimes, and if mutual exclusion used sometimes the other timer doesn't work
 - when we implement servos later we would face the problem that the 2 timers are already used
 
 Comment
-- we can merge PWM timer with millis timer in one timer (frequency should suit some devices like motors)
+- we can merge PWM timer with millis timer in one timer, this would help the problems(frequency should suit some devices like motors)
 
 ## UART
 
