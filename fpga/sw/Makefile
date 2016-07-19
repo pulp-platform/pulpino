@@ -1,3 +1,4 @@
+PWD=$(CURDIR)
 NCORES=4
 ARM_TOOLCHAIN_PATH := $(shell which arm-xilinx-linux-gnueabi-gcc)
 ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
@@ -89,7 +90,11 @@ rootfs: sd_image/rootfs.tar
 ################################################################################
 
 sd_image/devicetree.dtb: device-tree/*.dts* $(filter-out $(wildcard linux-xlnx), linux-xlnx)
+ifeq ($(BOARD),zybo)
+	cd device-tree/zybo/ && $(PWD)/linux-xlnx/scripts/dtc/dtc -I dts -O dtb -o $(PWD)/sd_image/devicetree.dtb system.dts
+else
 	cd device-tree && ../linux-xlnx/scripts/dtc/dtc -I dts -O dtb -o ../sd_image/devicetree.dtb system.dts
+endif
 
 .PHONY: devtree
 devtree: sd_image/devicetree.dtb
