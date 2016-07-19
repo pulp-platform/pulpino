@@ -69,6 +69,19 @@ zero_loop:
   ble x26, x27, zero_loop
 zero_loop_end:
 
+  /* call C++ constructors */
+  la x26, __init_array_start
+  la x27, __init_array_end
+
+  bge x26, x27, init_array_loop_end
+
+init_array_loop:
+  lw x10, 0(x26)
+  jalr x1, x10
+  addi x26, x26, 4
+  ble x26, x27, init_array_loop
+init_array_loop_end:
+
 
 main_entry:
   addi   x10, x0, 0
