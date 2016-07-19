@@ -44,6 +44,15 @@ SECTIONS
         _endtext = .;
     }  > instrram
 
+    .init_array : {
+        . = ALIGN(4);
+        __init_array_start = .;
+        *(.init_array)
+        *(.init_array.*)
+        __init_array_end = .;
+        KEEP(*(.init_array))
+    }  > instrram
+
     .rodata : {
         . = ALIGN(4);
         *(.rodata);
@@ -96,5 +105,11 @@ SECTIONS
     {
         [ .stabstr ]
     }
+
+    .bss :
+    {
+        . = ALIGN(4);
+        _end = .;
+    } > dataram
 }
 
