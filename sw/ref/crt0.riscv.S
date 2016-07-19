@@ -69,19 +69,8 @@ zero_loop:
   ble x26, x27, zero_loop
 zero_loop_end:
 
-  /* call C++ constructors */
-  la x26, __init_array_start
-  la x27, __init_array_end
-
-  bge x26, x27, init_array_loop_end
-
-init_array_loop:
-  lw x10, 0(x26)
-  jalr x1, x10
-  addi x26, x26, 4
-  ble x26, x27, init_array_loop
-init_array_loop_end:
-
+  /* Run global initialization functions */
+  call    __libc_init_array
 
 main_entry:
   addi   x10, x0, 0
@@ -248,6 +237,12 @@ end_except:
   addi x2, x2, EXCEPTION_STACK_SIZE
   eret
 
+  .global _init
+  .global _fini
+_init:
+_fini:
+  # These don't have to do anything since we use init_array/fini_array.
+  ret
 
 /* =================================================== [ exceptions ] === */
 /* This section has to be down here, since we have to disable rvc for it  */
