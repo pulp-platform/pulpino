@@ -60,28 +60,6 @@ void serialEventRun(void)
 #endif
 }
 
-// Actual interrupt handlers //////////////////////////////////////////////////////////////
-
-void HardwareSerial::_tx_thr_empty_irq(void)
-{
-  // If interrupts are enabled, there must be more data in the output
-  // buffer. Send the next byte
-  unsigned char c = _tx_buffer[_tx_buffer_tail];
-  _tx_buffer_tail = (_tx_buffer_tail + 1) % SERIAL_TX_BUFFER_SIZE;
-
-  *_thr = c;
-
-  // clear the TXC bit -- "can be cleared by writing a one to its bit
-  // location". This makes sure flush() won't return until the bytes
-  // actually got written
-  //sbi(*_ucsra, TXC0);
-
-  if (_tx_buffer_head == _tx_buffer_tail) {
-    // Buffer empty, so disable interrupts
-    cbi(*_ier, ETBEI);
-  }
-}
-
 // Public Methods //////////////////////////////////////////////////////////////
 
 void HardwareSerial::begin(unsigned int baud, byte config)
@@ -95,128 +73,77 @@ void HardwareSerial::begin(unsigned int baud, byte config)
   *_dll = baud_setting;
 
   _written = false;
+  _peek = false;
 
   //set the data bits, parity, and stop bits
   uint8_t lcrMasked=*_lcr & 0b11100000; 		//keep the most 3 bits unchanged
-  *_lcr= lcrMasked | config;			//config represents the least 5 bits
+  *_lcr= lcrMasked | config;				//config represents the least 5 bits
   
 
-  *_fcr = 0x27;		//enable and reset FIFOs
+  *_fcr = 0xA7;		           //enable and reset FIFOs
 
-  cbi(*_lcr, DLAB);		//clear DLAB bit in lcr reg to enable reading and writing
+  cbi(*_lcr, DLAB);		   //clear DLAB bit in lcr reg to enable reading and writing
 	
 
-  *_ier = 0x00;			//disable interrubt for now ##enable reciever later##
-  sbi(IER, 1<<24);                 //Enable Global UART interrupt
+  *_ier = 0x00;			   //disable all UART interrupts
+  cbi(IER, 1<<24);                 //Ensure diabling Global UART interrupt
   }
 
 void HardwareSerial::end()
-{
-  // wait for transmission of outgoing data
-  while (_tx_buffer_head != _tx_buffer_tail)
-    ;
-
-  cbi(IER, 1<<24);                 //Disable Global UART interrupt
-  *_ier = 0x00;			//enable reciever data avialble interrupt only
-  *_fcr = 0x06;			//enable reciever data avialble interrupt only
-  // clear any received data
-  _rx_buffer_head = _rx_buffer_tail;
+{ 
+  //if the pad mux is implemented, seitch the mux to GPIO
+  *_fcr = 0x06;			//Disable FIFO
 }
 
 int HardwareSerial::available(void)
-{
-  return ((unsigned int)(SERIAL_RX_BUFFER_SIZE + _rx_buffer_head - _rx_buffer_tail)) % SERIAL_RX_BUFFER_SIZE;
+{ 
+   if (bit_is_set(*_lsr, DR));
+   	return 1; 		// no buffer is used so always return 1
+   else 
+	return 0;
 }
 
 int HardwareSerial::peek(void)
 {
-  if (_rx_buffer_head == _rx_buffer_tail) {
-    return -1;
-  } else {
-    return _rx_buffer[_rx_buffer_tail];
-  }
+  	if (_peek == false)
+		_rx_buffer = read();
+	_peek= true;
+	return _rx_buffer;
 }
 
 int HardwareSerial::read(void)
 {
-  // if the head isn't ahead of the tail, we don't have any characters
-  if (_rx_buffer_head == _rx_buffer_tail) {
-    return -1;
-  } else {
-    unsigned char c = _rx_buffer[_rx_buffer_tail];
-    _rx_buffer_tail = (rx_buffer_index_t)(_rx_buffer_tail + 1) % SERIAL_RX_BUFFER_SIZE;
-    return c;
-  }
+	while(bit_is_clear(*_lsr, DR));
+	if (bit_is_clear(*_lsr, PE)){
+		_peek= false;
+  		return *_rbr;
+ 	}
+	else{
+ 		_peek= false;
+  		*_rbr;
+  		return -1;
+	}
 }
 
 int HardwareSerial::availableForWrite(void)
 {
-  //make local variables 
-  tx_buffer_index_t head = _tx_buffer_head;
-  tx_buffer_index_t tail = _tx_buffer_tail;
-
-  if (_tx_buffer_head >= _tx_buffer_tail) return SERIAL_TX_BUFFER_SIZE - 1 - head + tail;
-  return tail - head - 1;
+   if (bit_is_set(*_lsr, THRE));
+   	return 1; 		// no buffer is used so always return 1
+   else 
+	return 0;
 }
 
 void HardwareSerial::flush()
 {
-  // If we have never written a byte, no need to flush. This special
-  // case is needed since there is no way to force the TXC (transmit
-  // complete) bit to 1 during initialization
-  if (!_written)
+    //no need for flush as we are not using interrupt approach
     return;
-
-  while (bit_is_set(*_ier, ETBEI) || bit_is_clear(*_lsr, THRE)) {
-    int mstatusTemp;
-    csrr(mstatus, mstatusTemp);
-    if (bit_is_clear(mstatusTemp, 1) && bit_is_set(*_ier, ETBEI))
-	// Interrupts are globally disabled, but the DR empty
-	// interrupt should be enabled, so poll the DR empty flag to
-	// prevent deadlock
-	if (bit_is_set(*_lsr, THRE))
-	  _tx_thr_empty_irq();
-  }
-  // If we get here, nothing is queued anymore (DRIE is disabled) and
-  // the hardware finished tranmission (TXC is set).
 }
 
 size_t HardwareSerial::write(uint8_t c)
 {
   _written = true;
-  // If the buffer and the data register is empty, just write the byte
-  // to the data register and be done. This shortcut helps
-  // significantly improve the effective datarate at high (>
-  // 500kbit/s) bitrates, where interrupt overhead becomes a slowdown.
-  if (_tx_buffer_head == _tx_buffer_tail && bit_is_set(*_lsr, THRE)) {
-    *_thr = c;
-    //sbi(*_ucsra, TXC0);
-    return 1;
-  }
-  tx_buffer_index_t i = (_tx_buffer_head + 1) % SERIAL_TX_BUFFER_SIZE;
-	
-  // If the output buffer is full, there's nothing for it other than to 
-  // wait for the interrupt handler to empty it a bit
-  while (i == _tx_buffer_tail) {
-    int mstatusTemp;
-    csrr(mstatus, mstatusTemp);
-    if (bit_is_clear(mstatusTemp, 1)) {
-      // Interrupts are disabled, so we'll have to poll the data
-      // register empty flag ourselves. If it is set, pretend an
-      // interrupt has happened and call the handler to free up
-      // space for us.
-      if(bit_is_set(*_lsr, THRE))
-	_tx_thr_empty_irq();
-    } else {
-      // nop, the interrupt handler will free up space for us
-    }
-  }
-
-  _tx_buffer[_tx_buffer_head] = c;
-  _tx_buffer_head = i;
-	
-  sbi(*_ier, ETBEI); 		//enable reciever interrupt
-  
+  while(bit_is_clear(*_lsr, THRE));
+  *_thr = c;
   return 1;
 }
 

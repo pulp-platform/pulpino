@@ -31,7 +31,7 @@ Done
 - test
 
 Postponed
-- delay_microseconds() function because it should be hardcoded depending on the frequency used
+- delay_microseconds() function because it should be hardcoded depending on the frequency used (I wrote one generic function but need to be overriden later)
 
 
 Problems
@@ -45,10 +45,13 @@ Comment
 ## UART
 
 Implemented
-- Auxiliary classes (String, Print and Stream0
-- Hardware porting
-Postponed
-- Testing (until interrupt works)
+- Auxiliary classes (String, Print and Stream)
+- Hardware porting (using busy waiting approach not interrrupt)
+- test
+
+Problems
+- The UART reciever register ecieves bytes each iteration while no input was asserted (a problem in the UART IP).
+
 
 ## I2C
 Not yet
@@ -60,6 +63,5 @@ Not yet
 - WFI (wait for inteerupt) instruction associated with sleep() function causes an illegal instruction exception (in Berkeley's comppiler only)
 - ETH compiler don't work on 32 bit machines (could be solved by later commit by Berkeley's compiler)
 - FPGA scripts should be ported to ZYBO
-- compiler doesn't handle long specifier (I changed all long variables to int unlesss the function is overwritten by another function that uses int)
 - Regression tests on Gitlab fail for  testDivRem.test (even for commits that has passed before)
 

@@ -59,33 +59,8 @@ HardwareSerial::HardwareSerial(
     _rbr(rbr), _dll(dll),_thr(thr), _dlm(dlm),
     _ier(ier), _iir(iir),_fcr(fcr), _lcr(lcr),
     _mcr(mcr), _lsr(lsr),_msr(msr), _scr(scr),
-    _rx_buffer_head(0), _rx_buffer_tail(0),
-    _tx_buffer_head(0), _tx_buffer_tail(0)
+    _rx_buffer(0)
 {
-}
-
-// Actual interrupt handlers //////////////////////////////////////////////////////////////
-
-void HardwareSerial::_rx_available_irq(void)
-{
-  if (bit_is_clear(*_lsr, PE)) {
-    // No Parity error, read byte and store it in the buffer if there is
-    // room
-    unsigned char c = *_rbr;
-    rx_buffer_index_t i = (unsigned int)(_rx_buffer_head + 1) % SERIAL_RX_BUFFER_SIZE;
-
-    // if we should be storing the received character into the location
-    // just before the tail (meaning that the head would advance to the
-    // current location of the tail), we're about to overflow the buffer
-    // and so we don't write the character or advance the head.
-    if (i != _rx_buffer_tail) {
-      _rx_buffer[_rx_buffer_head] = c;
-      _rx_buffer_head = i;
-    }
-  } else {
-    // Parity error, read byte but discard it
-    *_rbr;
-  };
 }
 
 #endif // whole file

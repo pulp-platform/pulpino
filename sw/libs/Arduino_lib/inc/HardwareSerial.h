@@ -30,23 +30,6 @@
 #include "uart.h"
 
 
-// Define constants and variables for buffering incoming serial data.  We're
-// using a ring buffer (I think), in which head is the index of the location
-// to which to write the next incoming character and tail is the index of the
-// location from which to read.
-// NOTE: a "power of 2" buffer size is reccomended to dramatically
-//       optimize all the modulo operations for ring buffers.
-#if (SERIAL_TX_BUFFER_SIZE>256)
-typedef uint16_t tx_buffer_index_t;
-#else
-typedef uint8_t tx_buffer_index_t;
-#endif
-#if  (SERIAL_RX_BUFFER_SIZE>256)
-typedef uint16_t rx_buffer_index_t;
-#else
-typedef uint8_t rx_buffer_index_t;
-#endif
-
 // Define config for Serial.begin(baud, config);
 #define SERIAL_5N1 0b00000
 #define SERIAL_6N1 0b00001
@@ -90,16 +73,8 @@ class HardwareSerial : public Stream
     volatile uint8_t * const _scr;
     
     // Has any byte been written to the UART since begin()
-    bool _written;
-
-    volatile rx_buffer_index_t _rx_buffer_head;
-    volatile rx_buffer_index_t _rx_buffer_tail;
-    volatile tx_buffer_index_t _tx_buffer_head;
-    volatile tx_buffer_index_t _tx_buffer_tail;
-
- 
-    unsigned char _rx_buffer[SERIAL_RX_BUFFER_SIZE];
-    unsigned char _tx_buffer[SERIAL_TX_BUFFER_SIZE];
+    bool _written,_peek;
+    int _rx_buffer;
 
   public:
     inline HardwareSerial(

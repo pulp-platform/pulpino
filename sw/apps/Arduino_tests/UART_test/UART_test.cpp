@@ -29,6 +29,13 @@ void setup() {
   
   Serial.println("ASCII Table ~ Character Map");
 
+  
+}
+
+void loop(){
+
+  thisByte=Serial.read();
+  
   // prints value unaltered, i.e. the raw binary version of the
   // byte. The serial monitor interprets all bytes as
   // ASCII, so 33, the first number,  will show up as '!'
@@ -57,8 +64,5 @@ void setup() {
   // prints value as string in binary (base 2)
   // also prints ending line break:
   Serial.println(thisByte, BIN);
-  
-}
-
-void loop(){
+ 
 }

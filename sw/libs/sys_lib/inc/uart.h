@@ -59,6 +59,7 @@
 #define ETBEI 1<<1 	//ETBEI bit in IER reg
 #define PE 1<<2 	//PE bit in LSR reg
 #define THRE 1<<5 	//THRE bit in LSR reg
+#define DR 1	 	//DR bit in LSR reg
 
 
 #define UART_FIFO_DEPTH 64

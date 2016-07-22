@@ -33,37 +33,16 @@
 // file prevents the linker from pulling in any unused instances in the
 // first place.
 
-extern "C"{
+
 
 #if defined(HAVE_HWSERIAL0)
-
-#if defined(RBR_UART)
-  void ISR_UART(void)
-#elif defined(RBR_UART0)
-  void ISR_UART0(void)
-#endif
-  { 
-    #if defined(RBR_UART) 
-    uint8_t iirMasked= *IIR_UART & 0b1111;
-    #else
-    uint8_t iirMasked= *IIR_UART0 & 0b1111;
-    #endif
-    switch(iirMasked) {
-	case 0b0100  :
-      		Serial._rx_available_irq();
-      		break; 
-	case 0b0010  :
-      		Serial._tx_thr_empty_irq();
-      		break; 
-    } 
-  }
-}
 
 #if defined(RBR_UART) 
   HardwareSerial Serial(RBR_UART, DLL_UART, THR_UART, DLM_UART, IER_UART, IIR_UART,
 			FCR_UART, LCR_UART, MCR_UART, LSR_UART, MSR_UART, SCR_UART);
 #else
-  HardwareSerial Serial(&RBR0, &DLL0, &THR0, &DLM0, &IER_UART0, &IIR0, &FCR0, &LCR0, &MCR0, &LSR0, &MSR0, &SCR0);
+  HardwareSerial Serial(RBR_UART0, DLL_UART0, THR_UART0, DLM_UART0, IER_UART0, IIR_UART0,
+			FCR_UART0, LCR_UART0, MCR_UART0, LSR_UART0, MSR_UART0, SCR_UART0);
 #endif
 
 // Function that can be weakly referenced by serialEventRun to prevent
