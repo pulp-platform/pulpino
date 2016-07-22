@@ -82,7 +82,6 @@ static inline void int_enable(void) {
 //these functions can be redefined by users
 
 void ISR_I2C (void);	// 23: i2c
-void ISR_UART (void); 	// 24: uart
 void ISR_GPIO (void); 	// 25: gpio
 void ISR_SPIM0 (void);  // 26: spim end of transmission
 void ISR_SPIM1 (void);  // 27: spim R/T finished

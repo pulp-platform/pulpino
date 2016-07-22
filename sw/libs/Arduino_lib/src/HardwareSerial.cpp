@@ -87,7 +87,7 @@ void HardwareSerial::_tx_thr_empty_irq(void)
 void HardwareSerial::begin(unsigned int baud, byte config)
 {
   // calculating divisor for baud rate
-  uint16_t baud_setting = (F_CPU / 16* baud);	//we may add -1 accoring to int.c
+  uint16_t baud_setting = (F_CPU / (16* baud)) -1;	//we may add -1 accoring to int.c
  
   sbi(*_lcr, DLAB);		//set DLAB bit in lcr reg to enable divisor modification
   // assign the baud_setting, to the divisor registers
@@ -101,12 +101,12 @@ void HardwareSerial::begin(unsigned int baud, byte config)
   *_lcr= lcrMasked | config;			//config represents the least 5 bits
   
 
-  *_fcr|= 0b00000111;		//enable and reset FIFOs
+  *_fcr = 0x27;		//enable and reset FIFOs
 
   cbi(*_lcr, DLAB);		//clear DLAB bit in lcr reg to enable reading and writing
 	
 
-  sbi(*_ier, ERBFI);		//enable reciever data avialble interrupt
+  *_ier = 0x00;			//disable interrubt for now ##enable reciever later##
   sbi(IER, 1<<24);                 //Enable Global UART interrupt
   }
 
@@ -116,8 +116,9 @@ void HardwareSerial::end()
   while (_tx_buffer_head != _tx_buffer_tail)
     ;
 
-  cbi(IER, 1<<24);                 //Enable Global UART interrupt
-
+  cbi(IER, 1<<24);                 //Disable Global UART interrupt
+  *_ier = 0x00;			//enable reciever data avialble interrupt only
+  *_fcr = 0x06;			//enable reciever data avialble interrupt only
   // clear any received data
   _rx_buffer_head = _rx_buffer_tail;
 }
@@ -166,10 +167,10 @@ void HardwareSerial::flush()
   if (!_written)
     return;
 
-  while (bit_is_set(*_lsr, ETBEI) || bit_is_clear(*_lsr, THRE)) {
+  while (bit_is_set(*_ier, ETBEI) || bit_is_clear(*_lsr, THRE)) {
     int mstatusTemp;
     csrr(mstatus, mstatusTemp);
-    if (bit_is_clear(mstatusTemp, 1) && bit_is_set(*_lsr, ETBEI))
+    if (bit_is_clear(mstatusTemp, 1) && bit_is_set(*_ier, ETBEI))
 	// Interrupts are globally disabled, but the DR empty
 	// interrupt should be enabled, so poll the DR empty flag to
 	// prevent deadlock

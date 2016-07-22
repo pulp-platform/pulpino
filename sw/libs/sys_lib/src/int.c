@@ -20,11 +20,7 @@
 
 // 23: i2c
 __attribute__ ((weak))
-void ISR_I2C (void){ for(;;); }
-
-// 24: uart
-__attribute__ ((weak))	
-void ISR_UART (void){ for(;;); } 	
+void ISR_I2C (void){ for(;;); }	
 
 // 25: gpio
 __attribute__ ((weak))
