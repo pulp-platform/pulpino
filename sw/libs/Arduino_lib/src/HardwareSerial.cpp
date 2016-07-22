@@ -97,7 +97,7 @@ void HardwareSerial::end()
 
 int HardwareSerial::available(void)
 { 
-   if (bit_is_set(*_lsr, DR));
+   if (bit_is_set(*_lsr, DR))
    	return 1; 		// no buffer is used so always return 1
    else 
 	return 0;
@@ -127,7 +127,7 @@ int HardwareSerial::read(void)
 
 int HardwareSerial::availableForWrite(void)
 {
-   if (bit_is_set(*_lsr, THRE));
+   if (bit_is_set(*_lsr, THRE))
    	return 1; 		// no buffer is used so always return 1
    else 
 	return 0;
