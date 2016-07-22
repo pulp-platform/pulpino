@@ -52,6 +52,10 @@ Implemented
 Problems
 - The UART reciever register ecieves bytes each iteration while no input was asserted (a problem in the UART IP).
 
+## Core Libraries
+
+Postponed
+- PulseIn function should have a part of it in assembly to know the determined cycles for that part (curently it's implemented totally in C)
 
 ## I2C
 Not yet

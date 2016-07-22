@@ -13,6 +13,7 @@ set(SOURCES
     src/new.cpp
     src/WMath.cpp
     src/wiring_shift.c
+    src/wiring_pulse.c
     )
 
 set(HEADERS

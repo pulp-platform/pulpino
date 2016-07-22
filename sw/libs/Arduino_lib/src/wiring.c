@@ -123,7 +123,7 @@ void init()
 	int_enable();	//enable global interrupt
 	
 	//###check later### Data sheet of Florian says that I should target 31 not 29
-	//IER |= (1<<29);	//enable Timer A compare match interrupt
+	IER |= (1<<29);	//enable Timer A compare match interrupt
 	TIRA = 0;	//reset Timer A
 	TOCRA= 0x4000;	//set the compare value to be 16834 to be compatible with Arduino cycles for interrupt
 	TPRA  = 0x05;	//enable timer, enable output compare, set prescaler to be 1
