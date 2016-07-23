@@ -155,6 +155,9 @@ void analogWrite(uint8_t, int);
 unsigned int pulseIn(uint8_t pin, uint8_t state, unsigned int timeout);	
 unsigned int pulseInLong(uint8_t pin, uint8_t state, unsigned int timeout);	
 
+void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);	
+uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);	
+
 //////////////////////// Supression///////////////////////
 /*
 void initVariant(void);	// ###check later###
@@ -165,9 +168,6 @@ int atexit(void (*func)()) __attribute__((weak));	// ###check later###
 int analogRead(uint8_t);	// ###check later###
 void analogReference(uint8_t mode);	// ###check later###
 
-
-void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);	// ###check later###
-uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);	// ###check later###
 
 */
 ///////////////////////End///////////////////////
@@ -249,9 +249,6 @@ int map(int, int, int, int, int);
 
 unsigned int pulseIn(uint8_t pin, uint8_t state, unsigned int timeout = 1000000U);	
 unsigned int pulseInLong(uint8_t pin, uint8_t state, unsigned int timeout = 1000000U);	
-
-//unsigned int pulseIn(uint8_t pin, uint8_t state, unsigned int timeout = 1000000L);	//###check later###
-//unsigned int pulseInLong(uint8_t pin, uint8_t state, unsigned int timeout = 1000000L);	//###check later###
 
 ////////////////////////Supression///////////////////////
 //Don't need to include other libraries now, ###check later###

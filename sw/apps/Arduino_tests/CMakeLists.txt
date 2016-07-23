@@ -5,4 +5,4 @@ add_subdirectory(timer_test)
 add_subdirectory(PWM_test)
 add_subdirectory(UART_test)
 add_subdirectory(PulseIn_test)
-
+add_subdirectory(shift_test)
