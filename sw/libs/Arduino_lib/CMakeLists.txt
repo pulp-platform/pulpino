@@ -14,6 +14,7 @@ set(SOURCES
     src/WMath.cpp
     src/wiring_shift.c
     src/wiring_pulse.c
+    src/IPAddress.cpp
     )
 
 set(HEADERS
@@ -30,6 +31,10 @@ set(HEADERS
     inc/binary.h
     inc/new.h
     inc/WCharacter.h
+    inc/IPAddress.h
+    inc/Server.h
+    inc/Udp.h
+    inc/Client.h
     )
 
 include_directories(inc/)
