@@ -111,7 +111,7 @@ module tb;
 
 
     .uart_tx           ( uart_rx      ),
-    .uart_rx           ( uart_rx      ),
+    .uart_rx           ( uart_tx      ),
     .uart_rts          ( s_uart_rts   ),
     .uart_dtr          ( s_uart_dtr   ),
     .uart_cts          ( 1'b0         ),
