@@ -19,7 +19,7 @@
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
 
-  $Id$
+   Modified 14 June 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #include "wiring_private.h"
@@ -95,7 +95,7 @@ void delay(unsigned int ms)
 
 	while (ms > 0) {
 		yield();
-		if ((micros() - start) >= 1000) {
+		while ( ms > 0 && (micros() - start) >= 1000) {
 			ms--;
 			start += 1000;
 		}

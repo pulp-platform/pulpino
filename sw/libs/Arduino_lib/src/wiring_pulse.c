@@ -18,8 +18,8 @@
   Public License along with this library; if not, write to the
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
-
-  $Id: wiring.c 248 2007-02-03 15:36:30Z mellis $
+  
+  Modified 22 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #include "wiring_private.h"
@@ -93,29 +93,25 @@ unsigned int pulseInLong(uint8_t pin, uint8_t state, unsigned int timeout)
 	volatile unsigned int *reg;
 	unsigned int stateMask = (state ? bit : 0);
 
-	// convert the timeout from microseconds to a number of times through
-	// the initial loop; it takes 16 clock cycles per iteration.
-	unsigned int numloops = 0;
-	unsigned int maxloops = microsecondsToClockCycles(timeout)/9;
+	unsigned int startMicros = micros();
 
         reg=PADIN;
 
 	// wait for any previous pulse to end
 	while ((*reg & bit) == stateMask)
-		if (numloops++ == maxloops)
+		if (micros() - startMicros > timeout)
 			return 0;
 
 	// wait for the pulse to start
 	while ((*reg & bit) != stateMask)
-		if (numloops++ == maxloops)
+		if (micros() - startMicros > timeout)
 			return 0;
 			
 	unsigned int start = micros();
 	// wait for the pulse to stop
-	while ((*reg & bit) == stateMask) {
-		if (numloops++ == maxloops){
+	while ((*reg & bit) == stateMask) 
+		if (micros() - startMicros > timeout)
 			return 0;
-		}
-	}
+	
 	return micros() - start;
 }

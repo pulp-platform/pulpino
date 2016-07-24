@@ -20,6 +20,7 @@
   Modified 28 September 2010 by Mark Sproul
   Modified 14 August 2012 by Alarus
   Modified 3 December 2013 by Matthijs Kooijman
+  Modified 4 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #include <stdlib.h>
@@ -65,7 +66,7 @@ void serialEventRun(void)
 void HardwareSerial::begin(unsigned int baud, byte config)
 {
   // calculating divisor for baud rate
-  uint16_t baud_setting = (F_CPU / (16* baud)) -1;	//we may add -1 accoring to int.c
+  uint16_t baud_setting = (F_CPU / (16* baud)) -1;	
  
   sbi(*_lcr, DLAB);		//set DLAB bit in lcr reg to enable divisor modification
   // assign the baud_setting, to the divisor registers
@@ -91,8 +92,10 @@ void HardwareSerial::begin(unsigned int baud, byte config)
 
 void HardwareSerial::end()
 { 
+  flush();
   //if the pad mux is implemented, seitch the mux to GPIO
   *_fcr = 0x06;			//Disable FIFO
+  cbi(IER, 1<<24);                 //Ensure diabling Global UART interrupt
 }
 
 int HardwareSerial::available(void)

@@ -20,8 +20,8 @@
   Boston, MA  02111-1307  USA
 
   Modified 28 September 2010 by Mark Sproul
+  Modified 14 June 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 
-  $Id: wiring.c 248 2007-02-03 15:36:30Z mellis $
 */
 
 #define ARDUINO_MAIN
@@ -45,18 +45,9 @@ void pinMode(uint8_t pin, uint8_t mode)
 		*reg &= ~bit;
 		csrw(mstatus, oldMstatus);
 	}
-//////////////////////// Supression///////////////////////
+
 //We don't have pullup and pulldown for FPGA but have it for imperio, ###check later###
-/*
-	else if (mode == INPUT_PULLUP) {
-		uint8_t oldSREG = SREG;
-                cli();
-		*reg &= ~bit;
-		*out |= bit;
-		SREG = oldSREG;
-	}
-*/
-/////////////////////////////End////////////////////////////	
+
 	else {
 		csrr(mstatus, oldMstatus);
 		int_disable(); 		//disable interrupt as the next instruction is not atomic

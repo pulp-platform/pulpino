@@ -20,6 +20,7 @@
  parsing functions based on TextFinder library by Michael Margolis
 
  findMulti/findUntil routines written by Jim Leonard/Xuth
+ Modified 2 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
  */
 
 #include "Arduino.h"
@@ -122,7 +123,7 @@ bool Stream::findUntil(char *target, size_t targetLen, char *terminator, size_t 
   }
 }
 
-// returns the first valid (int) integer value from the current position.
+// returns the first valid (long) integer value from the current position.
 // lookahead determines how parseInt looks ahead in the stream.
 // See LookaheadMode enumeration at the top of the file.
 // Lookahead is terminated by the first character that is not a valid part of an integer.

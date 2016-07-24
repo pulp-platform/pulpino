@@ -49,13 +49,12 @@ Implemented
 - Hardware porting (using busy waiting approach not interrrupt)
 - test
 
-Problems
-- The UART reciever register ecieves bytes each iteration while no input was asserted (a problem in the UART IP).
 
 ## Core Libraries
 
 Postponed
 - PulseIn function should have a part of it in assembly to know the determined cycles for that part (curently it's implemented totally in C)
+- Tone function as it uses timers and we on;y have two already used timers each with one channel and no PWM, and later when implementing the servo will need to handle it again. So better to handle the timers all together one time later.
 
 ## I2C
 Not yet

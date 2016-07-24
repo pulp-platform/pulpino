@@ -19,13 +19,11 @@
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
 
-  $Id: wiring.h 249 2007-02-03 16:52:51Z mellis $
+  Modified 14 June 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
-
-
 
 
 # if defined(Imperio)
@@ -53,74 +51,8 @@ static const uint8_t SCL = 18;
 
 #define LED_BUILTIN 13
 
-
-
-//////////////////////// Supression///////////////////////
-//Pin change interrupt, actually it's similar to what we have but only for any change, ###Check later###
-/*
-#define digitalPinToPCICR(p)    (((p) >= 0 && (p) <= 21) ? (&PCICR) : ((uint8_t *)0))
-#define digitalPinToPCICRbit(p) (((p) <= 7) ? 2 : (((p) <= 13) ? 0 : 1))
-#define digitalPinToPCMSK(p)    (((p) <= 7) ? (&PCMSK2) : (((p) <= 13) ? (&PCMSK0) : (((p) <= 21) ? (&PCMSK1) : ((uint8_t *)0))))
-#define digitalPinToPCMSKbit(p) (((p) <= 7) ? (p) : (((p) <= 13) ? ((p) - 8) : ((p) - 14)))
-*/
-////////////////////////End///////////////////////
-
-
 #define digitalPinToInterrupt(p)   ((p) < NUM_DIGITAL_PINS) ? (p) : (NOT_AN_INTERRUPT)	//in PULPino all GPIOs have interrupt
 
-#ifdef ARDUINO_MAIN
-
-
-
-
-
-
-//////////////////////// Supression///////////////////////
-// ###Check later###
-/*
-const uint8_t PROGMEM digital_pin_to_timer_PGM[] = {
-	NOT_ON_TIMER, // 0 - port D 
-	NOT_ON_TIMER,
-	NOT_ON_TIMER,
-	// on the ATmega168, digital pin 3 has hardware pwm
-#if defined(__AVR_ATmega8__)
-	NOT_ON_TIMER,
-#else
-	TIMER2B,
-#endif
-	NOT_ON_TIMER,
-	// on the ATmega168, digital pins 5 and 6 have hardware pwm
-#if defined(__AVR_ATmega8__)
-	NOT_ON_TIMER,
-	NOT_ON_TIMER,
-#else
-	TIMER0B,
-	TIMER0A,
-#endif
-	NOT_ON_TIMER,
-	NOT_ON_TIMER, // 8 - port B 
-	TIMER1A,
-	TIMER1B,
-#if defined(__AVR_ATmega8__)
-	TIMER2,
-#else
-	TIMER2A,
-#endif
-	NOT_ON_TIMER,
-	NOT_ON_TIMER,
-	NOT_ON_TIMER,
-	NOT_ON_TIMER, // 14 - port C 
-	NOT_ON_TIMER,
-	NOT_ON_TIMER,
-	NOT_ON_TIMER,
-	NOT_ON_TIMER,
-};
-*/
-////////////////////////End///////////////////////
-
-
-
-#endif
 
 // These serial port names are intended to allow libraries and architecture-neutral
 // sketches to automatically default to the correct port name for a particular type

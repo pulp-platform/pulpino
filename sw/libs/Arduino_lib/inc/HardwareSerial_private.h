@@ -19,6 +19,7 @@
   Modified 23 November 2006 by David A. Mellis
   Modified 28 September 2010 by Mark Sproul
   Modified 14 August 2012 by Alarus
+  Modified 2 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #include "wiring_private.h"

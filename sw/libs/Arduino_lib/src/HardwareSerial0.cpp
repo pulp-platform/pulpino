@@ -20,6 +20,7 @@
   Modified 28 September 2010 by Mark Sproul
   Modified 14 August 2012 by Alarus
   Modified 3 December 2013 by Matthijs Kooijman
+  Modified 4 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #include "Arduino.h"

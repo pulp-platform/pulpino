@@ -22,6 +22,7 @@
   
   Modified 24 November 2006 by David A. Mellis
   Modified 1 August 2010 by Mark Sproul
+  Modified 25 June 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #include <stdio.h>
@@ -31,8 +32,107 @@
 #include "event.h"
 #include "gpio.h"
 
-static volatile voidFuncPtr intFunc[NUM_DIGITAL_PINS];
-// volatile static voidFuncPtr twiIntFunc;
+static void nothing(void) {
+}
+
+static volatile voidFuncPtr intFunc[NUM_DIGITAL_PINS]= {
+#if NUM_DIGITAL_PINS > 31
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 30
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 29
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 28
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 27
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 26
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 25
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 24
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 23
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 22
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 21
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 20
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 19
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 18
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 17
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 16
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 15
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 14
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 13
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 12
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 11
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 10
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 9
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 8
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 7
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 6
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 5
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 4
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 3
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 2
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 1
+    nothing,
+#endif
+#if NUM_DIGITAL_PINS > 0
+    nothing
+#endif
+};
 
 void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
   unsigned int bit = digitalPinToBitMask(interruptNum);
@@ -73,11 +173,9 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
 
 void detachInterrupt(uint8_t interruptNum) {
   if(interruptNum < NUM_DIGITAL_PINS) {
-    // Disable the interrupt.  (We can't assume that interruptNum is equal
-    // to the number of the EIMSK bit to clear, as this isn't true on the 
-    // ATmega8.  There, INT0 is 6 and INT1 is 7.)
+    // Disable the interrupt. 
         *INTEN &= ~(1<<interruptNum);      //Disable the specific GPIO pin interrupt
-        intFunc[interruptNum] = NULL;
+        intFunc[interruptNum] = nothing;
   }
 }
 

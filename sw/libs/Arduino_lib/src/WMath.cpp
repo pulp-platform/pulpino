@@ -20,7 +20,7 @@
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
   
-  $Id$
+  Modified 7 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 extern "C" {

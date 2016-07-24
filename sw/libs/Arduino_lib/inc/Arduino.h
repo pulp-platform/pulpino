@@ -14,7 +14,9 @@
 
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA3
+  
+  Modified 14 June 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 
@@ -23,12 +25,10 @@
 
 #define F_CPU 25000000U	// Put here temporarily but later IDE should put it
 
-// ###check later###
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
-
 #include<stdint.h>	//Added for uint_t
 
 #include "binary.h"	
@@ -59,33 +59,12 @@ void yield(void);	// an empty function unless overwritten for multi threading
 #define LSBFIRST 0
 #define MSBFIRST 1
 
-//////////////////////// Modification///////////////////////
+
 //#define CHANGE 1 	//there is no change in PULPino, there's high instead
 // 0 is low 1 is high (already defined)
 #define RISING 2	//modified to be 2 instead of 3 as in AVR
 #define FALLING 3	//modified to be 3 instead of 2 as in AVR
-/////////////////////////////End////////////////////////////
 
-
-//////////////////////// Supression///////////////////////
-//these are AVR definitions for AVR varient ICs, ###check later###
-/*
-#if defined(__AVR_ATtiny24__) || defined(__AVR_ATtiny44__) || defined(__AVR_ATtiny84__) || defined(__AVR_ATtiny25__) || defined(__AVR_ATtiny45__) || defined(__AVR_ATtiny85__)
-#define DEFAULT 0
-#define EXTERNAL 1
-#define INTERNAL 2
-#else  
-#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__) || defined(__AVR_ATmega1284__) || defined(__AVR_ATmega1284P__) || defined(__AVR_ATmega644__) || defined(__AVR_ATmega644A__) || defined(__AVR_ATmega644P__) || defined(__AVR_ATmega644PA__)
-#define INTERNAL1V1 2
-#define INTERNAL2V56 3
-#else
-#define INTERNAL 3
-#endif
-#define DEFAULT 1
-#define EXTERNAL 0
-#endif
-*/
-/////////////////////////////End////////////////////////////
 
 // undefine stdlib's abs if encountered
 #ifdef abs
@@ -101,13 +80,8 @@ void yield(void);	// an empty function unless overwritten for multi threading
 #define degrees(rad) ((rad)*RAD_TO_DEG)
 #define sq(x) ((x)*(x))
 
-//////////////////////// Supression///////////////////////
-//these are functions provided by AVR libraries that needs to be built for PULPino, ###check later###
-/*
-#define interrupts() sei()
-#define noInterrupts() cli()
-*/
-////////////////////////End///////////////////////
+#define interrupts() int_enable()
+#define noInterrupts() int_disable()
 
 
 #define clockCyclesPerMicrosecond() ( F_CPU / 1000000L )
@@ -115,22 +89,16 @@ void yield(void);	// an empty function unless overwritten for multi threading
 #define microsecondsToClockCycles(a) ( (a) * clockCyclesPerMicrosecond() )
 
 #define lowByte(w) ((uint8_t) ((w) & 0xff))
-#define highByte(w) ((uint8_t) ((w) >> 24))	//changed to be 24 insteadof 8, we may need the middle bytes too ###check later###
+#define highByte(w) ((uint8_t) ((w) >> 8))	
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01)
 #define bitSet(value, bit) ((value) |= (1UL << (bit)))
 #define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
 #define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
 
 
-//////////////////////// Supression///////////////////////
-//Not sure if we have NOP pseudocod in the compiler or wil need to write the shift zero, ###check later###
-/*
-// avr-libc defines _NOP() since 1.6.2
 #ifndef _NOP
-#define _NOP() do { __asm__ volatile ("nop"); } while (0)
+#define _NOP() __asm__ volatile ("nop"); 
 #endif
-*/
-////////////////////////End///////////////////////
 
 
 typedef unsigned int word;
@@ -158,17 +126,15 @@ unsigned int pulseInLong(uint8_t pin, uint8_t state, unsigned int timeout);
 void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val);	
 uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder);	
 
-//////////////////////// Supression///////////////////////
-/*
-void initVariant(void);	// ###check later###
+void initVariant(void);	
 
-int atexit(void (*func)()) __attribute__((weak));	// ###check later###
+int atexit(void (*func)()) __attribute__((weak));
 
-
+/////////////////Analog Read/////////////////
+//current version of PULpino doesn't contain ADC
+/* 
 int analogRead(uint8_t);	// ###check later###
 void analogReference(uint8_t mode);	// ###check later###
-
-
 */
 ///////////////////////End///////////////////////
 
@@ -177,11 +143,6 @@ void detachInterrupt(uint8_t);
 
 void setup(void);
 void loop(void);
-
-
-//extern const uint8_t PROGMEM digital_pin_to_timer_PGM[];	// ###check later###
-//#define digitalPinToTimer(P) ( pgm_read_byte( digital_pin_to_timer_PGM + (P) ) )	// ###check later###
-//#define analogInPinToBit(P) (P)	// ###check later###
 
 #define digitalPinToBitMask(P) ( 1<< (P) )
 
@@ -196,34 +157,11 @@ return pin;
 
 
 #define NOT_A_PIN 0
-
 #define NOT_AN_INTERRUPT -1
-
-//////////////////////// Supression///////////////////////
-/*
-// ###check later###
+#
 #define NOT_ON_TIMER 0
-#define TIMER0A 1
-#define TIMER0B 2
-#define TIMER1A 3
-#define TIMER1B 4
-#define TIMER1C 5
-#define TIMER2  6
-#define TIMER2A 7
-#define TIMER2B 8
-
-#define TIMER3A 9
-#define TIMER3B 10S
-#define TIMER3C 11
-#define TIMER4A 12
-#define TIMER4B 13
-#define TIMER4C 14
-#define TIMER4D 15
-#define TIMER5A 16
-#define TIMER5B 17
-#define TIMER5C 18
-*/
-///////////////////////End///////////////////////
+#define TIMERA 1
+#define TIMERB 2
 
 #ifdef __cplusplus
 } // extern "C"
@@ -237,7 +175,7 @@ return pin;
 #include "WCharacter.h"
 
 uint16_t makeWord(uint16_t w);	//word here is 16 bit for compatibility with arduino
-uint16_t makeWord(byte h, byte l);	//###check later###
+uint16_t makeWord(byte h, byte l);	
 #define word(...) makeWord(__VA_ARGS__)	//###check later###
 
 
@@ -250,25 +188,12 @@ int map(int, int, int, int, int);
 unsigned int pulseIn(uint8_t pin, uint8_t state, unsigned int timeout = 1000000U);	
 unsigned int pulseInLong(uint8_t pin, uint8_t state, unsigned int timeout = 1000000U);	
 
-////////////////////////Supression///////////////////////
-//Don't need to include other libraries now, ###check later###
+
+//////////////Tone///////////////
+// tone is not implemented yet
 /*
-#include "USBAPI.h"
-*/
-////////////////////////End///////////////////////
-
-////////////////////////Supression///////////////////////
-/*
-// ###check later###
-#if defined(HAVE_HWSERIAL0) && defined(HAVE_CDCSERIAL)
-#error "Targets with both UART0 and CDC serial not supported"
-#endif
-
-
-
 void tone(uint8_t _pin, unsigned int frequency, unsigned int duration = 0);	//###check later###
 void noTone(uint8_t _pin);	//###check later###
-
 */
 ////////////////////////End///////////////////////
 #endif

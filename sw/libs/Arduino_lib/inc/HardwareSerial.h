@@ -19,6 +19,7 @@
   Modified 28 September 2010 by Mark Sproul
   Modified 14 August 2012 by Alarus
   Modified 3 December 2013 by Matthijs Kooijman
+  Modified 3 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #ifndef HardwareSerial_h
@@ -101,9 +102,6 @@ class HardwareSerial : public Stream
     using Print::write; // pull in write(str) and write(buf, size) from Print
     operator bool() { return true; }
 
-    // Interrupt handlers - Not intended to be called externally
-    inline void _rx_available_irq(void);
-    void _tx_thr_empty_irq(void);
 };
 
 // If in the future Pulpino may have many UARTs or none at all 

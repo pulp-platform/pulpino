@@ -18,6 +18,7 @@
  
  Modified 23 November 2006 by David A. Mellis
  Modified 03 August 2015 by Chuck Todd
+ Modified 2 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
  */
 
 #include <stdlib.h>
@@ -40,20 +41,8 @@ size_t Print::write(const uint8_t *buffer, size_t size)
   }
   return n;
 }
-/*
-size_t Print::print(const __FlashStringHelper *ifsh)
-{
-  PGM_P p = reinterpret_cast<PGM_P>(ifsh);
-  size_t n = 0;
-  while (1) {
-    unsigned char c = pgm_read_byte(p++);
-    if (c == 0) break;
-    if (write(c)) n++;
-    else break;
-  }
-  return n;
-}
-*/
+
+
 size_t Print::print(const String &s)
 {
   return write(s.c_str(), s.length());
@@ -110,14 +99,8 @@ size_t Print::print(double n, int digits)
 {
   return printFloat(n, digits);
 }
-/*
-size_t Print::println(const __FlashStringHelper *ifsh)
-{
-  size_t n = print(ifsh);
-  n += println();
-  return n;
-}
-*/
+
+
 size_t Print::print(const Printable& x)
 {
   return x.printTo(*this);

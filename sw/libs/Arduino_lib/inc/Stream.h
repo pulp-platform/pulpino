@@ -17,6 +17,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
   parsing functions based on TextFinder library by Michael Margolis
+  Modified 2 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #ifndef Stream_h
