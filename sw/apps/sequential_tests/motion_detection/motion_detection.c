@@ -13,9 +13,9 @@
 
 typedef short pixel;
 
-//#include "img_10_10.h"
+#include "img_10_10.h"
 //#include "img_20_20.h"
-#include "img_40_40.h"
+//#include "img_40_40.h"
 
 void check_motion_detection         (testresult_t *result, void (*start)(), void (*stop)());
 void check_motion_detection_dotp    (testresult_t *result, void (*start)(), void (*stop)());
@@ -212,7 +212,8 @@ int main()
 
 void check_motion_detection(testresult_t *result, void (*start)(), void (*stop)()) {
 
-init_motion_detection();
+  init_motion_detection();
+  printf("Starting Motion Detection Application \n");
 
 #ifdef PROFILE
   perf_reset();
@@ -232,6 +233,8 @@ init_motion_detection();
 void check_motion_detection_dotp(testresult_t *result, void (*start)(), void (*stop)()) {
 
   init_motion_detection();
+  printf("Starting Motion Detection Application with dotp \n");
+
 #ifdef PROFILE
   perf_reset();
   perf_enable_id(EVENT_ID);
@@ -290,12 +293,6 @@ void motion_detection(int fast_conv) {
   int time = 0;
   int max_pixel = 0;
 
-  printf("Starting Motion Detection Application \n");
-
-#ifdef PROFILE
-  reset_timer();
-  start_timer();
-#endif
 
 #ifdef DEBUG
   printf("Sub image \n");
@@ -356,12 +353,5 @@ void motion_detection(int fast_conv) {
 #endif
 
   multiply((pixel*) image_test, (pixel*) image_original);
-
-#ifdef PROFILE
-  stop_timer();
-  time = get_time();
-
-  printf("Time: %d cycles\n", time);
-#endif
 
 }
