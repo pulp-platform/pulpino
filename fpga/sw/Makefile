@@ -1,3 +1,4 @@
+PWD=$(CURDIR)
 NCORES=4
 ARM_TOOLCHAIN_PATH := $(shell which arm-xilinx-linux-gnueabi-gcc)
 ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
@@ -35,12 +36,21 @@ linux: sd_image/uImage
 
 u-boot-xlnx:
 	git clone git://github.com/Xilinx/u-boot-xlnx.git
+ifeq ($(BOARD),zybo)
+	cd u-boot-xlnx && git checkout 84f81e5b8950748fd7ca967ecf0428affef7ecea
+else
 	cd u-boot-xlnx && git checkout tags/xilinx-v2015.1
+endif
 	cd u-boot-xlnx && patch -p1 < ../u-boot-xlnx-def-env.patch
 
 u-boot-xlnx/.config: $(filter-out $(wildcard u-boot-xlnx), u-boot-xlnx)
+ifeq ($(BOARD),zybo)
+	cd u-boot-xlnx && make CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
+	cp ./u-boot.config.zybo ./u-boot-xlnx/.config
+else
 	cd u-boot-xlnx && make CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
 	cp ./u-boot.config ./u-boot-xlnx/.config
+endif
 
 u-boot-xlnx/u-boot: u-boot-xlnx/.config
 	cd u-boot-xlnx && make CROSS_COMPILE=arm-xilinx-linux-gnueabi-
@@ -80,7 +90,11 @@ rootfs: sd_image/rootfs.tar
 ################################################################################
 
 sd_image/devicetree.dtb: device-tree/*.dts* $(filter-out $(wildcard linux-xlnx), linux-xlnx)
+ifeq ($(BOARD),zybo)
+	cd device-tree/zybo/ && $(PWD)/linux-xlnx/scripts/dtc/dtc -I dts -O dtb -o $(PWD)/sd_image/devicetree.dtb system.dts
+else
 	cd device-tree && ../linux-xlnx/scripts/dtc/dtc -I dts -O dtb -o ../sd_image/devicetree.dtb system.dts
+endif
 
 .PHONY: devtree
 devtree: sd_image/devicetree.dtb
