@@ -38,7 +38,8 @@ set(HEADERS
     )
 
 include_directories(inc/)
-include_directories(../sys_lib/inc)
+include_directories(../../sys_lib/inc)
+include_directories(../separate_libs/inc)
 
 add_library(Arduino_core STATIC ${SOURCES} ${HEADERS})
 

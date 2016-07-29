@@ -91,6 +91,7 @@ endif()
 
 include_directories(libs/sys_lib/inc)
 include_directories(libs/Arduino_lib/core_libs/inc)
+include_directories(libs/Arduino_lib/separate_libs/inc)
 
 set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
 add_library(crt0 OBJECT ${crt0})

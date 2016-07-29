@@ -23,6 +23,7 @@ macro(add_application NAME SOURCE_FILES)
     ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/core_libs/inc
+    ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/separate_libs/inc
     ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
   )
 
@@ -39,7 +40,7 @@ macro(add_application NAME SOURCE_FILES)
   endif()
 
   # link libraries
-  target_link_libraries(${NAME}.elf ${ARG_LIBS} Arduino_core bench string sys)
+  target_link_libraries(${NAME}.elf ${ARG_LIBS} Arduino_core Arduino_separate bench string sys)
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
