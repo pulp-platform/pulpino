@@ -36,6 +36,8 @@ apb/apb_spi_master:
 apb/apb_timer:
   commit: master
 apb/apb_uart:
+  commit: master
+apb/apb_uart_sv:
   commit: verilator
 apb/apb2per:
   commit: master

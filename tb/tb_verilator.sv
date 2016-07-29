@@ -1,6 +1,6 @@
 module tb_verilator
 #(
-  parameter CLK_DIV = 16'h7
+  parameter CLK_DIV = 16'h3
 )
 (
   input  logic                  clk,

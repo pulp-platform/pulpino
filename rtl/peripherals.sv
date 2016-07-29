@@ -48,6 +48,10 @@ module peripherals
 
     output logic              uart_tx,
     input  logic              uart_rx,
+    output logic              uart_rts,
+    output logic              uart_dtr,
+    input  logic              uart_cts,
+    input  logic              uart_dsr,
 
     output logic              spi_master_clk,
     output logic              spi_master_csn0,
@@ -233,28 +237,57 @@ module peripherals
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
 
-  apb_uart
-  #(
-    .APB_ADDR_WIDTH( 3 )
-  )
-  apb_uart_i
-  (
-    .CLK      ( clk_int[1]            ),
-    .RSTN     ( rst_n                 ),
+  `ifndef VERILATOR
+  apb_uart apb_uart_i (
+    .CLK      ( clk_int[1]   ),
+    .RSTN     ( rst_n        ),
 
-    .PSEL     ( s_uart_bus.psel       ),
+    .PSEL     ( s_uart_bus.psel    ),
     .PENABLE  ( s_uart_bus.penable    ),
     .PWRITE   ( s_uart_bus.pwrite     ),
     .PADDR    ( s_uart_bus.paddr[4:2] ),
     .PWDATA   ( s_uart_bus.pwdata     ),
-    .PRDATA   ( s_uart_bus.prdata     ),
-    .PREADY   ( s_uart_bus.pready     ),
-    .PSLVERR  ( s_uart_bus.pslverr    ),
+    .PRDATA   ( s_uart_bus.prdata  ),
+    .PREADY   ( s_uart_bus.pready  ),
+    .PSLVERR  ( s_uart_bus.pslverr ),
 
-    .rx_i     ( uart_rx               ),
-    .tx_o     ( uart_tx               ),
-    .event_o  ( s_uart_event          )
+    .INT      ( s_uart_event ),   //Interrupt output
+
+    .OUT1N    (),                    //Output 1
+    .OUT2N    (),                    //Output 2
+    .RTSN     ( uart_rts    ),       //RTS output
+    .DTRN     ( uart_dtr    ),       //DTR output
+    .CTSN     ( uart_cts    ),       //CTS input
+    .DSRN     ( uart_dsr    ),       //DSR input
+    .DCDN     ( 1'b1        ),       //DCD input
+    .RIN      ( 1'b1        ),       //RI input
+    .SIN      ( uart_rx     ),
+    .SOUT     ( uart_tx     )
   );
+  `else
+  apb_uart_sv
+    #(
+       .APB_ADDR_WIDTH( 3 )
+    )
+    apb_uart_i
+    (
+      .CLK      ( clk_int[1]            ),
+      .RSTN     ( rst_n                 ),
+
+      .PSEL     ( s_uart_bus.psel       ),
+      .PENABLE  ( s_uart_bus.penable    ),
+      .PWRITE   ( s_uart_bus.pwrite     ),
+      .PADDR    ( s_uart_bus.paddr[4:2] ),
+      .PWDATA   ( s_uart_bus.pwdata     ),
+      .PRDATA   ( s_uart_bus.prdata     ),
+      .PREADY   ( s_uart_bus.pready     ),
+      .PSLVERR  ( s_uart_bus.pslverr    ),
+
+      .rx_i     ( uart_rx               ),
+      .tx_o     ( uart_tx               ),
+      .event_o  ( s_uart_event          )
+    );
+  `endif
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///

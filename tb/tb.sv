@@ -14,7 +14,7 @@ module tb;
 
   // +MEMLOAD= valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
   parameter  SPI           = "QUAD";    // valid values are "SINGLE", "QUAD"
-  parameter  BAUDRATE      = 3125000; // 1562500
+  parameter  BAUDRATE      = 390625; // 1562500
   parameter  CLK_USE_FLL   = 0;  // 0 or 1
   parameter  TEST          = ""; //valid values are "" (NONE), "DEBUG"
 
@@ -41,6 +41,8 @@ module tb;
 
   logic         uart_tx;
   logic         uart_rx;
+  logic         s_uart_dtr;
+  logic         s_uart_rts;
 
   logic [31:0]  gpio_out;
 
@@ -110,6 +112,10 @@ module tb;
 
     .uart_tx           ( uart_rx      ),
     .uart_rx           ( uart_rx      ),
+    .uart_rts          ( s_uart_rts   ),
+    .uart_dtr          ( s_uart_dtr   ),
+    .uart_cts          ( 1'b0         ),
+    .uart_dsr          ( 1'b0         ),
 
     .gpio_in           (              ),
     .gpio_out          ( gpio_out     ),

@@ -32,7 +32,7 @@ int main()
 void check_uart_basic(testresult_t *result, void (*start)(), void (*stop)()) {
     char c;
 
-    *(volatile unsigned int*)(UART_REG_FCR) = 0x00; // disable 16byte FIFO and clear FIFOs
+    // *(volatile unsigned int*)(UART_REG_FCR) = 0x00; // disable 16byte FIFO and clear FIFOs
     uart_send("a", 1);
 
     uart_wait_tx_done();
@@ -49,6 +49,7 @@ void check_uart(testresult_t *result, void (*start)(), void (*stop)()) {
   int i;
   int j;
   char c;
+  // *(volatile unsigned int*)(UART_REG_FCR) = 0x00; // disable 16byte FIFO and clear FIFOs
 
   for (j = 0; j < 10; j++) {
     uart_wait_tx_done();
