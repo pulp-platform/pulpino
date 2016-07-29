@@ -233,7 +233,11 @@ module peripherals
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
 
-  apb_uart apb_uart_i
+  apb_uart
+  #(
+    .APB_ADDR_WIDTH( 3 )
+  )
+  apb_uart_i
   (
     .CLK      ( clk_int[1]            ),
     .RSTN     ( rst_n                 ),
