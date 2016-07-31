@@ -267,28 +267,13 @@
             xlnx,has-ss2 = <0x1>;
             #address-cells=<1>;
             #size-cells=<0>;
-            rtc: ds3234@0 {
-              compatible = "dallas,ds3234";
+            status = "okay";
+            device@0 {
+              compatible = "spidev";
               reg = <0>;  // Chip select 0
-              #address-cells = <1>;
-              #size-cells = <0>;
               spi-max-frequency = <500000>;
-              spi-cpol = <0x1>;
-              spi-cpha = <0x1>;
-            };
-            device@1 {
-              compatible = "spidev";
-              reg = <1>;  // Chip select 1
-              spi-max-frequency = <500000>;
-              spi-cpol = <0x1>;
-              spi-cpha = <0x1>;
-            };
-            device@2 {
-              compatible = "spidev";
-              reg = <2>;  // Chip select 2
-              spi-max-frequency = <500000>;
-              spi-cpol = <0x1>;
-              spi-cpha = <0x1>;
+              spi-cpol = <0x0>;
+              spi-cpha = <0x0>;
             };
         } ;
         ps7_ttc_0: ps7-ttc@f8001000 {

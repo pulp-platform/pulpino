@@ -29,8 +29,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # If you do not already have a project created,
 # you can create a project using the following command:
-#    create_project project_1 myproj -part xc7z020clg484-1
-#    set_property BOARD_PART em.avnet.com:zed:part0:0.9 [current_project]
+#    create_project project_1 myproj -part xc7z010clg400-1
 
 # CHECKING IF PROJECT EXISTS
 if { [get_projects -quiet] eq "" } {
@@ -168,7 +167,7 @@ proc create_root_design { parentCell } {
 
   # Create instance: axi_crossbar_0, and set properties
   set axi_crossbar_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_crossbar:2.1 axi_crossbar_0 ]
-  set_property -dict [ list CONFIG.DATA_WIDTH {32} CONFIG.NUM_MI {4} CONFIG.S01_BASE_ID {0x00001000} CONFIG.S02_BASE_ID {0x00002000} CONFIG.S03_BASE_ID {0x00003000} CONFIG.S04_BASE_ID {0x00004000} CONFIG.S05_BASE_ID {0x00005000} CONFIG.S06_BASE_ID {0x00006000} CONFIG.S07_BASE_ID {0x00007000} CONFIG.S08_BASE_ID {0x00008000} CONFIG.S09_BASE_ID {0x00009000} CONFIG.S10_BASE_ID {0x0000a000} CONFIG.S11_BASE_ID {0x0000b000} CONFIG.S12_BASE_ID {0x0000c000} CONFIG.S13_BASE_ID {0x0000d000} CONFIG.S14_BASE_ID {0x0000e000} CONFIG.S15_BASE_ID {0x0000f000} CONFIG.STRATEGY {1} CONFIG.R_REGISTER {0} CONFIG.CONNECTIVITY_MODE {SASD} ] $axi_crossbar_0
+  set_property -dict [ list CONFIG.CONNECTIVITY_MODE {SASD} CONFIG.DATA_WIDTH {32} CONFIG.NUM_MI {4} CONFIG.R_REGISTER {0} CONFIG.S01_BASE_ID {0x00001000} CONFIG.S02_BASE_ID {0x00002000} CONFIG.S03_BASE_ID {0x00003000} CONFIG.S04_BASE_ID {0x00004000} CONFIG.S05_BASE_ID {0x00005000} CONFIG.S06_BASE_ID {0x00006000} CONFIG.S07_BASE_ID {0x00007000} CONFIG.S08_BASE_ID {0x00008000} CONFIG.S09_BASE_ID {0x00009000} CONFIG.S10_BASE_ID {0x0000a000} CONFIG.S11_BASE_ID {0x0000b000} CONFIG.S12_BASE_ID {0x0000c000} CONFIG.S13_BASE_ID {0x0000d000} CONFIG.S14_BASE_ID {0x0000e000} CONFIG.S15_BASE_ID {0x0000f000} CONFIG.STRATEGY {1}  ] $axi_crossbar_0
 
   # Create instance: axi_gpio_emu, and set properties
   set axi_gpio_emu [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_emu ]
@@ -201,12 +200,11 @@ proc create_root_design { parentCell } {
 
   # Create instance: processing_system7_0, and set properties
   set processing_system7_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:processing_system7:5.5 processing_system7_0 ]
-  set_property -dict [ list CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {50} CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1} CONFIG.PCW_SPI0_PERIPHERAL_ENABLE {1} CONFIG.PCW_S_AXI_HP0_DATA_WIDTH {64} CONFIG.PCW_UART0_PERIPHERAL_ENABLE {1} CONFIG.PCW_USE_S_AXI_HP0 {0} CONFIG.preset {ZedBoard}  ] $processing_system7_0
+  set_property -dict [ list CONFIG.PCW_CRYSTAL_PERIPHERAL_FREQMHZ {50} CONFIG.PCW_FPGA0_PERIPHERAL_FREQMHZ {50} CONFIG.PCW_QSPI_GRP_SINGLE_SS_ENABLE {1} CONFIG.PCW_SD0_GRP_WP_IO {EMIO} CONFIG.PCW_SPI0_PERIPHERAL_ENABLE {1} CONFIG.PCW_S_AXI_HP0_DATA_WIDTH {64} CONFIG.PCW_UART0_PERIPHERAL_ENABLE {1} CONFIG.PCW_UIPARAM_DDR_FREQ_MHZ {525} CONFIG.PCW_UIPARAM_DDR_PARTNO {MT41K128M16 JT-125} CONFIG.PCW_USE_S_AXI_HP0 {0} CONFIG.preset {ZedBoard}  ] $processing_system7_0
 
-
-  if {[string equal $::env(BOARD) "zybo"]} {
-    set_property -dict [list CONFIG.PCW_CRYSTAL_PERIPHERAL_FREQMHZ {50} CONFIG.PCW_UIPARAM_DDR_PARTNO {MT41K128M16 JT-125} CONFIG.PCW_UIPARAM_DDR_FREQ_MHZ {525}] [get_bd_cells processing_system7_0]
-  }
+  # Create instance: xlconstant_0, and set properties
+  set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0 ]
+  set_property -dict [ list CONFIG.CONST_VAL {0}  ] $xlconstant_0
 
   # Create interface connections
   connect_bd_intf_net -intf_net axi_crossbar_0_M00_AXI [get_bd_intf_pins axi_crossbar_0/M00_AXI] [get_bd_intf_pins axi_protocol_converter_0/S_AXI]
@@ -238,13 +236,14 @@ proc create_root_design { parentCell } {
   connect_bd_net -net processing_system7_0_SPI0_MOSI_O [get_bd_ports SPI0_MOSI_O] [get_bd_pins processing_system7_0/SPI0_MOSI_O]
   connect_bd_net -net processing_system7_0_SPI0_SCLK_O [get_bd_ports SPI0_SCLK_O] [get_bd_pins processing_system7_0/SPI0_SCLK_O]
   connect_bd_net -net processing_system7_0_SPI0_SS_O [get_bd_ports SPI0_SS_O] [get_bd_pins processing_system7_0/SPI0_SS_O]
+  connect_bd_net -net xlconstant_0_dout [get_bd_pins processing_system7_0/SDIO0_WP] [get_bd_pins xlconstant_0/dout]
 
   # Create address segments
   create_bd_addr_seg -range 0x10000 -offset 0x51030000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_gpio_emu/S_AXI/Reg] SEG_axi_gpio_emu_Reg
   create_bd_addr_seg -range 0x10000 -offset 0x51020000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_jtag_emu/S_AXI/Reg] SEG_axi_jtag_emu_Reg
   create_bd_addr_seg -range 0x10000 -offset 0x51000000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs axi_pulp_control/S_AXI/Reg] SEG_axi_pulp_control_Reg
   create_bd_addr_seg -range 0x10000 -offset 0x51010000 [get_bd_addr_spaces processing_system7_0/Data] [get_bd_addr_segs clking_axi/Reg] SEG_clking_axi_Reg
-
+  
 
   # Restore current instance
   current_bd_instance $oldCurInst
