@@ -267,28 +267,13 @@
             xlnx,has-ss2 = <0x1>;
             #address-cells=<1>;
             #size-cells=<0>;
-            rtc: ds3234@0 {
-              compatible = "dallas,ds3234";
+            status = "okay";
+            device@0 {
+              compatible = "spidev";
               reg = <0>;  // Chip select 0
-              #address-cells = <1>;
-              #size-cells = <0>;
               spi-max-frequency = <500000>;
-              spi-cpol = <0x1>;
-              spi-cpha = <0x1>;
-            };
-            device@1 {
-              compatible = "spidev";
-              reg = <1>;  // Chip select 1
-              spi-max-frequency = <500000>;
-              spi-cpol = <0x1>;
-              spi-cpha = <0x1>;
-            };
-            device@2 {
-              compatible = "spidev";
-              reg = <2>;  // Chip select 2
-              spi-max-frequency = <500000>;
-              spi-cpol = <0x1>;
-              spi-cpha = <0x1>;
+              spi-cpol = <0x0>;
+              spi-cpha = <0x0>;
             };
         } ;
         ps7_ttc_0: ps7-ttc@f8001000 {
@@ -422,11 +407,13 @@
         ps7_uart_0: ps7-uart@0xe0000000 {
             clock-names = "ref_clk", "aper_clk";
             clocks = <&clkc 23>, <&clkc 40>;
-            compatible = "xlnx,ps7-uart-1.00.a";
+            compatible = "xlnx,xuartps";
+            current-speed = <115200>;
+            device_type = "serial";
             interrupt-parent = <&ps7_scugic_0>;
             interrupts = <0 27 4>;
+            port-number = <1>;
             reg = <0xE0000000 0x1000>;
-            status = "disabled";
         } ;
         ps7_usb_1: ps7-usb@0xe0003000 {
             clocks = <&clkc 29>;

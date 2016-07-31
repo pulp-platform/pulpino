@@ -20,7 +20,7 @@ void read_port()
   int n;
   char c;
 
-  if ((fd = open("/dev/ttyPS0", O_RDONLY | O_NOCTTY) ) < 0) {
+  if ((fd = open("/dev/ttyPS1", O_RDONLY | O_NOCTTY) ) < 0) {
     perror("open_port: Unable to open /dev/ttyPS0");
     return;
   }
