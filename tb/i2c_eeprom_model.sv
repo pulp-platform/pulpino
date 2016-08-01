@@ -5,6 +5,31 @@ package pkg_i2c_model;
   localparam WAIT    = 2'b11;
 endpackage
 
+module i2c_buf
+  (
+    inout  logic       	scl_io,
+    inout  logic       	sda_io,
+
+    output logic	scl_pad_i,
+    input logic		scl_pad_o,
+    input logic		scl_padoen_o,
+    output logic	sda_pad_i,
+    input logic		sda_pad_o,
+    input logic		sda_padoen_o
+
+  );
+
+  assign sda_io = ~sda_padoen_o ? sda_pad_o : 1'bZ;
+  assign sda_pad_i = sda_io;
+
+  assign scl_io = ~scl_padoen_o ? scl_pad_o : 1'bZ;
+  assign scl_pad_i = scl_io;
+
+
+
+endmodule
+
+
 module i2c_model_phy
   (
     inout  logic       scl_io,

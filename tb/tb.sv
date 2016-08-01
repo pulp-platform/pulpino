@@ -43,6 +43,17 @@ module tb;
   logic         uart_rx;
   logic         s_uart_dtr;
   logic         s_uart_rts;
+ 
+  logic		scl_pad_i;
+  logic		scl_pad_o;
+  logic  	scl_padoen_o;
+
+  logic  	sda_pad_i;
+  logic  	sda_pad_o;
+  logic  	sda_padoen_o;
+
+  tri1       	scl_io;
+  tri1       	sda_io;
 
   logic [31:0]  gpio_out;
 
@@ -65,7 +76,27 @@ module tb;
     .word_done()
   );
 
+  
+  i2c_buf i2c_buf_i
+  (
+    .scl_io(scl_io),
+    .sda_io(sda_io),
+    .scl_pad_i(scl_pad_i),
+    .scl_pad_o(scl_pad_o),
+    .scl_padoen_o(scl_padoen_o),
+    .sda_pad_i(sda_pad_i),
+    .sda_pad_o(sda_pad_o),
+    .sda_padoen_o(sda_padoen_o)
 
+  );
+/*
+  i2c_eeprom_model i2c_eeprom_model_i
+  (
+    .scl_io(scl_io),
+    .sda_io(sda_io),
+    .rst_ni(s_rst_n)
+  );
+*/
   pulpino_top top_i
   (
     .clk               ( s_clk        ),
@@ -102,12 +133,12 @@ module tb;
     .spi_master_sdi2_i (              ),
     .spi_master_sdi3_i (              ),
 
-    .scl_pad_i         (              ),
-    .scl_pad_o         (              ),
-    .scl_padoen_o      (              ),
-    .sda_pad_i         (              ),
-    .sda_pad_o         (              ),
-    .sda_padoen_o      (              ),
+    .scl_pad_i         ( scl_pad_i    ),
+    .scl_pad_o         ( scl_pad_o    ),
+    .scl_padoen_o      ( scl_padoen_o ),
+    .sda_pad_i         ( sda_pad_i    ),
+    .sda_pad_o         ( sda_pad_o    ),
+    .sda_padoen_o      ( sda_padoen_o ),
 
 
     .uart_tx           ( uart_rx      ),
