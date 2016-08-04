@@ -58,7 +58,7 @@ void i2c_setup(int prescaler,int enable);
 
 /** Sends data via I2C.
  *
- * @param int value - data that sould be transmitted.
+ * @param int value - data that should be transmitted.
  *
 */
 void i2c_send_data(int value);
