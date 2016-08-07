@@ -76,7 +76,7 @@ module tb;
     .word_done()
   );
 
-  
+
   i2c_buf i2c_buf_i
   (
     .scl_io(scl_io),
@@ -87,16 +87,19 @@ module tb;
     .sda_pad_i(sda_pad_i),
     .sda_pad_o(sda_pad_o),
     .sda_padoen_o(sda_padoen_o)
+  );
 
-  );
-/*
-  i2c_eeprom_model i2c_eeprom_model_i
+  i2c_eeprom_model
+  #(
+    .ADDRESS ( 7'b1010_000 )
+  )
+  i2c_eeprom_model_i
   (
-    .scl_io(scl_io),
-    .sda_io(sda_io),
-    .rst_ni(s_rst_n)
+    .scl_io ( scl_io  ),
+    .sda_io ( sda_io  ),
+    .rst_ni ( s_rst_n )
   );
-*/
+
   pulpino_top top_i
   (
     .clk               ( s_clk        ),
