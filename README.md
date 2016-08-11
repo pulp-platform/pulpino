@@ -57,7 +57,11 @@ Postponed
 - Tone function as it uses timers and we on;y have two already used timers each with one channel and no PWM, and later when implementing the servo will need to handle it again. So better to handle the timers all together one time later.
 
 ## I2C
-Not yet
+Implemented
+- twi Library (Transmitter & Reciever)
+
+In Progress
+- Wire Library
 
 ## SPI
 Not yet

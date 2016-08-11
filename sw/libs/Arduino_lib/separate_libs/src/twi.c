@@ -104,6 +104,90 @@ void twi_setFrequency(uint32_t frequency)
   
 }
 
+/* 
+ * Function twi_readFrom	##Check Later ###
+ * Desc     attempts to become twi bus master and read a
+ *          series of bytes from a device on the bus
+ * Input    address: 7bit i2c device address
+ *          data: pointer to byte array
+ *          length: number of bytes to read into array
+ *          sendStop: Boolean indicating whether to send a stop at the end
+ * Output   number of bytes read
+ */
+uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sendStop)
+{
+  uint8_t i;
+
+  // ensure data will fit into buffer
+  if(TWI_BUFFER_LENGTH < length){
+    return 1;
+  }
+
+  if(TWI_READY != twi_state){
+    twi_error = TW_BUS_ERROR;	//bus error
+    return 4;
+  }
+
+   // wait until bus is not busy
+  while((I2C_STATUS & I2C_STATUS_BUSY) == I2C_STATUS_BUSY ){
+    continue;
+  }
+
+  twi_sendStop = sendStop;
+  
+  // reset error state (0xFF.. no error occured)
+  twi_error = 0xFF;
+
+  // initialize buffer iteration vars
+  twi_masterBufferIndex = 0;
+  twi_masterBufferLength = length;  // This is not intuitive, read on...			### Check Later ###
+  // On receive, the previously configured ACK/NACK setting is transmitted in
+  // response to the received byte before the interrupt is signalled. 
+  // Therefor we must actually set NACK when the _next_ to last byte is
+  // received, causing that NACK to be sent in response to receiving the last
+  // expected byte of data.
+
+  // put address in the TX
+  I2C_TX  = (address <<1) | 0x01;	//Device address should be only 7 bits the 8th bit determine read or write (here read as one)
+  I2C_CTR =  I2C_CTR_EN_INTEN;	//Enable interrupt
+  
+  if (true == twi_inRepStart) {	//###Check Later ###
+    // if we're in the repeated start state, then we've already sent the start,
+    // (@@@ we hope), and the TWI statemachine is just waiting for the address byte.
+    // We need to remove ourselves from the repeated start state before we enable interrupts,
+    // since the ISR is ASYNC, and we could get confused if we hit the ISR before cleaning
+    // up. Also, don't enable the START interrupt. There may be one pending from the 
+    // repeated start that we sent ourselves, and that would really confuse things.
+    twi_inRepStart = false;			// remember, we're dealing with an ASYNC ISR
+     // write without start bit (already sent)
+    I2C_CMD = I2C_WRITE;
+  }
+  else
+    // send start condition and write 
+    I2C_CMD = I2C_START_WRITE;
+  
+  twi_state = TWI_MRX;
+
+  Address_ACK=1;	//indicate we have just sent the addresss
+  // wait for read operation to complete
+  while(TWI_MRX == twi_state){
+    continue;
+  }
+
+
+  if (twi_masterBufferIndex < length)
+    length = twi_masterBufferIndex;
+
+
+  // copy twi buffer to data
+  for(i = 0; i < length; ++i)
+    data[i] = twi_masterBuffer[i];
+   
+	
+  return length;
+}
+
+
 
 /* 
  * Function twi_writeTo
@@ -229,7 +313,7 @@ void ISR_I2C(void)
 	twi_error = TW_MT_ARB_LOST;
         twi_releaseBus();
   }
-  else if ((status & I2C_STATUS_RXACK) == 0){ // Ack is active low
+  else if ((status & I2C_STATUS_RXACK) == 0){ //Ack is active low
 	if(twi_state == TWI_MTX){
 		if(twi_masterBufferIndex < twi_masterBufferLength){
 		// copy data to output register	
@@ -249,9 +333,33 @@ void ISR_I2C(void)
 			  twi_state = TWI_READY;
 			}
 		}
+	}else if(twi_state == TWI_MRX){
+		if(Address_ACK)	//ACK was for address
+			Address_ACK=0;
+		else			//ACK was for data received
+			twi_masterBuffer[twi_masterBufferIndex++] = I2C_RX;
+
+
+
+		if(twi_masterBufferIndex < twi_masterBufferLength)
+			I2C_CMD = I2C_READ;
+		else{   
+			if (twi_sendStop)
+			  twi_stop();
+			else{
+			  twi_inRepStart = true;	// we're gonna send the START
+			  // don't enable the interrupt. We'll generate the start, but we 
+			  // avoid handling the interrupt until we're in the next transaction,
+			  // at the point where we would normally issue the start.
+			  I2C_CTR = I2C_CTR_EN;		//disable interrupt
+			  I2C_CMD = I2C_START;
+			  twi_state = TWI_READY;
+			}
+		}
 	}
   }
   else{
+  	if(twi_state == TWI_MTX)
 	  	if(!twi_masterBufferIndex)	
 	  		twi_error = TW_MT_SLA_NACK;	//Address was not Acknowledged
 	  	else
