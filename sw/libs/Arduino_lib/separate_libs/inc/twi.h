@@ -39,6 +39,11 @@
   #define TWI_MTX   2
   #define TWI_SRX   3
   #define TWI_STX   4
+
+  #define TW_BUS_ERROR			0x00
+  #define TW_MT_SLA_NACK		0x20
+  #define TW_MT_DATA_NACK		0x30
+  #define TW_MT_ARB_LOST		0x38
   
   void twi_init(void);
   void twi_disable(void);
