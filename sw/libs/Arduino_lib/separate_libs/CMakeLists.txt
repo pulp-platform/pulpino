@@ -1,9 +1,11 @@
 set(SOURCES
     src/twi.c
+    src/Wire.cpp
     )
 
 set(HEADERS
     inc/twi.h
+    inc/Wire.h
     )
 
 include_directories(inc/)

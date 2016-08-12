@@ -59,9 +59,10 @@ Postponed
 ## I2C
 Implemented
 - twi Library (Transmitter & Reciever)
-
-In Progress
 - Wire Library
+
+Problems
+- the current PULPino version isn't design tp be have as a slave at all, So all the slave functions are removed from the modified library
 
 ## SPI
 Not yet
