@@ -29,8 +29,9 @@
 #include <stdbool.h>
 #include <string.h>
 #include <math.h>
-#include<stdint.h>	//Added for uint_t
+#include <stdint.h>	//Added for uint_t
 
+#include "int.h"
 #include "binary.h"	
 
 #ifdef __cplusplus
