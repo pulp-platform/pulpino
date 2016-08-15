@@ -145,13 +145,13 @@ public:
     }
     inTransactionFlag = 1;
     #endif
-
+digitalWrite(0,HIGH);
     SPI_STATUS= settings.status;			              
     SPI_CLKDIV= settings.clkdiv; 			                           
     SPI_SPILEN= settings.spilen;			              
     SPI_SPIDUM= settings.spidum;                		
     SPI_INTCFG= settings.intcfg;   		           
-  
+  digitalWrite(0,LOW);
   }
 
   // Write to the SPI bus (MOSI pin) and also receive (MISO pin)
@@ -159,10 +159,10 @@ public:
    
     SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
 
-    SPI_STATUS=0x12;		//initiate a write operation with select CS0
+    SPI_STATUS=0x102;		//initiate a write operation with select CS0
     SPI_TXFIFO=data;
 
-    SPI_STATUS=0x10;		//initiate a read operation with select CS0
+    SPI_STATUS=0x100;		//initiate a read operation with select CS0
     return (uint8_t)SPI_RXFIFO;
      
   }
@@ -170,10 +170,10 @@ public:
 
     SPI_SPILEN= (16<<16);	//set data length to be 8 bits, address and command lengths 0 bits
     
-    SPI_STATUS=0x12;		//initiate a write operation with select CS0
+    SPI_STATUS=0x102;		//initiate a write operation with select CS0
     SPI_TXFIFO=data;
 
-    SPI_STATUS=0x10;		//initiate a read operation with select CS0
+    SPI_STATUS=0x100;		//initiate a read operation with select CS0
     return (uint16_t)SPI_RXFIFO;
 
   }
@@ -182,17 +182,17 @@ public:
     SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
     uint8_t *p = (uint8_t *)buf;
     
-    SPI_STATUS=0x12;		//initiate a write operation with select CS0
+    SPI_STATUS=0x102;		//initiate a write operation with select CS0
     SPI_TXFIFO=*p; 
     while (--count > 0) {
       uint8_t out = *(p + 1);
-      SPI_STATUS=0x10;		//initiate a read operation with select CS0
+      SPI_STATUS=0x100;		//initiate a read operation with select CS0
       uint8_t in= (uint8_t)SPI_RXFIFO;
-      SPI_STATUS=0x12;		//initiate a write operation with select CS0
+      SPI_STATUS=0x102;		//initiate a write operation with select CS0
       SPI_TXFIFO=out; 
       *p++ = in;
     }
-    SPI_STATUS=0x10;		//initiate a read operation with select CS0
+    SPI_STATUS=0x100;		//initiate a read operation with select CS0
     *p = (uint8_t)SPI_RXFIFO;
   }
 
