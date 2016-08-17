@@ -84,7 +84,7 @@ private:
    
 
    //Initilize Mode and clock and data length, command and address length 
-   status= 0;	//reset FIFO
+   status= (1<<4);	//reset FIFO
    clkdiv= clockSetting;
    spilen= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
    spidum=0;		//set dummy cycles to be 0 
@@ -154,43 +154,64 @@ public:
 
   // Write to the SPI bus (MOSI pin) and also receive (MISO pin)
   inline static uint8_t transfer(uint8_t data) {
-    SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
-    
-    SPI_STATUS=0x102;		//initiate a write operation with select CS0
+    while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
+    SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
+    SPI_STATUS = 0x0102;		//initiate a write operation with select CS0
+    while (((SPI_STATUS >> 24) & 0xFF) >= 8);
     SPI_TXFIFO=data<<24;
 
-    SPI_STATUS=0x101;		//initiate a read operation with select CS0
-    return (uint8_t)SPI_RXFIFO;
-  
+    while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
+    //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bitsS
+    SPI_STATUS=0x0101;			//initiate a read operation with select CS0   
+    while (((SPI_STATUS >> 16) & 0xFF) == 0);
+    return (uint8_t)(SPI_RXFIFO);
+
   }
   inline static uint16_t transfer16(uint16_t data) {
 
-    SPI_SPILEN= (16<<16);	//set data length to be 8 bits, address and command lengths 0 bits
-    
-    SPI_STATUS=0x102;		//initiate a write operation with select CS0
+    while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
+    SPI_SPILEN= (16<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
+    SPI_STATUS = 0x0102;		//initiate a write operation with select CS0
+    while (((SPI_STATUS >> 24) & 0xFF) >= 8);
     SPI_TXFIFO=data<<16;
 
-    SPI_STATUS=0x101;		//initiate a read operation with select CS0
-    return (uint16_t)SPI_RXFIFO;
+    while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
+    //SPI_SPILEN= (16<<16);	//set data length to be 8 bits, address and command lengths 0 bitsS
+    SPI_STATUS=0x0101;			//initiate a read operation with select CS0   
+    while (((SPI_STATUS >> 16) & 0xFF) == 0);
+    return (uint16_t)(SPI_RXFIFO);
 
   }
   inline static void transfer(void *buf, size_t count) {
     if (count == 0) return;
+
+    while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
+    uint8_t *p = (uint8_t *)buf;    
     SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
-    uint8_t *p = (uint8_t *)buf;
-    
-    SPI_STATUS=0x102;		//initiate a write operation with select CS0
+    SPI_STATUS=0x0102;		//initiate a write operation with select CS0
+    while (((SPI_STATUS >> 24) & 0xFF) >= 8);
     SPI_TXFIFO=(*p)<<24; 
     while (--count > 0) {
       uint8_t out = *(p + 1);
-      SPI_STATUS=0x101;		//initiate a read operation with select CS0
+      while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
+      //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
+      SPI_STATUS=0x0101;		//initiate a read operation with select CS0
+      while (((SPI_STATUS >> 16) & 0xFF) == 0);
       uint8_t in= (uint8_t)SPI_RXFIFO;
-      SPI_STATUS=0x102;		//initiate a write operation with select CS0
-      SPI_TXFIFO=out<<24; 
+
+      while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
+      //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
+      SPI_STATUS=0x0102;		//initiate a write operation with select CS0
+      while (((SPI_STATUS >> 24) & 0xFF) >= 8);
+      SPI_TXFIFO=out<<24;
       *p++ = in;
     }
-    SPI_STATUS=0x101;		//initiate a read operation with select CS0
+    while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
+    //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
+    SPI_STATUS=0x0101;		//initiate a read operation with select CS0
+    while (((SPI_STATUS >> 16) & 0xFF) == 0);
     *p = (uint8_t)SPI_RXFIFO;
+
   }
 
   // After performing a group of transfers and releasing the chip select
