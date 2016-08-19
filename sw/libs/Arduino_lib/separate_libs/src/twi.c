@@ -17,6 +17,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
   Modified 2012 by Todd Krein (todd@krein.org) to implement repeated starts
+  Modified 29 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #include <math.h>
@@ -35,7 +36,6 @@
 #include "pins_arduino.h"
 
 static volatile uint8_t twi_state;
-static volatile uint8_t twi_slarw;
 static volatile uint8_t twi_sendStop;			// should the transaction end with a stop
 static volatile uint8_t twi_inRepStart;			// in the middle of a repeated start
 
@@ -269,7 +269,7 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
   else if (twi_error == TW_MT_SLA_NACK)
     return 2;	// error: address send, nack received
   else if (twi_error == TW_MT_DATA_NACK)
-    return 3;	// error: data send, nack received*/
+    return 3;	// error: data send, nack received
   else
     return 4;	// other twi error
 }

@@ -9,6 +9,8 @@
  * it under the terms of either the GNU General Public License version 2
  * or the GNU Lesser General Public License version 2.1, both as
  * published by the Free Software Foundation.
+ *
+ * Modified 13 August 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
  */
 
 #ifndef _SPI_H_INCLUDED
@@ -70,11 +72,6 @@ private:
   }
   void init_AlwaysInline(uint32_t clock, uint8_t bitOrder, uint8_t dataMode)
     __attribute__((__always_inline__)) {
-
-    // When the clock is known at compiletime, use this if-then-else
-    // cascade, which the compiler knows how to completely optimize
-    // away. When clock is not known, use a loop instead, which generates
-    // shorter code.
     
     uint32_t clockSetting = F_CPU / clock;
     if (clockSetting < 2)
@@ -157,13 +154,13 @@ public:
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
     SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
     SPI_STATUS = 0x0102;		//initiate a write operation with select CS0
-    while (((SPI_STATUS >> 24) & 0xFF) >= 8);
+    while (((SPI_STATUS >> 24) & 0xFF) >= 8);	//wait until tx buffer has available place
     SPI_TXFIFO=data<<24;
 
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
     //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bitsS
     SPI_STATUS=0x0101;			//initiate a read operation with select CS0   
-    while (((SPI_STATUS >> 16) & 0xFF) == 0);
+    while (((SPI_STATUS >> 16) & 0xFF) == 0);	//wait until rx buffer has available place
     return (uint8_t)(SPI_RXFIFO);
 
   }
@@ -172,13 +169,13 @@ public:
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
     SPI_SPILEN= (16<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
     SPI_STATUS = 0x0102;		//initiate a write operation with select CS0
-    while (((SPI_STATUS >> 24) & 0xFF) >= 8);
+    while (((SPI_STATUS >> 24) & 0xFF) >= 8);	//wait until tx buffer has available place
     SPI_TXFIFO=data<<16;
 
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
     //SPI_SPILEN= (16<<16);	//set data length to be 8 bits, address and command lengths 0 bitsS
     SPI_STATUS=0x0101;			//initiate a read operation with select CS0   
-    while (((SPI_STATUS >> 16) & 0xFF) == 0);
+    while (((SPI_STATUS >> 16) & 0xFF) == 0);	//wait until rx buffer has available place
     return (uint16_t)(SPI_RXFIFO);
 
   }
@@ -189,27 +186,27 @@ public:
     uint8_t *p = (uint8_t *)buf;    
     SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
     SPI_STATUS=0x0102;		//initiate a write operation with select CS0
-    while (((SPI_STATUS >> 24) & 0xFF) >= 8);
+    while (((SPI_STATUS >> 24) & 0xFF) >= 8);	//wait until tx buffer has available place
     SPI_TXFIFO=(*p)<<24; 
     while (--count > 0) {
       uint8_t out = *(p + 1);
       while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
       //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
       SPI_STATUS=0x0101;		//initiate a read operation with select CS0
-      while (((SPI_STATUS >> 16) & 0xFF) == 0);
+      while (((SPI_STATUS >> 16) & 0xFF) == 0);	//wait until rx buffer has available place
       uint8_t in= (uint8_t)SPI_RXFIFO;
 
       while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
       //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
       SPI_STATUS=0x0102;		//initiate a write operation with select CS0
-      while (((SPI_STATUS >> 24) & 0xFF) >= 8);
+      while (((SPI_STATUS >> 24) & 0xFF) >= 8);	//wait until tx buffer has available place 
       SPI_TXFIFO=out<<24;
       *p++ = in;
     }
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
     //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
     SPI_STATUS=0x0101;		//initiate a read operation with select CS0
-    while (((SPI_STATUS >> 16) & 0xFF) == 0);
+    while (((SPI_STATUS >> 16) & 0xFF) == 0);	//wait until rx buffer has available place
     *p = (uint8_t)SPI_RXFIFO;
 
   }

@@ -15,6 +15,8 @@
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+  Modified 29 July 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 #ifndef twi_h
@@ -24,7 +26,7 @@
   #include "int.h"
   #include "event.h"
   #include "i2c.h"
-  //#define ATMEGA8
+  
 
   #ifndef TWI_FREQ
   #define TWI_FREQ 100000L

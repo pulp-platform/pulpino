@@ -17,6 +17,7 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  
   Modified 2012 by Todd Krein (todd@krein.org) to implement repeated starts
+  Modified 13 Aug 2016 by Mahmoud Elmohr       (Ported to RISC-V PULPino)
 */
 
 extern "C" {
