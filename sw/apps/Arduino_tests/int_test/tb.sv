@@ -206,10 +206,13 @@ module tb;
 
     // Here  test for Interrrupts Starts
     #50000ns;
-    gpio_in[2]=1'b1;
-    #10000ns;
+    gpio_in[1]=1'b1;
     gpio_in[2]=1'b0;
     #10000ns;
+    gpio_in[1]=1'b0;
+    #10000ns;
+    gpio_in[1]=1'b1;
+    #20000ns;
     gpio_in[2]=1'b1;
     #20000ns;
     $stop();

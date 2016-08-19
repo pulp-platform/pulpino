@@ -1,5 +1,12 @@
 # Status
 
+
+
+## Core Libraries in General
+Postponed
+- PulseIn function should have a part of it in assembly to know the determined cycles for that part (curently it's implemented totally in C)
+- Tone function as it uses timers and we only have two already used timers each with one channel and no PWM, and later when implementing the servo will need to handle it again. So better to handle the timers all together one time later.
+
 ## GPIO
 Done
 - implementation 
@@ -20,9 +27,6 @@ Done
 Postponed
 - minimizing function calls inside interrupt functions
 - using interrupt atribute instead of crt0 approach
-
-problems
-- when two GPIO interrupts are attached, assertion errors occur and the GPIO_ISR is not entered when any event happens
 
 ## Timer
 Done
@@ -49,12 +53,14 @@ Implemented
 - Hardware porting (using busy waiting approach not interrrupt)
 - test
 
-
-## Core Libraries
-
 Postponed
-- PulseIn function should have a part of it in assembly to know the determined cycles for that part (curently it's implemented totally in C)
-- Tone function as it uses timers and we on;y have two already used timers each with one channel and no PWM, and later when implementing the servo will need to handle it again. So better to handle the timers all together one time later.
+- modify th elibraries to be interrupt based
+
+
+
+## Separated Libraries in General
+Problems
+- softwareSerial couldn't be implemented as it needs GPIO interrupts on toggle (any change rising or falling edge) which is not vailable on current version of PULPino
 
 ## I2C
 Implemented
@@ -65,11 +71,14 @@ Problems
 - the current PULPino version isn't design tp be have as a slave at all, So all the slave functions are removed from the modified library
 
 ## SPI
-Not yet
+Implemented
+- SPI Master library of Arduino (Arduino doesn't have official lib for SPI slave)
+
+
 
 ## General Problems
-- WFI (wait for inteerupt) instruction associated with sleep() function causes an illegal instruction exception (in Berkeley's comppiler only)
+- WFI (wait for interrupt) instruction associated with sleep() function causes an illegal instruction exception (in Berkeley's comppiler only)
 - ETH compiler don't work on 32 bit machines (could be solved by later commit by Berkeley's compiler)
-- FPGA scripts should be ported to ZYBO
-- Regression tests on Gitlab fail for  testDivRem.test (even for commits that has passed before)
+- ETH compiler doesn't allow function calls for interrupts if used interrupt attribute 
+
 

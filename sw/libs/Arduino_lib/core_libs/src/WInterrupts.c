@@ -136,6 +136,8 @@ static volatile voidFuncPtr intFunc[NUM_DIGITAL_PINS]= {
 
 void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
   unsigned int bit = digitalPinToBitMask(interruptNum);
+  unsigned int oldMstatus;
+
   if(interruptNum < NUM_DIGITAL_PINS) {
     intFunc[interruptNum] = userFunc;
     
@@ -145,7 +147,7 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
     // the mode into place.
       
     // Enable the interrupt.
-      
+    csrr(mstatus, oldMstatus);  
     switch(mode) {
 
         case LOW  :
@@ -164,10 +166,11 @@ void attachInterrupt(uint8_t interruptNum, void (*userFunc)(void), int mode) {
                 *INTTYPE1 |= bit;
                 *INTTYPE0 &= ~bit;
                 break;  
-}
+    }
+  csrw(mstatus, oldMstatus);
 
-	*INTEN |= bit;     //Enable the specific GPIO pin interrupt
-        IER |= (1<<25);                 //Enable Global GPIO interrupt
+  *INTEN |= bit;     //Enable the specific GPIO pin interrupt
+  IER |= (1<<25);                 //Enable Global GPIO interrupt
   }
 }
 
@@ -185,6 +188,7 @@ void ISR_GPIO (void) {
         voidFuncPtr func = intFunc[BitMaskToDigitalPin(*INTSTATUS)]; 
         if (func != NULL)
                 func();
+
         ICP |= (1<<25);         //clear interrupt pending for GPIO
 }
 
