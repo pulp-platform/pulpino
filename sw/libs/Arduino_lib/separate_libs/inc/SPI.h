@@ -73,9 +73,9 @@ private:
   void init_AlwaysInline(uint32_t clock, uint8_t bitOrder, uint8_t dataMode)
     __attribute__((__always_inline__)) {
     
-    uint32_t clockSetting = F_CPU / clock;
-    if (clockSetting < 2)
-	clockSetting =2;
+    int32_t clockSetting = (F_CPU/(2*clock))-1;
+    if (clockSetting < 0)
+	clockSetting =0;
     else if (clockSetting > 255)
 	clockSetting =255;
    
