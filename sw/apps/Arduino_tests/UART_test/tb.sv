@@ -207,7 +207,7 @@ module tb;
     end
 
     
-    // Here  test for shift Starts
+    // Here  test for UART Starts
     wait(top_i.gpio_out[0]);
    
     //tb tx is connected to pulpino rx (I'm writing to the receiver)			
@@ -232,9 +232,7 @@ module tb;
     #(RX_BIT_PERIOD);
     uart_tx = 1'b1;	//stop bit 
                
-    #2000000ns;
-    $stop();
-    // Here  test for shift Ends
+    // Here  test for UART Ends
 
 
     // end of computation

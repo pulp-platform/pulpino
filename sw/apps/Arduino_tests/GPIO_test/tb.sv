@@ -206,14 +206,14 @@ module tb;
 
 
     // Here  test for GPIO Starts
-    #50000ns;
+    wait(top_i.gpio_out[0]);
     gpio_in[4]=1'b1;
     #10000ns;
     gpio_in[4]=1'b0;
     #10000ns;
     gpio_in[4]=1'b1;
     #20000ns;
-    $stop();
+    gpio_in[7]=1'b1;
     // Here  test for GPIO Ends
 
 

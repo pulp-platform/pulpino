@@ -45,7 +45,7 @@ module tb;
   logic         s_uart_rts;
 
   logic [31:0]  gpio_out;
-  logic [31:0]  gpio_in;
+  logic [31:0]  gpio_in=0;
   logic [31:0]  gpio_dir;
 
   logic [31:0]  recv_data;
@@ -153,6 +153,7 @@ module tb;
 
   initial
   begin
+    gpio_in=32'b0;
 
     if(!$value$plusargs("MEMLOAD=%s", memload))
       memload = "PRELOAD";
@@ -205,7 +206,7 @@ module tb;
 
 
     // Here  test for Interrrupts Starts
-    #50000ns;
+    wait(top_i.gpio_out[0]);
     gpio_in[1]=1'b1;
     gpio_in[2]=1'b0;
     #10000ns;
@@ -215,7 +216,8 @@ module tb;
     #20000ns;
     gpio_in[2]=1'b1;
     #20000ns;
-    $stop();
+    gpio_in[7]=1'b1;
+    
     // Here  test for Interrupts Ends
 
 

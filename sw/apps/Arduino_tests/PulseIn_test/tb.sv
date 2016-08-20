@@ -205,20 +205,18 @@ module tb;
     end
 
 
-    // Here  test for GPIO Starts
-    #500000ns;
+    // Here  test for PulseIn Starts
+    wait(top_i.gpio_out[0]);
+    gpio_in[4]=1'b0;
+    #50000ns;
     gpio_in[4]=1'b1;
     #500000ns;
     gpio_in[4]=1'b0;
-    #500000ns;
-    #500000ns;
+    #1000000ns;
     gpio_in[4]=1'b1;
     #500000ns;
     gpio_in[4]=1'b0;
-    #500000ns;
-    #2000000ns;
-    $stop();
-    // Here  test for GPIO Ends
+    // Here  test for PulseIn Ends
 
 
     // end of computation

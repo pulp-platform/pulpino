@@ -206,26 +206,23 @@ module tb;
 
     
     // Here  test for shift Starts
-    wait(top_i.gpio_out[4]);
-    gpio_in[2]=1'b1;
+    wait(top_i.gpio_out[0]);
+    gpio_in[3]=1'b1;
     #5000ns;
-    gpio_in[2]=1'b1;
+    gpio_in[3]=1'b1;
     #5000ns;
-    gpio_in[2]=1'b0;
+    gpio_in[3]=1'b0;
     #5000ns;
-    gpio_in[2]=1'b0;
+    gpio_in[3]=1'b0;
     #5000ns;
-    gpio_in[2]=1'b1;
+    gpio_in[3]=1'b1;
     #5000ns;
-    gpio_in[2]=1'b0;
+    gpio_in[3]=1'b0;
     #5000ns;
-    gpio_in[2]=1'b0;
+    gpio_in[3]=1'b0;
     #5000ns;
-    gpio_in[2]=1'b1;
+    gpio_in[3]=1'b1;
     #5000ns;
-                  
-    #2000000ns;
-    $stop();
     // Here  test for shift Ends
 
 
