@@ -258,35 +258,20 @@ module tb;
     wait(!spi_master_csn0);
 
     assign spi_master_sdi0=1'b0;
-    #(`CLK_PERIOD*16)
+    #(`CLK_PERIOD*6)
     assign spi_master_sdi0=1'b0;
-    #(`CLK_PERIOD*16)
+    #(`CLK_PERIOD*6)
     assign spi_master_sdi0=1'b0;
-    #(`CLK_PERIOD*16)
+    #(`CLK_PERIOD*6)
     assign spi_master_sdi0=1'b1;
-    #(`CLK_PERIOD*16)
+    #(`CLK_PERIOD*6)
     assign spi_master_sdi0=1'b1;
-    #(`CLK_PERIOD*16)
+    #(`CLK_PERIOD*6)
     assign spi_master_sdi0=1'b1;
-    #(`CLK_PERIOD*16)
+    #(`CLK_PERIOD*6)
     assign spi_master_sdi0=1'b0;
-    #(`CLK_PERIOD*16)
+    #(`CLK_PERIOD*6)
     assign spi_master_sdi0=1'b0;
-    #(`CLK_PERIOD*16)
-    assign spi_master_sdi0=1'b0;
-    #(`CLK_PERIOD*16)
-    assign spi_master_sdi0=1'b1;
-    #(`CLK_PERIOD*16)
-    assign spi_master_sdi0=1'b1;
-    #(`CLK_PERIOD*16)
-    assign spi_master_sdi0=1'b1;
-    #(`CLK_PERIOD*16)
-    assign spi_master_sdi0=1'b0;
-    #(`CLK_PERIOD*16)
-    assign spi_master_sdi0=1'b0;
-    #(`CLK_PERIOD*16)
-    assign spi_master_sdi0=1'b0;
-  
     
     //Here my test for SPI Master Receiver Ends
 

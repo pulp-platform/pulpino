@@ -4,24 +4,27 @@
 #include <main.cpp>
 
 
-volatile int x,y;
+int y;
 
 void setup()
 {
-
-	delay(1);
+	Serial.begin(781250);
 	SPI.begin();
-	SPISettings mySettings(4000000, MSBFIRST, SPI_MODE0);
-	SPI.beginTransaction(mySettings);
-	y=SPI.transfer(0xA1);
-	printf("Received= %d \n",y);
-	SPI.endTransaction();
-	printf("End \n");
+	
 }
 
 void loop()
 {
-x++;
+	SPISettings mySettings(4000000, MSBFIRST, SPI_MODE0);
+	SPI.beginTransaction(mySettings);
+	y=SPI.transfer(0xA1);
+	Serial.print("Received=");
+   	Serial.print(y);
+  	Serial.print("\tExpected=");
+   	Serial.println("28");
+	SPI.endTransaction();
+	delay(1);
+        exit(0);
 }
 
 
