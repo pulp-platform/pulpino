@@ -1,1 +1,1 @@
- add_application(SPI_test SPI_test.cpp)
+ add_application(SPI_test SPI_test.cpp LABELS "arduino")

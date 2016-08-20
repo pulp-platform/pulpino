@@ -1,1 +1,1 @@
- add_application(PWM_test PWM_test.cpp)
+ add_application(PWM_test PWM_test.cpp LABELS "arduino")

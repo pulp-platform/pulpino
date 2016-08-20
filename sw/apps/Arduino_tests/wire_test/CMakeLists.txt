@@ -1,1 +1,1 @@
- add_application(wire_test wire_test.cpp)
+ add_application(wire_test wire_test.cpp LABELS "arduino")

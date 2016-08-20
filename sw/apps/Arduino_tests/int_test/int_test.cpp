@@ -1,6 +1,9 @@
 
 #include <main.cpp>
 
+// self test variables
+int irqPinToggles = 0;
+
 const byte ledPin = 13;
 const byte interruptPin1 = 1;
 const byte interruptPin2 = 2;
@@ -8,6 +11,8 @@ byte state = LOW;
 
 void blink() {
   state = !state;
+
+  irqPinToggles++;
 }
 
 void setup() {
@@ -23,10 +28,8 @@ void setup() {
 
 void loop() {
   digitalWrite(ledPin, state);
-  if (digitalRead(7))
-	exit(0);	//to end simulation properly
+
+  // check for test condition
+  if (irqPinToggles == 3)
+    exit(0);
 }
-
-
-
-

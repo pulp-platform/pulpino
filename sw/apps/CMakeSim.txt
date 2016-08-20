@@ -1,7 +1,8 @@
 
-set(SETENV "env PULP_CORE=${PULP_CORE} VSIM_DIR=${PULP_MODELSIM_DIRECTORY}")
 
 macro(add_sim_targets NAME)
+  set(SETENV "env PULP_CORE=${PULP_CORE} VSIM_DIR=${PULP_MODELSIM_DIRECTORY} TB_TEST=\"$<TARGET_PROPERTY:${NAME}.elf,TB_TEST>\"")
+
   # generate s19 file
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19
     COMMAND ${CMAKE_OBJCOPY} --srec-len 1 --output-target=srec $<TARGET_FILE:${NAME}.elf> ${NAME}.s19
