@@ -88,7 +88,7 @@ void sudokusolver(int* grid_solved, int* solved)
   solve(grid_solved, 0, 0, solved);
 }
 
-// check if current index doesnt violate any sudoku constraints
+// check if current index doesn't violate any sudoku constraints
 int safe(int* grid_solved, int row, int col, int n)
 {
   int r, c, br, bc;
