@@ -20,10 +20,17 @@ void read_port()
   int n;
   char c;
 
+#ifdef ZYBO
   if ((fd = open("/dev/ttyPS1", O_RDONLY | O_NOCTTY) ) < 0) {
     perror("open_port: Unable to open /dev/ttyPS0");
     return;
   }
+#else
+  if ((fd = open("/dev/ttyPS0", O_RDONLY | O_NOCTTY) ) < 0) {
+    perror("open_port: Unable to open /dev/ttyPS0");
+    return;
+  }
+#endif
 
   // set baudrate
   ioctl(fd, TCGETS2, &tio);
