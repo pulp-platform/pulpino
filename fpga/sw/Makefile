@@ -72,7 +72,7 @@ buildroot:
 	cd buildroot && git checkout tags/2015.05
 
 buildroot/.config: $(filter-out $(wildcard buildroot), buildroot)
-	cat ./buildroot.config | sed 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)#g' > ./buildroot/.config
+	cat ./buildroot.config | sed 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)"#g' > ./buildroot/.config
 
 buildroot/output/images/rootfs.tar: buildroot/.config
 	cd buildroot && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- -j${NCORES}
@@ -128,3 +128,13 @@ sd_image/pulpemu_top.bit: ../pulpemu/pulpemu.runs/impl_1/pulpemu_top.bit
 
 sd_image/BOOT.BIN: sd_image/u-boot.elf sd_image/pulpemu_top.bit boot.bif sd_image/fsbl.elf
 	bootgen -image ./boot.bif -o i ./sd_image/BOOT.BIN -w on
+
+.PHONY: clean
+clean:
+	rm -rf u-boot-xlnx
+	make -C linux-xlnx clean
+	rm -f linux-xlnx/.config
+	rm -f buildroot/.config
+	make -C buildroot clean
+	rm -f hsi/pulpemu_top.sysdef
+	rm -f sd_image/*
