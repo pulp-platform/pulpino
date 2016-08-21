@@ -43,18 +43,20 @@ module tb;
   logic         uart_rx;
   logic         s_uart_dtr;
   logic         s_uart_rts;
- 
-  logic		scl_pad_i;
-  logic		scl_pad_o;
-  logic  	scl_padoen_o;
 
-  logic  	sda_pad_i;
-  logic  	sda_pad_o;
-  logic  	sda_padoen_o;
+  logic         scl_pad_i;
+  logic         scl_pad_o;
+  logic         scl_padoen_o;
 
-  tri1       	scl_io;
-  tri1       	sda_io;
+  logic         sda_pad_i;
+  logic         sda_pad_o;
+  logic         sda_padoen_o;
 
+  tri1          scl_io;
+  tri1          sda_io;
+
+  logic [31:0]  gpio_in = '0;
+  logic [31:0]  gpio_dir;
   logic [31:0]  gpio_out;
 
   logic [31:0]  recv_data;
@@ -64,16 +66,16 @@ module tb;
   adv_dbg_if_t adv_dbg_if = new(jtag_if);
 
   // use 8N1
-  uart_tb_rx
+  uart_bus
   #(
     .BAUD_RATE(BAUDRATE),
     .PARITY_EN(0)
   )
-  uart_tb_rx_i
+  uart
   (
-    .rx(uart_rx),
-    .rx_en(1'b1),
-    .word_done()
+    .rx         ( uart_rx ),
+    .tx         ( uart_tx ),
+    .rx_en      ( 1'b1    )
   );
 
 
@@ -151,9 +153,9 @@ module tb;
     .uart_cts          ( 1'b0         ),
     .uart_dsr          ( 1'b0         ),
 
-    .gpio_in           (              ),
+    .gpio_in           ( gpio_in      ),
     .gpio_out          ( gpio_out     ),
-    .gpio_dir          (              ),
+    .gpio_dir          ( gpio_dir     ),
     .gpio_padcfg       (              ),
 
     .tck_i             ( jtag_if.tck     ),
@@ -227,16 +229,69 @@ module tb;
 
     #200ns;
     fetch_enable = 1'b1;
-    
-    if(TEST == "DEBUG")
-    begin
+
+    if(TEST == "DEBUG") begin
       debug_tests();
     end else if (TEST == "MEM_DPI") begin
       mem_dpi(4567);
+    end else if (TEST == "ARDUINO_UART") begin
+      if (~top_i.gpio_out[0])
+        wait(top_i.gpio_out[0]);
+      uart.send_char(8'h65);
+    end else if (TEST == "ARDUINO_GPIO") begin
+      // Here  test for GPIO Starts
+      #50us;
+      gpio_in[4]=1'b1;
+      #10us;
+      gpio_in[4]=1'b0;
+      #10us;
+      gpio_in[4]=1'b1;
+    end else if (TEST == "ARDUINO_SHIFT") begin
+      if (~top_i.gpio_out[4])
+        wait(top_i.gpio_out[4]);
+
+      gpio_in[2]=1'b1;
+      #5us;
+      gpio_in[2]=1'b1;
+      #5us;
+      gpio_in[2]=1'b0;
+      #5us;
+      gpio_in[2]=1'b0;
+      #5us;
+      gpio_in[2]=1'b1;
+      #5us;
+      gpio_in[2]=1'b0;
+      #5us;
+      gpio_in[2]=1'b0;
+      #5us;
+      gpio_in[2]=1'b1;
+      #5us;
+    end else if (TEST == "ARDUINO_PULSEIN") begin
+      #500us;
+      gpio_in[4]=1'b1;
+      #500us;
+      gpio_in[4]=1'b0;
+      #1ms;
+      gpio_in[4]=1'b1;
+      #500us;
+      gpio_in[4]=1'b0;
+      #500us;
+    end else if (TEST == "ARDUINO_INT") begin
+      #50us;
+      gpio_in[1]=1'b1;
+      #10us;
+      gpio_in[1]=1'b0;
+      #10us;
+      gpio_in[1]=1'b1;
+      #20us;
+      gpio_in[2]=1'b1;
     end
 
+
+
     // end of computation
-    wait(top_i.gpio_out[8]);
+    if (~top_i.gpio_out[8])
+      wait(top_i.gpio_out[8]);
 
     spi_check_return_codes(exit_status);
 

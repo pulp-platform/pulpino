@@ -13,7 +13,7 @@ include(CMakeSim.txt)
 ################################################################################
 macro(add_application NAME SOURCE_FILES)
   # optional argument parsing
-  set(oneValueArgs SUBDIR TB LABELS FLAGS)
+  set(oneValueArgs SUBDIR TB TB_TEST LABELS FLAGS)
   set(multiValueArgs LIBS)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   set(SUBDIR ${ARG_SUBDIR})
@@ -47,6 +47,13 @@ macro(add_application NAME SOURCE_FILES)
     set_target_properties(${NAME}.elf PROPERTIES TB ${ARG_TB})
   else()
     set_target_properties(${NAME}.elf PROPERTIES TB run.tcl)
+  endif()
+
+  # this specifies the TEST parameter argument for the testbench (if any)
+  if(ARG_TB_TEST)
+    set_target_properties(${NAME}.elf PROPERTIES TB_TEST ${ARG_TB_TEST})
+  else()
+    set_target_properties(${NAME}.elf PROPERTIES TB_TEST "")
   endif()
 
   add_custom_target(${NAME}.read)
