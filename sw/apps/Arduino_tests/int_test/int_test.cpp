@@ -21,7 +21,6 @@ void setup() {
   pinMode(interruptPin2, INPUT);
   attachInterrupt(interruptPin1, blink, RISING);
   attachInterrupt(interruptPin2, blink, RISING);
-  pinMode(7,INPUT);	//used to terminate test bench (for simulation only)
   pinMode(0,OUTPUT);	//used to intiate test bench stimulus (for simulation only)
   digitalWrite(0,HIGH);  
 }
@@ -31,5 +30,5 @@ void loop() {
 
   // check for test condition
   if (irqPinToggles == 3)
-    exit(0);
+    exit(0);	//last signal won't be shown in modelsim as simulation will end
 }

@@ -246,28 +246,31 @@ module tb;
       gpio_in[4]=1'b0;
       #10us;
       gpio_in[4]=1'b1;
+      gpio_in[7]=1'b1;
     end else if (TEST == "ARDUINO_SHIFT") begin
-      if (~top_i.gpio_out[4])
-        wait(top_i.gpio_out[4]);
+      if (~top_i.gpio_out[0])
+        wait(top_i.gpio_out[0]);
 
-      gpio_in[2]=1'b1;
+      gpio_in[3]=1'b1;
       #5us;
-      gpio_in[2]=1'b1;
+      gpio_in[3]=1'b1;
       #5us;
-      gpio_in[2]=1'b0;
+      gpio_in[3]=1'b0;
       #5us;
-      gpio_in[2]=1'b0;
+      gpio_in[3]=1'b0;
       #5us;
-      gpio_in[2]=1'b1;
+      gpio_in[3]=1'b1;
       #5us;
-      gpio_in[2]=1'b0;
+      gpio_in[3]=1'b0;
       #5us;
-      gpio_in[2]=1'b0;
+      gpio_in[3]=1'b0;
       #5us;
-      gpio_in[2]=1'b1;
+      gpio_in[3]=1'b1;
       #5us;
     end else if (TEST == "ARDUINO_PULSEIN") begin
-      #500us;
+      if (~top_i.gpio_out[0])
+        wait(top_i.gpio_out[0]);	
+      #50us;
       gpio_in[4]=1'b1;
       #500us;
       gpio_in[4]=1'b0;
@@ -275,16 +278,18 @@ module tb;
       gpio_in[4]=1'b1;
       #500us;
       gpio_in[4]=1'b0;
-      #500us;
     end else if (TEST == "ARDUINO_INT") begin
+      if (~top_i.gpio_out[0])
+        wait(top_i.gpio_out[0]);
       #50us;
       gpio_in[1]=1'b1;
-      #10us;
+      #20us;
       gpio_in[1]=1'b0;
-      #10us;
+      #20us;
       gpio_in[1]=1'b1;
       #20us;
       gpio_in[2]=1'b1;
+      #20us;
     end
 
 
