@@ -78,7 +78,7 @@ module tb;
     .rx_en      ( 1'b1    )
   );
 
-  SPI
+  spi_slave
   spi_master();
 
 
@@ -273,7 +273,7 @@ module tb;
       #5us;
     end else if (TEST == "ARDUINO_PULSEIN") begin
       if (~top_i.gpio_out[0])
-        wait(top_i.gpio_out[0]);	
+        wait(top_i.gpio_out[0]);
       #50us;
       gpio_in[4]=1'b1;
       #500us;
@@ -296,8 +296,8 @@ module tb;
       #20us;
     end else if (TEST == "ARDUINO_SPI") begin
       for(i = 0; i < 2; i++) begin
-        spi_master.s_wait_csn(1'b0);
-        spi_master.s_send(0, {>>{8'h38}});
+        spi_master.wait_csn(1'b0);
+        spi_master.send(0, {>>{8'h38}});
       end
     end
 
