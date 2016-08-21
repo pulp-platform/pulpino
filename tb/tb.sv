@@ -78,17 +78,20 @@ module tb;
     .rx_en      ( 1'b1    )
   );
 
+  spi_slave
+  spi_master();
+
 
   i2c_buf i2c_buf_i
   (
-    .scl_io(scl_io),
-    .sda_io(sda_io),
-    .scl_pad_i(scl_pad_i),
-    .scl_pad_o(scl_pad_o),
-    .scl_padoen_o(scl_padoen_o),
-    .sda_pad_i(sda_pad_i),
-    .sda_pad_o(sda_pad_o),
-    .sda_padoen_o(sda_padoen_o)
+    .scl_io       ( scl_io       ),
+    .sda_io       ( sda_io       ),
+    .scl_pad_i    ( scl_pad_i    ),
+    .scl_pad_o    ( scl_pad_o    ),
+    .scl_padoen_o ( scl_padoen_o ),
+    .sda_pad_i    ( sda_pad_i    ),
+    .sda_pad_o    ( sda_pad_o    ),
+    .sda_padoen_o ( sda_padoen_o )
   );
 
   i2c_eeprom_model
@@ -123,20 +126,20 @@ module tb;
     .spi_sdi2_i        ( spi_sdo2     ),
     .spi_sdi3_i        ( spi_sdo3     ),
 
-    .spi_master_clk_o  (              ),
-    .spi_master_csn0_o (              ),
-    .spi_master_csn1_o (              ),
-    .spi_master_csn2_o (              ),
-    .spi_master_csn3_o (              ),
-    .spi_master_mode_o (              ),
-    .spi_master_sdo0_o (              ),
-    .spi_master_sdo1_o (              ),
-    .spi_master_sdo2_o (              ),
-    .spi_master_sdo3_o (              ),
-    .spi_master_sdi0_i (              ),
-    .spi_master_sdi1_i (              ),
-    .spi_master_sdi2_i (              ),
-    .spi_master_sdi3_i (              ),
+    .spi_master_clk_o  ( spi_master.clk     ),
+    .spi_master_csn0_o ( spi_master.csn     ),
+    .spi_master_csn1_o (                    ),
+    .spi_master_csn2_o (                    ),
+    .spi_master_csn3_o (                    ),
+    .spi_master_mode_o ( spi_master.padmode ),
+    .spi_master_sdo0_o ( spi_master.sdo[0]  ),
+    .spi_master_sdo1_o ( spi_master.sdo[1]  ),
+    .spi_master_sdo2_o ( spi_master.sdo[2]  ),
+    .spi_master_sdo3_o ( spi_master.sdo[3]  ),
+    .spi_master_sdi0_i ( spi_master.sdi[0]  ),
+    .spi_master_sdi1_i ( spi_master.sdi[1]  ),
+    .spi_master_sdi2_i ( spi_master.sdi[2]  ),
+    .spi_master_sdi3_i ( spi_master.sdi[3]  ),
 
     .scl_pad_i         ( scl_pad_i    ),
     .scl_pad_o         ( scl_pad_o    ),
@@ -187,6 +190,7 @@ module tb;
 
   initial
   begin
+    int i;
 
     if(!$value$plusargs("MEMLOAD=%s", memload))
       memload = "PRELOAD";
@@ -269,7 +273,7 @@ module tb;
       #5us;
     end else if (TEST == "ARDUINO_PULSEIN") begin
       if (~top_i.gpio_out[0])
-        wait(top_i.gpio_out[0]);	
+        wait(top_i.gpio_out[0]);
       #50us;
       gpio_in[4]=1'b1;
       #500us;
@@ -290,6 +294,11 @@ module tb;
       #20us;
       gpio_in[2]=1'b1;
       #20us;
+    end else if (TEST == "ARDUINO_SPI") begin
+      for(i = 0; i < 2; i++) begin
+        spi_master.wait_csn(1'b0);
+        spi_master.send(0, {>>{8'h38}});
+      end
     end
 
 
