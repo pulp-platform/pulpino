@@ -45,6 +45,8 @@ echo "${Red}"
 ##############################################################################
 
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${TB_PATH}                                                ${TB_PATH}/pkg_spi.sv          || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${TB_PATH}                                                ${TB_PATH}/if_spi_slave.sv     || goto error
+vlog -quiet -sv -work ${LIB_PATH} +incdir+${TB_PATH}                                                ${TB_PATH}/if_spi_master.sv    || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${TB_PATH}                                                ${TB_PATH}/uart.sv             || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${TB_PATH}                                                ${TB_PATH}/i2c_eeprom_model.sv || goto error
 vlog -quiet -sv -work ${LIB_PATH} +incdir+${TB_PATH} +incdir+${RTL_PATH}/includes/                  ${TB_PATH}/tb.sv               || goto error
