@@ -17,7 +17,7 @@ set(UNIX TRUE CACHE STRING "" FORCE)
 # We should probably create a custom system name
 set(CMAKE_SYSTEM_NAME "Linux-CXX")
 
-enable_language(C ASM)
+enable_language(C CXX ASM)
 project (pulp_software C)
 
 enable_testing()
@@ -70,6 +70,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra -Wall -Wno-unused-parameter -Wno-unu
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT} -nostartfiles -Wl,--gc-sections")
 set(BOOT_LINKER_FLAGS      "-L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT_BOOT} -nostartfiles -Wl,--gc-sections")
 
+set(CMAKE_CXX_COMPILER "${CMAKE_C_COMPILER}")
+set(CMAKE_CXX_FLAGS    "${CMAKE_C_FLAGS}")
+
 set(CMAKE_ASM_COMPILER "${CMAKE_C_COMPILER}")
 set(CMAKE_ASM_FLAGS    "${CMAKE_C_FLAGS}")
 
@@ -87,6 +90,9 @@ else()
 endif()
 
 include_directories(libs/sys_lib/inc)
+include_directories(libs/Arduino_lib/core_libs/inc)
+include_directories(libs/Arduino_lib/separate_libs/inc)
+
 set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
 add_library(crt0 OBJECT ${crt0})
 
@@ -130,6 +136,7 @@ add_custom_target(vcompile.core
 
 add_subdirectory(libs/string_lib)
 add_subdirectory(libs/sys_lib)
+add_subdirectory(libs/Arduino_lib)
 add_subdirectory(libs/bench_lib)
 
 add_subdirectory(apps)

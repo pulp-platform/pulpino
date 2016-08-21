@@ -101,6 +101,9 @@ void check(testresult_t *result, void (*start)(), void (*stop)()) {
     return;
   }
 
+  i2c_send_command(I2C_STOP);      //do a stop bit, initiate eeprom write
+  while(i2c_busy());
+
 
   i2c_send_data(0xA1); // write to EEprom with A0,A1=1 1010 B0 A1 A0 R/Wn
   i2c_send_command(I2C_START_WRITE); //do a start bit and send data

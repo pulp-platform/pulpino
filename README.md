@@ -157,3 +157,13 @@ If for some reason you don't want to use the git sub-repository approach, you
 can create a tarball of the whole design by executing `./create-tarball.py`.
 This will download the latest PULPino sources, including all IPS, remove the
 git internal folders and create a tar gz.
+
+
+## Arduino compatible libraries
+
+Most of official Arduino libraries are supported by PULPino software, they can be compiled, simulated and uploded the same way as traditional software programs using the available PULPino utilities.
+You only need to include main.cpp at the begining of the program:
+
+	#include "main.cpp"
+
+Take a look at the `sw/libs/Arduino_libs` subfolder for more information about the status of the currently supported libraries.

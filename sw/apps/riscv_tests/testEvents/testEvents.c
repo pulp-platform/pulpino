@@ -122,8 +122,8 @@ void check_sleep_irq(testresult_t *result, void (*start)(), void (*stop)()) {
   int_disable();
 }
 
-__attribute__ ((interrupt))
-void int_time_cmp(void) {
+
+void ISR_TA_CMP(void) {
   ICP = (1 << 29);
 
   switch (g_sleep_irq_global) {

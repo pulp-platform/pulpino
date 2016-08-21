@@ -19,8 +19,8 @@
 
 volatile int timer_triggered = 0;
 
-__attribute__ ((interrupt))
-void int_time_cmp(void) {
+
+void ISR_TA_CMP(void) {
   ICP = (1 << 29);
   // if (timer_triggered == 1) {
   //   set_gpio_pin_direction(0, DIR_OUT);
@@ -33,8 +33,8 @@ void int_time_cmp(void) {
 
 int main() {
   // Configure ISRs
-  int_init();
-  int_add(29, (void *) int_time_cmp, 0);
+  //int_init();
+  //int_add(29, (void *) int_time_cmp, 0);
   int_enable();
 
   EER = 0xF0000000; // enable all timer events;

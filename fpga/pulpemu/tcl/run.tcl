@@ -1,10 +1,18 @@
-
-if { ![info exists ::env(XILINX_PART)] } {
-  set ::env(XILINX_PART) "xc7z020clg484-1"
+if { ![info exists ::env(BOARD) ]} {
+  set ::env(BOARD) "zedboard"
 }
 
-if { ![info exists ::env(XILINX_BOARD)] } {
-  set ::env(XILINX_BOARD) "em.avnet.com:zynq:zed:c"
+if { ![info exists ::env(XILINX_PART)] } {
+  if {[string equal $::env(BOARD) "zybo"]} {
+    puts "Running implementation for ZYBO board"
+    set ::env(XILINX_PART) "xc7z010clg400-1"
+  } {
+    set ::env(XILINX_PART) "xc7z020clg484-1"
+
+    if { ![info exists ::env(XILINX_BOARD)] } {
+      set ::env(XILINX_BOARD) "em.avnet.com:zynq:zed:c"
+    }
+  }
 }
 
 
@@ -16,7 +24,11 @@ set FPGA_PULPINO ../pulpino
 
 # create project
 create_project pulpemu . -part $::env(XILINX_PART)
-set_property board $::env(XILINX_BOARD) [current_project]
+
+if { [info exists ::env(XILINX_BOARD) ] } {
+  set_property board $::env(XILINX_BOARD) [current_project]
+}
+
 
 # set up meaningful errors
 source ../common/messages.tcl
@@ -47,10 +59,12 @@ add_files -norecurse ../pulpino/pulpino.edf \
 
 update_compile_order -fileset sources_1
 
+# save area
+set_property strategy Flow_AreaOptimized_High [get_runs synth_1]
+
 # synthesize
 synth_design -rtl -name rtl_1
 
-# create_clock -period 4.000 -name ref_clk_i -waveform {0.000 2.000} [get_nets {ref_clk_i}]
 launch_runs synth_1
 wait_on_run synth_1
 open_run synth_1 -name netlist_1

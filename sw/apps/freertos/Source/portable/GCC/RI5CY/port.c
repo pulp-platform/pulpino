@@ -220,8 +220,8 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 BaseType_t xPortStartScheduler( void )
 {
     // Configure ISRs
-    int_init();
-    int_add(TIMER_A_OUTPUT_CMP, (void *) int_time_cmp, 0);
+    //int_init();
+    //int_add(TIMER_A_OUTPUT_CMP, (void *) int_time_cmp, 0);
 
     // enable timer interrupt
     IER = 0xF0000000;
@@ -323,7 +323,8 @@ static void prvSetupTimerInterrupt( void )
  * the context is saved at the start of vPortYieldFromTick().  The tick
  * count is incremented after the context is saved.
  */
-void int_time_cmp(void)
+
+void ISR_TA_CMP(void)
 {
     /* interrupts are disabled until eret */
     vPortYieldFromTick();
@@ -335,7 +336,8 @@ void int_time_cmp(void)
  * tick count.  We don't need to switch context, this can only be done by
  * manual calls to taskYIELD();
  */
-void int_time_cmp(void)
+
+void ISR_TA_CMP(void)
 {
     int mcause;
     csrr(mcause, mcause);
