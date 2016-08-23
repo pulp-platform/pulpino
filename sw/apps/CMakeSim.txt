@@ -230,7 +230,8 @@ macro(add_sim_targets NAME)
   add_custom_target(${NAME}
     DEPENDS ${NAME}.stim.txt
     DEPENDS ${NAME}.slm.cmd
-    DEPENDS ${NAME}.bin)
+    DEPENDS ${NAME}.bin.cmd
+    )
 
 
   ##############################################################################
