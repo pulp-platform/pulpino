@@ -21,7 +21,7 @@ void left_to_right_off_slow(unsigned int first, unsigned int last);
 
 void waste_time() {
   int i;
-  for(i = 0; i < 100; i++) asm volatile("nop");
+  for(i = 0; i < 10000; i++) asm volatile("nop");
 }
 
 #define SW_0_BIT    (1 <<  0)
