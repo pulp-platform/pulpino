@@ -428,6 +428,7 @@ int main(int argc, char **argv)
 
   if (arguments.timeout > 0) {
     console_thread_start();
+    sleep(1);
   }
 
   printf("Starting device\n");
