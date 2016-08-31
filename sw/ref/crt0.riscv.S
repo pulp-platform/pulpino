@@ -120,7 +120,7 @@ ISR_SPIM0_ASM:
   la x1, end_except
   jal x0, ISR_SPIM0
 
-/* ========================================== [ SPI Master recieve/transmit finish handler ] === */
+/* ========================================== [ SPI Master receive/transmit finish handler ] === */
 ISR_SPIM1_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
   sw x1, 0x5C(x2)

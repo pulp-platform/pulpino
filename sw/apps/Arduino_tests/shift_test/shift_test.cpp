@@ -10,7 +10,7 @@ void setup()
   pinMode(1,OUTPUT);
   pinMode(2,OUTPUT);
   pinMode(3,INPUT);
-  pinMode(4,OUTPUT);   
+  pinMode(4,OUTPUT);
 }
 
 void loop()
@@ -18,7 +18,7 @@ void loop()
   shiftOut(1, 2, 0, 5);
   digitalWrite(0,HIGH);
   x=shiftIn(3, 4, 0);
-  Serial.print("Recieved\t");
+  Serial.print("Received\t");
   Serial.print(x);
   Serial.print("\texpected\t");
   Serial.println("147");
@@ -28,6 +28,3 @@ void loop()
   exit(0);	//to end simulation properly
 
 }
-
-
-
