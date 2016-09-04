@@ -2,3 +2,4 @@
 sw/build/*
 imperio
 ipstools
+fpga/sw/hsi
