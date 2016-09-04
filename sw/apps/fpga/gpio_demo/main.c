@@ -48,13 +48,16 @@ int main()
 }
 
 void ISR_GPIO(void) {
-  switch(get_gpio_irq_status()) {
+  int i = get_gpio_irq_status();
+  if (0 == i)
+    return;
+  switch(i) {
     case 1 << 16: printf("Enter pressed\n"); break;
     case 1 << 17: printf("Down pressed\n");  break;
     case 1 << 18: printf("Left pressed\n");  break;
     case 1 << 19: printf("Right pressed\n"); break;
     case 1 << 20: printf("Up pressed\n");    break;
-    default:      printf("Unknown GPIO\n");  break;
+    default:      printf("Unknown GPIO 0x%x\n", i);  break;
   }
 }
 
