@@ -56,7 +56,7 @@
 
 class SPISettings { //the settings parameters are with no use for now as the current design is with only one mode, but left for further hardware modifications
 public:
-  SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode) {	
+  SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode) {
     if (__builtin_constant_p(clock)) {
       init_AlwaysInline(clock, bitOrder, dataMode);
     } else {
@@ -72,19 +72,19 @@ private:
   }
   void init_AlwaysInline(uint32_t clock, uint8_t bitOrder, uint8_t dataMode)
     __attribute__((__always_inline__)) {
-    
+
     int32_t clockSetting = (F_CPU/(2*clock))-1;
     if (clockSetting < 0)
 	clockSetting =0;
     else if (clockSetting > 255)
 	clockSetting =255;
-   
 
-   //Initilize Mode and clock and data length, command and address length 
+
+   //Initialize Mode and clock and data length, command and address length 
    status= (1<<4);	//reset FIFO
    clkdiv= clockSetting;
    spilen= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
-   spidum=0;		//set dummy cycles to be 0 
+   spidum=0;		//set dummy cycles to be 0
    intcfg=0;		//disable interrupt
 
   }
@@ -122,7 +122,7 @@ public:
 
   inline static void beginTransaction(SPISettings settings) {
     if (interruptMode > 0) {
-      unsigned int oldMstatus;   
+      unsigned int oldMstatus;
       csrr(mstatus, oldMstatus);
       noInterrupts();
 
@@ -142,24 +142,24 @@ public:
     }
     inTransactionFlag = 1;
     #endif
-    SPI_STATUS= settings.status;			              
-    SPI_CLKDIV= settings.clkdiv; 			                           
-    SPI_SPILEN= settings.spilen;			              
-    SPI_SPIDUM= settings.spidum;                		
-    SPI_INTCFG= settings.intcfg;   		           
+    SPI_STATUS= settings.status;
+    SPI_CLKDIV= settings.clkdiv;
+    SPI_SPILEN= settings.spilen;
+    SPI_SPIDUM= settings.spidum;
+    SPI_INTCFG= settings.intcfg;
   }
 
   // Write to the SPI bus (MOSI pin) and also receive (MISO pin)
   inline static uint8_t transfer(uint8_t data) {
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
-    SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
+    SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
     SPI_STATUS = 0x0102;		//initiate a write operation with select CS0
     while (((SPI_STATUS >> 24) & 0xFF) >= 8);	//wait until tx buffer has available place
     SPI_TXFIFO=data<<24;
 
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
     //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bitsS
-    SPI_STATUS=0x0101;			//initiate a read operation with select CS0   
+    SPI_STATUS=0x0101;			//initiate a read operation with select CS0
     while (((SPI_STATUS >> 16) & 0xFF) == 0);	//wait until rx buffer has available place
     return (uint8_t)(SPI_RXFIFO);
 
@@ -167,14 +167,14 @@ public:
   inline static uint16_t transfer16(uint16_t data) {
 
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
-    SPI_SPILEN= (16<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
+    SPI_SPILEN= (16<<16);	//set data length to be 8 bits, address and command lengths 0 bits
     SPI_STATUS = 0x0102;		//initiate a write operation with select CS0
     while (((SPI_STATUS >> 24) & 0xFF) >= 8);	//wait until tx buffer has available place
     SPI_TXFIFO=data<<16;
 
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
     //SPI_SPILEN= (16<<16);	//set data length to be 8 bits, address and command lengths 0 bitsS
-    SPI_STATUS=0x0101;			//initiate a read operation with select CS0   
+    SPI_STATUS=0x0101;			//initiate a read operation with select CS0
     while (((SPI_STATUS >> 16) & 0xFF) == 0);	//wait until rx buffer has available place
     return (uint16_t)(SPI_RXFIFO);
 
@@ -183,15 +183,15 @@ public:
     if (count == 0) return;
 
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
-    uint8_t *p = (uint8_t *)buf;    
+    uint8_t *p = (uint8_t *)buf;
     SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
     SPI_STATUS=0x0102;		//initiate a write operation with select CS0
     while (((SPI_STATUS >> 24) & 0xFF) >= 8);	//wait until tx buffer has available place
-    SPI_TXFIFO=(*p)<<24; 
+    SPI_TXFIFO=(*p)<<24;
     while (--count > 0) {
       uint8_t out = *(p + 1);
       while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
-      //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
+      //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
       SPI_STATUS=0x0101;		//initiate a read operation with select CS0
       while (((SPI_STATUS >> 16) & 0xFF) == 0);	//wait until rx buffer has available place
       uint8_t in= (uint8_t)SPI_RXFIFO;
@@ -199,12 +199,12 @@ public:
       while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
       //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
       SPI_STATUS=0x0102;		//initiate a write operation with select CS0
-      while (((SPI_STATUS >> 24) & 0xFF) >= 8);	//wait until tx buffer has available place 
+      while (((SPI_STATUS >> 24) & 0xFF) >= 8);	//wait until tx buffer has available place
       SPI_TXFIFO=out<<24;
       *p++ = in;
     }
     while((SPI_STATUS & 0x01)==0);	//wait until SPI is idle
-    //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits 
+    //SPI_SPILEN= (8<<16);	//set data length to be 8 bits, address and command lengths 0 bits
     SPI_STATUS=0x0101;		//initiate a read operation with select CS0
     while (((SPI_STATUS >> 16) & 0xFF) == 0);	//wait until rx buffer has available place
     *p = (uint8_t)SPI_RXFIFO;
@@ -223,15 +223,15 @@ public:
     #endif
 
     if (interruptMode > 0) {
-      
-      unsigned int oldMstatus;   
+
+      unsigned int oldMstatus;
       csrr(mstatus, oldMstatus);
       noInterrupts();
-      
+
       if (interruptMode == 1) {
         *INTEN = interruptSave;
         csrw(mstatus, oldMstatus);
-      } else   
+      } else
           csrw(mstatus, interruptSave);
     }
   }
@@ -239,7 +239,7 @@ public:
   // Disable the SPI bus
   static void end();
 
-  
+
 private:
   static uint8_t initialized;
   static uint8_t interruptMode; // 0=none, 1=mask, 2=global
