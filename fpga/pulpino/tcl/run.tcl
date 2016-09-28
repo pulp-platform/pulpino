@@ -60,6 +60,14 @@ synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define R
 launch_runs synth_1
 wait_on_run synth_1
 
+# create reports
+exec mkdir -p reports/
+exec rm -rf reports/*
+check_timing                                                            -file reports/pulpino.check_timing.rpt 
+report_timing -max_paths 100 -nworst 100 -delay_type max -sort_by slack -file reports/pulpino.timing_WORST_100.rpt
+report_timing -nworst 1 -delay_type max -sort_by group                  -file reports/pulpino.timing.rpt
+report_utilization -hierarchical                                        -file reports/pulpino.utilization.rpt
+
 # save EDIF netlist
 open_run synth_1
 write_edif -force pulpino.edf
