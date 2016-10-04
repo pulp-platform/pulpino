@@ -67,3 +67,6 @@ little-riscv:
 #or10n:
 #  commit: master
 #  alternatives: [or10n,riscv]
+#riscv:
+#  commit: master
+#  alternatives: [or10n,riscv]
