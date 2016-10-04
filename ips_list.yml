@@ -61,9 +61,9 @@ axi/core2axi:
 adv_dbg_if:
   commit: master
 
-riscv:
+little-riscv:
   commit: master
-  alternatives: [or10n,riscv]
+  alternatives: [or10n,little-riscv]
 #or10n:
 #  commit: master
 #  alternatives: [or10n,riscv]
