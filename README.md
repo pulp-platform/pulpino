@@ -1,4 +1,4 @@
-<img src="doc/datasheet/figures/pulpino_logo_inline1.png" width="400px" />
+<img src="https://raw.githubusercontent.com/pulp-platform/pulpino/master/doc/datasheet/figures/pulpino_logo_inline1.png" width="400px" />
 
 # Introduction
 
