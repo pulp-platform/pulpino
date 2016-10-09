@@ -11,7 +11,7 @@ add_subdirectory(matrixMul8_dotp)
 add_subdirectory(matrixMul16)
 add_subdirectory(matrixMul16_dotp)
 add_subdirectory(matrixMul32)
-#add_subdirectory(motion_detection) # Uses custom RI5CY ISA extensions: Will not work on little-riscv
+add_subdirectory(motion_detection)
 add_subdirectory(convolution)
 add_subdirectory(stencil)
 
