@@ -28,7 +28,7 @@ The components that are affected by the BOARD variable are:
 
 ## Requirements
 
-This synthesis flow has been tested with `Vivado 2015.1`, there is no guarantee
+This synthesis flow has been tested with `Vivado 2015.4`, there is no guarantee
 that it is going to work with any other version without modifications to the
 scripts.
 
