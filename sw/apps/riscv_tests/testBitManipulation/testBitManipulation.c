@@ -14,6 +14,11 @@
 #define BEXTRACT   "p.extract"
 #define BEXTRACTU  "p.extractu"
 #define BINSERT    "p.insert"
+#define BSETR      "p.bsetr"
+#define BCLRR      "p.bclrr"
+#define BEXTRACTR  "p.extractr"
+#define BEXTRACTUR "p.extractur"
+#define BINSERTR   "p.insertr"
 #else
 #define BSET       "l.bset"
 #define BCLR       "l.bclr"
@@ -22,19 +27,33 @@
 #define BINSERT    "l.binsert"
 #endif
 
-void check_bset      (testresult_t *result, void (*start)(), void (*stop)());
-void check_bclr      (testresult_t *result, void (*start)(), void (*stop)());
-void check_bextract  (testresult_t *result, void (*start)(), void (*stop)());
-void check_bextractu (testresult_t *result, void (*start)(), void (*stop)());
-void check_binsert   (testresult_t *result, void (*start)(), void (*stop)());
+void check_bset          (testresult_t *result, void (*start)(), void (*stop)());
+void check_bclr          (testresult_t *result, void (*start)(), void (*stop)());
+void check_bextract      (testresult_t *result, void (*start)(), void (*stop)());
+void check_bextractu     (testresult_t *result, void (*start)(), void (*stop)());
+void check_binsert       (testresult_t *result, void (*start)(), void (*stop)());
 
+#ifdef __riscv
+void check_bset_reg      (testresult_t *result, void (*start)(), void (*stop)());
+void check_bclr_reg      (testresult_t *result, void (*start)(), void (*stop)());
+void check_bextract_reg  (testresult_t *result, void (*start)(), void (*stop)());
+void check_bextractu_reg (testresult_t *result, void (*start)(), void (*stop)());
+void check_binsert_reg   (testresult_t *result, void (*start)(), void (*stop)());
+#endif
 
 testcase_t testcases[] = {
-  { .name = "bset"        , .test = check_bset      },
-  { .name = "bclr"        , .test = check_bclr      },
-  { .name = "bextract"    , .test = check_bextract  },
-  { .name = "bextractu"   , .test = check_bextractu },
-  { .name = "binsert"     , .test = check_binsert   },
+  { .name = "bset"          , .test = check_bset          },
+  { .name = "bclr"          , .test = check_bclr          },
+  { .name = "bextract"      , .test = check_bextract      },
+  { .name = "bextractu"     , .test = check_bextractu     },
+  { .name = "binsert"       , .test = check_binsert       },
+#ifdef __riscv
+  { .name = "bset_reg"      , .test = check_bset_reg      },
+  { .name = "bclr_reg"      , .test = check_bclr_reg      },
+  { .name = "bextract_reg"  , .test = check_bextract_reg  },
+  { .name = "bextractu_reg" , .test = check_bextractu_reg },
+  { .name = "binsert_reg"   , .test = check_binsert_reg   },
+#endif
   {0, 0}
 };
 
@@ -401,3 +420,87 @@ void check_binsert(testresult_t *result, void (*start)(), void (*stop)()) {
 
     check_uint32(result, "binsert", res,  res_binsert[9]);
 }
+
+
+#ifdef __riscv
+
+void check_bset_reg(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  unsigned int res;
+
+  //-----------------------------------------------------------------
+  // Check p.bsetr
+  //-----------------------------------------------------------------
+    for(i=0;i<NumberOfStimuli;i++){
+      asm volatile (BSETR " %[c], %[a], %[b]\n"
+                    : [c] "=r" (res)
+                    : [a] "r"  (op_a_reg[i]), [b] "r" (op_b_reg[i]));
+
+      check_uint32(result, "bsetr", res,  res_bset_reg[i]);
+    }
+}
+
+void check_bclr_reg(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  unsigned int res;
+
+  //-----------------------------------------------------------------
+  // Check p.bclrr
+  //-----------------------------------------------------------------
+    for(i=0;i<NumberOfStimuli;i++){
+      asm volatile (BCLRR " %[c], %[a], %[b]\n"
+                    : [c] "=r" (res)
+                    : [a] "r"  (op_a_reg[i]), [b] "r" (op_b_reg[i]));
+
+      check_uint32(result, "bclrr", res,  res_bclr_reg[i]);
+    }
+}
+
+void check_bextract_reg(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  unsigned int res;
+
+  //-----------------------------------------------------------------
+  // Check p.bextractr
+  //-----------------------------------------------------------------
+    for(i=0;i<NumberOfStimuli;i++){
+      asm volatile (BEXTRACTR " %[c], %[a], %[b]\n"
+                    : [c] "=r" (res)
+                    : [a] "r"  (op_a_reg[i]), [b] "r" (op_b_reg[i]));
+
+      check_uint32(result, "bextractr", res,  res_bextract_reg[i]);
+    }
+}
+void check_bextractu_reg(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  unsigned int res;
+
+  //-----------------------------------------------------------------
+  // Check p.bextractr
+  //-----------------------------------------------------------------
+    for(i=0;i<NumberOfStimuli;i++){
+      asm volatile (BEXTRACTUR " %[c], %[a], %[b]\n"
+                    : [c] "=r" (res)
+                    : [a] "r"  (op_a_reg[i]), [b] "r" (op_b_reg[i]));
+
+      check_uint32(result, "bextractr", res,  res_bextractu_reg[i]);
+    }
+}
+
+void check_binsert_reg(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  unsigned int res;
+
+  //-----------------------------------------------------------------
+  // Check p.binsertr
+  //-----------------------------------------------------------------
+    for(i=0;i<NumberOfStimuli;i++){
+      res = op_c_reg[i];
+      asm volatile (BINSERTR " %[c], %[a], %[b]\n"
+                    : [c] "+r" (res)
+                    : [a] "r"  (op_a_reg[i]), [b] "r" (op_b_reg[i]));
+
+      check_uint32(result, "binsertr", res,  res_binsert_reg[i]);
+    }
+}
+#endif

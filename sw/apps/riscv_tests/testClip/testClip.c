@@ -8,20 +8,29 @@
 #include "testClip_stimuli.h"
 
 #ifdef __riscv
-#define CLIP "p.clip"
-#define CLIPU "p.clipu"
+#define CLIP   "p.clip"
+#define CLIPU  "p.clipu"
+#define CLIPR  "p.clipr"
+#define CLIPUR "p.clipur"
 #else
-#define CLIP "l.clip"
-#define CLIPU "l.clipu"
+#define CLIP   "l.clip"
+#define CLIPU  "l.clipu"
 #endif
 
-void check_clip    (testresult_t *result, void (*start)(), void (*stop)());
-void check_clipu   (testresult_t *result, void (*start)(), void (*stop)());
-
+void check_clip       (testresult_t *result, void (*start)(), void (*stop)());
+void check_clipu      (testresult_t *result, void (*start)(), void (*stop)());
+#ifdef __riscv
+void check_clip_reg   (testresult_t *result, void (*start)(), void (*stop)());
+void check_clipu_reg  (testresult_t *result, void (*start)(), void (*stop)());
+#endif
 
 testcase_t testcases[] = {
   { .name = "clip"        , .test = check_clip       },
   { .name = "clipu"       , .test = check_clipu      },
+#ifdef __riscv
+  { .name = "clipr"       , .test = check_clip_reg   },
+  { .name = "clipur"      , .test = check_clipu_reg  },
+#endif
   {0, 0}
 };
 
@@ -172,3 +181,37 @@ void check_clipu(testresult_t *result, void (*start)(), void (*stop)()) {
 
   check_uint32(result, "clipu", res,  res_clipu[9]);
 }
+
+#ifdef __riscv
+void check_clip_reg(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  unsigned int res;
+
+  //-----------------------------------------------------------------
+  // Check p.clipr
+  //-----------------------------------------------------------------
+  for(i=0;i<NumberOfStimuli;i++) {
+    asm volatile (CLIPR " %[c], %[a],%[b]\n"
+        : [c] "=r" (res)
+        : [a] "r"  (op_a_clip_reg[i]), [b] "r" (op_b_clip_reg[i]));
+
+    check_uint32(result, "clipr", res,  res_clip_reg[i]);
+  }
+}
+void check_clipu_reg(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  unsigned int res;
+
+  //-----------------------------------------------------------------
+  // Check p.clipur
+  //-----------------------------------------------------------------
+  for(i=0;i<NumberOfStimuli;i++) {
+    asm volatile (CLIPUR " %[c], %[a],%[b]\n"
+        : [c] "=r" (res)
+        : [a] "r"  (op_a_clipu_reg[i]), [b] "r" (op_b_clipu_reg[i]));
+
+    check_uint32(result, "clipr", res,  res_clipu_reg[i]);
+  }
+}
+
+#endif
