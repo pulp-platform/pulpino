@@ -21,10 +21,10 @@ interface uart_bus
   logic             parity;
   integer           charnum;
   integer           file;
-
+ 
   initial
   begin
-    tx   = 1'b1;
+    tx   = 1'bZ;
     file = $fopen("stdout/uart", "w");
   end
 
