@@ -31,7 +31,7 @@ testcase_t testcases[] = {
   { .name = "flush",        .test = check_flush        },
   { .name = "sleep_irq",    .test = check_sleep_irq    },
   { .name = "branch_irq",   .test = check_branch_irq   },
-  { .name = "while1_irq",   .test = check_while1_irq   },
+  //{ .name = "while1_irq",   .test = check_while1_irq   },
   {0, 0}
 };
 
@@ -172,7 +172,10 @@ void check_branch_irq(testresult_t *result, void (*start)(), void (*stop)()) {
 }
 
 void check_while1_irq(testresult_t *result, void (*start)(), void (*stop)()) {
-
+  /*
+    This test is commented because it nevers end.
+    TODO: try to find a solution, for instance a TB to kill the simulation
+  */
   killme = 1;
   g_sleep_irq_global = 0;
   ECP = 0xFFFFFFFF;
