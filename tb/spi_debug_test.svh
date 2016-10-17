@@ -2117,7 +2117,7 @@
     end
   endtask
 
-  task debug_test_infinite_loop;
+  task debug_test_infinite_jmp_loop;
     logic [31:0] npc, npc_jmp, lbl_jmp, trigger;
     int i;
     begin
@@ -2129,7 +2129,8 @@
       debug_resume();
 
       trigger = 0;
-      while (trigger !== 5) begin
+      while (trigger < 5) begin
+        debug_halt();
         debug_wait_for_stall();
         debug_mem_lw(dbg_tb_irq_trig_addr, trigger);
         debug_resume();
@@ -2157,6 +2158,42 @@
     end
   endtask
 
+  task debug_test_infinite_branch_loop;
+    logic [31:0] npc, lbl_branch, trigger;
+    int i;
+    begin
+      $display("[DEBUG IRQ] Running test_infinite_branch_loop");
+      debug_wait_for_stall();
+
+      debug_gpr_read(5'd17, lbl_branch);
+      debug_resume();
+
+      trigger = 0;
+      while (trigger < 5) begin
+        debug_halt();
+        debug_wait_for_stall();
+        debug_mem_lw(dbg_tb_irq_trig_addr, trigger);
+        debug_resume();
+      end
+
+      npc = 0;
+      do begin
+        debug_halt();
+        debug_wait_for_stall();
+        debug_read(`DBG_NPC_REG, npc);
+        if (npc == lbl_branch)
+          debug_gpr_write(16,  32'h0); //unlock the infinite branch loop
+        debug_resume();
+      end while(npc != lbl_branch);
+
+      // and finally write some stuff to the GPRs
+      debug_wait_for_stall();
+      debug_gpr_write(18, 32'hABBA_ABBA);
+
+      debug_resume();
+    end
+  endtask
+
   task debug_irq_tests;
     logic [31:0] testcase_nr;
     begin
@@ -2167,7 +2204,8 @@
         debug_mem_lw(dbg_testcase_addr, testcase_nr);
 
         unique case (testcase_nr)
-          02: debug_test_infinite_loop();
+          02: debug_test_infinite_jmp_loop();
+          03: debug_test_infinite_branch_loop();
           32'hFFFF_FFFF: break;
           default: $display("ERROR: Unknown testcase %d", testcase_nr);
         endcase
