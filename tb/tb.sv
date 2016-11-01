@@ -236,6 +236,8 @@ module tb;
 
     if(TEST == "DEBUG") begin
       debug_tests();
+    end else if (TEST == "DEBUG_IRQ") begin
+      debug_irq_tests();
     end else if (TEST == "MEM_DPI") begin
       mem_dpi(4567);
     end else if (TEST == "ARDUINO_UART") begin
