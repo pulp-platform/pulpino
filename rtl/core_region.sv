@@ -77,7 +77,6 @@ module core_region
   logic [31:0]  core_data_rdata;
   logic [31:0]  core_data_wdata;
 
-
   // signals to/from AXI mem
   logic                        is_axi_addr;
   logic                        axi_mem_req;

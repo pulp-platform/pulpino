@@ -168,6 +168,13 @@ illegal_insn_handler:
   la x1, end_except
   jal x0, illegal_insn_handler_c
 
+/* ================================= [ ecall instruction handler] === */
+ecall_insn_handler:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ecall_insn_handler_c
 
 // saves all caller-saved registers (except return address)
 store_regs:
@@ -278,4 +285,4 @@ _fini:
 
   // ecall handler
   .org 0x88
-  jal x0, illegal_insn_handler
+  jal x0, ecall_insn_handler

@@ -174,7 +174,6 @@ if(${RISCV})
   add_subdirectory(freertos)
   add_subdirectory(boot_code)
 endif()
-
 add_subdirectory(sequential_tests)
 add_subdirectory(imperio_tests)
 
