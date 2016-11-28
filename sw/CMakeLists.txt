@@ -138,5 +138,6 @@ add_subdirectory(libs/string_lib)
 add_subdirectory(libs/sys_lib)
 add_subdirectory(libs/Arduino_lib)
 add_subdirectory(libs/bench_lib)
+add_subdirectory(libs/beebs_lib)
 
 add_subdirectory(apps)

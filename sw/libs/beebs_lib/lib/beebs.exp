@@ -1,0 +1,175 @@
+# Copyright (C) 2014 Embecosm Limited.
+
+# Contributor Andrew Burgess <andrew.burgess@embecosm.com>
+
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation; either version 3 of the License, or (at your option)
+# any later version.
+
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+
+# You should have received a copy of the GNU General Public License along
+# with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Called for each binary within each benchmark.  Return true
+# (non-zero) if we should run this benchmark, otherwise, return false
+# (zero).
+proc default_beebs_filter_benchmark { benchmark filename } {
+    return 1
+}
+
+# Called once before we run any benchmark tests.
+proc default_beebs_setup_before_all_benchmarks { } {
+    return 1;
+}
+
+# Called once after we've finished all the benchmark tests.
+proc default_beebs_cleanup_after_all_benchmarks { } {
+    return 1
+}
+
+# Called once for every benchmark directory before any tests in that
+# directory are run.
+proc default_beebs_setup_before_benchmark { benchmark filename } {
+    return 1;
+}
+
+# Called once for every benchmark directory after all the tests in
+# that directory are run.
+proc default_beebs_cleanup_after_benchmark { benchmark filename } {
+    return 1
+}
+
+# Give an announcement before running a benchmark.
+proc default_beebs_announce { benchmark filename } {
+    verbose -log "\n - - - - -     $benchmark     - - - - -\n"
+}
+
+# Method called to run benchmarks.  Passed the path to the benchmark
+# directory DIR, the benchmark name BENCHMARK, and the binary to
+# execute FILE.  The parameter FILE will not include the directory
+# suffix, while the path DIR does already include the benchmark name.
+proc default_beebs_run_benchmark { benchmark filename } {
+    global beebs_run_benchmark_result
+    set beebs_run_benchmark_result [beebs_load "${filename}"]
+    return 1
+}
+
+# Main loop to run all benchmarks.
+proc beebs_run_all_benchmarks { } {
+    global beebs_run_benchmark_result
+    global benchmarks
+    global objdir
+    global srcdir
+
+    # Perform any setup required before running any benchmarks.
+    if { [catch {beebs_setup_before_all_benchmarks} msg] } {
+        error "Failed to setup before all benchmarks\n$msg"
+    }
+
+    # First, need to find all of the benchmark files.  The BENCHMARKS
+    # variable contains all the directories that can contain
+    # benchmarks, the benchmarks themselves are the executable files
+    # within those directories.
+    foreach benchmark $benchmarks {
+
+        # Now find all the executable files to run.
+        set benchmark_dir "$objdir/src/$benchmark"
+        set benchmark_file "${benchmark_dir}/${benchmark}"
+
+        if { [file isfile ${benchmark_file}] && [file executable ${benchmark_file}]} {
+
+            # Filter.
+            if { ![beebs_filter_benchmark $benchmark $benchmark_file] } {
+                unsupported "$benchmark"
+                continue;
+            }
+
+            beebs_announce $benchmark $benchmark_file
+
+            # Setup.
+            if { [catch {beebs_setup_before_benchmark $benchmark $benchmark_file} msg] } {
+                verbose -log "Failed to setup before benchmark '$benchmark' ($benchmark_file)\n$msg"
+                unresolved "$benchmark"
+            }
+
+            # Run.
+            if { [catch {beebs_run_benchmark $benchmark $benchmark_file} msg] } {
+                fail "$benchmark"
+                error "Failed to run benchmark '$benchmark' ($benchmark_file)\n$msg"
+            } {
+                if { [lindex $beebs_run_benchmark_result 0 ] == "pass" } {
+                    pass "$benchmark"
+                } {
+                    verbose -log "Fail $benchmark: $beebs_run_benchmark_result"
+                    fail "$benchmark"
+                }
+            }
+
+            # Cleanup.
+            if { [catch {beebs_cleanup_after_benchmark $benchmark $benchmark_file} msg] } {
+                error "Failed to cleanup after benchmark '$benchmark' ($benchmark_file)\n$msg"
+            }
+        } else {
+            verbose -log "Missing executable for benchmark '$benchmark' looked at '$benchmark_file'"
+            unresolved "$benchmark"
+        }
+    }
+
+    # Now cleanup after we've finished running all the benchmarks.
+    if { [catch {beebs_cleanup_after_all_benchmarks} msg] } {
+        error "Failed to cleanup after all benchmarks\n$msg"
+    }
+}
+
+proc beebs_results_root { } {
+    set dir [pwd]
+    set dir "$dir/results"
+    file mkdir ${dir}
+    return ${dir}
+}
+
+proc beebs_results_directory { benchmark file } {
+    set dir [beebs_results_root]
+    set dir "${dir}/${benchmark}/${file}/"
+    file mkdir ${dir}
+    return ${dir}
+}
+
+proc beebs_restore_default_procs {} {
+    uplevel #0 {
+        proc beebs_setup_before_all_benchmarks { } {
+            return [default_beebs_setup_before_all_benchmarks]
+        }
+        proc beebs_filter_benchmark { b f } {
+            return [default_beebs_filter_benchmark $b $f]
+        }
+        proc beebs_announce { b f } {
+            return [default_beebs_announce $b $f]
+        }
+        proc beebs_setup_before_benchmark { b f } {
+            return [default_beebs_setup_before_benchmark $b $f]
+        }
+        proc beebs_run_benchmark { b f } {
+            return [default_beebs_run_benchmark $b $f]
+        }
+        proc beebs_cleanup_after_benchmark { b f } {
+            return [default_beebs_cleanup_after_benchmark $b $f]
+        }
+        proc beebs_cleanup_after_all_benchmarks { } {
+            return [default_beebs_cleanup_after_all_benchmarks]
+        }
+    }
+}
+
+proc beebs_init { test_file_name } {
+    beebs_restore_default_procs
+}
+
+proc beebs_finish {} {
+    # ... nothing yet ...
+}
