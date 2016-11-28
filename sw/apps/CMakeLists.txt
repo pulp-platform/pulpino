@@ -163,7 +163,7 @@ endmacro()
 
 add_subdirectory(helloworld)
 add_subdirectory(Arduino_tests)
-
+add_subdirectory(dhrystone)
 # add_subdirectory(debug)
 add_subdirectory(bench)
 add_subdirectory(beebs)

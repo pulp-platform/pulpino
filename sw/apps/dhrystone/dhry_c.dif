@@ -1,0 +1,141 @@
+7c7
+<  *  Version:    C, Version 2.1
+---
+>  *  Version:    C, Version 2.0
+9c9
+<  *  File:       dhry.h (part 1 of 3)
+---
+>  *  File:       dhry_global.h (part 1 of 3)
+11c11
+<  *  Date:       May 25, 1988
+---
+>  *  Date:       March 3, 1988
+30c30
+<  *              In addition, Berkeley UNIX system calls "times ()" or "time ()"
+---
+>  *              In addition, UNIX system calls "times ()" or "time ()"
+44c44
+<  *      Please send results to Rick Richardson and/or Reinhold Weicker.
+---
+>  *      Please send results to Reinhold Weicker and/or Rick Richardson.
+59c59
+<  *  History:    This version C/2.1 has been made for two reasons:
+---
+>  *  History:    This version C/2.0 has been made for two reasons:
+123,129d122
+<  *              Version 2.1 is identical to version 2.0 distributed via
+<  *              the UNIX network Usenet in March 1988 except that it corrects
+<  *              some minor deficiencies that were found by users of version 2.0.
+<  *              The only change within the measurement loop is that a
+<  *              non-executed "else" part was added to the "if" statement in
+<  *              Func_3, and a non-executed "else" part removed from Proc_3.
+<  *
+165,167c158,160
+<  *              -DHZ=nnn
+<  *                      In Berkeley UNIX, the function "times" returns process
+<  *                      time in 1/HZ seconds, with HZ = 60 for most systems.
+---
+>  *              -DHZ=nnn                (default: 60)
+>  *                      The function "times" returns process times in
+>  *                      1/HZ seconds, with HZ = 60 for most systems.
+169c162
+<  *                      A VALUE.
+---
+>  *                      THE DEFAULT VALUE.
+176,178c169,171
+<  *  - dhry.h (this file, containing global definitions and comments)
+<  *  - dhry_1.c (containing the code corresponding to Ada package Pack_1)
+<  *  - dhry_2.c (containing the code corresponding to Ada package Pack_2)
+---
+>  *  - dhry_global.h (this file, containing global definitions and comments)
+>  *  - dhry_pack_1.c (containing the code corresponding to Ada package Pack_1)
+>  *  - dhry_pack_2.c (containing the code corresponding to Ada package Pack_2)
+350a344
+> #ifndef TIMES
+353,354c347,354
+<                 /* Use times(2) time function unless    */
+<                 /* explicitly defined otherwise         */
+---
+> #endif
+>                 /* Use "times" function for measurement */
+>                 /* unless explicitly defined otherwise  */
+> #ifndef HZ
+> #define HZ      60
+> #endif
+>                 /* Use HZ = 60 for "times" function     */
+>                 /* unless explicitly defined otherwise  */
+363c363
+<                 /* Berkeley UNIX C returns process times in seconds/HZ */
+---
+>                 /* UNIX C returns process times in seconds/HZ */
+7c7
+<  *  Version:    C, Version 2.1
+---
+>  *  Version:    C, Version 2.0
+9c9
+<  *  File:       dhry_1.c (part 2 of 3)
+---
+>  *  File:       dhry_pack_1.c (part 2 of 3)
+11c11
+<  *  Date:       May 25, 1988
+---
+>  *  Date:       March 3, 1988
+18c18
+< #include "dhry.h"
+---
+> #include "dhry_global.h"
+50,51d49
+< #define Too_Small_Time 120
+<                 /* Measurements should last at least about 2 seconds */
+55a54,55
+> #endif
+> 
+58d57
+< #endif
+73a73
+> 
+84a85
+> 
+99,100c100,102
+<         /* Was missing in published program. Without this statement,    */
+<         /* Arr_2_Glob [8][7] would have an undefined value.             */
+---
+>         /* Was missing in published program. Without this               */
+>         /* initialization, Arr_2_Glob [8][7] would have an              */
+>         /* undefined value.                                             */
+105c107
+<   printf ("Dhrystone Benchmark, Version 2.1 (Language: C)\n");
+---
+>   printf ("Dhrystone Benchmark, Version 2.0 (Language: C)\n");
+281c283
+< /******************/
+---
+> /**********************/
+338c340
+< /******************/
+---
+> /**********************/
+347a350,351
+>   else /* not executed */
+>     Int_Glob = 100;
+349a354
+> 
+7c7
+<  *  Version:    C, Version 2.1
+---
+>  *  Version:    C, Version 2.0
+9c9
+<  *  File:       dhry_2.c (part 3 of 3)
+---
+>  *  File:       dhry_pack_2.c (part 3 of 3)
+11c11
+<  *  Date:       May 25, 1988
+---
+>  *  Date:       March 3, 1988
+18c18
+< #include "dhry.h"
+---
+> #include "dhry_global.h"
+189,190d188
+<   else /* not executed */
+<     return (false);
