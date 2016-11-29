@@ -30,7 +30,6 @@
 #endif
 
 #ifdef HAVE_BOARDSUPPORT_H
-#warning ma perche
 #include "boardsupport.h"
 #else
 // Default board support is here
