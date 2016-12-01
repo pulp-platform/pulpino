@@ -40,8 +40,10 @@ macro(add_application NAME SOURCE_FILES)
     set_target_properties(${NAME}.elf PROPERTIES COMPILE_FLAGS ${ARG_FLAGS})
   endif()
 
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
+
   # link libraries
-  target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench Arduino_separate Arduino_core bench string sys)
+  target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench Arduino_separate Arduino_core bench string sys m)
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
