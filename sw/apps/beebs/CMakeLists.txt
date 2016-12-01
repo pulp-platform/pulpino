@@ -76,5 +76,7 @@ add_subdirectory(statemate)
 add_subdirectory(stb_perlin)
 add_subdirectory(stringsearch1)
 add_subdirectory(strstr)
+add_subdirectory(tarai)
+add_subdirectory(template)
 add_subdirectory(ud)
-
+add_subdirectory(whetstone)
