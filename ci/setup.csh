@@ -1,6 +1,6 @@
 #!/bin/tcsh
 
-setenv PATH /usr/scratch2/larain/haugoug/artefacts/riscv_gcc/2.2.26/bin/:$PATH
+setenv PATH /usr/scratch2/larain/haugoug/artefacts/riscv_gcc/2.3.2/bin/:$PATH
 
 ./update-ips.py git@iis-git.ee.ethz.ch   || exit 1
 
