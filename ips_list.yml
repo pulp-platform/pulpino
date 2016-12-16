@@ -50,7 +50,7 @@ axi/axi_node:
 axi/axi_slice:
   commit: master
 axi/axi_slice_dc:
-  commit: pulp-dev-041016-015900
+  commit: master
 axi/axi_spi_master:
   commit: master
 axi/axi_spi_slave:
