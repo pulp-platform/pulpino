@@ -1,0 +1,74 @@
+CLARIFICATION
+There seems to have been a great deal of confusion over what this
+benchmark measures, and how to use these results.  Let me try to clarify
+this:
+
+	1) DHRYSTONE is a measure of processor+compiler efficiency in
+	   executing a 'typical' program.  The 'typical' program was
+	   designed by measuring statistics on a great number of
+	   'real' programs.  The 'typical' program was then written
+	   by Reinhold P. Weicker using these statistics.  The
+	   program is balanced according to statement type, as well
+	   as data type.
+
+	2) DHRYSTONE does not use floating point.  Typical programs don't.
+
+	3) DHRYSTONE does not do I/O.  Typical programs do, but then
+	   we'd have a whole can of worms opened up.
+
+	4) DHRYSTONE does not contain much code that can be optimized
+	   by vector processors.  That is why a CRAY doesn't look real
+	   fast, they weren't built to do this sort of computing.
+
+	5) DHRYSTONE does not measure OS performance, as it avoids
+	   calling the O.S.  The O.S. is indicated in the results only
+	   to help in identifying the compiler technology.
+
+	6) DHRYSTONE is not perfect, but is a hell of a lot better than
+	   the "sieve", or "SI".
+
+	7) DHRYSTONE gives results in dhrystones/second.  Bigger
+	   numbers are better.  As a baseline, the original IBM PC
+	   gives around 300-400 dhrystones/second with a good compiler.
+	   The fastest machines today are approaching 100,000.
+
+If somebody asked me to pick out the best machine for the money, I
+wouldn't look at just the results of DHRYSTONE.  I'd probably:
+
+	1) Run DHRYSTONE to get a feel for the compiler+processor
+	   speed.
+	2) Run any number of benchmarks to check disk I/O bandwidth,
+	   using both sequential and random read/writes.
+	3) Run a multitasking benchmark to check multi-user response
+	   time.  Typically, these benchmarks run several types of
+	   programs such as editors, shell scripts, sorts, compiles,
+	   and plot the results against the number of simulated users.
+	4) If appropriate for the intended use, run something like
+	   WHETSTONE, to determine floating point performance.
+	5) If appropriate for intended use, run some programs which do
+	   vector and matrix computations.
+	6) Figure out what the box will:
+		- cost to buy
+		- cost to operate and maintain
+		- be worth when it is sold
+		- be worth if the manufacturer goes out of business
+	7) Having done the above, I probably have a hand-full of
+	   machines which meet my price/performance requirements.
+	   Now, I find out if the applications programs I'd like
+	   to use will run on any of these machines.  I also find
+	   out how much interest people have in writing new software
+	   for the machine, and look carefully at the migration path
+	   I will have to take when I reach the (inevitable) limits
+	   of the machine.
+
+To summarize, DHRYSTONES by themselves are not anything more than
+a way to win free beers when arguing 'Box-A versus Box-B' religion.
+They do provide insight into Box-A/Compiler-A versus Box-A/Compiler-B
+comparisons.
+
+			Rick Richardson
+			PC Research, Inc.
+			(201) 389-8963 (9-17 EST)
+			(201) 542-3734 (7-9,17-24 EST)
+			...!uunet!pcrat!rick	(normal mail)
+			...!uunet!pcrat!dry2	(results only)
