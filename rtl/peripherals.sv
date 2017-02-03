@@ -9,6 +9,8 @@
 // specific language governing permissions and limitations under the License.
 
 `include "axi_bus.sv"
+`include "apb_bus.sv"
+`include "debug_bus.sv"
 `include "config.sv"
 
 module peripherals
@@ -27,6 +29,8 @@ module peripherals
 
     AXI_BUS.Master axi_spi_master,
 
+    DEBUG_BUS.Master debug,
+
     input  logic             spi_clk_i,
     input  logic             testmode_i,
     input  logic             spi_cs_i,
@@ -39,7 +43,6 @@ module peripherals
     input  logic             spi_sdi1_i,
     input  logic             spi_sdi2_i,
     input  logic             spi_sdi3_i,
-
 
     AXI_BUS.Slave  slave,
 
@@ -96,35 +99,37 @@ module peripherals
     output logic       [31:0] boot_addr_o
   );
 
-  localparam APB_ADDR_WIDTH  = 12;
+  localparam APB_ADDR_WIDTH  = 32;
   localparam APB_NUM_SLAVES  = 8;
 
-  logic                                s_penable;
-  logic                                s_pwrite;
-  logic        [APB_ADDR_WIDTH-1:0]    s_paddr;
-  logic        [APB_NUM_SLAVES-1:0]    s_psel;
-  logic                      [31:0]    s_pwdata;
-  logic [APB_NUM_SLAVES-1:0] [31:0]    s_prdata;
-  logic        [APB_NUM_SLAVES-1:0]    s_pready;
-  logic        [APB_NUM_SLAVES-1:0]    s_pslverr;
+  APB_BUS s_apb_bus();
 
+  APB_BUS s_uart_bus();
+  APB_BUS s_gpio_bus();
+  APB_BUS s_spi_bus();
+  APB_BUS s_timer_bus();
+  APB_BUS s_event_unit_bus();
+  APB_BUS s_i2c_bus();
+  APB_BUS s_fll_bus();
+  APB_BUS s_soc_ctrl_bus();
+  APB_BUS s_debug_bus();
 
   logic [1:0]   s_spim_event;
   logic [3:0]   timer_irq;
   logic [31:0]  peripheral_clock_gate_ctrl;
   logic [31:0]  clk_int;
-  logic s_uart_event;
-  logic i2c_event;
-  logic s_power_event;
-  logic s_gpio_event;
+  logic         s_uart_event;
+  logic         i2c_event;
+  logic         s_power_event;
+  logic         s_gpio_event;
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
   /// Peripheral Clock Gating                                    ///
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
-   
-  generate 
+
+  generate
      genvar i;
        for (i = 0; i < APB_NUM_SLAVES; i = i + 1) begin
         cluster_clock_gating core_clock_gate
@@ -184,24 +189,46 @@ module peripherals
       .AXI_DATA_WIDTH ( AXI_DATA_WIDTH     ),
       .AXI_USER_WIDTH ( AXI_USER_WIDTH     ),
       .AXI_ID_WIDTH   ( AXI_SLAVE_ID_WIDTH ),
-      .APB_ADDR_WIDTH ( APB_ADDR_WIDTH     ),
-      .APB_NUM_SLAVES ( APB_NUM_SLAVES     )
+      .APB_ADDR_WIDTH ( APB_ADDR_WIDTH     )
   )
   axi2apb_i
   (
-    .clk_i     ( clk_i     ),
-    .rst_ni    ( rst_n     ),
+    .clk_i     ( clk_i      ),
+    .rst_ni    ( rst_n      ),
+    .test_en_i ( testmode_i ),
 
-    .axi_slave ( slave     ),
+    .axi_slave ( slave      ),
 
-    .penable   ( s_penable ),
-    .pwrite    ( s_pwrite  ),
-    .paddr     ( s_paddr   ),
-    .psel      ( s_psel    ),
-    .pwdata    ( s_pwdata  ),
-    .prdata    ( s_prdata  ),
-    .pready    ( s_pready  ),
-    .pslverr   ( s_pslverr )
+    .apb_master( s_apb_bus  )
+  );
+
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// APB Bus                                                    ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
+
+  periph_bus_wrap
+  #(
+     .APB_ADDR_WIDTH( APB_ADDR_WIDTH ),
+     .APB_DATA_WIDTH( 32             )
+  )
+  periph_bus_i
+  (
+     .clk_i             ( clk_i            ),
+     .rst_ni            ( rst_n            ),
+
+     .apb_slave         ( s_apb_bus        ),
+
+     .uart_master       ( s_uart_bus       ),
+     .gpio_master       ( s_gpio_bus       ),
+     .spi_master        ( s_spi_bus        ),
+     .timer_master      ( s_timer_bus      ),
+     .event_unit_master ( s_event_unit_bus ),
+     .i2c_master        ( s_i2c_bus        ),
+     .fll_master        ( s_fll_bus        ),
+     .soc_ctrl_master   ( s_soc_ctrl_bus   ),
+     .debug_master      ( s_debug_bus      )
   );
 
   //////////////////////////////////////////////////////////////////
@@ -215,14 +242,14 @@ module peripherals
     .CLK      ( clk_int[1]   ),
     .RSTN     ( rst_n        ),
 
-    .PSEL     ( s_psel[0]    ),
-    .PENABLE  ( s_penable    ),
-    .PWRITE   ( s_pwrite     ),
-    .PADDR    ( s_paddr[4:2] ),
-    .PWDATA   ( s_pwdata     ),
-    .PRDATA   ( s_prdata[0]  ),
-    .PREADY   ( s_pready[0]  ),
-    .PSLVERR  ( s_pslverr[0] ),
+    .PSEL     ( s_uart_bus.psel    ),
+    .PENABLE  ( s_uart_bus.penable    ),
+    .PWRITE   ( s_uart_bus.pwrite     ),
+    .PADDR    ( s_uart_bus.paddr[4:2] ),
+    .PWDATA   ( s_uart_bus.pwdata     ),
+    .PRDATA   ( s_uart_bus.prdata  ),
+    .PREADY   ( s_uart_bus.pready  ),
+    .PSLVERR  ( s_uart_bus.pslverr ),
 
     .INT      ( s_uart_event ),   //Interrupt output
 
@@ -249,14 +276,14 @@ module peripherals
     .HCLK       ( clk_int[2]   ),
     .HRESETn    ( rst_n        ),
 
-    .PADDR      ( s_paddr      ),
-    .PWDATA     ( s_pwdata     ),
-    .PWRITE     ( s_pwrite     ),
-    .PSEL       ( s_psel[1]    ),
-    .PENABLE    ( s_penable    ),
-    .PRDATA     ( s_prdata[1]  ),
-    .PREADY     ( s_pready[1]  ),
-    .PSLVERR    ( s_pslverr[1] ),
+    .PADDR      ( s_gpio_bus.paddr[11:0]),
+    .PWDATA     ( s_gpio_bus.pwdata     ),
+    .PWRITE     ( s_gpio_bus.pwrite     ),
+    .PSEL       ( s_gpio_bus.psel       ),
+    .PENABLE    ( s_gpio_bus.penable    ),
+    .PRDATA     ( s_gpio_bus.prdata     ),
+    .PREADY     ( s_gpio_bus.pready     ),
+    .PSLVERR    ( s_gpio_bus.pslverr    ),
 
     .gpio_in      ( gpio_in       ),
     .gpio_out     ( gpio_out      ),
@@ -281,14 +308,14 @@ module peripherals
     .HCLK         ( clk_int[3]   ),
     .HRESETn      ( rst_n        ),
 
-    .PADDR        ( s_paddr      ),
-    .PWDATA       ( s_pwdata     ),
-    .PWRITE       ( s_pwrite     ),
-    .PSEL         ( s_psel[2]    ),
-    .PENABLE      ( s_penable    ),
-    .PRDATA       ( s_prdata[2]  ),
-    .PREADY       ( s_pready[2]  ),
-    .PSLVERR      ( s_pslverr[2] ),
+    .PADDR        ( s_spi_bus.paddr[11:0]),
+    .PWDATA       ( s_spi_bus.pwdata     ),
+    .PWRITE       ( s_spi_bus.pwrite     ),
+    .PSEL         ( s_spi_bus.psel       ),
+    .PENABLE      ( s_spi_bus.penable    ),
+    .PRDATA       ( s_spi_bus.prdata     ),
+    .PREADY       ( s_spi_bus.pready     ),
+    .PSLVERR      ( s_spi_bus.pslverr    ),
 
     .events_o     ( s_spim_event ),
 
@@ -320,14 +347,14 @@ module peripherals
     .HCLK       ( clk_int[4]   ),
     .HRESETn    ( rst_n        ),
 
-    .PADDR      ( s_paddr      ),
-    .PWDATA     ( s_pwdata     ),
-    .PWRITE     ( s_pwrite     ),
-    .PSEL       ( s_psel[3]    ),
-    .PENABLE    ( s_penable    ),
-    .PRDATA     ( s_prdata[3]  ),
-    .PREADY     ( s_pready[3]  ),
-    .PSLVERR    ( s_pslverr[3] ),
+    .PADDR      ( s_timer_bus.paddr[11:0]),
+    .PWDATA     ( s_timer_bus.pwdata     ),
+    .PWRITE     ( s_timer_bus.pwrite     ),
+    .PSEL       ( s_timer_bus.psel       ),
+    .PENABLE    ( s_timer_bus.penable    ),
+    .PRDATA     ( s_timer_bus.prdata     ),
+    .PREADY     ( s_timer_bus.pready     ),
+    .PSLVERR    ( s_timer_bus.pslverr    ),
 
     .irq_o      ( timer_irq    )
   );
@@ -345,14 +372,14 @@ module peripherals
     .HCLK             ( clk_int[5]   ),
     .HRESETn          ( rst_n        ),
 
-    .PADDR            ( s_paddr      ),
-    .PWDATA           ( s_pwdata     ),
-    .PWRITE           ( s_pwrite     ),
-    .PSEL             ( s_psel[4]    ),
-    .PENABLE          ( s_penable    ),
-    .PRDATA           ( s_prdata[4]  ),
-    .PREADY           ( s_pready[4]  ),
-    .PSLVERR          ( s_pslverr[4] ),
+    .PADDR            ( s_event_unit_bus.paddr[11:0]),
+    .PWDATA           ( s_event_unit_bus.pwdata     ),
+    .PWRITE           ( s_event_unit_bus.pwrite     ),
+    .PSEL             ( s_event_unit_bus.psel       ),
+    .PENABLE          ( s_event_unit_bus.penable    ),
+    .PRDATA           ( s_event_unit_bus.prdata     ),
+    .PREADY           ( s_event_unit_bus.pready     ),
+    .PSLVERR          ( s_event_unit_bus.pslverr    ),
 
     .irq_i            ( {timer_irq, s_spim_event, s_gpio_event, s_uart_event, i2c_event, 23'b0} ),
     .event_i          ( {timer_irq, s_spim_event, s_gpio_event, s_uart_event, i2c_event, 23'b0} ),
@@ -376,14 +403,14 @@ module peripherals
     .HCLK         ( clk_int[6]    ),
     .HRESETn      ( rst_n         ),
 
-    .PADDR        ( s_paddr       ),
-    .PWDATA       ( s_pwdata      ),
-    .PWRITE       ( s_pwrite      ),
-    .PSEL         ( s_psel[5]     ),
-    .PENABLE      ( s_penable     ),
-    .PRDATA       ( s_prdata[5]   ),
-    .PREADY       ( s_pready[5]   ),
-    .PSLVERR      ( s_pslverr[5]  ),
+    .PADDR        ( s_i2c_bus.paddr[11:0] ),
+    .PWDATA       ( s_i2c_bus.pwdata      ),
+    .PWRITE       ( s_i2c_bus.pwrite      ),
+    .PSEL         ( s_i2c_bus.psel        ),
+    .PENABLE      ( s_i2c_bus.penable     ),
+    .PRDATA       ( s_i2c_bus.prdata      ),
+    .PREADY       ( s_i2c_bus.pready      ),
+    .PSLVERR      ( s_i2c_bus.pslverr     ),
     .interrupt_o  ( i2c_event     ),
     .scl_pad_i    ( scl_pad_i     ),
     .scl_pad_o    ( scl_pad_o     ),
@@ -405,14 +432,14 @@ module peripherals
       .HCLK        ( clk_int[7]   ),
       .HRESETn     ( rst_n        ),
 
-      .PADDR       ( s_paddr      ),
-      .PWDATA      ( s_pwdata     ),
-      .PWRITE      ( s_pwrite     ),
-      .PSEL        ( s_psel[6]    ),
-      .PENABLE     ( s_penable    ),
-      .PRDATA      ( s_prdata[6]  ),
-      .PREADY      ( s_pready[6]  ),
-      .PSLVERR     ( s_pslverr[6] ),
+      .PADDR       ( s_fll_bus.paddr[11:0]),
+      .PWDATA      ( s_fll_bus.pwdata     ),
+      .PWRITE      ( s_fll_bus.pwrite     ),
+      .PSEL        ( s_fll_bus.psel       ),
+      .PENABLE     ( s_fll_bus.penable    ),
+      .PRDATA      ( s_fll_bus.prdata     ),
+      .PREADY      ( s_fll_bus.pready     ),
+      .PSLVERR     ( s_fll_bus.pslverr    ),
 
       .fll1_req    ( fll1_req_o   ),
       .fll1_wrn    ( fll1_wrn_o   ),
@@ -446,18 +473,55 @@ module peripherals
       .HCLK        ( clk_i        ),
       .HRESETn     ( rst_n        ),
 
-      .PADDR       ( s_paddr      ),
-      .PWDATA      ( s_pwdata     ),
-      .PWRITE      ( s_pwrite     ),
-      .PSEL        ( s_psel[7]    ),
-      .PENABLE     ( s_penable    ),
-      .PRDATA      ( s_prdata[7]  ),
-      .PREADY      ( s_pready[7]  ),
-      .PSLVERR     ( s_pslverr[7] ),
+      .PADDR       ( s_soc_ctrl_bus.paddr[11:0]),
+      .PWDATA      ( s_soc_ctrl_bus.pwdata     ),
+      .PWRITE      ( s_soc_ctrl_bus.pwrite     ),
+      .PSEL        ( s_soc_ctrl_bus.psel       ),
+      .PENABLE     ( s_soc_ctrl_bus.penable    ),
+      .PRDATA      ( s_soc_ctrl_bus.prdata     ),
+      .PREADY      ( s_soc_ctrl_bus.pready     ),
+      .PSLVERR     ( s_soc_ctrl_bus.pslverr    ),
 
       .pad_cfg_o   ( pad_cfg_o                  ),
       .clk_gate_o  ( peripheral_clock_gate_ctrl ),
       .pad_mux_o   ( pad_mux_o                  ),
       .boot_addr_o ( boot_addr_o                )
     );
+
+  //////////////////////////////////////////////////////////////////
+  ///                                                            ///
+  /// APB Slave 8: APB2PER for debug                             ///
+  ///                                                            ///
+  //////////////////////////////////////////////////////////////////
+
+  apb2per
+  #(
+    .PER_ADDR_WIDTH ( 15             ),
+    .APB_ADDR_WIDTH ( APB_ADDR_WIDTH )
+  )
+  apb2per_debug_i
+  (
+    .clk_i                ( clk_i                   ),
+    .rst_ni               ( rst_n                   ),
+
+    .PADDR                ( s_debug_bus.paddr       ),
+    .PWDATA               ( s_debug_bus.pwdata      ),
+    .PWRITE               ( s_debug_bus.pwrite      ),
+    .PSEL                 ( s_debug_bus.psel        ),
+    .PENABLE              ( s_debug_bus.penable     ),
+    .PRDATA               ( s_debug_bus.prdata      ),
+    .PREADY               ( s_debug_bus.pready      ),
+    .PSLVERR              ( s_debug_bus.pslverr     ),
+
+    .per_master_req_o     ( debug.req               ),
+    .per_master_add_o     ( debug.addr              ),
+    .per_master_we_o      ( debug.we                ),
+    .per_master_wdata_o   ( debug.wdata             ),
+    .per_master_be_o      (                         ),
+    .per_master_gnt_i     ( debug.gnt               ),
+
+    .per_master_r_valid_i ( debug.rvalid            ),
+    .per_master_r_opc_i   ( '0                      ),
+    .per_master_r_rdata_i ( debug.rdata             )
+  );
 endmodule

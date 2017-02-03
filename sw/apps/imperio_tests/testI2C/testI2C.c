@@ -25,8 +25,7 @@ testcase_t testcases[] = {
 };
 
 int main() {
-  run_suite(testcases);
-  return 0;
+  return run_suite(testcases);
 }
 
 void check(testresult_t *result, void (*start)(), void (*stop)()) {
@@ -101,6 +100,9 @@ void check(testresult_t *result, void (*start)(), void (*stop)()) {
     result->errors++;
     return;
   }
+
+  i2c_send_command(I2C_STOP);      //do a stop bit, initiate eeprom write
+  while(i2c_busy());
 
 
   i2c_send_data(0xA1); // write to EEprom with A0,A1=1 1010 B0 A1 A0 R/Wn

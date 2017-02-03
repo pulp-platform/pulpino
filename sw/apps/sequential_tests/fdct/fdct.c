@@ -258,12 +258,7 @@ testcase_t testcases[] = {
 
 int main()
 {
-
-  run_suite(testcases);
-
-  eoc(0);
-  
-  return 0;
+  return run_suite(testcases);
 }
 
 
@@ -290,7 +285,7 @@ void check_fdct(testresult_t *result, void (*start)(), void (*stop)()) {
   for (i = 0; i < 64; i++) {
     if (block[i] != check_block[i]) {
       result->errors++;
-      printf("Error occured! expected result: %d does not match actual result %d\n",check_block[i],block[i],0,0);
+      printf("Error occurred! expected result: %d does not match actual result %d\n",check_block[i],block[i],0,0);
     }
   }
 }

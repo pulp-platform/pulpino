@@ -22,7 +22,18 @@ module pulpemu_top(
   FIXED_IO_ps_srstb,
   LD_o,
   sw_i,
-  btn_i
+  btn_i,
+  oled_sclk_io,
+  oled_sdin_io,
+  oled_dc_o,
+  oled_res_o,
+  oled_vbat_o,
+  oled_vdd_o,
+  ext_tck_i,
+  ext_trstn_i,
+  ext_tdi_i,
+  ext_tms_i,
+  ext_tdo_o
   );
 
   inout  [14:0] DDR_addr;
@@ -50,6 +61,18 @@ module pulpemu_top(
   output  [7:0] LD_o;
   input   [7:0] sw_i;
   input   [4:0] btn_i;
+  inout         oled_sclk_io;
+  inout         oled_sdin_io;
+  output        oled_dc_o;
+  output        oled_res_o;
+  output        oled_vbat_o;
+  output        oled_vdd_o;
+
+  input         ext_tck_i;
+  input         ext_trstn_i;
+  input         ext_tdi_i;
+  input         ext_tms_i;
+  output        ext_tdo_o;
 
 
   wire [14:0] DDR_addr;
@@ -74,8 +97,6 @@ module pulpemu_top(
   wire        FIXED_IO_ps_porb;
   wire        FIXED_IO_ps_srstb;
 
-  wire [31:0] end_of_operation;
-  wire [31:0] fetch_enable;
   wire        ps7_clk;
   wire        ps7_rst_n;
   wire        ps7_rst_clking_n;
@@ -83,6 +104,8 @@ module pulpemu_top(
   wire        ref_clk_i;               // input
   wire        rst_ni;                  // input
   wire        fetch_en;                // input
+
+  wire [31:0] fetch_enable;
 
   wire [31:0] jtag_emu_i; // input to PS
   wire [31:0] jtag_emu_o; // output from PS
@@ -101,6 +124,13 @@ module pulpemu_top(
   wire [31:0] gpio_in;                 // input
   wire [31:0] gpio_in_ps7;             // output of ps7 => to pulpino
   wire [31:0] gpio_out;                // output
+
+  wire        scl_oen;
+  wire        scl_in;
+  wire        scl_out;
+  wire        sda_oen;
+  wire        sda_in;
+  wire        sda_out;
 
   reg   [7:0] LD_q;
 
@@ -144,17 +174,6 @@ module pulpemu_top(
 
   assign fetch_en = fetch_en_r;
 
-  reg [31:0] end_of_operation_r;
-  always @(posedge ps7_clk or negedge ps7_rst_n)
-  begin
-    if(ps7_rst_n == 1'b0)
-      end_of_operation_r = 32'b0;
-    else begin
-      end_of_operation_r = gpio_out;
-    end
-  end
-  assign end_of_operation = end_of_operation_r;
-
   always @(posedge ps7_clk or negedge ps7_rst_n)
   begin
     if(ps7_rst_n == 1'b0)
@@ -164,13 +183,22 @@ module pulpemu_top(
   end
 
   // JTAG signals
-  assign tck_i            = jtag_emu_o[0];
-  assign trst_ni          = jtag_emu_o[1];
-  assign td_i             = jtag_emu_o[2];
-  assign tms_i            = jtag_emu_o[3];
+  // for JTAG EMU
+  // assign tck_i            = jtag_emu_o[0];
+  // assign trst_ni          = jtag_emu_o[1];
+  // assign td_i             = jtag_emu_o[2];
+  // assign tms_i            = jtag_emu_o[3];
   assign jtag_emu_i[3:0]  = 4'b0;
   assign jtag_emu_i[4]    = td_o;
   assign jtag_emu_i[31:5] = 27'b0;
+
+  // for external JTAG
+  assign tck_i   = ext_tck_i;
+  assign trst_ni = ext_trstn_i;
+  assign td_i    = ext_tdi_i;
+  assign tms_i   = ext_tms_i;
+
+  assign ext_tdo_o = td_o;
 
 
   // GPIO signals
@@ -188,6 +216,19 @@ module pulpemu_top(
   assign gpio_in[15:8]  = 8'b0;
   assign gpio_in[20:16] = btn_i;
   assign gpio_in[31:21] = gpio_in_ps7[31:21];
+
+
+  // I2C for LCD
+  assign oled_sclk_io = (~scl_oen) ? scl_out : 1'bz;
+  assign scl_in       = oled_sclk_io;
+  assign oled_sdin_io = (~sda_oen) ? sda_out : 1'bz;
+  assign sda_in       = oled_sdin_io;
+
+  assign oled_vbat_o  = 1'b1;
+  assign oled_vdd_o   = 1'b1;
+
+  assign oled_dc_o    = gpio_out[16];
+  assign oled_res_o   = gpio_out[17];
 
   // Zynq Processing System
   ps7_wrapper ps7_wrapper_i (
@@ -234,7 +275,6 @@ module pulpemu_top(
     .clking_axi_rvalid  ( clking_axi_rvalid  ),
     .clking_axi_rready  ( clking_axi_rready  ),
 
-    .end_of_operation   ( end_of_operation   ),
     .fetch_enable       ( fetch_enable       ),
     .ps7_clk            ( ps7_clk            ),
     .ps7_rst_n          ( ps7_rst_n          ),
@@ -325,12 +365,12 @@ module pulpemu_top(
     .spi_master_sdo2_o (                ),
     .spi_master_sdo3_o (                ),
 
-    .scl_i             (                ),
-    .scl_o             (                ),
-    .scl_oen_o         (                ),
-    .sda_i             (                ),
-    .sda_o             (                ),
-    .sda_oen_o         (                ),
+    .scl_i             ( scl_in         ),
+    .scl_o             ( scl_out        ),
+    .scl_oen_o         ( scl_oen        ),
+    .sda_i             ( sda_in         ),
+    .sda_o             ( sda_out        ),
+    .sda_oen_o         ( sda_oen        ),
 
     .gpio_in           ( gpio_in        ),
     .gpio_out          ( gpio_out       ),

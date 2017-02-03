@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.1)
+cmake_minimum_required (VERSION 2.8)
 
 include(CMakeParseArguments)
 
@@ -17,7 +17,7 @@ set(UNIX TRUE CACHE STRING "" FORCE)
 # We should probably create a custom system name
 set(CMAKE_SYSTEM_NAME "Linux-CXX")
 
-enable_language(C ASM)
+enable_language(C CXX ASM)
 project (pulp_software C)
 
 enable_testing()
@@ -27,12 +27,11 @@ if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
   message("NOTE: Detected RISCV compiler, using RISCV setup")
 
   if(${GCC_ETH})
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IXpulpv2 -Wa,-march=IXpulpv2")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mnoaddsubnormround -mnoclip -mnobitop -mnomulmacnormround -mnoshufflepack -mnovect -mnoball")
-    set(CMAKE_OBJDUMP_FLAGS -Mmarch=IXpulpv2 -d)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IMXpulpv2 -Wa,-march=IMXpulpv2")
+    set(CMAKE_OBJDUMP_FLAGS -Mmarch=IMXpulpv2 -d)
   else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=RV32I -Wa,-march=RV32I")
-    set(CMAKE_OBJDUMP_FLAGS -d)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=RV32IM -Wa,-march=RV32IM")
+    set(CMAKE_OBJDUMP_FLAGS -Mmarch=RV32IM -d)
   endif()
 
   if(${RVC})
@@ -71,6 +70,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wextra -Wall -Wno-unused-parameter -Wno-unu
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT} -nostartfiles -Wl,--gc-sections")
 set(BOOT_LINKER_FLAGS      "-L${CMAKE_CURRENT_SOURCE_DIR}/ref -T${LDSCRIPT_BOOT} -nostartfiles -Wl,--gc-sections")
 
+set(CMAKE_CXX_COMPILER "${CMAKE_C_COMPILER}")
+set(CMAKE_CXX_FLAGS    "${CMAKE_C_FLAGS}")
+
 set(CMAKE_ASM_COMPILER "${CMAKE_C_COMPILER}")
 set(CMAKE_ASM_FLAGS    "${CMAKE_C_FLAGS}")
 
@@ -81,13 +83,16 @@ set(VSIM "vsim" CACHE FILEPATH "Path to the vsim executable")
 
 if(${RISCV})
   set(crt0      "ref/crt0.riscv.S")
+  set(crt0_boot "ref/crt0.boot.S")
 else()
   set(crt0      "ref/crt0.or1k.S")
+  set(crt0_boot "ref/crt0.or1k.S") # dummy, not functional
 endif()
 
-set(crt0_boot   "ref/crt0.boot.S")
-
 include_directories(libs/sys_lib/inc)
+include_directories(libs/Arduino_lib/core_libs/inc)
+include_directories(libs/Arduino_lib/separate_libs/inc)
+
 set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
 add_library(crt0 OBJECT ${crt0})
 
@@ -107,23 +112,22 @@ endif()
 
 
 add_custom_target(vcompile
-  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./scripts/vcompile_all.sh"
+  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./vcompile/build_rtl_sim.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
 add_custom_target(vcompile.ps
-  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./scripts/vcompile_ps.sh"
+  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./vcompile/vcompile_ps.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
 add_custom_target(vcompile.pl
-  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./scripts/vcompile_pl.sh"
+  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./vcompile/vcompile_pl.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
 add_custom_target(vcompile.core
-  COMMAND tcsh ./scripts/vcompile_riscv.sh
-  COMMAND tcsh ./scripts/vcompile_or10n.sh
+  COMMAND tcsh ./vcompile/vcompile_riscv.csh
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
@@ -132,6 +136,7 @@ add_custom_target(vcompile.core
 
 add_subdirectory(libs/string_lib)
 add_subdirectory(libs/sys_lib)
+add_subdirectory(libs/Arduino_lib)
 add_subdirectory(libs/bench_lib)
 
 add_subdirectory(apps)

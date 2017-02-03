@@ -31,9 +31,7 @@ testcase_t testcases[] = {
 
 int main()
 {
-  run_suite(testcases);
-
-  return 0;
+  return run_suite(testcases);
 }
 
 

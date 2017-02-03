@@ -654,6 +654,8 @@
 #define SPR_PCMR_ACTIVE           0x1 /* Activate counting */
 #define SPR_PCMR_SATURATE         0x2 /* Activate saturation */
 
+#define SPR_PCER_NAME(id) (id == 0 ? "Cycles" : id == 1 ? "Instructions" : id == 2 ? "LD_Stall" : id == 3 ? "Jmp_Stall" : id == 4 ? "IMISS" : id == 5 ? "WBRANCH" : id == 6 ? "WBRANCH_CYC" : id == 7 ? "LD" : id == 8 ? "ST" : id == 9 ? "JUMP" : id == 10 ? "BRANCH" : id == 11 ? "DELAY_NOP" : id == 12 ? "LD_EXT" : id == 13 ? "ST_EXT" : id == 14 ? "LD_EXT_CYC" : id == 15 ? "ST_EXT_CYC" : id == 16 ? "TCDM_CONT" : "NA")
+
 /*
  * Bit definitions for the Power management register
  *

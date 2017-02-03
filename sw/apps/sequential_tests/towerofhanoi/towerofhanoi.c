@@ -8,42 +8,46 @@ void ToH(int, char*, char*, char*);
 
 void computeGold(int, char*, char*, char*);
 
-__attribute__ ((section(".heapscm"))) char A[NR_PLATES];
-__attribute__ ((section(".heapscm"))) char B[NR_PLATES];
-__attribute__ ((section(".heapscm"))) char C[NR_PLATES];
+static char A[NR_PLATES];
+static char B[NR_PLATES];
+static char C[NR_PLATES];
 
+void check(testresult_t *result, void (*start)(), void (*stop)());
+
+testcase_t testcases[] = {
+  { .name = "towerofhanoi",   .test = check       },
+  {0, 0}
+};
 
 int main()
 {
-  int i,j;
   int error = 0;
+  if(get_core_id()==0){
+    error = run_suite(testcases);
+  }
+  return error;
+}
 
-
+void check(testresult_t *result, void (*start)(), void (*stop)()) {
+  int i,j;
   printf("Start towerofhanoi\n");
 
-  for (j=0; j<2; j++) {
-    for (i=0;i<NR_PLATES;i++){
+  for (i=0;i<NR_PLATES;i++){
       A[i] = i;
       B[i] = 0;
       C[i] = 0;
-    }
-
-    computeGold(NR_PLATES, A, B, C);
   }
+  start();
+  computeGold(NR_PLATES, A, B, C);
+  stop();
 
   for (i=0;i<NR_PLATES;i++) {
     if (B[i] != i) {
       printf("expected: %d, actual: %d\n",i,B[i]);
-      error = error + 1;
+      result->errors++;
     }
   }
-
-
-  print_summary(error);
-
-  return 0;
 }
-
 void computeGold(int n, char* A, char* B, char* C)
 {
   ToH(n-1,A,B,C);

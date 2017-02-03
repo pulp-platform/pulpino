@@ -1,11 +1,6 @@
-# set default core to RI5CY
-if { ! [info exists ::env(PULP_CORE)] } {
-  set core "RI5CY"
-} else {
-  set core $::env(PULP_CORE)
+if { ![info exists ::env(BOARD) ]} {
+  set ::env(BOARD) "zedboard"
 }
-puts "Set PULP core to $core"
-
 
 if { ![info exists ::env(XILINX_PART)] } {
   set ::env(XILINX_PART) "xc7z020clg484-1"
@@ -20,84 +15,18 @@ if { ![info exists ::env(XILINX_BOARD)] } {
 create_project pulpino . -part $::env(XILINX_PART)
 set_property board $::env(XILINX_BOARD) [current_project]
 
-if { $core == "RI5CY" } {
-  set_property include_dirs { \
-    ../../ips/riscv/include \
-    ../../ips/apb/apb_event_unit/include \
-    ../../rtl/include \
-  } [current_fileset]
-}
-
-if { $core == "OR10N" } {
-  set_property include_dirs { \
-    ../../ips/or10n/include \
-    ../../ips/apb/apb_event_unit/include \
-    ../../rtl/include \
-  } [current_fileset]
-}
+source tcl/ips_inc_dirs.tcl
 
 # set up meaningful errors
 source ../common/messages.tcl
 
+source tcl/ips_src_files.tcl
 source tcl/src_files.tcl
 
 # add memory cuts
 add_files -norecurse $FPGA_IPS/xilinx_mem_8192x32/ip/xilinx_mem_8192x32.dcp
 
-# add axi_mem_if_DP
-add_files -norecurse -scan_for_includes $SRC_AXI_MEM_IF_DP
-
-# add axi_spi_slave
-add_files -norecurse -scan_for_includes $SRC_AXI_SLAVE
-
-# add apb_event_unit
-add_files -norecurse -scan_for_includes $SRC_APB_EVENT_UNIT
-
-# add apb_timer_unit
-add_files -norecurse -scan_for_includes $SRC_APB_TIMER_UNIT
-
-# add apb_spim
-add_files -norecurse -scan_for_includes $SRC_APB_SPIM
-
-# add apb_i2c
-add_files -norecurse -scan_for_includes $SRC_APB_I2C
-
-# add apb_fll_if
-add_files -norecurse -scan_for_includes $SRC_APB_FLL_IF
-
-# add apb_pulpino
-add_files -norecurse -scan_for_includes $SRC_APB_PULPINO
-
-# add apb_gpio
-add_files -norecurse -scan_for_includes $SRC_APB_GPIO
-
-# add apb_uart
-add_files -norecurse -scan_for_includes $SRC_APB_UART
-
-# add axi2apb
-add_files -norecurse -scan_for_includes $SRC_AXI2APB
-
-# add axi_slice
-add_files -norecurse -scan_for_includes $SRC_AXI_SLICE
-
-# add axi_slice_dc
-add_files -norecurse -scan_for_includes $SRC_AXI_SLICE_DC
-
-# add axi_node
-add_files -norecurse -scan_for_includes $SRC_AXI_NODE
-
-if { $core == "OR10N" } {
-  # add or10n
-  add_files -norecurse -scan_for_includes $SRC_OR10N
-}
-
-if { $core == "RI5CY" } {
-  # add RI5CY
-  add_files -norecurse -scan_for_includes $SRC_RI5CY
-}
-
-# add adv_dbg_if
-add_files -norecurse -scan_for_includes $SRC_ADV_DEBUG_IF
+source ./tcl/ips_add_files.tcl
 
 # add components
 add_files -norecurse $SRC_COMPONENTS
@@ -114,22 +43,16 @@ update_compile_order -fileset sim_1
 
 add_files -fileset constrs_1 -norecurse constraints.xdc
 
+# save area
+set_property strategy Flow_AreaOptimized_High [get_runs synth_1]
+
 # run synthesis
-if { $core == "OR10N" } {
-  # first try will fail
-  catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1}
-} else {
-  # first try will fail
-  catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1}
-}
+# first try will fail
+catch {synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1}
 
 update_compile_order -fileset sources_1
 
-if { $core == "OR10N" } {
-  synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1
-} else {
-  synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1
-}
+synth_design -rtl -name rtl_1 -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1
 
 #set_property STEPS.SYNTH_DESIGN.ARGS.KEEP_EQUIVALENT_REGISTERS true [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.RESOURCE_SHARING off [get_runs synth_1]

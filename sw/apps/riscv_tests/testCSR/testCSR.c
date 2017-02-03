@@ -41,7 +41,7 @@ testcase_t testcases[] = {
 int main()
 {
   if(get_core_id() == 0) {
-    run_suite(testcases);
+    return run_suite(testcases);
   }
 
   return 0;
@@ -129,10 +129,10 @@ void check_csr_op(testresult_t *result, void (*start)(), void (*stop)()) {
 }
 
 
-#define util_check_rw(csr, i, act, last) \
+#define util_check_rw(csr, addr, i, act, last) \
   for (i = 0; i < (sizeof(g_ ## csr ## _a)/4); i++) { \
-    util_csrrw(#csr, g_ ## csr ## _a[i], last); \
-    util_csrr (#csr, act); \
+    util_csrrw(addr, g_ ## csr ## _a[i], last); \
+    util_csrr (addr, act); \
     check_uint32(result, "csrrw_" #csr, act, g_ ## csr ## _exp[i]); \
     if (i != 0) \
       check_uint32(result, "csrrw_prev_" #csr, last, g_ ## csr ## _exp[i-1]); \
@@ -144,14 +144,14 @@ void check_csr_rw(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i;
 
   // 32-bit registers
-  util_check_rw(mepc, i, act, last);
+  util_check_rw(mepc, "mepc", i, act, last);
 
   // single bit
-  util_check_rw(mstatus, i, act, last);
+  util_check_rw(mstatus, "mstatus", i, act, last);
 
   // constants
-  util_check_rw(mcpuid, i, act, last);
-  util_check_rw(mimpid, i, act, last);
-  util_check_rw(mhartid, i, act, last);
+  util_check_rw(mcpuid,  "0xF00", i, act, last);
+  util_check_rw(mimpid,  "0xF01", i, act, last);
+  util_check_rw(mhartid, "0xF10", i, act, last);
 }
 

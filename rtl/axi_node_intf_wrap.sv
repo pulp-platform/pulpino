@@ -39,7 +39,7 @@ module axi_node_intf_wrap
 
   // AXI ID WIDTHs for master and slave IPS
   localparam AXI_ID_WIDTH_TARG =   AXI_ID_WIDTH;
-  localparam AXI_ID_WIDTH_INIT =   AXI_ID_WIDTH_TARG + `LOG2(NB_SLAVE-1);
+  localparam AXI_ID_WIDTH_INIT =   AXI_ID_WIDTH_TARG + $clog2(NB_SLAVE);
 
 
   // Signals to slave periperhals

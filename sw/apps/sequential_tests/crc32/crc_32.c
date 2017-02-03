@@ -67,7 +67,7 @@
 #include "utils.h"
 #include "string_lib.h"
 #include "bar.h"
-#include "../blowfish/jrand.c"
+#include "jrand.c"
 
 __attribute__ ((section(".heapsram"))) UNS_32_BITS crc_tab[CRC_TAB_SIZE];
 
@@ -107,8 +107,7 @@ testcase_t testcases[] = {
 
 int main()
 {
-  run_suite(testcases);
-  return 0;
+  return run_suite(testcases);
 }
 
 void check_crc32(testresult_t *result, void (*start)(), void (*stop)()) {
@@ -133,6 +132,6 @@ void check_crc32(testresult_t *result, void (*start)(), void (*stop)()) {
 
   if (output != check_output){
     result->errors++;
-    printf("Error:\nExpected result: %d does not match actual results: %d\n",check_output,output,0,0);
+    printf("Error:\nExpected result: %d does not match actual results: %d\n",check_output,output);
   }
 }

@@ -28,7 +28,7 @@
 #define BTN_R_BIT   (1 << 19)
 #define BTN_U_BIT   (1 << 20)
 
-void gpio_int_handler(void* unused);
+//void gpio_int_handler(void* unused);
 void board_setup();
 
 int main()
@@ -37,7 +37,7 @@ int main()
 
   IER = 0x1 << GPIO_EVENT;
 
-  int_add(GPIO_EVENT, gpio_int_handler, NULL);
+  //int_add(GPIO_EVENT, gpio_int_handler, NULL);
   int_enable();
 
   printf("Going to sleep and wait for interrupts now\n");
@@ -47,20 +47,21 @@ int main()
   return 0;
 }
 
-void gpio_int_handler(void* unused) {
+void ISR_GPIO(void) {
   switch(get_gpio_irq_status()) {
     case 1 << 16: printf("Enter pressed\n"); break;
     case 1 << 17: printf("Down pressed\n");  break;
     case 1 << 18: printf("Left pressed\n");  break;
     case 1 << 19: printf("Right pressed\n"); break;
     case 1 << 20: printf("Up pressed\n");    break;
+    default:      printf("Unknown GPIO\n");  break;
   }
 }
 
 void board_setup() {
   int i;
 
-  int_init();
+  //int_init();
 
   // setup GPIO pins
   for(i = 0; i < 8; i++) {

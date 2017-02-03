@@ -95,7 +95,7 @@ if a byte order change is needed immediately after input and immediately
 before output to account for the use of a different internal byte order.
 In almost all situations both of these defines will be set to the native
 order of the processor on which the code is to run but other settings
-may somtimes be useful in special circumstances.
+may sometimes be useful in special circumstances.
 
 #define INTERNAL_BYTE_ORDER AES_LITTLE_ENDIAN
 #define EXTERNAL_BYTE_ORDER AES_LITTLE_ENDIAN

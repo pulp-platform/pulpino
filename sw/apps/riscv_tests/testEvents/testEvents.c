@@ -9,12 +9,9 @@
 // specific language governing permissions and limitations under the License.
 
 #include <stdio.h>
-#include "pulp.h"
-#include "events.h"
-#include "events_ids.h"
-#include "utils.h"
-#include "bar.h"
+#include "pulpino.h"
 #include "bench.h"
+#include "int.h"
 
 #define SR_OVERFLOW     0x800
 #define SR_CARRY        0x400
@@ -22,422 +19,43 @@
 #define IT_ADD             10
 #define HWLOOP_IT          10
 
-void check_add(testresult_t *result, void (*start)(), void (*stop)());
-void check_hwloop(testresult_t *result, void (*start)(), void (*stop)());
-void check_hwloop_sleep(testresult_t *result, void (*start)(), void (*stop)());
 void check_flush(testresult_t *result, void (*start)(), void (*stop)());
+void check_sleep_irq(testresult_t *result, void (*start)(), void (*stop)());
 
 // TODO: hwloops are not yet supported and thus commented
 testcase_t testcases[] = {
-  { .name = "add",          .test = check_add          },
-//  { .name = "hwloop",       .test = check_hwloop       },
-//  { .name = "hwloop_sleep", .test = check_hwloop_sleep },
   { .name = "flush",        .test = check_flush        },
+  { .name = "sleep_irq",    .test = check_sleep_irq    },
   {0, 0}
 };
 
 int main()
 {
-  run_suite(testcases);
-
-
-  synch_barrier();
-
-  return 0;
+  return run_suite(testcases);
 }
-
-
-
-void check_add(testresult_t *result, void (*start)(), void (*stop)()) {
-  unsigned int i, j;
-
-  if(get_core_id() == 0) {
-    for(j = 0; j < 400; j++) asm volatile ("nop\n");
-
-    for(i = 0; i < IT_ADD; i++) {
-      for(j = 0; j < i*5+100; j++) asm volatile ("nop\n");
-
-      trigg_GP(0xE,GP1);
-    }
-  } else {
-    int act = 0;
-    int exp;
-
-    set_evnt_mask_low(get_core_id(), (1 << GP1) | (1 << BARRIER));
-
-    //-----------------------------------------------------------------
-    // Basic Check
-    //-----------------------------------------------------------------
-    exp = 1 + 2 + 4 + 8 + 16 + 32 + 64 + 128 + 256;
-    for(i = 0; i < IT_ADD; i++) {
-      asm volatile ("addi %[act], x0, 1\n"
-                    "addi %[act], %[act], 2\n"
-                    "addi %[act], %[act], 4\n"
-                    "sw %[one], 0x0(%[clkgate_addr])\n"
-                    "wfi\n"
-                    "sw %[mask], 0x0(%[clr_buf])\n"
-                    "addi %[act], %[act], 8\n"
-                    "addi %[act], %[act], 16\n"
-                    "addi %[act], %[act], 32\n"
-                    "addi %[act], %[act], 64\n"
-                    "addi %[act], %[act], 128\n"
-                    "addi %[act], %[act], 256\n"
-                    : [act] "+r" (act)
-                    : [clkgate_addr] "r" (CORE_CLKGATE),
-                      [one]          "r" (0x1),
-                      [clr_buf]      "r" (EV_BUFF_CLEAR),
-                      [mask]         "r" (1 << GP1));
-
-      if(act != exp) {
-        result->errors++;
-        printf("Testing add before and after events: %X, expected %X\n", act, exp);
-      }
-    }
-  }
-
-  synch_barrier();
-}
-
-// void check_hwloop(testresult_t *result, void (*start)(), void (*stop)()) {
-//   unsigned int i, j;
-// 
-//   if(get_core_id() == 0) {
-//     for(j = 0; j < 400; j++) asm volatile ("l.nop\n");
-//     for(i = 0; i < HWLOOP_IT; i++) {
-//       for(j = 0; j < i*5+100; j++) asm volatile ("l.nop\n");
-// 
-//       trigg_GP(0xE,GP1);
-//     }
-// 
-//     synch_barrier();
-// 
-//     for(j = 0; j < 400; j++) asm volatile ("l.nop\n");
-//     for(i = 0; i < HWLOOP_IT; i++) {
-//       for(j = 0; j < i*5+100; j++) asm volatile ("l.nop\n");
-// 
-//       trigg_GP(0xE,GP1);
-//     }
-// 
-//     synch_barrier();
-// 
-//     for(j = 0; j < 400; j++) asm volatile ("l.nop\n");
-//     for(i = 0; i < HWLOOP_IT; i++) {
-//       for(j = 0; j < i*5+100; j++) asm volatile ("l.nop\n");
-// 
-//       trigg_GP(0xE,GP1);
-//     }
-// 
-//     synch_barrier();
-// 
-//     for(j = 0; j < 400; j++) asm volatile ("l.nop\n");
-//     for(i = 0; i < HWLOOP_IT; i++) {
-//       for(j = 0; j < i*5+100; j++) asm volatile ("l.nop\n");
-// 
-//       trigg_GP(0xE,GP1);
-//     }
-//   } else {
-//     int act;
-//     int act2;
-//     int exp;
-// 
-//     set_evnt_mask_low(get_core_id(), (1 << GP1) | (1 << BARRIER));
-// 
-//     //-----------------------------------------------------------------
-//     // Basic Check
-//     //-----------------------------------------------------------------
-//     act = 0;
-//     act2 = 0;
-//     exp = 10*(1 + 2 + 3 + 4 + 5 + 6);
-//     asm volatile ("lp.counti L0, 10\n"
-//                   "lp.start L0, 8\n"
-//                   "lp.end L0, 36\n"
-//                   "l.addi %[act], %[act], 1\n"
-//                   "l.addi %[act], %[act], 2\n"
-//                   "l.addi %[act], %[act], 3\n"
-//                   "l.sw 0x0(%[clkgate_addr]), %[one]\n"
-//                   "l.psync\n"
-//                   "l.sw 0x0(%[clr_buf]), %[mask]\n"
-//                   "l.addi %[act], %[act], 4\n"
-//                   "l.addi %[act], %[act], 5\n"
-//                   "l.addi %[act], %[act], 6\n"
-//                   : [act] "+r" (act)
-//                   : [clkgate_addr] "r" (CORE_CLKGATE),
-//                     [one]          "r" (0x1),
-//                     [clr_buf]      "r" (EV_BUFF_CLEAR),
-//                     [mask]         "r" (1 << GP1));
-// 
-//     // check if hwloops are okay
-//     asm volatile ("lp.counti L0, 10\n"
-//                   "lp.start L0, 8\n"
-//                   "lp.end L0, 24\n"
-//                   "l.addi %0, %0, 1\n"
-//                   "l.addi %0, %0, 2\n"
-//                   "l.addi %0, %0, 3\n"
-//                   "l.addi %0, %0, 4\n"
-//                   "l.addi %0, %0, 5\n"
-//                   "l.addi %0, %0, 6\n"
-//                   : "+r" (act2));
-// 
-//     if(act != exp) {
-//       result->errors++;
-//       printf("Testing hwloop with clock gating, 3,3: %X, expected %X\n", act, exp);
-//     }
-// 
-//     if(act != act2) {
-//       result->errors++;
-//       printf("Testing hwloop with clock gating vs. normal, 3,3: %X, expected %X\n", act, act2);
-//     }
-// 
-//     synch_barrier();
-//     set_evnt_mask_low(get_core_id(), (1 << GP1) | (1 << BARRIER));
-// 
-//     //-----------------------------------------------------------------
-//     // 3 before, 2 after
-//     //-----------------------------------------------------------------
-//     act = 0;
-//     act2 = 0;
-//     exp = 10*(1 + 2 + 3 + 4 + 5);
-//     asm volatile ("lp.counti L0, 10\n"
-//                   "lp.start L0, 8\n"
-//                   "lp.end L0, 32\n"
-//                   "l.addi %0, %0, 1\n"
-//                   "l.addi %0, %0, 2\n"
-//                   "l.addi %0, %0, 3\n"
-//                   "l.sw 0x0(%[clkgate_addr]), %[one]\n"
-//                   "l.psync\n"
-//                   "l.sw 0x0(%[clr_buf]), %[mask]\n"
-//                   "l.addi %0, %0, 4\n"
-//                   "l.addi %0, %0, 5\n"
-//                   : [act] "+r" (act)
-//                   : [clkgate_addr] "r" (CORE_CLKGATE),
-//                     [one]          "r" (0x1),
-//                     [clr_buf]      "r" (EV_BUFF_CLEAR),
-//                     [mask]         "r" (1 << GP1));
-// 
-//     // check if hwloops are okay
-//     asm volatile ("lp.counti L0, 10\n"
-//                   "lp.start L0, 8\n"
-//                   "lp.end L0, 20\n"
-//                   "l.addi %0, %0, 1\n"
-//                   "l.addi %0, %0, 2\n"
-//                   "l.addi %0, %0, 3\n"
-//                   "l.addi %0, %0, 4\n"
-//                   "l.addi %0, %0, 5\n"
-//                   : "+r" (act2));
-// 
-//     if(act != exp) {
-//       result->errors++;
-//       printf("Testing hwloop with clock gating, 3, 2: %X, expected %X\n", act, exp);
-//     }
-// 
-//     if(act != act2) {
-//       result->errors++;
-//       printf("Testing hwloop with clock gating vs. normal, 3, 2: %X, expected %X\n", act, act2);
-//     }
-// 
-//     synch_barrier();
-//     set_evnt_mask_low(get_core_id(), (1 << GP1) | (1 << BARRIER));
-// 
-//     //-----------------------------------------------------------------
-//     // 2 before, 3 after
-//     //-----------------------------------------------------------------
-//     act = 0;
-//     act2 = 0;
-//     exp = 10*(2 + 3 + 4 + 5 + 6);
-//     asm volatile ("lp.counti L0, 10\n"
-//                   "lp.start L0, 8\n"
-//                   "lp.end L0, 32\n"
-//                   "l.addi %0, %0, 2\n"
-//                   "l.addi %0, %0, 3\n"
-//                   "l.sw 0x0(%[clkgate_addr]), %[one]\n"
-//                   "l.psync\n"
-//                   "l.sw 0x0(%[clr_buf]), %[mask]\n"
-//                   "l.addi %0, %0, 4\n"
-//                   "l.addi %0, %0, 5\n"
-//                   "l.addi %0, %0, 6\n"
-//                   : [act] "+r" (act)
-//                   : [clkgate_addr] "r" (CORE_CLKGATE),
-//                     [one]          "r" (0x1),
-//                     [clr_buf]      "r" (EV_BUFF_CLEAR),
-//                     [mask]         "r" (1 << GP1));
-// 
-//     // check if hwloops are okay
-//     asm volatile ("lp.counti L0, 10\n"
-//                   "lp.start L0, 8\n"
-//                   "lp.end L0, 20\n"
-//                   "l.addi %0, %0, 2\n"
-//                   "l.addi %0, %0, 3\n"
-//                   "l.addi %0, %0, 4\n"
-//                   "l.addi %0, %0, 5\n"
-//                   "l.addi %0, %0, 6\n"
-//                   : "+r" (act2));
-// 
-//     if(act != exp) {
-//       result->errors++;
-//       printf("Testing hwloop with clock gating, 2, 3: %X, expected %X\n", act, exp);
-//     }
-// 
-//     if(act != act2) {
-//       result->errors++;
-//       printf("Testing hwloop with clock gating vs. normal, 2, 3: %X, expected %X\n", act, act2);
-//     }
-// 
-//     synch_barrier();
-//     set_evnt_mask_low(get_core_id(), (1 << GP1) | (1 << BARRIER));
-// 
-//     //-----------------------------------------------------------------
-//     // 2 before, 2 after
-//     //-----------------------------------------------------------------
-//     act = 0;
-//     act2 = 0;
-//     exp = 10*(2 + 3 + 4 + 5);
-//     asm volatile ("lp.counti L0, 10\n"
-//                   "lp.start L0, 8\n"
-//                   "lp.end L0, 28\n"
-//                   "l.addi %0, %0, 2\n"
-//                   "l.addi %0, %0, 3\n"
-//                   "l.sw 0x0(%[clkgate_addr]), %[one]\n"
-//                   "l.psync\n"
-//                   "l.sw 0x0(%[clr_buf]), %[mask]\n"
-//                   "l.addi %0, %0, 4\n"
-//                   "l.addi %0, %0, 5\n"
-//                   : [act] "+r" (act)
-//                   : [clkgate_addr] "r" (CORE_CLKGATE),
-//                     [one]          "r" (0x1),
-//                     [clr_buf]      "r" (EV_BUFF_CLEAR),
-//                     [mask]         "r" (1 << GP1));
-// 
-//     // check if hwloops are okay
-//     asm volatile ("lp.counti L0, 10\n"
-//                   "lp.start L0, 8\n"
-//                   "lp.end L0, 16\n"
-//                   "l.addi %0, %0, 2\n"
-//                   "l.addi %0, %0, 3\n"
-//                   "l.addi %0, %0, 4\n"
-//                   "l.addi %0, %0, 5\n"
-//                   : "+r" (act2));
-// 
-//     if(act != exp) {
-//       result->errors++;
-//       printf("Testing hwloop with clock gating, 2, 2: %X, expected %X\n", act, exp);
-//     }
-// 
-//     if(act != act2) {
-//       result->errors++;
-//       printf("Testing hwloop with clock gating vs. normal, 2, 2: %X, expected %X\n", act, act2);
-//     }
-//   }
-// 
-//   synch_barrier();
-// }
-
 
 void check_flush(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i;
   int act;
   int exp;
 
-  // //-----------------------------------------------------------------
-  // // Basic Check
-  // //-----------------------------------------------------------------
-  // act = 0;
-  // exp = 10*(1 + 2 + 3 + 4 + 5 + 6);
-  // asm volatile ("lp.counti L0, 10\n"
-  //               "lp.start L0, 8\n"
-  //               "lp.end L0, 28\n"
-  //               "l.addi %0, %0, 1\n"
-  //               "l.addi %0, %0, 2\n"
-  //               "l.addi %0, %0, 3\n"
-  //               "l.psync\n"
-  //               "l.addi %0, %0, 4\n"
-  //               "l.addi %0, %0, 5\n"
-  //               "l.addi %0, %0, 6\n"
-  //               : "+r" (act));
-
-  // if(act != exp) {
-  //   result->errors++;
-  //   printf("Testing hwloop with l.psync, 3,3: %X, expected %X\n", act, exp);
-  // }
-
-  // //-----------------------------------------------------------------
-  // // 3 before, 2 after
-  // //-----------------------------------------------------------------
-  // act = 0;
-  // exp = 10*(1 + 2 + 3 + 4 + 5);
-  // asm volatile ("lp.counti L0, 10\n"
-  //               "lp.start L0, 8\n"
-  //               "lp.end L0, 24\n"
-  //               "l.addi %0, %0, 1\n"
-  //               "l.addi %0, %0, 2\n"
-  //               "l.addi %0, %0, 3\n"
-  //               "l.psync\n"
-  //               "l.addi %0, %0, 4\n"
-  //               "l.addi %0, %0, 5\n"
-  //               : "+r" (act));
-
-  // if(act != exp) {
-  //   result->errors++;
-  //   printf("Testing hwloop with l.psync, 3, 2: %X, expected %X\n", act, exp);
-  // }
-
-  // //-----------------------------------------------------------------
-  // // 2 before, 3 after
-  // //-----------------------------------------------------------------
-  // act = 0;
-  // exp = 10*(2 + 3 + 4 + 5 + 6);
-  // asm volatile ("lp.counti L0, 10\n"
-  //               "lp.start L0, 8\n"
-  //               "lp.end L0, 24\n"
-  //               "l.addi %0, %0, 2\n"
-  //               "l.addi %0, %0, 3\n"
-  //               "l.psync\n"
-  //               "l.addi %0, %0, 4\n"
-  //               "l.addi %0, %0, 5\n"
-  //               "l.addi %0, %0, 6\n"
-  //               : "+r" (act));
-
-  // if(act != exp) {
-  //   result->errors++;
-  //   printf("Testing hwloop with l.psync, 2, 3: %X, expected %X\n", act, exp);
-  // }
-
-  // //-----------------------------------------------------------------
-  // // 2 before, 2 after
-  // //-----------------------------------------------------------------
-  // act = 0;
-  // exp = 10*(2 + 3 + 4 + 5);
-  // asm volatile ("lp.counti L0, 10\n"
-  //               "lp.start L0, 8\n"
-  //               "lp.end L0, 20\n"
-  //               "l.addi %0, %0, 2\n"
-  //               "l.addi %0, %0, 3\n"
-  //               "l.psync\n"
-  //               "l.addi %0, %0, 4\n"
-  //               "l.addi %0, %0, 5\n"
-  //               : "+r" (act));
-
-  // if(act != exp) {
-  //   result->errors++;
-  //   printf("Testing hwloop with l.psync, 2, 2: %X, expected %X\n", act, exp);
-  // }
-
   //-----------------------------------------------------------------
   // a very long one
   //-----------------------------------------------------------------
   act = 0;
   exp = (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10);
-  asm volatile ("addi %0, %0, 1\n"
-                "addi %0, %0, 2\n"
-                "addi %0, %0, 3\n"
-                "addi %0, %0, 4\n"
-                "addi %0, %0, 5\n"
-                "wfi\n"
-                "addi %0, %0, 6\n"
-                "addi %0, %0, 7\n"
-                "addi %0, %0, 8\n"
-                "addi %0, %0, 9\n"
-                "addi %0, %0, 10\n"
-                : "+r" (act));
+  asm volatile ("addi %[act], %[act], 1;"
+                "addi %[act], %[act], 2;"
+                "addi %[act], %[act], 3;"
+                "addi %[act], %[act], 4;"
+                "addi %[act], %[act], 5;"
+                "wfi;"
+                "addi %[act], %[act], 6;"
+                "addi %[act], %[act], 7;"
+                "addi %[act], %[act], 8;"
+                "addi %[act], %[act], 9;"
+                "addi %[act], %[act], 10;"
+                : [act] "+r" (act));
 
   if(act != exp) {
     result->errors++;
@@ -445,60 +63,80 @@ void check_flush(testresult_t *result, void (*start)(), void (*stop)()) {
   }
 }
 
-// void check_hwloop_sleep(testresult_t *result, void (*start)(), void (*stop)()) {
-//   unsigned int i, j;
-// 
-//   if(get_core_id() == 0) {
-//     for(j = 0; j < 400; j++) asm volatile ("l.nop\n");
-//     for(i = 0; i < HWLOOP_IT; i++) {
-//       for(j = 0; j < i*5+100; j++) asm volatile ("l.nop\n");
-// 
-//       trigg_GP(0xE,GP1);
-//     }
-//   } else {
-//     int act;
-//     int act2;
-//     int exp;
-// 
-//     set_evnt_mask_low(get_core_id(), 1 << GP1);
-// 
-//     act = 0;
-//     act2 = 0;
-//     exp = 10*(1 + 2 + 3);
-//     asm volatile ("lp.counti L0, 10\n"
-//                   "lp.start L0, 8\n"
-//                   "lp.end L0, 24\n"
-//                   "l.sw 0x0(%[clr_buf]), %[mask]\n"
-//                   "l.addi %0, %0, 1\n"
-//                   "l.addi %0, %0, 2\n"
-//                   "l.addi %0, %0, 3\n"
-//                   "l.sw 0x0(%1), %2\n"
-//                   "l.psync\n"
-//                   : [act] "+r" (act)
-//                   : [clr_buf]      "r" (EV_BUFF_CLEAR),
-//                     [mask]         "r" (1 << GP1));
-// 
-//     // check if hwloops are okay
-//     asm volatile ("lp.counti L0, 10\n"
-//                   "lp.start L0, 8\n"
-//                   "lp.end L0, 12\n"
-//                   "l.addi %0, %0, 1\n"
-//                   "l.addi %0, %0, 2\n"
-//                   "l.addi %0, %0, 3\n"
-//                   : "+r" (act2));
-// 
-//     if(act != exp) {
-//       result->errors++;
-//       printf("Testing hwloop with clock gating: %X, expected %X\n", act, exp);
-//     }
-// 
-//     if(act != act2) {
-//       result->errors++;
-//       printf("Testing hwloop with clock gating vs. normal: %X, expected %X\n", act, act2);
-//     }
-//   }
-// 
-//   set_evnt_mask_low(get_core_id(), 1 << BARRIER);
-// 
-//   synch_barrier();
-// }
+int g_sleep_irq_global;
+
+void check_sleep_irq(testresult_t *result, void (*start)(), void (*stop)()) {
+  int act;
+  int exp;
+
+  g_sleep_irq_global = 0;
+  ECP = 0xFFFFFFFF;
+  IER = 1 << 29;
+  int_enable();
+
+  // enable timer and wait for 2000 cycles before triggering
+  TPRA  = 0x0;
+  TIRA  = 0x0;
+  TOCRA = 2000;
+
+  TPRA  = 0x1;
+
+
+  act = 0;
+  exp = (1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 + 9 + 10);
+  asm volatile ("sw %[SLEEP_VALUE], 0(%[SLEEP_ADDR]);"
+                "addi %[act], %[act], 1;"
+                "addi %[act], %[act], 2;"
+                "addi %[act], %[act], 3;"
+                "addi %[act], %[act], 4;"
+                "addi %[act], %[act], 5;"
+                "wfi;"
+                "addi %[act], %[act], 6;"
+                "addi %[act], %[act], 7;"
+                "addi %[act], %[act], 8;"
+                "addi %[act], %[act], 9;"
+                "addi %[act], %[act], 10;"
+                : [act] "+r" (act)
+                : [SLEEP_VALUE] "r" (0x1),
+                  [SLEEP_ADDR] "r"  (EVENT_UNIT_BASE_ADDR + REG_SLEEP_CTRL));
+
+  // disable timer
+  TPRA = 0x0;
+
+  if(act != exp) {
+    result->errors++;
+    printf("Timer with wfi: %X, expected %X\n", act, exp);
+  }
+
+  if(g_sleep_irq_global != 2) {
+    result->errors++;
+    printf("Timer Interrupt was not triggered at the correct time\n");
+  }
+
+  if((EPR & 0x1) != 0x1) {
+    result->errors++;
+    printf("Event was not triggered\n");
+  }
+
+  ECP = 0x1;
+  int_disable();
+}
+
+
+void ISR_TA_CMP(void) {
+  ICP = (1 << 29);
+
+  switch (g_sleep_irq_global) {
+    case 0:
+      g_sleep_irq_global = 1;
+
+      // re-arm timer
+      TIRA = 0x0;
+      break;
+
+    case 1:
+      g_sleep_irq_global = 2;
+      ESP = 0x1;
+      break;
+  }
+}

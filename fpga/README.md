@@ -1,6 +1,29 @@
 # FPGA
 
-This folder contains everything needed to synthesize and run PULPino on a ZedBoard.
+This folder contains everything needed to synthesize and run PULPino on a ZedBoard or ZYBO.
+
+To select board for the ZYBO board instead of the ZedBoard, set the environment
+variable `BOARD`. In the tcsh this means
+
+    setenv BOARD "zybo"
+
+or
+
+    setenv BOARD "zedboard"
+
+Note that if `BOARD` is not set, it defaults to zedboard.
+
+
+This environment variable has to be set during compilation of all FPGA related
+components. If you accidentally forget to set the environment variable during
+part of the compilation process, you may end up with a mixed zedboard/zybo
+build which will not work correctly.
+
+The components that are affected by the BOARD variable are:
+* pulpemu
+* u-boot
+* devicetree
+* spiloader
 
 
 ## Requirements
@@ -9,10 +32,17 @@ This synthesis flow has been tested with `Vivado 2015.1`, there is no guarantee
 that it is going to work with any other version without modifications to the
 scripts.
 
+For convenience reasons it is best to connect the ZedBoard to your local
+network. This way you can easily transfer files from your host computer to the
+Linux running on the ARM cores of the ZYNQ.
+
 
 ## Get Started
 
-1. Make sure you have the Vivado toolchain in your PATH before continuing.
+1. Make sure you have the Vivado toolchain and the Xilinx SDK toolchain in your
+   PATH before continuing. The Vivado toolchain is required to generate the
+   bitstream, while the SDK contains the ARM compiler that is used for
+   cross-compiling linux and applications.
 
 2. Type `make all` in the fpga directory
    This builds the FPGA bitstream for the ZedBoard, downloads and compiles linux
@@ -35,6 +65,18 @@ scripts.
 
 7. You should now be able to login to the ZYNQ and have a fully working Linux
    running on it.
+
+8. To be able to login to Linux via ssh, you have to make sure that Linux is
+   able to access the local network. By default it will try to get an IP
+   address via dhcp. You can check with `ifconfig` and friends if your device
+   has gotten an IP address and use it to connect to it via a host.
+
+9. In order to login use the following credentials:
+
+       username: root
+
+       password: pulp
+
 
 
 The boot.bin and rootfs.tar files can be found under the folder sw/sd_image.
@@ -83,6 +125,14 @@ public keys) and you need to setup the environment variable `$FPGA_HOSTNAME`.
 Take a look at the script `./sw/utils/run-on-fpga.sh` to understand how it
 works.
 
+
+## stdout via printf on PULPino
+
+When PULPino is run on the FPGA, it transfers all output via printf via UART to
+the ARM host processor in the ZYNQ. To display it, either use a console program
+like minicom to read directly from the serial port, or specify a timeout when
+using `spiload`. `spiload` will connect to the serial port and display
+everything that PULPino sends via UART until the timeout expires.
 
 ## Connected peripherals & communication with PULPino
 

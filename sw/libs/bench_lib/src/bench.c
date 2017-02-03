@@ -50,10 +50,8 @@ void print_summary(unsigned int errors)
 
   if (errors == 0) {
     printf("SUCCESS\n");
-    printf("OOOOOOK!!!!!!\n"); // TODO: remove this one
   } else {
     printf("FAIL\n");
-    printf("NOT OK!!!!!\n");   // TODO: remove this one
   }
 }
 
@@ -71,7 +69,7 @@ void run_benchmark(testcase_t *test, testresult_t *result)
   result->time = get_time();
 }
 
-void run_suite(testcase_t *tests)
+unsigned int run_suite(testcase_t *tests)
 {
   // figure out how many tests should be run
   size_t num = 0;
@@ -91,6 +89,7 @@ void run_suite(testcase_t *tests)
 
   print_summary(errors);
 
+  return errors;
 }
 
 void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, uint32_t expected)
@@ -113,7 +112,8 @@ void perf_print_all(void) {
   printf("Perf #ST:      %d\n", cpu_perf_get(6));
   printf("Perf #JUMP:    %d\n", cpu_perf_get(7));
   printf("Perf #BRANCH:  %d\n", cpu_perf_get(8));
-//  printf("Perf #TAKEN:   %d\n", cpu_perf_get(9));
+  printf("Perf #TAKEN:   %d\n", cpu_perf_get(9));
+  printf("Perf #RVC:     %d\n", cpu_perf_get(10));
 #else
   printf("Perf CYCLES: %d\n",      cpu_perf_get(SPR_PCER_CYCLES));
   printf("Perf INSTR: %d\n",       cpu_perf_get(SPR_PCER_INSTR));
@@ -143,5 +143,5 @@ void illegal_insn_handler_c(void)
 #endif
   insn = *((unsigned int*)(exception_address));
   printf("Illegal instruction encountered at address 0x%08X: %X\n", exception_address, insn);
-  eoc(0);
+  exit(1);
 }

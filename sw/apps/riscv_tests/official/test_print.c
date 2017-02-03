@@ -36,4 +36,7 @@ void print_test_summary()
   }
 
   uart_wait_tx_done();
+  
+  // signal end of computation
+  eoc(g_errors);
 }

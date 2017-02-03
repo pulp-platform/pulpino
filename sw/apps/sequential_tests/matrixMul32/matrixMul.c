@@ -20,8 +20,7 @@ int num_cores = 1;
 
 int main()
 {
-  run_suite(testcases);
-  return 0;
+  return run_suite(testcases);
 }
 
 void matrix_init();

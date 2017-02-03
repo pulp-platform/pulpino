@@ -1,1 +1,0 @@
-add_application(testSTDIO testSTDIO.c)

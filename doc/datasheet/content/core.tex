@@ -7,8 +7,9 @@ The core use a very simple data and instruction interface to talk to data and
 instruction memories. To interface with AXI, a core2axi protocol converter is
 instantiated in \pulpino.
 
-The core is connected via a debug interface to the advanced debug unit which
-allows in-circuit debugging.
+For debugging purposes, all core registers have been memory mapped which allows
+to them to be accessed over the AXI bus. The debug unit inside the core handles
+the request over this bus and reads/sets the core registers and/or halts the core.
 
 The core supports performance counters. Those are mainly used for counting core
 internal events like stalls, but it is possible to count core-external events

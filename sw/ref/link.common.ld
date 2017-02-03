@@ -44,6 +44,33 @@ SECTIONS
         _endtext = .;
     }  > instrram
 
+    /*--------------------------------------------------------------------*/
+    /* Global constructor/destructor segement                             */
+    /*--------------------------------------------------------------------*/
+
+    .preinit_array     :
+    {
+      PROVIDE_HIDDEN (__preinit_array_start = .);
+      KEEP (*(.preinit_array))
+      PROVIDE_HIDDEN (__preinit_array_end = .);
+    } > dataram
+
+    .init_array     :
+    {
+      PROVIDE_HIDDEN (__init_array_start = .);
+      KEEP (*(SORT(.init_array.*)))
+      KEEP (*(.init_array ))
+      PROVIDE_HIDDEN (__init_array_end = .);
+    } > dataram
+
+    .fini_array     :
+    {
+      PROVIDE_HIDDEN (__fini_array_start = .);
+      KEEP (*(SORT(.fini_array.*)))
+      KEEP (*(.fini_array ))
+      PROVIDE_HIDDEN (__fini_array_end = .);
+    } > dataram
+
     .rodata : {
         . = ALIGN(4);
         *(.rodata);
@@ -96,5 +123,11 @@ SECTIONS
     {
         [ .stabstr ]
     }
+
+    .bss :
+    {
+        . = ALIGN(4);
+        _end = .;
+    } > dataram
 }
 

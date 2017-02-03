@@ -1,4 +1,4 @@
-<img src="doc/datasheet/figures/pulpino_logo_inline1.png" width="400px" />
+<img src="https://raw.githubusercontent.com/pulp-platform/pulpino/master/doc/datasheet/figures/pulpino_logo_inline1.png" width="400px" />
 
 # Introduction
 
@@ -35,12 +35,19 @@ PULPino has the following requirements
 
 - ModelSim in reasonably recent version (we tested it with versions >= 10.2c)
 - CMake >= 2.8.0, versions greater than 3.1.0 recommended due to support for ninja
-- riscv-toolchain, specifically you need riscv32-unknown-elf-gcc compiler and friends
+- riscv-toolchain, specifically you need riscv32-unknown-elf-gcc compiler and
+  friends. There are two choices for this toolchain: Either using the official
+  RISC-V toolchain supported by Berkeley or the custom RISC-V toolchain from
+  ETH. The ETH version supports all the ISA extensions that were incorporated
+  into the RI5CY core.
+  Please make sure you are using the newlib version of the toolchain.
+- python2 >= 2.6
 
 ## Editions
 
 There are two PULPino editions available, one for OR1K based on the OR10N core
-and one for RISCV based on the RI5CY core.
+and one for RISCV based on the RI5CY core. Only the RISC-V based version is
+currently open-source.
 The software included in this repository is compatible with both ISAs and
 automatically targets the correct ISA based on the compiler used.
 
@@ -113,7 +120,7 @@ Replace helloworld with the test/application you want to run.
 ### Using ninja instead of make
 
 You can use ninja instead make to build software for PULPino, just replace all
-occurences of make with ninja.
+occurrences of make with ninja.
 The same targets are supported on both make and ninja.
 
 
@@ -143,3 +150,20 @@ To regenerate the bootcode and copy it to the `rtl` folder use
 
 PULPino can be synthesized and run on a ZedBoard.
 Take a look at the `fpga` subfolder for more information.
+
+## Creating a tarball of the PULPino sources
+
+If for some reason you don't want to use the git sub-repository approach, you
+can create a tarball of the whole design by executing `./create-tarball.py`.
+This will download the latest PULPino sources, including all IPS, remove the
+git internal folders and create a tar gz.
+
+
+## Arduino compatible libraries
+
+Most of official Arduino libraries are supported by PULPino software, they can be compiled, simulated and uploded the same way as traditional software programs using the available PULPino utilities.
+You only need to include main.cpp at the begining of the program:
+
+	#include "main.cpp"
+
+Take a look at the `sw/libs/Arduino_libs` subfolder for more information about the status of the currently supported libraries.

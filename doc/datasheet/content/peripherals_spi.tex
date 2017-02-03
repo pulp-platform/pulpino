@@ -62,14 +62,8 @@
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,11,8,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{CLKDIV}
-    \bitbox{20}{unused}
-    \bitbox{4}{CS}
-    \bitbox{3}{0}
-    \bitbox{1}{\rotatebox{90}{\tiny SRST}}
-    \bitbox{1}{\rotatebox{90}{\tiny QWR}}
-    \bitbox{1}{\rotatebox{90}{\tiny QRD}}
-    \bitbox{1}{\rotatebox{90}{\tiny WR}}
-    \bitbox{1}{\rotatebox{90}{\tiny RD}}
+    \bitbox{24}{unused}
+    \bitbox{8}{CLKDIV}
   \end{rightwordgroup}\\
   \end{bytefield}
 }{

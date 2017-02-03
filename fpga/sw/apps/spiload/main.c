@@ -59,8 +59,8 @@ int pulp_ctrl(int fetch_en, int reset) {
   }
 
   gpio_base = ctrl_map + (PULP_CTRL_AXI_ADDR & MAP_MASK);
-  volatile uint32_t* gpio2 = (volatile uint32_t*)(gpio_base + 0x8);
-  volatile uint32_t* dir2  = (volatile uint32_t*)(gpio_base + 0xC);
+  volatile uint32_t* gpio = (volatile uint32_t*)(gpio_base + 0x0);
+  volatile uint32_t* dir  = (volatile uint32_t*)(gpio_base + 0x4);
 
   // now we can actually write to the peripheral
   uint32_t val = 0x0;
@@ -70,8 +70,8 @@ int pulp_ctrl(int fetch_en, int reset) {
   if (fetch_en)
     val |= (1 << 0);
 
-  *dir2  = 0x0; // configure as output
-  *gpio2 = val;
+  *dir  = 0x0; // configure as output
+  *gpio = val;
 
 fail:
   close(mem_fd);
@@ -193,7 +193,7 @@ int spi_read_reg(unsigned int addr) {
   }
 
 
-  // check if write was sucessful
+  // check if write was successful
   if (ioctl(fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
     perror("SPI_IOC_MESSAGE");
     retval = -1;
@@ -311,7 +311,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
   // prepare for readback
   rd_buf = (char*)malloc(transfer_len);
   if (rd_buf == NULL) {
-    printf("Unable to acquire buffer to check if write was sucessful\n");
+    printf("Unable to acquire buffer to check if write was successful\n");
 
     retval = -1;
     goto fail;
@@ -340,7 +340,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
   wr_buf[3] = addr >> 8;
   wr_buf[4] = addr;
 
-  // check if write was sucessful
+  // check if write was successful
   if (ioctl(fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
     perror("SPI_IOC_MESSAGE");
     retval = -1;
@@ -428,6 +428,7 @@ int main(int argc, char **argv)
 
   if (arguments.timeout > 0) {
     console_thread_start();
+    sleep(1);
   }
 
   printf("Starting device\n");

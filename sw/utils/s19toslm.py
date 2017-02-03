@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 # ////////////////////////////////////////////////////////////////////////////////
 # // Company:        Multitherman Laboratory @ DEIS - University of Bologna     //

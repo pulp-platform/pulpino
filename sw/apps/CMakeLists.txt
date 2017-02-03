@@ -13,7 +13,7 @@ include(CMakeSim.txt)
 ################################################################################
 macro(add_application NAME SOURCE_FILES)
   # optional argument parsing
-  set(oneValueArgs SUBDIR TB LABELS FLAGS)
+  set(oneValueArgs SUBDIR TB TB_TEST LABELS FLAGS)
   set(multiValueArgs LIBS)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   set(SUBDIR ${ARG_SUBDIR})
@@ -22,6 +22,8 @@ macro(add_application NAME SOURCE_FILES)
     ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
+    ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/core_libs/inc
+    ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/separate_libs/inc
     ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
   )
 
@@ -38,13 +40,20 @@ macro(add_application NAME SOURCE_FILES)
   endif()
 
   # link libraries
-  target_link_libraries(${NAME}.elf ${ARG_LIBS} bench string sys)
+  target_link_libraries(${NAME}.elf ${ARG_LIBS}  Arduino_separate Arduino_core bench string sys)
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
     set_target_properties(${NAME}.elf PROPERTIES TB ${ARG_TB})
   else()
     set_target_properties(${NAME}.elf PROPERTIES TB run.tcl)
+  endif()
+
+  # this specifies the TEST parameter argument for the testbench (if any)
+  if(ARG_TB_TEST)
+    set_target_properties(${NAME}.elf PROPERTIES TB_TEST ${ARG_TB_TEST})
+  else()
+    set_target_properties(${NAME}.elf PROPERTIES TB_TEST "")
   endif()
 
   add_custom_target(${NAME}.read)
@@ -151,12 +160,8 @@ endmacro()
 
 ################################################################################
 
-# add_subdirectory(spi_regression)
-
-add_subdirectory(boot_code)
-
 add_subdirectory(helloworld)
-add_subdirectory(freertos)
+add_subdirectory(Arduino_tests)
 
 # add_subdirectory(debug)
 add_subdirectory(bench)
@@ -166,6 +171,8 @@ if(${RISCV})
   #add_subdirectory(compressed)
   add_subdirectory(fpga)
   add_subdirectory(riscv_tests)
+  add_subdirectory(freertos)
+  add_subdirectory(boot_code)
 endif()
 
 add_subdirectory(sequential_tests)

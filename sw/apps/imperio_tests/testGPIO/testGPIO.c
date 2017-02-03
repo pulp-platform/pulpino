@@ -17,7 +17,7 @@ int main()
 {
   set_pin_function(PIN_MSPI_CSN1, FUNC_EXT2);
   if (get_pin_function(PIN_MSPI_CSN1) == FUNC_EXT2) {
-     printf("Succesfully enabled func 2 on PIN_MSPI_CSN1\n");
+     printf("Successfully enabled func 2 on PIN_MSPI_CSN1\n");
   } else {
      printf("ERROR on enabling func 2 on PIN_MSPI_CSN1\n");
   }
@@ -25,7 +25,7 @@ int main()
   set_pin_function(PIN_MSPI_CSN2, FUNC_GPIO);
   set_gpio_pin_direction(PIN_MSPI_CSN2, DIR_OUT);
   if (get_gpio_pin_direction(PIN_MSPI_CSN2) == DIR_OUT) {
-     printf("Succesfully set out dir on PIN_MSPI_CSN2\n");
+     printf("Successfully set out dir on PIN_MSPI_CSN2\n");
   } else {
      printf("ERROR on setting out dir on PIN_MSPI_CSN2\n");
   }

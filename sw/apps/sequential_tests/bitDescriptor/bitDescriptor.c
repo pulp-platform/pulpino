@@ -118,8 +118,7 @@ testcase_t testcases[] = {
 
 int main()
 {
-  run_suite(testcases);
-  return 0;
+  return run_suite(testcases);
 }
 
 void check_bit(testresult_t *result, void (*start)(), void (*stop)()) {
@@ -136,5 +135,4 @@ void check_bit(testresult_t *result, void (*start)(), void (*stop)()) {
   Process(result, "25% 1, 75% 0", Descr7, Descr_Size);
   Process(result, "75% 1, 25% 0", Descr8, Descr_Size);
   Process(result, "Random", Descr3, Descr_Size);
-
 }

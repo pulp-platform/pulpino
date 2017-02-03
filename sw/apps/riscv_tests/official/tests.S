@@ -167,7 +167,4 @@ finish:
   //jal x1, wait_barrier_event_buff
 
   jal print_test_summary
-
-  // signal end of computation
-  jal x1, eoc
   jal x0, (. - 4)

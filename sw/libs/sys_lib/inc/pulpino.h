@@ -55,8 +55,10 @@
 /** Data RAM */
 #define DATA_RAM_BASE_ADDR            ( 0x00100000 )
 
-/** Register Map */
-
+/** Registers and pointers */
+#define REGP(x) ((volatile unsigned int*)(x))
+#define REG(x) (*((volatile unsigned int*)(x)))
+#define REGP_8(x) (((volatile uint8_t*)(x)))
 
 /* pointer to mem of apb pulpino unit - PointerSocCtrl */
 #define __PSC__(a) *(unsigned volatile int*) (SOC_CTRL_BASE_ADDR + a)
@@ -83,5 +85,7 @@
 
 /** Boot address register */
 #define BOOTREG     __PSC__(0x08)
+
+#define RES_STATUS  __PSC__(0x14)
 
 #endif

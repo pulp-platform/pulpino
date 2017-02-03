@@ -2,7 +2,8 @@
 
 \pulpino features a lightweight event and interrupt unit which supports
 vectorized interrupts of up to 32 lines and event triggering of up to 32 input
-lines.
+lines. The interrupt and event lines are separately masked and buffered, see
+Figure~\ref{fig:event_unit}.
 
 
 \begin{figure}[H]
@@ -12,8 +13,19 @@ lines.
   \label{fig:event_unit}
 \end{figure}
 
+The current assignment of event and interrupt lines is given in
+Figure~\ref{fig:event_lines}. Note that \signal{irq\_i} and \signal{event\_i}
+are bound together.
 
-\regDesc{0x1A10\_4000}{0x0000\_0000}{IER (Interrupt Enable))}{
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.6\textwidth]{./figures/event_lines}
+  \caption{Event Lines.}
+  \label{fig:event_lines}
+\end{figure}
+
+
+\regDesc{0x1A10\_4000}{0x0000\_0000}{IER (Interrupt Enable)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{IER}
@@ -57,7 +69,7 @@ lines.
   }
 }
 
-\regDesc{0x1A10\_4004}{0x0000\_0000}{IPR (Interrupt Pending))}{
+\regDesc{0x1A10\_4004}{0x0000\_0000}{IPR (Interrupt Pending)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{IPR}
@@ -101,7 +113,7 @@ lines.
   }
 }
 
-\regDesc{0x1A10\_4008}{0x0000\_0000}{ISP (Interrupt Set Pending))}{
+\regDesc{0x1A10\_4008}{0x0000\_0000}{ISP (Interrupt Set Pending)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{ISP}
@@ -146,7 +158,7 @@ lines.
   }
 }
 
-\regDesc{0x1A10\_400C}{0x0000\_0000}{ICP (Interrupt Clear Pending))}{
+\regDesc{0x1A10\_400C}{0x0000\_0000}{ICP (Interrupt Clear Pending)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{ICP}
@@ -191,7 +203,7 @@ lines.
   }
 }
 
-\regDesc{0x1A10\_4010}{0x0000\_0000}{EER (Event Enable))}{
+\regDesc{0x1A10\_4010}{0x0000\_0000}{EER (Event Enable)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{EER}
@@ -235,7 +247,7 @@ lines.
   }
 }
 
-\regDesc{0x1A10\_4014}{0x0000\_0000}{EPR (Event Pending))}{
+\regDesc{0x1A10\_4014}{0x0000\_0000}{EPR (Event Pending)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{EPR}
@@ -279,7 +291,7 @@ lines.
   }
 }
 
-\regDesc{0x1A10\_4018}{0x0000\_0000}{ESP (Event Set Pending))}{
+\regDesc{0x1A10\_4018}{0x0000\_0000}{ESP (Event Set Pending)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{ESP}
@@ -324,7 +336,7 @@ lines.
   }
 }
 
-\regDesc{0x1A10\_401C}{0x0000\_0000}{ECP (Event Clear Pending))}{
+\regDesc{0x1A10\_401C}{0x0000\_0000}{ECP (Event Clear Pending)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{ECP}
@@ -369,7 +381,7 @@ lines.
   }
 }
 
-\regDesc{0x1A10\_4020}{0x0000\_0000}{SCR (Sleep Control))}{
+\regDesc{0x1A10\_4020}{0x0000\_0000}{SCR (Sleep Control)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{SCR}
@@ -384,7 +396,7 @@ lines.
   }
 }
 
-\regDesc{0x1A10\_4024}{0x0000\_0000}{SSR (Sleep Status))}{
+\regDesc{0x1A10\_4024}{0x0000\_0000}{SSR (Sleep Status)}{
   \begin{bytefield}[rightcurly=.,endianness=big]{32}
   \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
   \begin{rightwordgroup}{SSR}
