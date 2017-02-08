@@ -138,13 +138,23 @@ module core_region
   // Core Instantiation
   //----------------------------------------------------------------------------//
 
+  logic [4:0] irq_id;
+  always_comb begin
+    irq_id = '0;
+    for (int i = 0; i < 32; i+=1) begin
+      if(irq_i[i]) begin
+        irq_id = i[4:0];
+      end
+    end
+  end
+
   cpu_marx_if apu_master ();
   assign apu_master.ack_ds_s = '1;
   assign apu_master.valid_us_s = '0;
   assign apu_master.result_us_d ='0;
   assign apu_master.flags_us_d = '0;
   assign apu_master.tag_us_d = '0;
-     
+
   riscv_core
   #(
     .N_EXT_PERF_COUNTERS ( 0 )
@@ -177,7 +187,9 @@ module core_region
     .data_rvalid_i   ( core_lsu_rvalid   ),
     .data_err_i      ( 1'b0              ),
 
-    .irq_i           ( irq_i             ),
+    .irq_i           ( (|irq_i)          ),
+    .irq_id_i        ( irq_id            ),
+    .irq_ack_o       (                   ),
 
     .debug_req_i     ( debug.req         ),
     .debug_gnt_o     ( debug.gnt         ),

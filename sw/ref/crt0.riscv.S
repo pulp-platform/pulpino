@@ -242,7 +242,7 @@ end_except:
   lw x31, 0x40(x2)
   lw  x1, 0x5C(x2)
   addi x2, x2, EXCEPTION_STACK_SIZE
-  eret
+  mret
 
   .global _init
   .global _fini

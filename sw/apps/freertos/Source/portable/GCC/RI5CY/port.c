@@ -271,7 +271,7 @@ void vPortYield( void )
  * vPortYield() from the call to vTaskSwitchContext() onwards.  The only
  * difference from vPortYield() is the tick count is incremented as the
  * call comes from the tick ISR - this function is called inside a ISR only
- * and needs to return with the ERET instruction.
+ * and needs to return with the MRET instruction.
  */
 void vPortYieldFromTick( void );
 void vPortYieldFromTick( void )
@@ -296,7 +296,7 @@ void vPortYieldFromTick( void )
        in the crt0 runtime - because the call to the timer ISR is naked */
     /* return address is restored from stack to the empc register */
     // asm volatile ("addi sp,   sp, 0x10                       \n\t");
-    asm volatile ( "eret" );
+    asm volatile ( "mret" );
 }
 /*-----------------------------------------------------------*/
 
@@ -346,7 +346,7 @@ void ISR_TA_CMP(void)
     xTaskIncrementTick();
 
     /* return address is restored from stack to the empc register */
-    asm volatile ( "eret" );
+    asm volatile ( "mret" );
 }
 #endif
 
