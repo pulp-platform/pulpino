@@ -120,7 +120,7 @@ void test_rw_csr(testresult_t *result, void (*start)(), void (*stop)()) {
 
   asm volatile ("csrw 0x300, %[a];"
                 "csrw 0x341, %[b];"
-                "ebreak;" :: [a] "r" (0x1), [b] "r" (0x12345678));
+                "ebreak;" :: [a] "r" (0x0), [b] "r" (0x12345678));
 
   // now read back some values written by the debug system
   asm volatile ("ebreak;"
@@ -128,7 +128,7 @@ void test_rw_csr(testresult_t *result, void (*start)(), void (*stop)()) {
                 "csrr %[b], 0x341;"
                 : [a] "=r" (a), [b] "=r" (b));
 
-  check_uint32(result, "mstatus",  a, 0x00000006);
+  check_uint32(result, "mstatus",  a, 0x00000008);
   check_uint32(result, "mepc",     b, 0x87654321);
 }
 

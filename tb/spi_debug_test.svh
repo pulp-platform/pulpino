@@ -266,8 +266,8 @@
 
       // now check some specific ones for known values
       debug_csr_read(15'h300, data);
-      if (data !== 32'h0000_0007) begin
-        $display("ERROR: mstatus is not 0x0000_0007, but %X", data);
+      if (data !== 32'h0000_0000) begin
+        $display("ERROR: mstatus is not 0x0000_0000, but %X", data);
         dbg_tb_errors++;
       end
 
@@ -282,7 +282,7 @@
       debug_wait_for_stall();
 
       // and finally write some stuff to the CSRs
-      debug_csr_write(15'h300, 32'h0000_0000);
+      debug_csr_write(15'h300, 32'h0000_0008);
       debug_csr_write(15'h341, 32'h8765_4321);
 
       debug_resume();

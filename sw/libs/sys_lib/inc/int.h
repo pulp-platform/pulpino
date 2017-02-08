@@ -46,7 +46,7 @@ static inline void int_disable(void) {
   // read-modify-write
   int mstatus;
   asm volatile ("csrr %0, mstatus": "=r" (mstatus));
-  mstatus &= 0xFFFFFFFE;
+  mstatus &= 0xFFFFFFF7;
   asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
   asm("csrw 0x300, %0" : : "r" (0x0) );
 #else
@@ -69,7 +69,7 @@ static inline void int_enable(void) {
   // read-modify-write
   int mstatus;
   asm volatile ("csrr %0, mstatus": "=r" (mstatus));
-  mstatus |= 0x01;
+  mstatus |= 0x08;
   asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
 #else
   mtspr(SPR_SR, mfspr(SPR_SR) | (SPR_SR_IEE));
