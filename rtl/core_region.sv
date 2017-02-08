@@ -138,6 +138,13 @@ module core_region
   // Core Instantiation
   //----------------------------------------------------------------------------//
 
+  cpu_marx_if apu_master ();
+  assign apu_master.ack_ds_s = '1;
+  assign apu_master.valid_us_s = '0;
+  assign apu_master.result_us_d ='0;
+  assign apu_master.flags_us_d = '0;
+  assign apu_master.tag_us_d = '0;
+     
   riscv_core
   #(
     .N_EXT_PERF_COUNTERS ( 0 )
@@ -185,6 +192,8 @@ module core_region
 
     .fetch_enable_i  ( fetch_enable_i    ),
     .core_busy_o     ( core_busy_o       ),
+
+    .apu_master      ( apu_master        ),
 
     .ext_perf_counters_i (               )
   );
