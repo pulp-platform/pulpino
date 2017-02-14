@@ -21,7 +21,7 @@ if {$rvcores ne ""} {
   add wave -group "Exc Ctrl"                                 $rvcores/id_stage_i/exc_controller_i/*
   add wave -group "Hwloop Regs"                              $rvcores/id_stage_i/hwloop_regs_i/*
   add wave -group "EX Stage" -group "ALU"                    $rvcores/ex_stage_i/alu_i/*
-  add wave -group "EX Stage" -group "ALU_DIV"                $rvcores/ex_stage_i/alu_i/div_i/*
+  add wave -group "EX Stage" -group "ALU_DIV"                $rvcores/ex_stage_i/alu_i/int_div/div_i/*
   add wave -group "EX Stage" -group "MUL"                    $rvcores/ex_stage_i/mult_i/*
   add wave -group "EX Stage"                                 $rvcores/ex_stage_i/*
   add wave -group "LSU"                                      $rvcores/load_store_unit_i/*
