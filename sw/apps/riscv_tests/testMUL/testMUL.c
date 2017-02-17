@@ -15,14 +15,18 @@
 
 #include "stimuli.h"
 
+void check_mul   (testresult_t *result, void (*start)(), void (*stop)());
 void check_mulh  (testresult_t *result, void (*start)(), void (*stop)());
 void check_mulhu (testresult_t *result, void (*start)(), void (*stop)());
 void check_mulhsu(testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
+  { .name = "mul",           .test = check_mul           },
+#ifndef USE_ZERO_RISCY
   { .name = "mulh",          .test = check_mulh          },
   { .name = "mulhu",         .test = check_mulhu         },
   { .name = "mulhsu",        .test = check_mulhsu        },
+#endif
   {0, 0}
 };
 
@@ -34,6 +38,15 @@ int main()
 
   return 0;
 }
+
+#define util_check_mul(result, a_const, b_const, exp) \
+    a = a_const; \
+    b = b_const; \
+    asm volatile ("mul %[c], %[a], %[b];" \
+                  : [c] "=r" (act) \
+                  : [a] "r"  (a), \
+                    [b] "r"  (b)); \
+    check_uint32(result, "mul", act, exp);
 
 #define util_check_mulh(result, a_const, b_const, exp) \
     a = a_const; \
@@ -62,7 +75,24 @@ int main()
                     [b] "r"  (b)); \
     check_uint32(result, "mulhsu", act, exp);
 
+void check_mul(testresult_t *result, void (*start)(), void (*stop)()) {
+  int act;
+  int a;
+  int b;
+  int i;
 
+  util_check_mul(result, 0x0, 0x0, 0x0);
+  util_check_mul(result, 3, 5, 15);
+  util_check_mul(result, 234, 5, 1170);
+  util_check_mul(result, 1170, 1170, 1368900);
+  util_check_mul(result, 1368900, 3, 4106700);
+  util_check_mul(result, 234, 12345, 2888730);
+
+  for(i = 0; i < n_stimuli; i++) {
+    util_check_mul(result, stim_mul_a[i], stim_mul_b[i], stim_mul_exp[i]);
+  }
+}
+#ifndef USE_ZERO_RISCY
 void check_mulh(testresult_t *result, void (*start)(), void (*stop)()) {
   int act;
   int a;
@@ -128,3 +158,4 @@ void check_mulhsu(testresult_t *result, void (*start)(), void (*stop)()) {
     util_check_mulhsu(result, stim_mulhsu_a[i], stim_mulhsu_b[i], stim_mulhsu_exp[i]);
   }
 }
+#endif
