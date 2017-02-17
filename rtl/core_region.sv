@@ -148,13 +148,6 @@ module core_region
     end
   end
 
-  cpu_marx_if apu_master ();
-  assign apu_master.ack_ds_s = '1;
-  assign apu_master.valid_us_s = '0;
-  assign apu_master.result_us_d ='0;
-  assign apu_master.flags_us_d = '0;
-  assign apu_master.tag_us_d = '0;
-
   riscv_core
   #(
     .N_EXT_PERF_COUNTERS ( 0 )
@@ -205,7 +198,21 @@ module core_region
     .fetch_enable_i  ( fetch_enable_i    ),
     .core_busy_o     ( core_busy_o       ),
 
-    .apu_master      ( apu_master        ),
+    // apu-interconnect
+    // handshake signals
+    .apu_master_req_o      (             ),
+    .apu_master_ready_o    (             ),
+    .apu_master_gnt_i      ( 1'b1        ),
+    // request channel
+    .apu_master_operands_o (             ),
+    .apu_master_op_o       (             ),
+    .apu_master_type_o     (             ),
+    .apu_master_tag_o      (             ),
+    .apu_master_flags_o    (             ),
+    // response channel
+    .apu_master_valid_i    ( '0          ),
+    .apu_master_result_i   ( '0          ),
+    .apu_master_flags_i    ( '0          ),
 
     .ext_perf_counters_i (               )
   );
