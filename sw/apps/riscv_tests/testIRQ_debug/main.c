@@ -13,36 +13,58 @@
 #include "pulpino.h"
 #include "int.h"
 
+void test_init(testresult_t *result, void (*start)(), void (*stop)());
+void test_finish(testresult_t *result, void (*start)(), void (*stop)());
+
 void test_infinite_jmp_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
-  { .name = " 1. test_infinite_jmp_loop",     .test = test_infinite_jmp_loop     },
-  { .name = " 2. test_infinite_branch_loop",  .test = test_infinite_branch_loop  },
+  { .name = "init",                           .test = test_init                  },
+  { .name = " 2. test_infinite_jmp_loop",     .test = test_infinite_jmp_loop     },
+  { .name = " 3. test_infinite_branch_loop",  .test = test_infinite_branch_loop  },
 #ifdef GCC_ETH
-  { .name = " 3. test_infinite_hw_loop",      .test = test_infinite_hw_loop      },
+  { .name = " 4. test_infinite_hw_loop",      .test = test_infinite_hw_loop      },
 #endif
+  { .name = "finish",                         .test = test_finish                },
   {0, 0}
 };
 
 volatile uint32_t testcase_current = 0;
 volatile uint32_t irq_trig = 0;
 volatile uint32_t tb_errors = 0;
-volatile int mepc_jmp;
-volatile int mepc_branch;
+
 
 int main() {
   return run_suite(testcases);
 }
 
+void test_init(testresult_t *result, void (*start)(), void (*stop)()) {
+  //----------------------------------------------------------------------------
+  // 1. Stop and tell TB about our testcase_current variable
+  //----------------------------------------------------------------------------
+
+  asm volatile ("mv x16, %[current];"
+                "mv x17, %[tb_errors];"
+                "mv x18, %[irq_trig];"
+                "ebreak" :: [current] "r" (&testcase_current), [tb_errors] "r" (&tb_errors), [irq_trig] "r" (&irq_trig) : "x16", "x17", "x18");
+}
+
+void test_finish(testresult_t *result, void (*start)(), void (*stop)()) {
+  testcase_current = 0xFFFFFFFF;
+  asm volatile ("ebreak");
+
+  result->errors += tb_errors;
+}
+
 //----------------------------------------------------------------------------
-// 1. while(1)
+// 2. while(1)
 //----------------------------------------------------------------------------
 void test_infinite_jmp_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
-  volatile uint32_t act = 0;
-  testcase_current = 1;
+  volatile uint32_t act = 0, abba = 0;
+  testcase_current = 2;
   irq_trig = 0;
 
   ECP = 0xFFFFFFFF;
@@ -56,31 +78,36 @@ void test_infinite_jmp_loop(testresult_t *result, void (*start)(), void (*stop)(
   TPRA  = 0x1;
 
   asm volatile ("la x16, jmp1;"
-                "sw x16, 0(%[newmepc_jmp]);"
+                "la x17, lblj1;"
+                "ebreak;"
                 "lblj1: j lblj1;"
                 "jmp1: addi %[a], %[a], 4;"
                 : [a] "+r" (act)
-                : [newmepc_jmp] "r" (&mepc_jmp)
-                : "x16", "x17");
+                :: "x16", "x17");
 
   // disable timer
   TPRA = 0x0;
   ECP = 0x1;
   int_disable();
 
+  // now read back some values written by the debug system
+  asm volatile ("ebreak;"
+                "mv %[a], x18;"
+                : [a] "=r" (abba) :: "x18");
 
   check_uint32(result, "while(1) jmp",   act, 4);
+  check_uint32(result, "while(1) jmp",  abba, 0xABBAABBA);
 
   irq_trig = 0;
 
 }
 //----------------------------------------------------------------------------
-// 2. while(1) with branch
+// 3. while(1) with branch
 //----------------------------------------------------------------------------
 void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
   volatile uint32_t act = 0, abba = 0;
-  testcase_current = 2;
+  testcase_current = 3;
   irq_trig = 0;
 
   ECP = 0xFFFFFFFF;
@@ -93,22 +120,27 @@ void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*sto
   TOCRA = 1000;
   TPRA  = 0x1;
 
-  asm volatile ("la x16, branch1;"
-                "sw x16, 0(%[newmepc_branch]);"
+  asm volatile ("la x17, lblb1;"
                 "addi x16, x0, 0x10;"
+                "ebreak;"
                 "lblb1: bne x16, x0, lblb1;"
-                "branch1: addi x16, x16, 0x4;"
+                "addi x16, x16, 0x4;"
                 "mv %[a], x16;"
                 : [a] "+r" (act)
-                : [newmepc_branch] "r" (&mepc_branch)
-                : "x16", "x17");
+                :: "x16", "x17");
 
   // disable timer
   TPRA = 0x0;
   ECP = 0x1;
   int_disable();
 
-  check_uint32(result, "while(1) branch", act, 20);
+  // now read back some values written by the debug system
+  asm volatile ("ebreak;"
+                "mv %[a], x18;"
+                : [a] "=r" (abba) :: "x18");
+
+  check_uint32(result, "while(1) branch",   act, 4);
+  check_uint32(result, "while(1) branch",  abba, 0xABBAABBA);
 
   irq_trig = 0;
 
@@ -120,7 +152,7 @@ void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*sto
 void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
   volatile uint32_t act = 0, abba = 0;
-  testcase_current = 3;
+  testcase_current = 4;
   irq_trig = 0;
 
   ECP = 0xFFFFFFFF;
@@ -153,24 +185,10 @@ void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)()
 
 }
 #endif
-
 void ISR_TA_CMP(void) {
   ICP = (1 << 29);
-  int dest_mepc, source_mepc;
-  source_mepc = 0;
+
   irq_trig++;
-  if(irq_trig > 10) {
-    asm volatile ("csrrw %[d], mepc, %[s]"
-      : [d] "=r" (dest_mepc)
-      : [s] "r"  (source_mepc));
-    if(testcase_current == 1)
-      dest_mepc = mepc_jmp; //jump
-    else if (testcase_current == 2)
-      dest_mepc = mepc_branch; //branch
-    asm volatile ("csrrw %[d], mepc, %[s]"
-      : [d] "=r" (source_mepc)
-      : [s] "r"  (dest_mepc));
-  }
   // re-arm timer
   TIRA = 0x0;
 
