@@ -11,12 +11,15 @@ VSIM=`which vsim`
 
 # if you want to have compressed instructions, set this to 1
 RVC=0
-
+# if you want to have multiplication instructions in the official compiler, set this to 1
+RISCV_M=1
 # if you are using the ETH gcc compiler that supports the extended instruction
 # of RI5CY, set this to 1
 # Otherwise it is assumed that the official riscv compiler is used and no special
 # instructions are inserted
 GCC_ETH=1
+# if you are using zero-riscy, set this to 1
+USE_ZERO_RISCY=0
 
 
 PULP_GIT_DIRECTORY=../../
@@ -28,6 +31,8 @@ cmake "$PULP_GIT_DIRECTORY"/sw/ \
     -DVSIM="$VSIM" \
     -DRVC="$RVC" \
     -DGCC_ETH="$GCC_ETH" \
+    -DUSE_ZERO_RISCY="$USE_ZERO_RISCY" \
+    -DRISCV_M="$RISCV_M" \
     -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
     -DCMAKE_OBJDUMP="$OBJDUMP"
