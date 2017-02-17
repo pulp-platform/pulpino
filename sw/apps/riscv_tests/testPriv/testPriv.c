@@ -175,6 +175,8 @@ void ecall_insn_handler_c()
   else
     printf("TEST FAIL\n");
 
+  for(int i=0;i<3000;i++) asm volatile ("nop");
+
   exit(num_errors);
 
 }
