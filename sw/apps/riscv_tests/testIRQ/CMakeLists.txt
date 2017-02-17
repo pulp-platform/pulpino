@@ -1,5 +1,5 @@
-if (${GCC_ETH})
-  add_application(testIRQ main.c FLAGS "-DGCC_ETH" LABELS "riscv_tests")
+if (${USE_ZERO_RISCY})
+  add_application(testIRQ main.c FLAGS "-DUSE_ZERO_RISCY" LABELS "riscv_tests")
 else ()
   add_application(testIRQ main.c LABELS "riscv_tests")
 endif()

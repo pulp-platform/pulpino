@@ -7,6 +7,7 @@ set cmd "vsim -quiet $TB \
   +nowarnTSCALE \
   +nowarnTFMPC \
   +MEMLOAD=$MEMLOAD \
+  -gUSE_ZERO_RISCY=$env(USE_ZERO_RISCY) \
   -t ps \
   -voptargs=\"+acc -suppress 2103\" \
   $VSIM_FLAGS"

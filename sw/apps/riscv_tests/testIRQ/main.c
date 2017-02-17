@@ -20,7 +20,7 @@ void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)()
 testcase_t testcases[] = {
   { .name = " 1. test_infinite_jmp_loop",     .test = test_infinite_jmp_loop     },
   { .name = " 2. test_infinite_branch_loop",  .test = test_infinite_branch_loop  },
-#ifdef GCC_ETH
+#ifndef USE_ZERO_RISCY
   { .name = " 3. test_infinite_hw_loop",      .test = test_infinite_hw_loop      },
 #endif
   {0, 0}
@@ -113,7 +113,7 @@ void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*sto
   irq_trig = 0;
 
 }
-#ifdef GCC_ETH
+#ifndef USE_ZERO_RISCY
 //----------------------------------------------------------------------------
 // 3. while(i < N) with hw loop
 //----------------------------------------------------------------------------

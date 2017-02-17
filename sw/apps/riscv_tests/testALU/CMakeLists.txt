@@ -1,6 +1,6 @@
 if (${GCC_ETH})
-    if (${GCC_ETH_SLIM})
-      add_application(testALU testALU.c FLAGS "-DGCC_ETH_SLIM" LABELS "riscv_tests")
+    if (${USE_ZERO_RISCY})
+      add_application(testALU testALU.c FLAGS "-DUSE_ZERO_RISCY" LABELS "riscv_tests")
     else()
       add_application(testALU testALU.c FLAGS "-DGCC_ETH" LABELS "riscv_tests")
     endif()

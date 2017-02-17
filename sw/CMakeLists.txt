@@ -27,7 +27,7 @@ if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
   message("NOTE: Detected RISCV compiler, using RISCV setup")
 
   if(${GCC_ETH})
-    if(${GCC_ETH_SLIM})
+    if(${USE_ZERO_RISCY})
       message("NOTE: Slim GCC_ETH RISCV compiler selected")
       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IXpulpslim -Wa,-march=IXpulpslim")
       set(CMAKE_OBJDUMP_FLAGS -Mmarch=IXpulpslim -d)
@@ -142,6 +142,11 @@ add_custom_target(vcompile.pl
 
 add_custom_target(vcompile.core
   COMMAND tcsh ./vcompile/vcompile_riscv.csh
+  WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
+  ${USES_TERMINAL})
+
+add_custom_target(vcompile.core.zero
+  COMMAND tcsh ./vcompile/vcompile_zero-riscy.csh
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 

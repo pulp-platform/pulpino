@@ -1,3 +1,3 @@
-if (${GCC_ETH} AND NOT${GCC_ETH_SLIM})
+if (${GCC_ETH})
   add_application(testAddSubNorm testAddSubNorm.c LABELS "riscv_tests")
 endif()

@@ -209,7 +209,7 @@ void check_shifts(testresult_t *result, void (*start)(), void (*stop)()) {
 
     check_uint32(result, "sra", g_sra_act[i],  g_sra_exp[i]);
   }
-#if defined(GCC_ETH) && !defined(GCC_ETH_SLIM)
+#if defined(GCC_ETH) && !defined(USE_ZERO_RISCY)
   //-----------------------------------------------------------------
   // Check p.ror
   //-----------------------------------------------------------------

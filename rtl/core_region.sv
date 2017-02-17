@@ -19,7 +19,8 @@ module core_region
     parameter AXI_ID_SLAVE_WIDTH   = 10,
     parameter AXI_USER_WIDTH       = 0,
     parameter DATA_RAM_SIZE        = 32768, // in bytes
-    parameter INSTR_RAM_SIZE       = 32768  // in bytes
+    parameter INSTR_RAM_SIZE       = 32768, // in bytes
+    parameter USE_ZERO_RISCY       = 0
   )
 (
     // Clock and Reset
@@ -155,60 +156,114 @@ module core_region
   assign apu_master.flags_us_d = '0;
   assign apu_master.tag_us_d = '0;
 
-  riscv_core
-  #(
-    .N_EXT_PERF_COUNTERS ( 0 )
-  )
-  RISCV_CORE
-  (
-    .clk_i           ( clk               ),
-    .rst_ni          ( rst_n             ),
+  if(USE_ZERO_RISCY) begin
+      zeroriscy_core
+      #(
+        .N_EXT_PERF_COUNTERS ( 0 )
+      )
+      RISCV_CORE
+      (
+        .clk_i           ( clk               ),
+        .rst_ni          ( rst_n             ),
 
-    .clock_en_i      ( clock_gating_i    ),
-    .test_en_i       ( testmode_i        ),
+        .clock_en_i      ( clock_gating_i    ),
+        .test_en_i       ( testmode_i        ),
 
-    .boot_addr_i     ( boot_addr_i       ),
-    .core_id_i       ( 4'h0              ),
-    .cluster_id_i    ( 6'h0              ),
+        .boot_addr_i     ( boot_addr_i       ),
+        .core_id_i       ( 4'h0              ),
+        .cluster_id_i    ( 6'h0              ),
 
-    .instr_addr_o    ( core_instr_addr   ),
-    .instr_req_o     ( core_instr_req    ),
-    .instr_rdata_i   ( core_instr_rdata  ),
-    .instr_gnt_i     ( core_instr_gnt    ),
-    .instr_rvalid_i  ( core_instr_rvalid ),
+        .instr_addr_o    ( core_instr_addr   ),
+        .instr_req_o     ( core_instr_req    ),
+        .instr_rdata_i   ( core_instr_rdata  ),
+        .instr_gnt_i     ( core_instr_gnt    ),
+        .instr_rvalid_i  ( core_instr_rvalid ),
 
-    .data_addr_o     ( core_lsu_addr     ),
-    .data_wdata_o    ( core_lsu_wdata    ),
-    .data_we_o       ( core_lsu_we       ),
-    .data_req_o      ( core_lsu_req      ),
-    .data_be_o       ( core_lsu_be       ),
-    .data_rdata_i    ( core_lsu_rdata    ),
-    .data_gnt_i      ( core_lsu_gnt      ),
-    .data_rvalid_i   ( core_lsu_rvalid   ),
-    .data_err_i      ( 1'b0              ),
+        .data_addr_o     ( core_lsu_addr     ),
+        .data_wdata_o    ( core_lsu_wdata    ),
+        .data_we_o       ( core_lsu_we       ),
+        .data_req_o      ( core_lsu_req      ),
+        .data_be_o       ( core_lsu_be       ),
+        .data_rdata_i    ( core_lsu_rdata    ),
+        .data_gnt_i      ( core_lsu_gnt      ),
+        .data_rvalid_i   ( core_lsu_rvalid   ),
+        .data_err_i      ( 1'b0              ),
 
-    .irq_i           ( (|irq_i)          ),
-    .irq_id_i        ( irq_id            ),
-    .irq_ack_o       (                   ),
+        .irq_i           ( (|irq_i)          ),
+        .irq_id_i        ( irq_id            ),
+        .irq_ack_o       (                   ),
 
-    .debug_req_i     ( debug.req         ),
-    .debug_gnt_o     ( debug.gnt         ),
-    .debug_rvalid_o  ( debug.rvalid      ),
-    .debug_addr_i    ( debug.addr        ),
-    .debug_we_i      ( debug.we          ),
-    .debug_wdata_i   ( debug.wdata       ),
-    .debug_rdata_o   ( debug.rdata       ),
-    .debug_halted_o  (                   ),
-    .debug_halt_i    ( 1'b0              ),
-    .debug_resume_i  ( 1'b0              ),
+        .debug_req_i     ( debug.req         ),
+        .debug_gnt_o     ( debug.gnt         ),
+        .debug_rvalid_o  ( debug.rvalid      ),
+        .debug_addr_i    ( debug.addr        ),
+        .debug_we_i      ( debug.we          ),
+        .debug_wdata_i   ( debug.wdata       ),
+        .debug_rdata_o   ( debug.rdata       ),
+        .debug_halted_o  (                   ),
+        .debug_halt_i    ( 1'b0              ),
+        .debug_resume_i  ( 1'b0              ),
 
-    .fetch_enable_i  ( fetch_enable_i    ),
-    .core_busy_o     ( core_busy_o       ),
+        .fetch_enable_i  ( fetch_enable_i    ),
+        .core_busy_o     ( core_busy_o       ),
+        .ext_perf_counters_i (               )
+      );
+  end else begin
+      riscv_core
+      #(
+        .N_EXT_PERF_COUNTERS ( 0 )
+      )
+      RISCV_CORE
+      (
+        .clk_i           ( clk               ),
+        .rst_ni          ( rst_n             ),
 
-    .apu_master      ( apu_master        ),
+        .clock_en_i      ( clock_gating_i    ),
+        .test_en_i       ( testmode_i        ),
 
-    .ext_perf_counters_i (               )
-  );
+        .boot_addr_i     ( boot_addr_i       ),
+        .core_id_i       ( 4'h0              ),
+        .cluster_id_i    ( 6'h0              ),
+
+        .instr_addr_o    ( core_instr_addr   ),
+        .instr_req_o     ( core_instr_req    ),
+        .instr_rdata_i   ( core_instr_rdata  ),
+        .instr_gnt_i     ( core_instr_gnt    ),
+        .instr_rvalid_i  ( core_instr_rvalid ),
+
+        .data_addr_o     ( core_lsu_addr     ),
+        .data_wdata_o    ( core_lsu_wdata    ),
+        .data_we_o       ( core_lsu_we       ),
+        .data_req_o      ( core_lsu_req      ),
+        .data_be_o       ( core_lsu_be       ),
+        .data_rdata_i    ( core_lsu_rdata    ),
+        .data_gnt_i      ( core_lsu_gnt      ),
+        .data_rvalid_i   ( core_lsu_rvalid   ),
+        .data_err_i      ( 1'b0              ),
+
+        .irq_i           ( (|irq_i)          ),
+        .irq_id_i        ( irq_id            ),
+        .irq_ack_o       (                   ),
+
+        .debug_req_i     ( debug.req         ),
+        .debug_gnt_o     ( debug.gnt         ),
+        .debug_rvalid_o  ( debug.rvalid      ),
+        .debug_addr_i    ( debug.addr        ),
+        .debug_we_i      ( debug.we          ),
+        .debug_wdata_i   ( debug.wdata       ),
+        .debug_rdata_o   ( debug.rdata       ),
+        .debug_halted_o  (                   ),
+        .debug_halt_i    ( 1'b0              ),
+        .debug_resume_i  ( 1'b0              ),
+
+        .fetch_enable_i  ( fetch_enable_i    ),
+        .core_busy_o     ( core_busy_o       ),
+
+        .apu_master      ( apu_master        ),
+
+        .ext_perf_counters_i (               )
+      );
+  end
 
 
   core2axi_wrap
