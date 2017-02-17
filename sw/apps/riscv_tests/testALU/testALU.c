@@ -209,7 +209,7 @@ void check_shifts(testresult_t *result, void (*start)(), void (*stop)()) {
 
     check_uint32(result, "sra", g_sra_act[i],  g_sra_exp[i]);
   }
-
+#if defined(GCC_ETH) && !defined(GCC_ETH_SLIM)
   //-----------------------------------------------------------------
   // Check p.ror
   //-----------------------------------------------------------------
@@ -238,6 +238,7 @@ void check_shifts(testresult_t *result, void (*start)(), void (*stop)()) {
                 : [a] "r"  (0x12345678), [b] "r" (31));
 
   check_uint32(result, "p.ror", act, 0x2468ACF0);
+#endif
 }
 
 void check_shifts_imm(testresult_t *result, void (*start)(), void (*stop)()) {

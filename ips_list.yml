@@ -64,6 +64,10 @@ adv_dbg_if:
 riscv:
   commit: master
   alternatives: [or10n,riscv]
+
+zero-riscy:
+  commit: master
+  alternatives: [or10n,riscv]
 #or10n:
 #  commit: master
 #  alternatives: [or10n,riscv]
