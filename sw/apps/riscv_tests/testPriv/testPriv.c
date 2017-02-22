@@ -35,6 +35,7 @@ void check_switch_mode() {
   unsigned int priv_lvl;
   unsigned int mepc;
   unsigned int mpp;
+  unsigned int boot_add;
 
   //-----------------------------------------------------------------
   // Check switch_mode
@@ -43,6 +44,7 @@ void check_switch_mode() {
   //First we check we are in machine mode
   mstatus  = __builtin_pulp_spr_read(0x300);
   priv_lvl = __builtin_pulp_spr_read(0xC10);
+  boot_add = __builtin_pulp_spr_read(0x305);
 
   if(mstatus!=0x1800){
     num_errors++;
@@ -52,6 +54,11 @@ void check_switch_mode() {
   if(priv_lvl!=PRIV_LVL_M){
     num_errors++;
     printf("2) priv_lvl is %x. Expected %x\n",priv_lvl,PRIV_LVL_M);
+  }
+
+  if(boot_add!=0){
+    num_errors++;
+    printf("1) boot_add is %x. Expected %x\n",boot_add,0);
   }
 
   //Here we prepare contex for USER task
