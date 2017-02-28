@@ -149,13 +149,6 @@ module core_region
     end
   end
 
-  cpu_marx_if apu_master ();
-  assign apu_master.ack_ds_s = '1;
-  assign apu_master.valid_us_s = '0;
-  assign apu_master.result_us_d ='0;
-  assign apu_master.flags_us_d = '0;
-  assign apu_master.tag_us_d = '0;
-
   if(USE_ZERO_RISCY) begin
       zeroriscy_core
       #(
@@ -209,6 +202,15 @@ module core_region
         .ext_perf_counters_i (               )
       );
   end else begin
+
+      cpu_marx_if apu_master ();
+
+      assign apu_master.ack_ds_s = '1;
+      assign apu_master.valid_us_s = '0;
+      assign apu_master.result_us_d ='0;
+      assign apu_master.flags_us_d = '0;
+      assign apu_master.tag_us_d = '0;
+
       riscv_core
       #(
         .N_EXT_PERF_COUNTERS ( 0 )

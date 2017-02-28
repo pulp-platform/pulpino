@@ -22,11 +22,9 @@ void check_mulhsu(testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
   { .name = "mul",           .test = check_mul           },
-#ifndef USE_ZERO_RISCY
   { .name = "mulh",          .test = check_mulh          },
   { .name = "mulhu",         .test = check_mulhu         },
   { .name = "mulhsu",        .test = check_mulhsu        },
-#endif
   {0, 0}
 };
 
@@ -92,7 +90,7 @@ void check_mul(testresult_t *result, void (*start)(), void (*stop)()) {
     util_check_mul(result, stim_mul_a[i], stim_mul_b[i], stim_mul_exp[i]);
   }
 }
-#ifndef USE_ZERO_RISCY
+
 void check_mulh(testresult_t *result, void (*start)(), void (*stop)()) {
   int act;
   int a;
@@ -158,4 +156,3 @@ void check_mulhsu(testresult_t *result, void (*start)(), void (*stop)()) {
     util_check_mulhsu(result, stim_mulhsu_a[i], stim_mulhsu_b[i], stim_mulhsu_exp[i]);
   }
 }
-#endif

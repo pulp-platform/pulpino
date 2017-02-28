@@ -26,10 +26,12 @@ void test_single_step(testresult_t *result, void (*start)(), void (*stop)());
 void test_jumps(testresult_t *result, void (*start)(), void (*stop)());
 void test_jumps_after_branch(testresult_t *result, void (*start)(), void (*stop)());
 void test_branch(testresult_t *result, void (*start)(), void (*stop)());
+#if defined(GCC_ETH) && !defined(USE_ZERO_RISCY)
 void test_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_nested_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_ss_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
+#endif
 void test_wfi_sleep(testresult_t *result, void (*start)(), void (*stop)());
 void test_access_while_sleep(testresult_t *result, void (*start)(), void (*stop)());
 
@@ -47,10 +49,12 @@ testcase_t testcases[] = {
   { .name = "10. test_jumps",                 .test = test_jumps                 },
   { .name = "11. test_jumps_after_branch",    .test = test_jumps_after_branch    },
   { .name = "12. test_branch",                .test = test_branch                },
+#if defined(GCC_ETH) && !defined(USE_ZERO_RISCY)
   { .name = "13. test_hardware_loop",         .test = test_hardware_loop         },
   { .name = "14. test_nested_hardware_loop",  .test = test_nested_hardware_loop  },
   { .name = "15. test_illegal_hardware_loop", .test = test_illegal_hardware_loop },
   { .name = "16. test_ss_hardware_loop",      .test = test_ss_hardware_loop      },
+#endif
   { .name = "17. test_wfi_sleep",             .test = test_wfi_sleep             },
   { .name = "18. test_access_while_sleep",    .test = test_access_while_sleep    },
 
@@ -229,9 +233,15 @@ void test_single_step(testresult_t *result, void (*start)(), void (*stop)()) {
                 "addi %[a], %[a], 2;"
                 "addi %[a], %[a], 4;"
                 "addi %[a], %[a], 8;"
+#ifndef NO_MUL
+                "mul  %[a], %[a], %[a];"
+#endif
                 : [a] "+r" (act));
-
+#ifndef NO_MUL
+  check_uint32(result, "addi single step", act, (1 + 2 + 4 + 8)*(1 + 2 + 4 + 8));
+#else
   check_uint32(result, "addi single step", act, 1 + 2 + 4 + 8);
+#endif
 
   //----------------------------------------------------------------------------
   // check tight branch loop with load
@@ -406,6 +416,7 @@ void test_branch(testresult_t *result, void (*start)(), void (*stop)()) {
   check_uint32(result, "branch_not_taken_backward", act, 1+2);
 }
 
+#if defined(GCC_ETH) && !defined(USE_ZERO_RISCY)
 #define HWLP_COUNTI 10
 //----------------------------------------------------------------------------
 // 13. Hardware Loop
@@ -622,7 +633,7 @@ void test_ss_hardware_loop(testresult_t *result, void (*start)(), void (*stop)()
 
 
 }
-
+#endif
 //----------------------------------------------------------------------------
 // 17. WFI and sleep
 //----------------------------------------------------------------------------
