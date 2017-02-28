@@ -17,6 +17,10 @@
   .section .text
 
 reset_handler:
+
+  /* set 0 in mtvec (base for IVT) */
+  csrrw x0, mtvec, x0
+
   /* set all registers to zero */
   mv  x1, x0
   mv  x2, x1
@@ -52,7 +56,6 @@ reset_handler:
 
   /* stack initilization */
   la   x2, _stack_start
-
 
 _start:
   .global _start

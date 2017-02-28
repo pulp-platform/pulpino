@@ -217,11 +217,7 @@ module tb;
       adv_dbg_if.jtag_reset();
       adv_dbg_if.jtag_softreset();
       adv_dbg_if.init();
-      //adv_dbg_if.axi4_write32(32'h1A10_7008, 1, 32'h0000_0000);
-      debug_halt();
-      debug_wait_for_stall();
-      debug_csr_write(15'h305, 32'h0000_0000);
-      debug_resume();
+      adv_dbg_if.axi4_write32(32'h1A10_7008, 1, 32'h0000_0000);
     end
 
     if (memload == "PRELOAD")
