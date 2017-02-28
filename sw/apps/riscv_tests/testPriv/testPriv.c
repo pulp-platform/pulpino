@@ -58,7 +58,7 @@ void check_switch_mode() {
 
   if(boot_add!=0){
     num_errors++;
-    printf("1) boot_add is %x. Expected %x\n",boot_add,0);
+    printf("3) boot_add is %x. Expected %x\n",boot_add,0);
   }
 
   //Here we prepare contex for USER task
@@ -69,7 +69,7 @@ void check_switch_mode() {
   mpp  = ( mstatus & (3 << 11) ) >> 11;
   if(mpp!=PRIV_LVL_U){
     num_errors++;
-    printf("3) mpp is %x. Expected %x\n",mpp,PRIV_LVL_U);
+    printf("4) mpp is %x. Expected %x\n",mpp,PRIV_LVL_U);
   }
 
   //the ECALL handler will return here
@@ -94,12 +94,12 @@ void user_taks()
 
   if(ustatus!=0){
     num_errors++;
-    printf("4) ustatus is %x. Expected %x\n",ustatus,0);
+    printf("5) ustatus is %x. Expected %x\n",ustatus,0);
   }
 
   if(priv_lvl!=PRIV_LVL_U){
     num_errors++;
-    printf("5) priv_lvl is %x. Expected %x\n",priv_lvl,PRIV_LVL_U);
+    printf("6) priv_lvl is %x. Expected %x\n",priv_lvl,PRIV_LVL_U);
   }
 
   //Here we try to access mstatus, this will raise an illegal instruction
@@ -113,7 +113,7 @@ void user_taks()
 
   if(g_illegal_insn_counter!=1){
     num_errors++;
-    printf("8) g_illegal_insn_counter is %x. Expected %x\n",g_illegal_insn_counter,1);
+    printf("9) g_illegal_insn_counter is %x. Expected %x\n",g_illegal_insn_counter,1);
   }
 
   //Here we call the ECALL, we go back to machine mode
@@ -134,12 +134,12 @@ void illegal_insn_handler_c()
 
   if(mpp!=PRIV_LVL_U){
     num_errors++;
-    printf("6) mpp is %x. Expected %x\n",mstatus,PRIV_LVL_U);
+    printf("7) mpp is %x. Expected %x\n",mstatus,PRIV_LVL_U);
   }
 
   if(priv_lvl!=PRIV_LVL_M){
     num_errors++;
-    printf("7) priv_lvl is %x. Expected %x\n",priv_lvl,PRIV_LVL_M);
+    printf("8) priv_lvl is %x. Expected %x\n",priv_lvl,PRIV_LVL_M);
   }
 
   g_illegal_insn_counter += 1;
@@ -164,12 +164,12 @@ void ecall_insn_handler_c()
 
   if(mpp!=PRIV_LVL_U){
     num_errors++;
-    printf("9) mpp is %x. Expected %x\n",mpp,PRIV_LVL_U);
+    printf("10) mpp is %x. Expected %x\n",mpp,PRIV_LVL_U);
   }
 
   if(priv_lvl!=PRIV_LVL_M){
     num_errors++;
-    printf("10) priv_lvl is %x. Expected %x\n",priv_lvl,PRIV_LVL_M);
+    printf("11) priv_lvl is %x. Expected %x\n",priv_lvl,PRIV_LVL_M);
   }
 
   g_ecall_insn_counter += 1;
