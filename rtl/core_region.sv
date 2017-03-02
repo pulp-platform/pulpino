@@ -207,7 +207,6 @@ module core_region
     .apu_master_operands_o (             ),
     .apu_master_op_o       (             ),
     .apu_master_type_o     (             ),
-    .apu_master_tag_o      (             ),
     .apu_master_flags_o    (             ),
     // response channel
     .apu_master_valid_i    ( '0          ),
