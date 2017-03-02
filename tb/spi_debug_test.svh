@@ -266,8 +266,8 @@
 
       // now check some specific ones for known values
       debug_csr_read(15'h300, data);
-      if (data !== 32'h0000_0000) begin
-        $display("ERROR: mstatus is not 0x0000_0000, but %X", data);
+      if (data !== 32'h0000_1800) begin
+        $display("ERROR: mstatus is not 0x0000_1800, but %X", data);
         dbg_tb_errors++;
       end
 
