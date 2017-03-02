@@ -128,7 +128,7 @@ void test_rw_csr(testresult_t *result, void (*start)(), void (*stop)()) {
                 "csrr %[b], 0x341;"
                 : [a] "=r" (a), [b] "=r" (b));
 
-  check_uint32(result, "mstatus",  a, 0x00000008);
+  check_uint32(result, "mstatus",  a, 0x00001808);
   check_uint32(result, "mepc",     b, 0x87654321);
 }
 

@@ -183,6 +183,8 @@ module core_region
     .irq_i           ( (|irq_i)          ),
     .irq_id_i        ( irq_id            ),
     .irq_ack_o       (                   ),
+    .irq_sec_i       ( 1'b0              ),
+    .sec_lvl_o       (                   ),
 
     .debug_req_i     ( debug.req         ),
     .debug_gnt_o     ( debug.gnt         ),
