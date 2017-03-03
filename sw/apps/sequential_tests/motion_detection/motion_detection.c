@@ -9,7 +9,9 @@
 //#define DEBUG
 #define PROFILE
 
-#define DOTP
+#ifdef DOTP
+  #warning DOTP has been defined
+#endif
 
 typedef short pixel;
 

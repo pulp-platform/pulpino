@@ -5,12 +5,8 @@ if {$rvcores ne ""} {
   set rvprefetch [find instances -recursive -bydu riscv_prefetch_L0_buffer -nodu]
 
   add wave -group "Core"                                     $rvcores/*
-  if {$rvprefetch ne ""} {
-    add wave -group "IF Stage" -group "Prefetch"               $rvcores/if_stage_i/prefetch_128/prefetch_buffer_i/*
-  } {
-    add wave -group "IF Stage" -group "Prefetch" -group "FIFO" $rvcores/if_stage_i/prefetch_32/prefetch_buffer_i/fifo_i/*
-    add wave -group "IF Stage" -group "Prefetch"               $rvcores/if_stage_i/prefetch_32/prefetch_buffer_i/*
-  }
+  add wave -group "IF Stage" -group "Prefetch" -group "FIFO" $rvcores/if_stage_i/prefetch_buffer_i/fifo_i/*
+  add wave -group "IF Stage" -group "Prefetch"               $rvcores/if_stage_i/prefetch_buffer_i/*
   add wave -group "IF Stage"                                 $rvcores/if_stage_i/*
   add wave -group "ID Stage"                                 $rvcores/id_stage_i/*
   add wave -group "RF"                                       $rvcores/id_stage_i/registers_i/mem

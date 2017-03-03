@@ -1,12 +1,16 @@
 // SumDotp and Dotp are now defined on shorts!
-#define SumDotp(a, b, c) __builtin_pulp_sdotsp2(a, b, c)
-#define Dotp(a, b)       __builtin_pulp_dotsp2(a, b)
 
+#ifdef DOTP
+  #define SumDotp(a, b, c) __builtin_pulp_sdotsp2(a, b, c)
+  #define Dotp(a, b)       __builtin_pulp_dotsp2(a, b)
+#endif
 typedef short pixel;
 typedef short pixelV __attribute__((vector_size (4)));
 
 void  __attribute__ ((noinline)) Conv3x3_fast(pixel * __restrict__ In, pixel * __restrict__ Out, pixel * __restrict__ Coeff)
 {
+#ifdef DOTP
+
   int i, j;
   pixelV V0, V1, V2, V3, V4;
   /* Move all Kernel coeffs into registers */
@@ -94,5 +98,5 @@ void  __attribute__ ((noinline)) Conv3x3_fast(pixel * __restrict__ In, pixel * _
     Out[k*IMG_WIDTH]                   = In[k*IMG_WIDTH];
     Out[k*IMG_WIDTH + IMG_WIDTH - 1]   = In[k*IMG_WIDTH + IMG_WIDTH - 1];
   }
-
+#endif
 }
