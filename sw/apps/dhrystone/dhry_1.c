@@ -33,8 +33,8 @@ Enumeration     Func_1 ();
   /* forward declaration necessary since Enumeration may not simply be int */
 
 
-#ifdef CUSTOM_NOREG
-    Boolean Reg = false;
+#ifdef CUSTOM_REG
+    Boolean Reg = true;
 #else
     #ifndef REG
         Boolean Reg = false;
@@ -116,7 +116,7 @@ main ()
   /* Main and Proc_0 in the Ada version             */
 {
 
-#ifndef CUSTOM_NOREG
+#ifndef CUSTOM_REG
 
         One_Fifty       Int_1_Loc;
   REG   One_Fifty       Int_2_Loc;
@@ -129,25 +129,19 @@ main ()
   REG   int             Number_Of_Runs;
 #else
         One_Fifty       Int_1_Loc;
-        One_Fifty       Int_2_Loc;
+register   One_Fifty       Int_2_Loc;
         One_Fifty       Int_3_Loc;
-        char            Ch_Index;
+register    char            Ch_Index;
         Enumeration     Enum_Loc;
         Str_30          Str_1_Loc;
         Str_30          Str_2_Loc;
-        int             Run_Index;
-        int             Number_Of_Runs;
-#endif
-  /* Initializations */
-#ifndef CUSTOM_NOMALLOC
-  Next_Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
-  Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
-#else
-  Rec_Type foo1, foo2;
-  Next_Ptr_Glob = &foo1;
-  Ptr_Glob = &foo2;
+register   int             Run_Index;
+register   int             Number_Of_Runs;
 #endif
 
+  /* Initializations */
+  Next_Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
+  Ptr_Glob = (Rec_Pointer) malloc (sizeof (Rec_Type));
   Ptr_Glob->Ptr_Comp                    = Next_Ptr_Glob;
   Ptr_Glob->Discr                       = Ident_1;
   Ptr_Glob->variant.var_1.Enum_Comp     = Ident_3;
@@ -349,11 +343,11 @@ main ()
     printf ("\n");
 #elif CUSTOM_TIME
     /*PULPino timer gives number of cycles, thus they must be divided by the clock frequency
-        (float) User_Time / (float) HZ gives the number of nanoseconds
+        (float) User_Time / (float) MHz gives the number of microseconds
     */
     float  tot_Seconds;
-    Microseconds = (0.001 * (float) User_Time / (float) HZ ) / (float)Number_Of_Runs;
-    tot_Seconds  = (0.000001 * (float) User_Time / (float) HZ );
+    Microseconds = ((float) User_Time / (float) MHz ) / (float)Number_Of_Runs;
+    tot_Seconds  = ((float) User_Time / (float) MHz )/1000000.0;
     Dhrystones_Per_Second = ((float) Number_Of_Runs) / tot_Seconds;
     printf ("Microseconds for one run through Dhrystone: ");
     printFloat(Microseconds);
@@ -365,7 +359,7 @@ main ()
     printFloat(Dhrystones_Per_Second/(float)1757);
     printf ("\n");
     printf ("DMIPS/MHz: ");
-    printFloat(Dhrystones_Per_Second/(float)1757/(float)HZ);
+    printFloat(Dhrystones_Per_Second/(float)1757/(float)MHz);
     printf ("\n");
 #else
     Microseconds = (float) User_Time * Mic_secs_Per_Second 
@@ -379,7 +373,6 @@ main ()
     printf ("\n");
 #endif
   }
-  
 }
 
 Proc_1 (Ptr_Val_Par)

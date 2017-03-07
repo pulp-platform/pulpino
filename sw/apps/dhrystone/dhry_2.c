@@ -27,6 +27,7 @@ extern  int     Int_Glob;
 extern  char    Ch_1_Glob;
 
 
+
 Proc_6 (Enum_Val_Par, Enum_Ref_Par)
 /*********************************/
     /* executed once */

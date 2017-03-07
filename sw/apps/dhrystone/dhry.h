@@ -370,7 +370,7 @@
 #undef TIMES
 #include "timer.h"
 #include "pulpino.h"
-#define HZ  500
+#define MHz  500
 #endif
 
 #define Mic_secs_Per_Second     1000000.0
