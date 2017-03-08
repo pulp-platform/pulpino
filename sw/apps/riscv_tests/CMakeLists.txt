@@ -13,7 +13,6 @@ add_subdirectory(testExceptions)
 # arithmetic operations
 add_subdirectory(testALU)
 add_subdirectory(testALUExt)
-# disabled for now since opcodes clash
 add_subdirectory(testMUL)
 
 # ETH specific features

@@ -1,3 +1,7 @@
 if (${GCC_ETH})
-  add_application(testDivRem testDivRem.c LABELS "riscv_tests")
+    if (${USE_RISCY})
+        add_application(testDivRem testDivRem.c LABELS "riscv_tests")
+    endif()
+else()
+    add_application(testDivRem testDivRem.c LABELS "riscv_tests")
 endif()

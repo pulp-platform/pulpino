@@ -21,10 +21,10 @@ void test_infinite_jmp_mulh(testresult_t *result, void (*start)(), void (*stop)(
 testcase_t testcases[] = {
   { .name = " 1. test_infinite_jmp_loop",     .test = test_infinite_jmp_loop     },
   { .name = " 2. test_infinite_branch_loop",  .test = test_infinite_branch_loop  },
-#if defined(GCC_ETH) && !defined(USE_ZERO_RISCY)
+#if defined(GCC_ETH) && defined(USE_RISCY)
   { .name = " 3. test_infinite_hw_loop",      .test = test_infinite_hw_loop      },
 #endif
-#ifndef NO_NUM
+#ifdef USE_RISCY
   { .name = " 4. test_infinite_jmp_mulh",     .test = test_infinite_jmp_mulh     },
 #endif
   {0, 0}
@@ -118,7 +118,7 @@ void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*sto
   irq_trig = 0;
 
 }
-#if defined(GCC_ETH) && !defined(USE_ZERO_RISCY)
+#if defined(GCC_ETH) && defined(USE_RISCY)
 //----------------------------------------------------------------------------
 // 3. while(i < N) with hw loop
 //----------------------------------------------------------------------------
@@ -158,7 +158,7 @@ void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)()
 
 }
 #endif
-#ifndef NO_NUM
+#ifdef USE_RISCY
 //----------------------------------------------------------------------------
 // 4. while(1) mulh
 //----------------------------------------------------------------------------

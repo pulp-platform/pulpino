@@ -1,3 +1,5 @@
 if (${GCC_ETH})
-  add_application(testVecCmp testVecCmp.c LABELS "riscv_tests")
+    if (${USE_RISCY})
+        add_application(testVecCmp testVecCmp.c LABELS "riscv_tests")
+    endif()
 endif()

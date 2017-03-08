@@ -1,1 +1,7 @@
-add_application(testMUL testMUL.c LABELS "riscv_tests")
+if (${GCC_ETH})
+    if (${USE_RISCY})
+        add_application(testMUL testMUL.c LABELS "riscv_tests")
+    endif()
+else()
+    add_application(testMUL testMUL.c LABELS "riscv_tests")
+endif()

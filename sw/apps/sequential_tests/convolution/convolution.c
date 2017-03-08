@@ -12,10 +12,14 @@ void check_Conv5x5_Vector          (testresult_t *result, void (*start)(), void 
 
 testcase_t testcases[] = {
 #if FILT_WIN == 3
+  #ifdef DOTP
   { .name = "Conv3x3_Vector"    , .test = check_Conv3x3_Vector    },
+  #endif
   { .name = "Conv3x3_Scalar"    , .test = check_Conv3x3_Scalar    },
 #else
+  #ifdef DOTP
   { .name = "Conv5x5_Vector"    , .test = check_Conv5x5_Vector    },
+  #endif
   { .name = "Conv5x5_Scalar"    , .test = check_Conv5x5_Scalar    },
 #endif
   {0, 0}

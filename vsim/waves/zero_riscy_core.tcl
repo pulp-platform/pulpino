@@ -14,6 +14,7 @@ if {$rvcores ne ""} {
   add wave -group "Controller"                               $rvcores/id_stage_i/controller_i/*
   add wave -group "Exc Ctrl"                                 $rvcores/id_stage_i/exc_controller_i/*
   add wave -group "EX Block" -group "ALU"                    $rvcores/ex_block_i/alu_i/*
+  add wave -group "EX Block" -group "MULDIV"                 $rvcores/ex_block_i/multdiv_slow/multdiv_i/*
   add wave -group "EX Block"                                 $rvcores/ex_block_i/*
   add wave -group "LSU"                                      $rvcores/load_store_unit_i/*
   add wave -group "CSR"                                      $rvcores/cs_registers_i/*

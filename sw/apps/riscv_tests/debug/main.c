@@ -26,7 +26,7 @@ void test_single_step(testresult_t *result, void (*start)(), void (*stop)());
 void test_jumps(testresult_t *result, void (*start)(), void (*stop)());
 void test_jumps_after_branch(testresult_t *result, void (*start)(), void (*stop)());
 void test_branch(testresult_t *result, void (*start)(), void (*stop)());
-#if defined(GCC_ETH) && !defined(USE_ZERO_RISCY)
+#if defined(GCC_ETH) && defined(USE_RISCY)
 void test_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_nested_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_illegal_hardware_loop(testresult_t *result, void (*start)(), void (*stop)());
@@ -49,7 +49,7 @@ testcase_t testcases[] = {
   { .name = "10. test_jumps",                 .test = test_jumps                 },
   { .name = "11. test_jumps_after_branch",    .test = test_jumps_after_branch    },
   { .name = "12. test_branch",                .test = test_branch                },
-#if defined(GCC_ETH) && !defined(USE_ZERO_RISCY)
+#if defined(GCC_ETH) && defined(USE_RISCY)
   { .name = "13. test_hardware_loop",         .test = test_hardware_loop         },
   { .name = "14. test_nested_hardware_loop",  .test = test_nested_hardware_loop  },
   { .name = "15. test_illegal_hardware_loop", .test = test_illegal_hardware_loop },
@@ -233,11 +233,11 @@ void test_single_step(testresult_t *result, void (*start)(), void (*stop)()) {
                 "addi %[a], %[a], 2;"
                 "addi %[a], %[a], 4;"
                 "addi %[a], %[a], 8;"
-#ifndef NO_MUL
+#ifdef USE_RISCY
                 "mul  %[a], %[a], %[a];"
 #endif
                 : [a] "+r" (act));
-#ifndef NO_MUL
+#ifdef USE_RISCY
   check_uint32(result, "addi single step", act, (1 + 2 + 4 + 8)*(1 + 2 + 4 + 8));
 #else
   check_uint32(result, "addi single step", act, 1 + 2 + 4 + 8);
