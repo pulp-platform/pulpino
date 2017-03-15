@@ -1,7 +1,5 @@
 #!/bin/bash
 
-PATH=/Users/florianzaruba/Library/riscv_gcc/2.2.14/bin/:$PATH
-
 OBJDUMP=`which riscv32-unknown-elf-objdump`
 OBJCOPY=`which riscv32-unknown-elf-objcopy`
 
@@ -17,7 +15,7 @@ RVC=0
 # of RI5CY, set this to 1
 # Otherwise it is assumed that the official riscv compiler is used and no special
 # instructions are inserted
-GCC_ETH=1
+GCC_ETH=0
 
 PULP_GIT_DIRECTORY=../../
 SIM_DIRECTORY="$PULP_GIT_DIRECTORY/vsim"

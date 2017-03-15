@@ -17,6 +17,10 @@
   .section .text
 
 reset_handler:
+
+  /* set 0 in mtvec (base for IVT) */
+  csrrw x0, mtvec, x0
+
   /* set all registers to zero */
   mv  x1, x0
   mv  x2, x1
@@ -53,7 +57,6 @@ reset_handler:
   /* stack initilization */
   la   x2, _stack_start
 
-
 _start:
   .global _start
 
@@ -69,6 +72,8 @@ zero_loop:
   ble x26, x27, zero_loop
 zero_loop_end:
 
+  /* Run global initialization functions */
+  call    __libc_init_array
 
 main_entry:
   addi   x10, x0, 0
@@ -86,22 +91,93 @@ main_entry:
   jal  x1, exit
 
 
-/* ========================================== [ interrupt handler ] === */
-interrupt_handler:
+/* ========================================== [ I2C handler ] === */
+ISR_I2C_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
-  jal x0, int_main
+  jal x0, ISR_I2C
+
+/* ========================================== [ UART handler ] === */
+ISR_UART_ASM:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ISR_UART
+
+/* ========================================== [ GPIO handler ] === */
+ISR_GPIO_ASM:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ISR_GPIO
+
+/* ========================================== [ SPI Master end of transmission handler ] === */
+ISR_SPIM0_ASM:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ISR_SPIM0
+
+/* ========================================== [ SPI Master receive/transmit finish handler ] === */
+ISR_SPIM1_ASM:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ISR_SPIM1
+
+/* ========================================== [ Timer A compare handler ] === */
+ISR_TA_CMP_ASM:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ISR_TA_CMP
+
+/* ========================================== [ Timer A overflow handler ] === */
+ISR_TA_OVF_ASM:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ISR_TA_OVF
+
+/* ========================================== [ Timer B Compare handler ] === */
+ISR_TB_CMP_ASM:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ISR_TB_CMP
+
+/* ========================================== [ Timer B overflow handler ] === */
+ISR_TB_OVF_ASM:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ISR_TB_OVF
 
 /* ================================= [ illegal instruction handler] === */
 illegal_insn_handler:
   addi x2, x2, -EXCEPTION_STACK_SIZE
-  sw x1, 0x44(x2)
+  sw x1, 0x5C(x2)
   jal x1, store_regs
   la x1, end_except
   jal x0, illegal_insn_handler_c
 
+/* ================================= [ ecall instruction handler] === */
+ecall_insn_handler:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ecall_insn_handler_c
 
 // saves all caller-saved registers (except return address)
 store_regs:
@@ -167,10 +243,16 @@ end_except:
   lw x29, 0x38(x2)
   lw x30, 0x3c(x2)
   lw x31, 0x40(x2)
-  lw  x1, 0x44(x2)
+  lw  x1, 0x5C(x2)
   addi x2, x2, EXCEPTION_STACK_SIZE
-  eret
+  mret
 
+  .global _init
+  .global _fini
+_init:
+_fini:
+  # These don't have to do anything since we use init_array/fini_array.
+  ret
 
 /* =================================================== [ exceptions ] === */
 /* This section has to be down here, since we have to disable rvc for it  */
@@ -184,15 +266,17 @@ end_except:
   .rept 23
   nop                       // unused
   .endr
-  jal x0, interrupt_handler // 23: i2c
-  jal x0, interrupt_handler // 24: uart
-  jal x0, interrupt_handler // 25: gpio
-  jal x0, interrupt_handler // 26: spim
-  jal x0, interrupt_handler // 27: spim
-  nop                       // 28: timer
-  jal x0, int_time_cmp      // 29: timer
-  nop                       // 30: timer
-  nop                       // 31: timer
+
+  jal x0, ISR_I2C_ASM 	    // 23: i2c
+  jal x0, ISR_UART_ASM 	    // 24: uart
+  jal x0, ISR_GPIO_ASM 	    // 25: gpio
+  jal x0, ISR_SPIM0_ASM     // 26: spim	end of transmission
+  jal x0, ISR_SPIM1_ASM     // 27: spim R/T finished
+  jal x0, ISR_TA_OVF_ASM    // 28: timer A overflow
+  jal x0, ISR_TA_CMP_ASM    // 29: timer A compare
+  jal x0, ISR_TB_OVF_ASM    // 30: timer B overflow
+  jal x0, ISR_TB_CMP_ASM    // 31: timer B compare
+
 
   // reset vector
   .org 0x80
@@ -204,4 +288,4 @@ end_except:
 
   // ecall handler
   .org 0x88
-  jal x0, illegal_insn_handler
+  jal x0, ecall_insn_handler

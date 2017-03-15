@@ -25,3 +25,9 @@ void illegal_insn_handler_c(void)
 {
   for(;;);
 }
+// use weak attribute here, so we can overwrite this function to provide custom exception handlers, e.g. for tests
+__attribute__((interrupt)) __attribute__((weak))
+void ecall_insn_handler_c(void)
+{
+  for(;;);
+}

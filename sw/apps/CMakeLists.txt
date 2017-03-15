@@ -13,8 +13,8 @@ include(CMakeSim.txt)
 ################################################################################
 macro(add_application NAME SOURCE_FILES)
   # optional argument parsing
-  set(oneValueArgs SUBDIR TB FLAGS)
-  set(multiValueArgs LABELS LIBS)
+  set(oneValueArgs SUBDIR TB TB_TEST LABELS FLAGS)
+  set(multiValueArgs LIBS)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   set(SUBDIR ${ARG_SUBDIR})
 
@@ -22,7 +22,10 @@ macro(add_application NAME SOURCE_FILES)
     ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
+    ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/core_libs/inc
+    ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/separate_libs/inc
     ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
+    ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
   )
 
   add_executable(${NAME}.elf $<TARGET_OBJECTS:crt0> ${SOURCE_FILES})
@@ -37,14 +40,23 @@ macro(add_application NAME SOURCE_FILES)
     set_target_properties(${NAME}.elf PROPERTIES COMPILE_FLAGS ${ARG_FLAGS})
   endif()
 
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
+
   # link libraries
-  target_link_libraries(${NAME}.elf ${ARG_LIBS} bench string sys)
+  target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench Arduino_separate Arduino_core bench string sys m)
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
     set_target_properties(${NAME}.elf PROPERTIES TB ${ARG_TB})
   else()
     set_target_properties(${NAME}.elf PROPERTIES TB run.tcl)
+  endif()
+
+  # this specifies the TEST parameter argument for the testbench (if any)
+  if(ARG_TB_TEST)
+    set_target_properties(${NAME}.elf PROPERTIES TB_TEST ${ARG_TB_TEST})
+  else()
+    set_target_properties(${NAME}.elf PROPERTIES TB_TEST "")
   endif()
 
   add_custom_target(${NAME}.read)
@@ -158,9 +170,11 @@ endmacro()
 ################################################################################
 
 add_subdirectory(helloworld)
-
+add_subdirectory(Arduino_tests)
+add_subdirectory(dhrystone)
 # add_subdirectory(debug)
 add_subdirectory(bench)
+add_subdirectory(beebs)
 
 # RISCV only tests
 if(${RISCV})
@@ -170,7 +184,6 @@ if(${RISCV})
   add_subdirectory(freertos)
   add_subdirectory(boot_code)
 endif()
-
 add_subdirectory(sequential_tests)
 add_subdirectory(imperio_tests)
 

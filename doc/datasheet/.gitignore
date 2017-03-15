@@ -2,3 +2,6 @@
 *.log
 *.toc
 datasheet.pdf
+fig*/*.eps
+fig*/*.pdf
+fig*/*.png

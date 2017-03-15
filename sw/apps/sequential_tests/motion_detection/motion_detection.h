@@ -2,7 +2,7 @@
 
 // Performance counters
 
-#define EVENT_ID 0
+#define EVENT_ID 1
 
 void perf_enable_id( int eventid){
   cpu_perf_conf_events(SPR_PCER_EVENT_MASK(eventid));

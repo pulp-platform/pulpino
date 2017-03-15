@@ -1,0 +1,23 @@
+\section{Debug Port}
+
+This block contains a apb2per bridge which allows to convert from APB commands to the debug bus. The debug bus directly connects the debug unit of the core to the APB bus and allows for memory mapped debugging. Since all core registers are memory mapped, it is possible to debug the core with a memory interface, rather than a highly specialized interface.
+
+The debug bus signals are described as follows:
+
+\begin{table}[H]
+ \caption{Debug Bus Signals}
+ \label{tab:sspi_signals}
+  \begin{tabularx}{\textwidth}{@{}llX@{}} \toprule
+    \textbf{Signal}              & \textbf{Direction} & \textbf{Description}        \\ \toprule
+    \signal{dbg\_req}            & \textbf{Output}     & Request signal             \\ \hline
+    \signal{dbg\_addr}           & \textbf{Output}     & Address                    \\ \hline
+    \signal{dbg\_we}             & \textbf{Output}     & Write enable               \\ \hline
+    \signal{dbg\_wdata[31:0]}    & \textbf{Output}     & Data to write              \\ \hline
+    \signal{dbg\_gnt}            & \textbf{Input}      & Grant                      \\ \hline
+    \signal{dbg\_rvalid}         & \textbf{Input}      & Response valid             \\ \hline
+    \signal{dbg\_rdata[31:0]}    & \textbf{Input}      & Read data                  \\ \hline
+  \end{tabularx}
+\end{table}
+
+The protocol is very similar to the core data, and instruction interfaces. To read or write, the Master has to raise the request with the address, the write enable, and the data to write. As soon as the Slave sets the grant to 1, the transfer is granted. In case of a write operation the rvalid signal rises to one to inform the Master that the transaction was successful.
+In case of a read operation, the Slave returns the requested data on the rdata line, exactly one cycle after the grant.

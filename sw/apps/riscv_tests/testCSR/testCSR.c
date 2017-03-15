@@ -17,7 +17,6 @@
 // and writeable:
 // - mepc
 // - mstatus
-// - mcpuid
 // - mimpid
 // - mhartid
 
@@ -150,8 +149,7 @@ void check_csr_rw(testresult_t *result, void (*start)(), void (*stop)()) {
   util_check_rw(mstatus, "mstatus", i, act, last);
 
   // constants
-  util_check_rw(mcpuid,  "0xF00", i, act, last);
-  util_check_rw(mimpid,  "0xF01", i, act, last);
-  util_check_rw(mhartid, "0xF10", i, act, last);
+  util_check_rw(mimpid,  "0xF13", i, act, last);
+  util_check_rw(mhartid, "0xF14", i, act, last);
 }
 

@@ -25,7 +25,7 @@ int main() {
 
 void check(testresult_t *result, void (*start)(), void (*stop)()) {
   printf("Start sudokusolver\n");
-
+  start();
   // store sudoku to solve in grid_init
   for (int i = 0; i < 9; i++) {
     for (int j = 0; j < 9; j++) {
@@ -58,7 +58,7 @@ void check(testresult_t *result, void (*start)(), void (*stop)()) {
     sudokusolver(grid_solved, solved);
     //printf("Iteration %d completed\n",k);
   }
-
+  stop();
   // print solution
   printf("Solution:\n");
 
@@ -88,7 +88,7 @@ void sudokusolver(int* grid_solved, int* solved)
   solve(grid_solved, 0, 0, solved);
 }
 
-// check if current index doesnt violate any sudoku constraints
+// check if current index doesn't violate any sudoku constraints
 int safe(int* grid_solved, int row, int col, int n)
 {
   int r, c, br, bc;

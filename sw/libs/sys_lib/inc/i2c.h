@@ -42,6 +42,13 @@
 #define I2C_REG_TX              ( I2C_BASE_ADDR + 0x10 )
 #define I2C_REG_CMD             ( I2C_BASE_ADDR + 0x14 )
 
+#define I2C_PRE 	REG(I2C_REG_PRE)             
+#define I2C_CTR 	REG(I2C_REG_CTR)             
+#define I2C_RX 		REG(I2C_REG_RX)              
+#define I2C_STATUS 	REG(I2C_REG_STATUS)       
+#define I2C_TX 		REG(I2C_REG_TX)              
+#define I2C_CMD 	REG(I2C_REG_CMD)            
+
 #define I2C_STATUS_RXACK 0x80
 #define I2C_STATUS_BUSY  0x40
 #define I2C_STATUS_AL    0x20
@@ -58,7 +65,7 @@ void i2c_setup(int prescaler,int enable);
 
 /** Sends data via I2C.
  *
- * @param int value - data that sould be transmitted.
+ * @param int value - data that should be transmitted.
  *
 */
 void i2c_send_data(int value);

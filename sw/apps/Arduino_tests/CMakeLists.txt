@@ -1,0 +1,10 @@
+
+add_subdirectory(GPIO_test)
+add_subdirectory(int_test)
+add_subdirectory(timer_test)
+add_subdirectory(PWM_test)
+add_subdirectory(UART_test)
+add_subdirectory(PulseIn_test)
+add_subdirectory(shift_test)
+add_subdirectory(wire_test)
+add_subdirectory(SPI_test)

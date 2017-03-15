@@ -1,0 +1,141 @@
+*** rer/dhry.h	Sun Dec  4 00:08:26 1988
+--- weicker/dhry.h	Sun Dec  4 00:09:00 1988
+***************
+*** 38,45
+   *              PC Research. Inc.
+   *              94 Apple Orchard Drive
+   *              Tinton Falls, NJ 07724
+!  *                      Phone:  (201) 389-8963 (9-17 EST)               
+!  *                      Usenet: ...!uunet!pcrat!rick
+   *
+   *      Please send results to Rick Richardson and/or Reinhold Weicker.
+   *      Complete information should be given on hardware and software used.
+
+--- 38,45 -----
+   *              PC Research. Inc.
+   *              94 Apple Orchard Drive
+   *              Tinton Falls, NJ 07724
+!  *                      Phone:  (201) 834-1378 (9-17 EST)               
+!  *                      Usenet: ...!seismo!uunet!pcrat!rick
+   *
+   *      Please send results to Rick Richardson and/or Reinhold Weicker.
+   *      Complete information should be given on hardware and software used.
+***************
+*** 348,354
+  /* Compiler and system dependent definitions: */
+  
+  #ifndef TIME
+- #undef TIMES
+  #define TIMES
+  #endif
+                  /* Use times(2) time function unless    */
+
+--- 348,353 -----
+  /* Compiler and system dependent definitions: */
+  
+  #ifndef TIME
+  #define TIMES
+  #endif
+                  /* Use times(2) time function unless    */
+***************
+*** 353,366
+  #endif
+                  /* Use times(2) time function unless    */
+                  /* explicitly defined otherwise         */
+- 
+- #ifdef MSC_CLOCK
+- #undef HZ
+- #undef TIMES
+- #include <time.h>
+- #define HZ	CLK_TCK
+- #endif
+- 		/* Use Microsoft C hi-res clock */
+  
+  #ifdef TIMES
+  #include <sys/types.h>
+
+--- 352,357 -----
+  #endif
+                  /* Use times(2) time function unless    */
+                  /* explicitly defined otherwise         */
+  
+  #ifdef TIMES
+  #include <sys/types.h>
+*** rer/dhry_1.c	Sun Dec  4 00:08:36 1988
+--- weicker/dhry_1.c	Sun Dec  4 00:09:09 1988
+***************
+*** 47,53
+  struct tms      time_info;
+  extern  int     times ();
+                  /* see library function "times" */
+! #define Too_Small_Time (2*HZ)
+                  /* Measurements should last at least about 2 seconds */
+  #endif
+  #ifdef TIME
+
+--- 47,53 -----
+  struct tms      time_info;
+  extern  int     times ();
+                  /* see library function "times" */
+! #define Too_Small_Time 120
+                  /* Measurements should last at least about 2 seconds */
+  #endif
+  #ifdef TIME
+***************
+*** 56,65
+  #define Too_Small_Time 2
+                  /* Measurements should last at least 2 seconds */
+  #endif
+- #ifdef MSC_CLOCK
+- extern clock_t	clock();
+- #define Too_Small_Time (2*HZ)
+- #endif
+  
+  long            Begin_Time,
+                  End_Time,
+
+--- 56,61 -----
+  #define Too_Small_Time 2
+                  /* Measurements should last at least 2 seconds */
+  #endif
+  
+  long            Begin_Time,
+                  End_Time,
+***************
+*** 139,147
+  #ifdef TIME
+    Begin_Time = time ( (long *) 0);
+  #endif
+- #ifdef MSC_CLOCK
+-   Begin_Time = clock();
+- #endif
+  
+    for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index)
+    {
+
+--- 135,140 -----
+  #ifdef TIME
+    Begin_Time = time ( (long *) 0);
+  #endif
+  
+    for (Run_Index = 1; Run_Index <= Number_Of_Runs; ++Run_Index)
+    {
+***************
+*** 199,207
+  #endif
+  #ifdef TIME
+    End_Time = time ( (long *) 0);
+- #endif
+- #ifdef MSC_CLOCK
+-   End_Time = clock();
+  #endif
+  
+    printf ("Execution ends\n");
+
+--- 192,197 -----
+  #endif
+  #ifdef TIME
+    End_Time = time ( (long *) 0);
+  #endif
+  
+    printf ("Execution ends\n");

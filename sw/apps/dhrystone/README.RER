@@ -1,0 +1,126 @@
+12/04/88
+
+Here is Reinhold Weicker's DHRYSTONE 2.1 benchmark, slightly modified
+by me for instrumentation purposes only.  This is an integer CPU
+benchmark.  The differences between 2.0 and 2.1 are minor, and
+I believe that 2.0 and 2.1 results are comparable.
+
+For purists, I've enclosed context diffs to turn what I'm posting
+as 2.1 back into what Reinhold sent me as 2.1.  The changes
+are in pure2_1.dif.  As you can see, it is only the instrumentation
+that is slightly different.
+
+Both the C and the Pascal versions are here.  The Ada version I
+have is marked preliminary (not to be posted).
+
+I've enclosed a new submission form (note new address for mailings).
+Please deluge this mailbox (..!uunet!pcrat!dry2) with your results.
+I'll summarize and repost when the dust clears.  Please do not
+assume that I will pull posted results off of the net (I won't, its
+too much work).
+
+I've attempted to include a Makefile for UNIX and Microsoft C (with ndmake).
+Pay particular attention to the HZ parameter, even though your power may
+be 50 or 60 hertz, your computer may not be.  You may have to ask someone,
+read the manual, or check:
+	/usr/include/sys/param.h
+	/usr/include/limits.h		(CLK_TCK==HZ)
+for this information.
+
+REPEAT: HZ IS NOT NECESSARILY THE FREQUENCY OF YOUR AC POWER !!!!!!
+
+There are two versions to run, one with register variables, and one
+without.  Please let the benchmark run for 30,000 loops on sixteen
+bit machines, and for much longer (a minute or two) on faster machines.
+Please note that "time(2)" has a resolution of 1 second, and may give
+variable results.  No matter how time is measured, a sanity check with
+a stopwatch is prudent.  We've run into systems that lie about time,
+and there is always the configuration error problem.  When it comes
+to time measurement on UNIX, there is no widely adhered to standard.
+
+For segmented architectures, it is appropriate to submit results for
+all memory models, as shown below.
+
+I dropped the CODESIZE information that I attempted to add the last
+time I posted this.  People couldn't follow directions, and the
+information wasn't very useful anyway.
+
+Here's a sample submission of results:
+
+DHRYSTONE 2.1 BENCHMARK REPORTING FORM
+MANUF: IBM
+MODEL: PC/AT
+PROC: 80286
+CLOCK: 8
+OS: Venix
+OVERSION: SVr2.3
+COMPILER: AT&T cc
+CVERSION: 11/8/84
+OPTIONS: -O
+NOREG: 1450
+REG: 1450
+NOTES: HZ=60; Small Model
+DATE: 03/04/88
+SUBMITTER: pcrat!rick (Rick Richardson)
+MAILTO: uunet!pcrat!dry2
+
+DHRYSTONE 2.1 BENCHMARK REPORTING FORM
+MANUF: IBM
+MODEL: PC/AT
+PROC: 80286
+CLOCK: 8
+OS: Venix
+OVERSION: SVr2.3
+COMPILER: AT&T cc
+CVERSION: 11/8/84
+OPTIONS: -O -Ml
+NOREG: 1043
+REG: 1043
+NOTES: HZ=60; Large Model
+DATE: 03/04/88
+SUBMITTER: pcrat!rick (Rick Richardson)
+MAILTO: uunet!pcrat!dry2
+
+The program that processes submission forms is rather dumb.  Please
+do not change the order, add or removes lines in the form.  If your
+NOTES are longer than the space provided, then they are too long for
+the summary.  Keep it terse, please.
+
+A form consists of all lines between:
+	DHRYSTONE 2.1 BENCHMARK REPORTING FORM
+and
+	MAILTO: uunet!pcrat!dry2
+both lines must be present for the form to be processed.  If
+a field does not apply or is not known, leave it blank.  The fields
+are:
+	MANUF:	Computer manufacturer, e.g. AT&T, IBM
+	MODEL:	Model number of computer
+	PROC:	If a microprocessor CPU, the part number, e.g. 68030
+	CLOCK:	Clock in Mhz, if known.  Numeric only, e.g. 16.67
+	OS:	Operating system, e.g. UNIX
+	OVERSION: OS version, e.g. SVR3
+	COMPILER: Compiler name, e.g. cc, Microsoft, or Green Hills
+	CVERSION: Compiler version, e.g. 5.10
+	OPTIONS: Relevant compiler options, e.g. -O3
+	NOREG:	Dhrystones/second, no register attribute
+	REG:	Dhrystones/second, with register attribute
+	NOTES:	Additional, terse comments on one line
+	DATE:	Date of test, US format MM/DD/YY
+	SUBMITTER: uucp or domain address (full name)
+
+
+HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ
+
+Please, if you are using times(2) to measure time, indicate
+the HZ value you used in the NOTES field.  Something like this is OK:
+
+	NOTES: HZ=100; no inlining...
+
+HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ HZ
+
+--
+		Rick Richardson, President, PC Research, Inc.
+
+(201) 542-3734 (voice, nights)   OR     (201) 389-8963 (voice, days)
+uunet!pcrat!rick (UUCP)			rick%pcrat.uucp@uunet.uu.net (INTERNET)
+		uunet!pcrat!dry2   (Dhrystone submission forms only)

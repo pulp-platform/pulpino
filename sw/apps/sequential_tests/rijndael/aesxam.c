@@ -129,7 +129,7 @@ int decfile(aes *ctx, byte *decoutbuf)
 
    for(k = 0; k < 16; ++k)
       inbuf2[k] = jrand();
-   
+
    decrypt(inbuf2, decoutbuf, ctx);   /* decrypt it                       */
 
    for(i = 0; i < 16; ++i)         /* xor with previous input          */
@@ -197,16 +197,16 @@ int main()
 	for (i = 0; i < 16; i++){
 	  if (encoutbuf[i] != check_encoutbuf[i]) {
 	    error+=1;
-	    /* 	  printf("Error occured in encryption\n",0,0,0,0); */
+	    /* 	  printf("Error occurred in encryption\n",0,0,0,0); */
 	    //printf("encrypted: %d, expected: %d\n",encoutbuf[i],check_encoutbuf[i],0,0);
 	  }
 	  if (decoutbuf[i] != check_decoutbuf[i]) {
 	    error+=1;
-	    /* 	  printf("Error occured in decryption\n",0,0,0,0); */
+	    /* 	  printf("Error occurred in decryption\n",0,0,0,0); */
 	    //printf("decrypted: %d, expected: %d\n",decoutbuf[i],check_decoutbuf[i],0,0);
-	  } 
+	  }
 	}
-      } 
+      }
       int *DEFAULT_RESULT;
       if (error == 0) {
 	//printf ("OOOOOOK!!!!!!\n",0,0,0,0);
@@ -215,15 +215,15 @@ int main()
       }
       else {
 	//printf ("Not OK!! %d\n",error,0,0,0);
-  
+
 	DEFAULT_RESULT = (int*)0x10003ffc;
 	*(DEFAULT_RESULT) = error;
       }
-           
+
     }
   synch_barrier();
   eoc(0);
-  
+
 }
 
 
@@ -231,7 +231,7 @@ void compute_aes(){
   //printf("Start Rijndael encryption/decryption\n\n",0,0,0,0);
       char    *cp, ch;
       int     i=0, by=0, key_len=0, err = 0, n;
-      
+
       //repeatfactor = 4096 >> 9
       for(n = 0; n < 4096 >> 9; n++)
 	{
@@ -285,7 +285,7 @@ void compute_aes(){
 	  err = decfile(ctx, decoutbuf);
 
 	}
-    
+
     exit:
       i=0;
 }

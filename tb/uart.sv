@@ -1,14 +1,15 @@
 // This module takes data over UART and prints them to the console
 // A string is printed to the console as soon as a '\n' character is found
-module uart_tb_rx
+interface uart_bus
   #(
     parameter BAUD_RATE = 115200,
     parameter PARITY_EN = 0
     )
   (
     input  logic rx,
-    input  logic rx_en,
-    output logic word_done
+    output logic tx,
+
+    input  logic rx_en
   );
   timeunit      1ps;
   timeprecision 1ps;
@@ -20,9 +21,10 @@ module uart_tb_rx
   logic             parity;
   integer           charnum;
   integer           file;
-
+ 
   initial
   begin
+    tx   = 1'bZ;
     file = $fopen("stdout/uart", "w");
   end
 
@@ -68,8 +70,6 @@ module uart_tb_rx
         $write("RX string: %s\n",stringa);
         charnum = 0;
         stringa = "";
-        word_done = 1;
-        #100 word_done = 0;
       end
       else
       begin
@@ -80,8 +80,24 @@ module uart_tb_rx
     begin
       charnum = 0;
       stringa = "";
-      word_done = 0;
       #10;
     end
   end
-endmodule
+
+  task send_char(input logic [7:0] c);
+    int i;
+
+    // start bit
+    tx = 1'b0;
+
+    for (i = 0; i < 8; i++) begin
+      #(BIT_PERIOD);
+      tx = c[i];
+    end
+
+    // stop bit
+    #(BIT_PERIOD);
+    tx = 1'b1;
+    #(BIT_PERIOD);
+  endtask
+endinterface

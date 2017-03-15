@@ -46,6 +46,17 @@
 #define SPI_REG_INTCFG                ( SPI_BASE_ADDR + 0x24 )
 #define SPI_REG_INTSTA                ( SPI_BASE_ADDR + 0x28 )
 
+#define SPI_STATUS			REG(SPI_REG_STATUS)              
+#define SPI_CLKDIV 			REG(SPI_REG_CLKDIV)              
+#define SPI_SPICMD 			REG(SPI_REG_SPICMD)              
+#define SPI_SPIADR			REG(SPI_REG_SPIADR)               
+#define SPI_SPILEN			REG(SPI_REG_SPILEN)               
+#define SPI_SPIDUM                	REG(SPI_REG_SPIDUM)	
+#define SPI_TXFIFO			REG(SPI_REG_TXFIFO)          
+#define SPI_RXFIFO			REG(SPI_REG_RXFIFO)           
+#define SPI_INTCFG   			REG(SPI_REG_INTCFG)            
+#define SPI_INTSTA			REG(SPI_REG_INTSTA)       
+
 #define PIN_SSPI_SIO0 4
 #define PIN_SSPI_SIO1 5
 #define PIN_SSPI_SIO2 6

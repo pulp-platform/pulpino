@@ -40,7 +40,8 @@ void eoc(int i) {
 // sleep for 'iter' iterations. each iteration is approx 10 cycles
 void sleep_busy(volatile int iter)
 {
-  while (iter--);
+  for (int i=0;i<iter;i++)
+    asm volatile ("nop");
 }
 
 #ifdef __riscv__

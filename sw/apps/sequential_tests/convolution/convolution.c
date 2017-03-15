@@ -32,7 +32,9 @@ int main()
   return errors;
 }
 
-static Pixel __attribute__ ((section(".heapsram"))) Out[IMG_DIM];
+static Pixel __attribute__ ((section(".heapsram")))  Out[IMG_DIM];
+static Pixel __attribute__ ((section(".heapsram")))  In[IMG_DIM];
+static Filtc __attribute__ ((section(".heapsram")))  Kernel[FILT_DIM];
 
 void check_Conv3x3_Scalar(testresult_t *result, void (*start)(), void (*stop)()) {
 
@@ -194,7 +196,7 @@ int  __attribute__ ((noinline)) checkresult(Pixel * __restrict__ Out, Pixel * __
 
   for (i = 0; i<N; i++) {
     if (Out[i]!=OutGold[i]) {
-#ifdef DEBUG
+#ifdef CONV2D_DEBUG
       printf("At index %d: Actual value: %x: Expected: %x\n", i, Out[i],  OutGold[i]);
 #endif
       err++;

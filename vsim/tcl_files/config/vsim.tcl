@@ -11,6 +11,7 @@ set cmd "vsim -quiet $TB \
   -voptargs=\"+acc -suppress 2103\" \
   $VSIM_FLAGS"
 
+# set cmd "$cmd -sv_lib ./work/libri5cyv2sim"
 eval $cmd
 
 # check exit status in tb and quit the simulation accordingly

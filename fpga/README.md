@@ -1,6 +1,29 @@
 # FPGA
 
-This folder contains everything needed to synthesize and run PULPino on a ZedBoard.
+This folder contains everything needed to synthesize and run PULPino on a ZedBoard or ZYBO.
+
+To select board for the ZYBO board instead of the ZedBoard, set the environment
+variable `BOARD`. In the tcsh this means
+
+    setenv BOARD "zybo"
+
+or
+
+    setenv BOARD "zedboard"
+
+Note that if `BOARD` is not set, it defaults to zedboard.
+
+
+This environment variable has to be set during compilation of all FPGA related
+components. If you accidentally forget to set the environment variable during
+part of the compilation process, you may end up with a mixed zedboard/zybo
+build which will not work correctly.
+
+The components that are affected by the BOARD variable are:
+* pulpemu
+* u-boot
+* devicetree
+* spiloader
 
 
 ## Requirements

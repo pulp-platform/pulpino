@@ -14,78 +14,43 @@
 #include "uart.h"
 #include "event.h"
 
-/* int time cmp stub */
-__attribute__ ((weak, interrupt))
-void int_time_cmp (void) {
 
-}
+//defining all interrupt handelrs
+//these functions can be redefined by users
 
-/* Interrupt handlers table */
-struct ihnd int_handlers[MAX_INT_HANDLERS];
+// 23: i2c
+__attribute__ ((weak))
+void ISR_I2C (void){ for(;;); }	
 
-void handler_stub(void) {
-  printf("Stub called\n");
-}
+// 24: uart
+__attribute__ ((weak))
+void ISR_UART (void){ for(;;); }	
 
-/* Initialize routine */
-void int_init(void)
-{
-  for(int i = 0; i < MAX_INT_HANDLERS; i++) {
-    int_handlers[i].handler = (void *) handler_stub;
-    int_handlers[i].arg = 0;
-  }
-}
+// 25: gpio
+__attribute__ ((weak))
+void ISR_GPIO (void){ for(;;); }	
 
-/* Add interrupt handler */
-int int_add(unsigned long irq, void (* handler)(void *), void *arg)
-{
-  if(irq >= MAX_INT_HANDLERS)
-    return 0;
+// 26: spim end of transmission
+__attribute__ ((weak))
+void ISR_SPIM0 (void){ for(;;); }  
 
-  int_handlers[irq].handler = handler;
-  int_handlers[irq].arg = arg;
+// 27: spim R/T finished
+__attribute__ ((weak))
+void ISR_SPIM1 (void){ for(;;); }  
 
-  return 1;
-}
+// 28: timer A overflow
+__attribute__ ((weak))
+void ISR_TA_OVF (void){ for(;;); } 
 
-/* Main interrupt handler */
-__attribute__((weak))
-void int_main(void) {
-  // select correct interrupt
-  // read cause register to get pending interrupt
-  // execute ISR.
+// 29: timer A compare
+__attribute__ ((weak))
+void ISR_TA_CMP (void){ for(;;); } 
 
-#ifdef __riscv__
-  int mcause;
-  csrr(mcause, mcause);
+// 30: timer B overflow
+__attribute__ ((weak))
+void ISR_TB_OVF (void){ for(;;); } 
 
-  // printf("In ISR. cause = %u\n", mcause & 0x1F);
+// 31: timer B compare
+__attribute__ ((weak))
+void ISR_TB_CMP (void){ for(;;); }
 
-  if (mcause & (1 << 31)) {
-    // interrupt handler called because of external IRQ
-    int_handlers[(mcause & 0x1F)].handler(int_handlers[(mcause & 0x1F)].arg);
-  }
-
-  // printf("Leaving ISR.\n");
-  // clear pending register
-  ICP = (1 << mcause);
-#else
-  int pending;
-  int irq;
-
-  while ((pending = IPR) != 0) {
-
-    irq = __builtin_pulp_ff1(pending) - 1;
-
-    printf("In ISR. cause = %u, irq %u\n", pending, irq);
-
-    // interrupt handler called because of external IRQ
-    if (int_handlers[irq].handler != NULL)
-      int_handlers[irq].handler(int_handlers[irq].arg);
-
-    // printf("Leaving ISR.\n");
-    // clear pending register
-    ICP = (1 << irq);
-  };
-#endif
-}

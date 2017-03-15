@@ -77,7 +77,6 @@ module core_region
   logic [31:0]  core_data_rdata;
   logic [31:0]  core_data_wdata;
 
-
   // signals to/from AXI mem
   logic                        is_axi_addr;
   logic                        axi_mem_req;
@@ -139,6 +138,16 @@ module core_region
   // Core Instantiation
   //----------------------------------------------------------------------------//
 
+  logic [4:0] irq_id;
+  always_comb begin
+    irq_id = '0;
+    for (int i = 0; i < 32; i+=1) begin
+      if(irq_i[i]) begin
+        irq_id = i[4:0];
+      end
+    end
+  end
+
   riscv_core
   #(
     .N_EXT_PERF_COUNTERS ( 0 )
@@ -171,7 +180,11 @@ module core_region
     .data_rvalid_i   ( core_lsu_rvalid   ),
     .data_err_i      ( 1'b0              ),
 
-    .irq_i           ( irq_i             ),
+    .irq_i           ( (|irq_i)          ),
+    .irq_id_i        ( irq_id            ),
+    .irq_ack_o       (                   ),
+    .irq_sec_i       ( 1'b0              ),
+    .sec_lvl_o       (                   ),
 
     .debug_req_i     ( debug.req         ),
     .debug_gnt_o     ( debug.gnt         ),
@@ -186,6 +199,21 @@ module core_region
 
     .fetch_enable_i  ( fetch_enable_i    ),
     .core_busy_o     ( core_busy_o       ),
+
+    // apu-interconnect
+    // handshake signals
+    .apu_master_req_o      (             ),
+    .apu_master_ready_o    (             ),
+    .apu_master_gnt_i      ( 1'b1        ),
+    // request channel
+    .apu_master_operands_o (             ),
+    .apu_master_op_o       (             ),
+    .apu_master_type_o     (             ),
+    .apu_master_flags_o    (             ),
+    // response channel
+    .apu_master_valid_i    ( '0          ),
+    .apu_master_result_i   ( '0          ),
+    .apu_master_flags_i    ( '0          ),
 
     .ext_perf_counters_i (               )
   );

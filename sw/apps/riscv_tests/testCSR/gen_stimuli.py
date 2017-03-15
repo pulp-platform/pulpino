@@ -49,8 +49,7 @@ instr_32_r('g_csrrs', 0x00, lambda a, p: (p | a))
 instr_32_r('g_csrrc', 0xffffffff, lambda a, p: (p & (~a)))
 
 instr_32_r('g_mepc',     0x00, lambda a, p: a)
-instr_32_r('g_mstatus',  0x00, lambda a, p: (a & 0x01 | 0x6))
-instr_32_r('g_mcpuid',   0x00, lambda a, p: 0x00801100)
-instr_32_r('g_mimpid',   0x00, lambda a, p: 0x8000)
+instr_32_r('g_mstatus',  0x00, lambda a, p: (a & 0x88 | 0x1800))
+instr_32_r('g_mimpid',   0x00, lambda a, p: 0x0000)
 instr_32_r('g_mhartid',  0x00, lambda a, p: 0x0000) # for core 0 in cluster 0
 

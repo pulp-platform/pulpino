@@ -1,0 +1,93 @@
+\section{SoC Control}
+
+\pulpino features a small and simple APB peripheral which provides information about the platform and provides the means
+for pad muxing on the ASIC.
+
+The following registers can be accessed.
+
+
+\regDesc{0x1A10\_7000}{0x0000\_0000}{PAD Mux}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{PAD\_MUX}
+    \bitbox{32}{PADMUX}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{PADMUX}{
+    The content of this register can be used to multiplex pads when targeting an ASIC.
+  }
+}
+
+\regDesc{0x1A10\_7004}{0x0000\_0001}{CLK Gate}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{CLK\_GATE}
+    \bitbox{31}{Unused}
+    \bitbox{1}{E}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{CLK GATE}{
+    This register contains the value of the clock gate enable signal (E) used to clock gate the core. It is active high.
+  }
+}
+
+\regDesc{0x1A10\_7008}{0x0000\_8000}{Boot Address}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{BOOT\_ADR}
+    \bitbox{32}{Boot Address}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{Boot Address}{
+    This register holds the boot address. It is possible to boot from a ROM, or directly from the instruction memory.
+  }
+}
+
+\regDesc{0x1A10\_7010}{0x0000\_8082}{Info}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{INFO}
+    \bitbox{4}{Unused}
+    \bitbox{1}{D}
+    \bitbox{1}{I}
+    \bitbox{5}{Rom Size}
+    \bitbox{8}{Inst Ram Size}
+    \bitbox{8}{Data Ram Size}
+    \bitbox{5}{Version}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{Info Register}{
+    This register holds information about the PULPino architecture. Version contains the pulpino version. The flags D and I report if there is a data/instruction cache present. Rom Size defines the size of the boot ROM. Finally,  Inst. Ram Size and Data Ram Size define the size of the RAMs in multiples of 8 kB.
+  }
+}
+
+\regDesc{0x1A10\_7014}{0x0000\_0001}{Status}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{STATUS}
+    \bitbox{31}{Unused}
+    \bitbox{1}{S}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{Status Register}{
+    The status register bit S can be used to hold the final result of a test for verification purposes.
+  }
+}
+
+\regDesc{0x1A10\_7020 - 0x1A10\_703C}{0x0000\_0000}{PAD Configuration}{
+  \begin{bytefield}[rightcurly=.,endianness=big]{32}
+  \bitheader{31,30,29,28,27,26,25,24,23,22,21,20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1,0} \\
+  \begin{rightwordgroup}{PAD CFG0-7}
+    \bitbox{32}{PAD Configuration}
+  \end{rightwordgroup}\\
+  \end{bytefield}
+}{
+  \regItem{Bit 31:0}{PAD CFG0-7}{
+    These 8 registers can be used for ASIC targets to configure pads, e.g. pull up, pull down values.
+  }
+}

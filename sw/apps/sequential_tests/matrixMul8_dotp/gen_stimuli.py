@@ -19,7 +19,9 @@ def write_arr2(f, name, arr):
     return
 
 ################################################################################
-f = open('parMatrixMul8_stimuli.h', 'w')
+f = open('dotMatrixMul8_stimuli.h', 'w')
+f.write('#ifndef _DOTMATMUL8_\n')
+f.write('#define _DOTMATMUL8_\n')
 
 
 SIZE = 8
@@ -54,8 +56,5 @@ write_arr2(f, 'm_exp', m_exp)
 f.write('#define SIZE %d\n' % SIZE)
 
 
-f.write('char g_mA[SIZE][SIZE];\n')
-f.write('char g_mB[SIZE][SIZE];\n')
-f.write('int g_mC[SIZE][SIZE];\n')
-f.write('char g_mB_tmp[SIZE][SIZE];\n')
+f.write('#endif')
 

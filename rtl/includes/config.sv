@@ -10,7 +10,7 @@
 
 `ifndef CONFIG_SV
 `define CONFIG_SV
-
+`define RISCV
 // always define ASIC when we do a synthesis run
 `ifndef PULP_FPGA_EMUL
 `ifdef SYNTHESIS

@@ -2,9 +2,9 @@
 #include <stdio.h>
 
 #define ROUNDBIT   (1 << (DATA_WIDTH -1 -1))
-#define SATURATION ((1 << (DATA_WIDTH -1) ) -1)
+#define SATURATION ((1 << (DATA_WIDTH -1)) -1)
 
-void  __attribute__ ((noinline)) Conv3x3_Scalar  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
+void __attribute__ ((noinline)) Conv3x3_Scalar  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
   int r, c, k, i, j, w, t;
   Filtc coeff;
@@ -25,15 +25,14 @@ void  __attribute__ ((noinline)) Conv3x3_Scalar  (Pixel * In_Img, Pixel * Out_Im
         */
         for (i = -1; i <= 1; i++) {
             for (j = -1; j <= 1; j++) {
-
                 k = (r+i)*R + (c+j); //coeff for one dimension matrix
                 data = In_Img[k];
                 w = (i+1)*FILT_WIN + (j+1);
                 coeff = Kernel[w];
-                S += (int)(coeff*data);
-
+                S = S + (int)(coeff*data);
             }
         }
+
         // Rounding
         S = S + ROUNDBIT;
         // Normalization: Data are Q2.2*(DATA_WIDTH-1), now Q2.DATA_WIDTH-1
@@ -47,7 +46,7 @@ void  __attribute__ ((noinline)) Conv3x3_Scalar  (Pixel * In_Img, Pixel * Out_Im
   }
 }
 
-void  __attribute__ ((noinline)) Conv5x5_Scalar  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
+void __attribute__ ((noinline)) Conv5x5_Scalar  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
   int r, c, k, i, j, w, t;
   Filtc coeff;
@@ -78,6 +77,7 @@ void  __attribute__ ((noinline)) Conv5x5_Scalar  (Pixel * In_Img, Pixel * Out_Im
                 S += (int)(coeff*data);
             }
         }
+
         // Rounding
         S = S + ROUNDBIT;
         // Normalization: Data are Q2.2*(DATA_WIDTH-1), now Q2.DATA_WIDTH-1
@@ -85,14 +85,15 @@ void  __attribute__ ((noinline)) Conv5x5_Scalar  (Pixel * In_Img, Pixel * Out_Im
         // Saturation
         S = S > SATURATION ? SATURATION : S;
         S = S <          0 ?          0 : S;
+
         Out_Img[t] = (Pixel)S;
     }
   }
 }
 
-#if DATA_WIDTH == 8
+#if DATA_TYPE == 8
 
-void  __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
+void __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
 
   FiltcV coeff_0, coeff_1, coeff_2;
@@ -101,13 +102,13 @@ void  __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Im
   int r, c, i, j, t;
   int S;
 
-  coeff_0 = (FiltcV)  {Kernel[0], Kernel[1], Kernel[2], 0};
-  coeff_1 = (FiltcV)  {Kernel[3], Kernel[4], Kernel[5], 0};
-  coeff_2 = (FiltcV)  {Kernel[6], Kernel[7], Kernel[8], 0};
+  coeff_0 = (FiltcV)  {Kernel[0], Kernel[1], Kernel[2], 0 };
+  coeff_1 = (FiltcV)  {Kernel[3], Kernel[4], Kernel[5], 0 };
+  coeff_2 = (FiltcV)  {Kernel[6], Kernel[7], Kernel[8], 0 };
 
   //image board is black
   for (c=0; c < C-2; c++) {
-    r = 0;
+
     Img_0   = (PixelV)  {In_Img[c],     In_Img[c+1],     In_Img[c+2],     0};
     Img_1   = (PixelV)  {In_Img[c+R],   In_Img[c+1+R],   In_Img[c+2+R],   0};
     Img_2   = (PixelV)  {In_Img[c+2*R], In_Img[c+1+2*R], In_Img[c+2+2*R], 0};
@@ -159,11 +160,12 @@ void  __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Im
         Img_2 = new_data;
 
     }
-    //last iteration, r=R-2
+    //last iteration
     t = r*R + c+1;
     S = dotp(Img_0,coeff_0);
     S = sumdotp(Img_1,coeff_1, S);
     S = sumdotp(Img_2,coeff_2, S);
+
     // Rounding and Normalization: Data are Q2.2*(DATA_WIDTH-1), now Q2.DATA_WIDTH-1
     S = addnr(S,DATA_WIDTH-1,ROUNDBIT);
     // Saturation
@@ -173,7 +175,7 @@ void  __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Im
   }
 }
 
-void  __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
+void __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
 
   FiltcV coeff_0, coeff_1, coeff_2, coeff_3, coeff_4, coeff_5, coeff_6;
@@ -188,20 +190,20 @@ void  __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Im
   coeff_2 = *((FiltcV *) (&Kernel[10]));
   coeff_3 = *((FiltcV *) (&Kernel[15]));
   coeff_4 = *((FiltcV *) (&Kernel[20]));
-  coeff_5 = (FiltcV)  {  Kernel[4],  Kernel[9], Kernel[14], Kernel[19]};
-  coeff_6 = (FiltcV)  { Kernel[24],          0,          0,          0};
-  mask0 = (PixelV){5, 6, 7, 0};
+  coeff_5 = (FiltcV)     { Kernel[4],  Kernel[9], Kernel[14], Kernel[19] };
+  coeff_6 = (FiltcV)     { Kernel[24], 0,         0,          0 };
+  mask0 = (PixelV){1, 2, 3, 4};
 
   //image board is black
   for (c=0; c < C-4; c++) {
-    r = 0;
+
     Img_0   = *((PixelV *) (&In_Img[c])     );
     Img_1   = *((PixelV *) (&In_Img[c+R])   );
     Img_2   = *((PixelV *) (&In_Img[c+2*R]) );
     Img_3   = *((PixelV *) (&In_Img[c+3*R]) );
     Img_4   = *((PixelV *) (&In_Img[c+4*R]) );
-    Img_5   = (PixelV)  {     In_Img[c+4],   In_Img[c+4+R], In_Img[c+4+2*R], In_Img[c+4+3*R] };
-    Img_6   = (PixelV)  { In_Img[c+4+4*R],               0,               0,               0 };
+    Img_5   = (PixelV)     { In_Img[c+4],     In_Img[c+4+R], In_Img[c+4+2*R], In_Img[c+4+3*R] };
+    Img_6   = (PixelV)     { In_Img[c+4+4*R], 0,             0,               0 };
 
     for (r=1; r < R-4; r++) {
 
@@ -271,7 +273,7 @@ void  __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Im
         Img_6 = new_data2;
 
     }
-    //last iteration, r=R-2
+    //last iteration
     t = (r+1)*R + c+2;
     S = dotp(Img_0,coeff_0);
     S = sumdotp(Img_1,coeff_1, S);
@@ -292,7 +294,7 @@ void  __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Im
 
 #else
 
-void  __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
+void __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
 
   FiltcV coeff_0, coeff_1, coeff_2, coeff_3, coeff_4;
@@ -305,20 +307,19 @@ void  __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Im
   coeff_0 = *((FiltcV *) (&Kernel[0]));
   coeff_1 = *((FiltcV *) (&Kernel[3]));
   coeff_2 = *((FiltcV *) (&Kernel[6]));
-  coeff_3 = (FiltcV)  {Kernel[2], Kernel[5]};
-  coeff_4 = (FiltcV)  {Kernel[8],         0};
+  coeff_3 = (FiltcV)     { Kernel[2], Kernel[5] };
+  coeff_4 = (FiltcV)     { Kernel[8], 0 };
 
-  mask0 = (PixelV){3, 0};
+  mask0 = (PixelV){1, 2};
 
   //image board is black
   for (c=0; c < C-2; c++) {
-    r = 0;
 
     Img_0   = *((PixelV *) (&In_Img[c])     );
     Img_1   = *((PixelV *) (&In_Img[c+R])   );
     Img_2   = *((PixelV *) (&In_Img[c+2*R]) );
-    Img_3   = (PixelV)  {    In_Img[c+2], In_Img[c+2+R]   };
-    Img_4   = (PixelV)  {In_Img[c+2+2*R], 0               };
+    Img_3   = (PixelV)     { In_Img[c+2],     In_Img[c+2+R]   };
+    Img_4   = (PixelV)     { In_Img[c+2+2*R], 0               };
 
     for (r=1; r < R-2; r++) {
 
@@ -335,10 +336,9 @@ void  __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Im
         S = clipu(S,0,SATURATION);
 
         Out_Img[t] = (Pixel)S;
-        //new_data1 = (PixelV)  {  In_Img[c+(r+2)*R], In_Img[c+1+(r+2)*R]};
-        new_data1 = *((PixelV *) (&In_Img[c+(r+2)*R]));
-        new_data2 = (PixelV)  {In_Img[c+2+(r+2)*R], 0                  };
 
+        new_data1 = *((PixelV *) (&In_Img[c+(r+2)*R]));
+        new_data2 = (PixelV)  {In_Img[c+2+(r+2)*R], 0 };
 
         // Move the window
         /*
@@ -376,8 +376,9 @@ void  __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Im
         Img_2 = new_data1;
         Img_3 = shuffle(Img_3,Img_4,mask0);
         Img_4 = new_data2;
+
     }
-    //last iteration, r=R-2
+    //last iteration
     t = r*R + c+1;
     S = dotp(Img_0,coeff_0);
     S = sumdotp(Img_1,coeff_1, S);
@@ -394,7 +395,7 @@ void  __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Im
   }
 }
 
-void  __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
+void __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
   FiltcV coeff_0, coeff_1, coeff_2, coeff_3, coeff_4, coeff_5, coeff_6, coeff_7, coeff_8, coeff_9, coeff_10, coeff_11, coeff_12;
   PixelV Img_0, Img_1, Img_2, Img_3, Img_4, Img_5, Img_6, Img_7, Img_8, Img_9, Img_10, Img_11, Img_12;
@@ -413,15 +414,14 @@ void  __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Im
   coeff_7  = *((FiltcV *) (&Kernel[17]));
   coeff_8  = *((FiltcV *) (&Kernel[20]));
   coeff_9  = *((FiltcV *) (&Kernel[22]));
-  coeff_10 = (FiltcV)  {  Kernel[4],  Kernel[9]};
-  coeff_11 = (FiltcV)  { Kernel[14], Kernel[19]};
-  coeff_12 = (FiltcV)  { Kernel[24],          0};
+  coeff_10 = (FiltcV)     { Kernel[4],  Kernel[9] };
+  coeff_11 = (FiltcV)     { Kernel[14], Kernel[19] };
+  coeff_12 = (FiltcV)     { Kernel[24], 0 };
 
-  mask0 = (PixelV){3, 0};
+  mask0 = (PixelV){1, 2};
 
   //image board is black
   for (c=0; c < C-4; c++) {
-    r = 0;
 
     Img_0   = *((PixelV *) (&In_Img[c])      );
     Img_1   = *((PixelV *) (&In_Img[c+2])    );
@@ -433,9 +433,9 @@ void  __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Im
     Img_7   = *((PixelV *) (&In_Img[c+2+3*R]));
     Img_8   = *((PixelV *) (&In_Img[c+4*R])  );
     Img_9   = *((PixelV *) (&In_Img[c+2+4*R]));
-    Img_10  = (PixelV)  {           In_Img[c+4],     In_Img[c+4+R]    };
-    Img_11  = (PixelV)  {       In_Img[c+4+2*R],     In_Img[c+4+3*R]  };
-    Img_12  = (PixelV)  {       In_Img[c+4+4*R],                   0  };
+    Img_10  = (PixelV)     { In_Img[c+4],     In_Img[c+4+R] };
+    Img_11  = (PixelV)     { In_Img[c+4+2*R], In_Img[c+4+3*R] };
+    Img_12  = (PixelV)     { In_Img[c+4+4*R], 0  };
 
     for (r=1; r < R-4; r++) {
 
@@ -532,7 +532,7 @@ void  __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Im
         Img_12 = new_data3;
 
     }
-    //last iteration, r=R-2
+    //last iteration
     t = (r+1)*R + c+2;
     S = dotp(Img_0,coeff_0);
     S = sumdotp(Img_1,  coeff_1, S);

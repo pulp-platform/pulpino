@@ -153,6 +153,7 @@
   logic [31: 0] dbg_testcase_addr;
   logic [31: 0] dbg_tb_errors_addr;
   logic [31: 0] dbg_tb_errors;
+  logic [31: 0] dbg_tb_irq_trig_addr;
 
   task debug_test_init;
     begin
@@ -167,6 +168,25 @@
       debug_wait_for_stall();
       debug_gpr_read(16, dbg_testcase_addr);
       debug_gpr_read(17, dbg_tb_errors_addr);
+
+      debug_resume();
+    end
+  endtask
+
+  task debug_irq_test_init;
+    begin
+      $display("[DEBUG IRQ] Test Init");
+      dbg_tb_errors = 0;
+
+      debug_halt();
+      debug_write(`DBG_IE_REG, 32'h0000000F);
+      debug_wait_for_stall();
+      debug_resume();
+
+      debug_wait_for_stall();
+      debug_gpr_read(16, dbg_testcase_addr);
+      debug_gpr_read(17, dbg_tb_errors_addr);
+      debug_gpr_read(18, dbg_tb_irq_trig_addr);
 
       debug_resume();
     end
@@ -246,8 +266,8 @@
 
       // now check some specific ones for known values
       debug_csr_read(15'h300, data);
-      if (data !== 32'h0000_0007) begin
-        $display("ERROR: mstatus is not 0x0000_0007, but %X", data);
+      if (data !== 32'h0000_1800) begin
+        $display("ERROR: mstatus is not 0x0000_1800, but %X", data);
         dbg_tb_errors++;
       end
 
@@ -262,7 +282,7 @@
       debug_wait_for_stall();
 
       // and finally write some stuff to the CSRs
-      debug_csr_write(15'h300, 32'h0000_0000);
+      debug_csr_write(15'h300, 32'h0000_0008);
       debug_csr_write(15'h341, 32'h8765_4321);
 
       debug_resume();
@@ -2088,6 +2108,104 @@
           17: debug_test_wfi_sleep();
           18: debug_test_access_while_sleep();
 
+          32'hFFFF_FFFF: break;
+          default: $display("ERROR: Unknown testcase %d", testcase_nr);
+        endcase
+      end
+
+      debug_test_finish();
+    end
+  endtask
+
+  task debug_test_infinite_jmp_loop;
+    logic [31:0] npc, npc_jmp, lbl_jmp, trigger;
+    int i;
+    begin
+      $display("[DEBUG IRQ] Running test_infinite_loop");
+      debug_wait_for_stall();
+
+      debug_gpr_read(5'd16, npc_jmp);
+      debug_gpr_read(5'd17, lbl_jmp);
+      debug_resume();
+
+      trigger = 0;
+      while (trigger < 5) begin
+        debug_halt();
+        debug_wait_for_stall();
+        debug_mem_lw(dbg_tb_irq_trig_addr, trigger);
+        debug_resume();
+      end
+
+      npc = 0;
+      while(npc !== lbl_jmp) begin
+        debug_halt();
+        debug_wait_for_stall();
+        debug_read(`DBG_NPC_REG, npc);
+        debug_resume();
+      end
+
+      debug_halt();
+      debug_wait_for_stall();
+      debug_write(`DBG_NPC_REG, npc_jmp);
+
+      debug_resume();
+
+      // and finally write some stuff to the GPRs
+      debug_wait_for_stall();
+      debug_gpr_write(18, 32'hABBA_ABBA);
+
+      debug_resume();
+    end
+  endtask
+
+  task debug_test_infinite_branch_loop;
+    logic [31:0] npc, lbl_branch, trigger;
+    int i;
+    begin
+      $display("[DEBUG IRQ] Running test_infinite_branch_loop");
+      debug_wait_for_stall();
+
+      debug_gpr_read(5'd17, lbl_branch);
+      debug_resume();
+
+      trigger = 0;
+      while (trigger < 5) begin
+        debug_halt();
+        debug_wait_for_stall();
+        debug_mem_lw(dbg_tb_irq_trig_addr, trigger);
+        debug_resume();
+      end
+
+      npc = 0;
+      do begin
+        debug_halt();
+        debug_wait_for_stall();
+        debug_read(`DBG_NPC_REG, npc);
+        if (npc == lbl_branch)
+          debug_gpr_write(16,  32'h0); //unlock the infinite branch loop
+        debug_resume();
+      end while(npc != lbl_branch);
+
+      // and finally write some stuff to the GPRs
+      debug_wait_for_stall();
+      debug_gpr_write(18, 32'hABBA_ABBA);
+
+      debug_resume();
+    end
+  endtask
+
+  task debug_irq_tests;
+    logic [31:0] testcase_nr;
+    begin
+      debug_irq_test_init();
+
+      while(1) begin
+        debug_wait_for_stall();
+        debug_mem_lw(dbg_testcase_addr, testcase_nr);
+
+        unique case (testcase_nr)
+          02: debug_test_infinite_jmp_loop();
+          03: debug_test_infinite_branch_loop();
           32'hFFFF_FFFF: break;
           default: $display("ERROR: Unknown testcase %d", testcase_nr);
         endcase
