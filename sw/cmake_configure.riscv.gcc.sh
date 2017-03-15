@@ -28,8 +28,6 @@ cmake "$PULP_GIT_DIRECTORY"/sw/ \
     -DGCC_ETH="$GCC_ETH" \
     -DCMAKE_C_FLAGS="$TARGET_C_FLAGS" \
     -DCMAKE_OBJCOPY="$OBJCOPY" \
-    -DCMAKE_OBJDUMP="$OBJDUMP" \
-    -DCMAKE_RANLUB="$RANLIB" \
-    -G "Ninja"
+    -DCMAKE_OBJDUMP="$OBJDUMP"
 
 # Add -G "Ninja" to the cmake call above to use ninja instead of make
