@@ -124,11 +124,11 @@ Replace helloworld with the test/application you want to run.
 
 To evaluate PULPino using Verilator you need to compile all the HDL and the testbench first using:
 
-    make vericompile
+    ninja vericompile
 
 After compilation succeeded you can call any program with:
 
-    make helloworld.verilate
+    ninja helloworld.verilate
 
 ### Using ninja instead of make
 
