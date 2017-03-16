@@ -119,6 +119,9 @@ Replace helloworld with the test/application you want to run.
 
 ### Using Verilator
 
+> Note: Currently Verilator compilation is only supported by using `ninja`.
+> Adapt the `cmake_configure.riscv.gcc.sh` accordingly (e.g. pass `-G "Ninja"`) to it.
+
 To evaluate PULPino using Verilator you need to compile all the HDL and the testbench first using:
 
     make vericompile
