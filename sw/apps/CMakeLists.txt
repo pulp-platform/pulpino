@@ -77,7 +77,12 @@ macro(add_application NAME SOURCE_FILES)
 
   # if there are labels available for testing
   if(ARG_LABELS)
-    set_tests_properties(${NAME}.test PROPERTIES LABELS "${ARG_LABELS}")
+    set(TEST_LABELS, "")
+    string(REPLACE "verilator_tests" "" TEST_LABELS "${ARG_LABELS}")
+    set_tests_properties(${NAME}.test PROPERTIES LABELS "${TEST_LABELS}")
+  endif()
+  if(ARG_LABELS AND ARG_LABELS MATCHES "verilator_tests")
+    set_tests_properties(${NAME}.verilate PROPERTIES LABELS "verilator_tests")
   endif()
 
 endmacro()
@@ -157,6 +162,7 @@ macro(add_boot_code NAME SOURCE_FILES)
   # if there are labels available for testing
   if(ARG_LABELS)
     set_tests_properties(${NAME}.test PROPERTIES LABELS "${ARG_LABELS}")
+    set_tests_properties(${NAME}.verilate PROPERTIES LABELS "${ARG_LABELS}")
   endif()
 
 endmacro()

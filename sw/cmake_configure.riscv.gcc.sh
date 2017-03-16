@@ -4,10 +4,9 @@ OBJDUMP=`which riscv32-unknown-elf-objdump`
 OBJCOPY=`which riscv32-unknown-elf-objcopy`
 
 COMPILER=`which riscv32-unknown-elf-gcc`
+RANLIB=`which riscv32-unknown-elf-ranlib`
 
 TARGET_C_FLAGS="-O3 -m32 -g"
-
-VSIM=`which vsim`
 
 # if you want to have compressed instructions, set this to 1
 RVC=0
@@ -16,8 +15,7 @@ RVC=0
 # of RI5CY, set this to 1
 # Otherwise it is assumed that the official riscv compiler is used and no special
 # instructions are inserted
-GCC_ETH=1
-
+GCC_ETH=0
 
 PULP_GIT_DIRECTORY=../../
 SIM_DIRECTORY="$PULP_GIT_DIRECTORY/vsim"

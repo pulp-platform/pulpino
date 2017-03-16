@@ -8,10 +8,28 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#include <stdio.h>
+#ifndef PULPINO_H
+#define PULPINO_H
 
-int main()
-{
-  printf("Hello World!!!!!\n");
-  return 0;
-}
+#include "Vtb_verilator.h"
+#include "verilated.h"
+#include <fstream>
+#include <vector>
+#include <sstream>
+
+class PULPino {
+
+public:
+    PULPino();
+    ~PULPino();
+    void preload_memories(std::string instr_file, std::string data_file);
+    void set_boot_reg(unsigned int boot_address);
+    int get_return_code();
+
+    Vtb_verilator* top;
+private:
+
+    vector<string> split(string str, char delimiter);
+};
+
+#endif
