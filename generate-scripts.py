@@ -36,7 +36,6 @@ if os.path.exists("ipstools") and os.path.isdir("ipstools"):
     import ipstools
 else:
     execute("git clone git@iis-git.ee.ethz.ch:pulp-tools/IPApproX ipstools")
-    execute("git checkout verilator")
     import ipstools
 execute("mkdir -p vsim/vcompile/ips")
 execute("rm -rf vsim/vcompile/ips/*")
