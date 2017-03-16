@@ -13,6 +13,7 @@ add_subdirectory(matrixMul16_dotp)
 add_subdirectory(matrixMul32)
 add_subdirectory(motion_detection)
 add_subdirectory(convolution)
+add_subdirectory(pooling)
 add_subdirectory(stencil)
 
 
