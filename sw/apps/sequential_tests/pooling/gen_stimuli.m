@@ -20,15 +20,6 @@ max_pool      = rand(R_pool,C_pool);
 
 k = 0;
 
-%for R=1:R_img
-%    for C=1:C_img
-%        if k > 256
-%            k = 0;
-%        end
-%        image(R,C) = k;
-%        k = k + 1;
-%    end
-%end
 imshow(double(image)/256)
 
 for R = 1:R_pool
