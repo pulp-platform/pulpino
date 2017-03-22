@@ -23,7 +23,7 @@ module pulpino_top
   )
   (
     // Clock and Reset
-    input logic               clk,
+    input logic               clk /*verilator clocker*/,
     input logic               rst_n,
 
     input  logic              clk_sel_i,
@@ -33,8 +33,8 @@ module pulpino_top
     input  logic              scan_enable_i,
 
     //SPI Slave
-    input  logic              spi_clk_i,
-    input  logic              spi_cs_i,
+    input  logic              spi_clk_i /*verilator clocker*/,
+    input  logic              spi_cs_i /*verilator clocker*/,
     output logic [1:0]        spi_mode_o,
     output logic              spi_sdo0_o,
     output logic              spi_sdo1_o,

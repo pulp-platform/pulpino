@@ -77,7 +77,7 @@ zero_loop_end:
 
 main_entry:
   addi   x10, x0, 0
-  addi   x11, x0, 1
+  addi   x11, x0, 0x3
   jal  uart_set_cfg;
 
   /* jump to main program entry point (argc = argv = 0) */

@@ -1,6 +1,6 @@
 #!/bin/tcsh
 
-setenv PATH /usr/scratch2/larain/jenkins/artefacts/riscvv2_gcc/2.3.6/bin/:$PATH
+setenv PATH /usr/scratch2/larain/jenkins/artefacts/riscvv2_gcc/2.3.7/bin/:${PWD}/verilator-3.884/build/bin:$PATH
 
 ./update-ips.py git@iis-git.ee.ethz.ch   || exit 1
 
@@ -42,6 +42,8 @@ cmake-3.3.0 "$SW_DIR" \
 
 # compile RTL
 ninja vcompile || exit 1
+# compile verilator
+ninja vericompile || exit 1
 
 # compile SW
 ninja || exit 1

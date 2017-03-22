@@ -31,6 +31,7 @@ if os.path.exists("ipstools") and os.path.isdir("ipstools"):
     cwd = os.getcwd()
     os.chdir("ipstools")
     execute("git pull", silent=True)
+    execute("git checkout verilator")
     os.chdir(cwd)
     import ipstools
 else:
@@ -54,6 +55,8 @@ ipdb.export_vivado(script_path="fpga/pulpino/tcl/ips_src_files.tcl", alternative
 ipdb.generate_vivado_add_files("fpga/pulpino/tcl/ips_add_files.tcl", alternatives=['riscv'])
 # generate Vivado inc_dirs.tcl
 ipdb.generate_vivado_inc_dirs("fpga/pulpino/tcl/ips_inc_dirs.tcl", alternatives=['riscv'])
-
+# generate verilator compilation scripts
+ipdb.export_verilator(script_path="vsim/verilator/verilator_compile.csh",
+    more_opts="${TOP_PATH}/tb/tb_verilator.sv --exe ${TOP_PATH}/tb/tb.cpp ${TOP_PATH}/tb/pulpino.cpp -v ${TOP_PATH}/ips/riscv/include/riscv_defines.sv ${TOP_PATH}/ips/riscv/include/apu_core_package.sv -I${TOP_PATH}/rtl/includes -I${TOP_PATH}/rtl -I${TOP_PATH}/rtl/components")
 
 print tcolors.OK + "Generated new scripts for IPs!" + tcolors.ENDC

@@ -14,7 +14,7 @@ module tb;
 
   // +MEMLOAD= valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
   parameter  SPI            = "QUAD";    // valid values are "SINGLE", "QUAD"
-  parameter  BAUDRATE       = 781250; // 1562500
+  parameter  BAUDRATE       = 390625; // 1562500
   parameter  CLK_USE_FLL    = 0;  // 0 or 1
   parameter  TEST           = ""; //valid values are "" (NONE), "DEBUG"
   parameter  USE_ZERO_RISCY = 0;
