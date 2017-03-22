@@ -5,6 +5,7 @@ set FPGA_RTL ../rtl
 
 # components
 set SRC_COMPONENTS " \
+   $RTL/components/pulp_clock_gating.sv \
    $RTL/components/cluster_clock_gating.sv \
    $RTL/components/cluster_clock_inverter.sv \
    $RTL/components/cluster_clock_mux2.sv \
