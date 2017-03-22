@@ -120,7 +120,6 @@ module peripherals
   logic [31:0]  clk_int;
   logic         s_uart_event;
   logic         i2c_event;
-  logic         s_power_event;
   logic         s_gpio_event;
 
   //////////////////////////////////////////////////////////////////
@@ -313,7 +312,6 @@ module peripherals
     .gpio_out     ( gpio_out      ),
     .gpio_dir     ( gpio_dir      ),
     .gpio_padcfg  ( gpio_padcfg   ),
-    .power_event  ( s_power_event ),
     .interrupt    ( s_gpio_event  )
   );
 
