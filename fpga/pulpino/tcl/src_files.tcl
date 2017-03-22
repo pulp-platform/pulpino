@@ -32,7 +32,7 @@ set SRC_PULPINO " \
    $RTL/boot_rom_wrap.sv \
    $RTL/peripherals.sv \
    $RTL/ram_mux.sv \
-   $RTL/top.sv \
+   $RTL/pulpino_top.sv \
    $RTL/clk_rst_gen.sv \
    $FPGA_RTL/pulpino_wrap.v \
 "
