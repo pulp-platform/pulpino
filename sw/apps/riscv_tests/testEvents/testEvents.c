@@ -22,16 +22,13 @@
 void check_flush(testresult_t *result, void (*start)(), void (*stop)());
 void check_sleep_irq(testresult_t *result, void (*start)(), void (*stop)());
 void check_branch_irq(testresult_t *result, void (*start)(), void (*stop)());
-void check_while1_irq(testresult_t *result, void (*start)(), void (*stop)());
 
 volatile unsigned int killme=0;
 volatile unsigned int global_counter_branch=0;
-// TODO: hwloops are not yet supported and thus commented
 testcase_t testcases[] = {
   { .name = "flush",        .test = check_flush        },
   { .name = "sleep_irq",    .test = check_sleep_irq    },
   { .name = "branch_irq",   .test = check_branch_irq   },
-  //{ .name = "while1_irq",   .test = check_while1_irq   },
   {0, 0}
 };
 
@@ -171,37 +168,9 @@ void check_branch_irq(testresult_t *result, void (*start)(), void (*stop)()) {
   int_disable();
 }
 
-void check_while1_irq(testresult_t *result, void (*start)(), void (*stop)()) {
-  /*
-    This test is commented because it nevers end.
-    TODO: try to find a solution, for instance a TB to kill the simulation
-  */
-  killme = 1;
-  g_sleep_irq_global = 0;
-  ECP = 0xFFFFFFFF;
-  IER = 1 << 29;
-  int_enable();
-
-  // enable timer and wait for 2000 cycles before triggering
-  TPRA  = 0x0;
-  TIRA  = 0x0;
-  TOCRA = 2000;
-
-  TPRA  = 0x1;
-
-  asm volatile ("lbl_jmp: j lbl_jmp");
-
-  // disable timer
-  TPRA = 0x0;
-  ECP = 0x1;
-  int_disable();
-}
-
 void ISR_TA_CMP(void) {
   ICP = (1 << 29);
 
-  if (killme)
-    printf("This test never ends, if you see this message the while(1) test works, kill the simulation\n");
   global_counter_branch++;
   switch (g_sleep_irq_global) {
     case 0:
