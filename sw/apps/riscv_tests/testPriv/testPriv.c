@@ -182,7 +182,7 @@ void ecall_insn_handler_c()
   else
     printf("TEST FAIL\n");
 
-  for(int i=0;i<3000;i++) asm volatile ("nop");
+  uart_wait_tx_done();
 
   exit(num_errors);
 
