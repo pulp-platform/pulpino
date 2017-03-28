@@ -75,6 +75,8 @@ buildroot/.config: $(filter-out $(wildcard buildroot), buildroot)
 	cat ./buildroot.config | sed 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)"#g' > ./buildroot/.config
 
 buildroot/output/images/rootfs.tar: buildroot/.config
+	cd buildroot && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- busybox-source
+	cp busybox.config buildroot/output/build/busybox-1.23.2/.config
 	cd buildroot && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- -j${NCORES}
 
 sd_image/rootfs.tar: buildroot/output/images/rootfs.tar
