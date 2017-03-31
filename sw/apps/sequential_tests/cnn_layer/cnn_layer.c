@@ -195,7 +195,7 @@ int  __attribute__ ((noinline)) checkresult(Pixel * __restrict__ Out, Pixel * __
   for (i = 0; i<N; i++) {
     if (Out[i]!=OutGold[i]) {
 #ifdef CNN_DEBUG
-      printf("At index %d: Actual value: %x: Expected: %x\n", i, Out[i],  OutGold[i]);
+      printf("At index %d: Actual value: %d: Expected: %d\n", i, Out[i],  OutGold[i]);
 #endif
       err++;
     }
