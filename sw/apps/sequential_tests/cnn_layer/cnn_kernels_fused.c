@@ -91,7 +91,8 @@ void __attribute__ ((noinline)) CNN_layer_Scalar_Fused (Pixel * In_Img, Pixel * 
 
 }
 
-
+//using the SHUFFLE version makes the kernel slower
+//#define USE_SHUFFLE
 void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
   FiltcV coeff_0, coeff_1, coeff_2, coeff_3, coeff_4, coeff_5, coeff_6, coeff_7, coeff_8, coeff_9, coeff_10, coeff_11, coeff_12, coeff_13, coeff_14;
@@ -99,6 +100,9 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
   int r, c, t, k;
   int S00, S01, S10, S11;
   Pixel max0;
+  PixelV mask_left, mask_right;
+  PixelV zeroV;
+
   /*
  ________________
 |        |       |
@@ -111,6 +115,32 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
 |________|_______|
 
   */
+
+  mask_right = (PixelV){3, 0};
+  mask_left  = (PixelV){1, 2};
+  zeroV      = (PixelV){0, 0};
+
+#ifdef USE_SHUFFLE
+  coeff_0  = *((FiltcV *) (&Kernel[0]));
+  coeff_1  = *((FiltcV *) (&Kernel[2]));
+  coeff_2  = (FiltcV) { Kernel[4],  0 };
+
+  coeff_3  = *((FiltcV *) (&Kernel[5]));
+  coeff_4  = *((FiltcV *) (&Kernel[7]));
+  coeff_5  = (FiltcV) { Kernel[9],  0 };
+
+  coeff_6  = *((FiltcV *) (&Kernel[10]));
+  coeff_7  = *((FiltcV *) (&Kernel[12]));
+  coeff_8  = (FiltcV) { Kernel[14], 0 };
+
+  coeff_9  = *((FiltcV *) (&Kernel[15]));
+  coeff_10 = *((FiltcV *) (&Kernel[17]));
+  coeff_11 = (FiltcV) { Kernel[19], 0 };
+
+  coeff_12 = *((FiltcV *) (&Kernel[20]));
+  coeff_13 = *((FiltcV *) (&Kernel[22]));
+  coeff_14 = (FiltcV) { Kernel[24], 0 };
+#endif
 
   k = 0;
   //image board is black
@@ -144,7 +174,7 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
 
     for (r=1; r < R-6; r+=2) {
 
-        //windows 0-2
+#ifndef USE_SHUFFLE
         coeff_0  = *((FiltcV *) (&Kernel[0]));
         coeff_1  = *((FiltcV *) (&Kernel[2]));
         coeff_2  = (FiltcV) { Kernel[4],  0 };
@@ -164,8 +194,7 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
         coeff_12 = *((FiltcV *) (&Kernel[20]));
         coeff_13 = *((FiltcV *) (&Kernel[22]));
         coeff_14 = (FiltcV) { Kernel[24], 0 };
-
-
+#endif
         //WINDOW 0
         S00 = dotp(pImg0,coeff_0);
         S00 = sumdotp(pImg1,  coeff_1,  S00);
@@ -215,6 +244,7 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
         S10 = addnr(S10,DATA_WIDTH-1,ROUNDBIT);
 
         //windows 1-3
+#ifndef USE_SHUFFLE
         coeff_0  = (FiltcV) { 0, Kernel[0]  } ;
         coeff_1  = *((FiltcV *) (&Kernel[1])) ;
         coeff_2  = *((FiltcV *) (&Kernel[3])) ;
@@ -234,7 +264,27 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
         coeff_12 = (FiltcV) { 0, Kernel[20] } ;
         coeff_13 = *((FiltcV *) (&Kernel[21]));
         coeff_14 = *((FiltcV *) (&Kernel[23]));
+#else
+        coeff_2 = shuffle(coeff_2, coeff_1, mask_right);
+        coeff_1 = shuffle(coeff_1, coeff_0, mask_right);
+        coeff_0 = shuffle(coeff_0, zeroV, mask_right);
 
+        coeff_5 = shuffle(coeff_5, coeff_4, mask_right);
+        coeff_4 = shuffle(coeff_4, coeff_3, mask_right);
+        coeff_3 = shuffle(coeff_3, zeroV, mask_right);
+
+        coeff_8 = shuffle(coeff_8, coeff_7, mask_right);
+        coeff_7 = shuffle(coeff_7, coeff_6, mask_right);
+        coeff_6 = shuffle(coeff_6, zeroV, mask_right);
+
+        coeff_11 = shuffle(coeff_11, coeff_10, mask_right);
+        coeff_10 = shuffle(coeff_10, coeff_9, mask_right);
+        coeff_9  = shuffle(coeff_9, zeroV, mask_right);
+
+        coeff_14 = shuffle(coeff_14, coeff_13, mask_right);
+        coeff_13 = shuffle(coeff_13, coeff_12, mask_right);
+        coeff_12 = shuffle(coeff_12, zeroV, mask_right);
+#endif
 
         //WINDOW 1
         S01 = dotp(pImg0,coeff_0);
@@ -322,11 +372,32 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
         pImg16 = *((PixelV *) (&In_Img[c+2+(r+6)*R]));
         pImg17 = *((PixelV *) (&In_Img[c+4+(r+6)*R]));
 
+#ifdef USE_SHUFFLE
+        coeff_0 = shuffle(coeff_0, coeff_1, mask_left);
+        coeff_1 = shuffle(coeff_1, coeff_2, mask_left);
+        coeff_2 = shuffle(coeff_2, zeroV, mask_left);
 
+        coeff_3 = shuffle(coeff_3, coeff_4, mask_left);
+        coeff_4 = shuffle(coeff_4, coeff_5, mask_left);
+        coeff_5 = shuffle(coeff_5, zeroV, mask_left);
+
+        coeff_6 = shuffle(coeff_6, coeff_7, mask_left);
+        coeff_7 = shuffle(coeff_7, coeff_8, mask_left);
+        coeff_8 = shuffle(coeff_8, zeroV, mask_left);
+
+        coeff_9 = shuffle(coeff_9, coeff_10, mask_left);
+        coeff_10 = shuffle(coeff_10, coeff_11, mask_left);
+        coeff_11 = shuffle(coeff_11, zeroV, mask_left);
+
+        coeff_12 = shuffle(coeff_12, coeff_13, mask_left);
+        coeff_13 = shuffle(coeff_13, coeff_14, mask_left);
+        coeff_14 = shuffle(coeff_14, zeroV, mask_left);
+#endif
     }
 
     //last two rows
-    //windows 0-2
+
+#ifndef USE_SHUFFLE
     coeff_0  = *((FiltcV *) (&Kernel[0]));
     coeff_1  = *((FiltcV *) (&Kernel[2]));
     coeff_2  = (FiltcV) { Kernel[4],  0 };
@@ -346,7 +417,7 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
     coeff_12 = *((FiltcV *) (&Kernel[20]));
     coeff_13 = *((FiltcV *) (&Kernel[22]));
     coeff_14 = (FiltcV) { Kernel[24], 0 };
-
+#endif
 
     //WINDOW 0
     S00 = dotp(pImg0,coeff_0);
@@ -397,6 +468,7 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
     S10 = addnr(S10,DATA_WIDTH-1,ROUNDBIT);
 
     //windows 1-3
+#ifndef USE_SHUFFLE
     coeff_0  = (FiltcV) { 0, Kernel[0]  } ;
     coeff_1  = *((FiltcV *) (&Kernel[1])) ;
     coeff_2  = *((FiltcV *) (&Kernel[3])) ;
@@ -416,7 +488,27 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
     coeff_12 = (FiltcV) { 0, Kernel[20] } ;
     coeff_13 = *((FiltcV *) (&Kernel[21]));
     coeff_14 = *((FiltcV *) (&Kernel[23]));
+#else
+    coeff_2 = shuffle(coeff_2, coeff_1, mask_right);
+    coeff_1 = shuffle(coeff_1, coeff_0, mask_right);
+    coeff_0 = shuffle(coeff_0, zeroV, mask_right);
 
+    coeff_5 = shuffle(coeff_5, coeff_4, mask_right);
+    coeff_4 = shuffle(coeff_4, coeff_3, mask_right);
+    coeff_3 = shuffle(coeff_3, zeroV, mask_right);
+
+    coeff_8 = shuffle(coeff_8, coeff_7, mask_right);
+    coeff_7 = shuffle(coeff_7, coeff_6, mask_right);
+    coeff_6 = shuffle(coeff_6, zeroV, mask_right);
+
+    coeff_11 = shuffle(coeff_11, coeff_10, mask_right);
+    coeff_10 = shuffle(coeff_10, coeff_9, mask_right);
+    coeff_9  = shuffle(coeff_9, zeroV, mask_right);
+
+    coeff_14 = shuffle(coeff_14, coeff_13, mask_right);
+    coeff_13 = shuffle(coeff_13, coeff_12, mask_right);
+    coeff_12 = shuffle(coeff_12, zeroV, mask_right);
+#endif
 
     //WINDOW 1
     S01 = dotp(pImg0,coeff_0);
@@ -477,6 +569,26 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
     max0 = max0 > S11 ? max0 : S11;
 
     Out_Img[t] = (Pixel)max0;
+#ifdef USE_SHUFFLE
+    coeff_0 = shuffle(coeff_0, coeff_1, mask_left);
+    coeff_1 = shuffle(coeff_1, coeff_2, mask_left);
+    coeff_2 = shuffle(coeff_2, zeroV, mask_left);
 
+    coeff_3 = shuffle(coeff_3, coeff_4, mask_left);
+    coeff_4 = shuffle(coeff_4, coeff_5, mask_left);
+    coeff_5 = shuffle(coeff_5, zeroV, mask_left);
+
+    coeff_6 = shuffle(coeff_6, coeff_7, mask_left);
+    coeff_7 = shuffle(coeff_7, coeff_8, mask_left);
+    coeff_8 = shuffle(coeff_8, zeroV, mask_left);
+
+    coeff_9 = shuffle(coeff_9, coeff_10, mask_left);
+    coeff_10 = shuffle(coeff_10, coeff_11, mask_left);
+    coeff_11 = shuffle(coeff_11, zeroV, mask_left);
+
+    coeff_12 = shuffle(coeff_12, coeff_13, mask_left);
+    coeff_13 = shuffle(coeff_13, coeff_14, mask_left);
+    coeff_14 = shuffle(coeff_14, zeroV, mask_left);
+#endif
   }
 }
