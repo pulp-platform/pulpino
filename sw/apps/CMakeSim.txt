@@ -63,7 +63,7 @@ macro(add_sim_targets NAME)
 
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/vectors/)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/vectors/stim.txt
-    COMMAND ${UTILS_DIR}/parse_s19.pl ./${NAME}.s19 > ./vectors/stim.txt
+#    COMMAND ${UTILS_DIR}/parse_s19.pl ./${NAME}.s19 > ./vectors/stim.txt
     WORKING_DIRECTORY ./${SUBDIR}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
   add_custom_target(${NAME}.stim.txt ALL

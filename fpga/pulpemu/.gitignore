@@ -10,3 +10,5 @@ vivado*.backup.log
 *.xpr
 *.hwdef
 *.txt
+.Xil
+pulpemu_top.bit

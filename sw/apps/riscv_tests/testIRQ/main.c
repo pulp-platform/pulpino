@@ -76,7 +76,7 @@ void test_infinite_jmp_loop(testresult_t *result, void (*start)(), void (*stop)(
   ECP = 0x1;
   int_disable();
 
-
+  check_uint32(result, "while(1) jmp",   irq_trig > 10, 1);
   check_uint32(result, "while(1) jmp",   act, 4);
 
   irq_trig = 0;
@@ -87,7 +87,7 @@ void test_infinite_jmp_loop(testresult_t *result, void (*start)(), void (*stop)(
 //----------------------------------------------------------------------------
 void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
-  volatile uint32_t act = 0, abba = 0;
+  volatile uint32_t act = 0;
   testcase_current = 2;
   irq_trig = 0;
 
@@ -115,7 +115,7 @@ void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*sto
   TPRA = 0x0;
   ECP = 0x1;
   int_disable();
-
+  check_uint32(result, "while(1) jmp",   irq_trig > 10, 1);
   check_uint32(result, "while(1) branch", act, 20);
 
   irq_trig = 0;
@@ -171,7 +171,7 @@ void test_interrupt_loop(testresult_t *result, void (*start)(), void (*stop)()) 
 //----------------------------------------------------------------------------
 void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
-  volatile uint32_t act = 0, abba = 0;
+  volatile uint32_t act = 0;
   testcase_current = 4;
   irq_trig = 0;
 
@@ -182,7 +182,7 @@ void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)()
   // enable timer and wait for 1000 cycles before triggering
   TPRA  = 0x0;
   TIRA  = 0x0;
-  TOCRA = 1000;
+  TOCRA = 999;
   TPRA  = 0x1;
 
   asm volatile ("lp.counti x1, %[N];"
@@ -256,6 +256,7 @@ void ISR_TA_CMP(void) {
   int currMSTATUS = 0x0;
   source_mepc = 0;
   irq_trig++;
+
   if(irq_trig > 10) {
     if(testcase_current == 1)
       dest_mepc = mepc_jmp; //jump

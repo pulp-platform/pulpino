@@ -103,6 +103,7 @@ for R = 1:R_pool
         cup = 2*(C-1) + 1;
         cdw = 2*(C-1) + 2;
         window = [image_conv_appr_int(rup,cup) image_conv_appr_int(rup,cdw) image_conv_appr_int(rdw,cup) image_conv_appr_int(rdw,cdw)];
+
         max_pool(R,C) = max(window);
     end
 end
@@ -141,27 +142,43 @@ if WRITE_FILE == 1
 
     fprintf(fileID,'#ifndef _INPUT_IMAGE_\n#define _INPUT_IMAGE_\n\n');
 
-    fprintf(fileID,'static Pixel In_Img[%d] = { ', R_img*C_img);
+    fprintf(fileID,'static Pixel In_Img[%d] = {', R_img*C_img);
+    fprintf(fileID,'\n');
     for R = 1:R_img
         for C = 1:C_img
             fprintf(fileID,'%d, ', fxp_image_int(R,C));
         end
+        fprintf(fileID,'\\\n');
     end
     fprintf(fileID,'};\n\n');
 
-    fprintf(fileID,'static Filtc Filter_Kern[%d] = { ', WIN*WIN);
+    fprintf(fileID,'static Filtc Filter_Kern[%d] = {', WIN*WIN);
+    fprintf(fileID,'\n');
     for R = 1:WIN
         for C = 1:WIN
             fprintf(fileID,'%d, ', fxp_Filter_int(R,C));
         end
+        fprintf(fileID,'\\\n');
     end
     fprintf(fileID,'};\n\n');
 
-    fprintf(fileID,'static Pixel Gold_Out_Img[%d] = { ', R_pool*C_pool);
+    %fprintf(fileID,'static Pixel Conv_Out_Img[%d] = {', R_conv*C_conv);
+    %fprintf(fileID,'\n');
+    %for R = 1:R_conv
+    %    for C = 1:C_conv
+    %        fprintf(fileID,'%d, ', image_conv_appr_int(R,C));
+    %    end
+    %    fprintf(fileID,'\\\n');
+    %end
+    %fprintf(fileID,'};\n\n');
+
+    fprintf(fileID,'static Pixel Gold_Out_Img[%d] = {', R_pool*C_pool);
+    fprintf(fileID,'\n');
     for R = 1:R_pool
         for C = 1:C_pool
            fprintf(fileID,'%d, ', max_pool(R,C));
         end
+        fprintf(fileID,'\\\n');
     end
     fprintf(fileID,'};\n\n');
 

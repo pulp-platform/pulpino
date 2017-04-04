@@ -5,6 +5,7 @@ set FPGA_RTL ../rtl
 
 # components
 set SRC_COMPONENTS " \
+   $RTL/components/pulp_clock_gating.sv \
    $RTL/components/cluster_clock_gating.sv \
    $RTL/components/cluster_clock_inverter.sv \
    $RTL/components/cluster_clock_mux2.sv \
@@ -31,7 +32,7 @@ set SRC_PULPINO " \
    $RTL/boot_rom_wrap.sv \
    $RTL/peripherals.sv \
    $RTL/ram_mux.sv \
-   $RTL/top.sv \
+   $RTL/pulpino_top.sv \
    $RTL/clk_rst_gen.sv \
    $FPGA_RTL/pulpino_wrap.v \
 "
