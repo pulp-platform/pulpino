@@ -1956,8 +1956,12 @@
         dbg_tb_errors++;
       end
 
-      debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, but NO Single Step
+      // wake-up core in EU
+      debug_mem_sw(`EVENT_UNIT_BASE_ADDR + 32'h14, 32'hFFFF_FFFF);
+      // clear buffer
+      debug_mem_sw(`EVENT_UNIT_BASE_ADDR + 32'h14, 32'h0000_0000);
 
+      debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, but NO Single Step
 
       //------------------------------------------------------------------------------
       // third time, but with bells and whistles
@@ -1996,7 +2000,7 @@
         end
       end
 
-      // wake-up core
+      // wake-up core in EU
       debug_mem_sw(`EVENT_UNIT_BASE_ADDR + 32'h14, 32'hFFFF_FFFF);
 
       debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, but NO Single Step
