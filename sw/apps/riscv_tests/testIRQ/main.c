@@ -15,16 +15,30 @@
 
 void test_infinite_jmp_loop(testresult_t *result, void (*start)(), void (*stop)());
 void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*stop)());
-void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)());
-void test_infinite_jmp_mulh(testresult_t *result, void (*start)(), void (*stop)());
 void test_interrupt_loop(testresult_t *result, void (*start)(), void (*stop)());
+void test_hazard_interrupt(testresult_t *result, void (*start)(), void (*stop)());
+void test_infinite_jmp_mulh(testresult_t *result, void (*start)(), void (*stop)());
+void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)());
+
+void __attribute__ ((noinline)) isr_infinite_jmp_loop();
+void __attribute__ ((noinline)) isr_infinite_branch_loop();
+void __attribute__ ((noinline)) isr_interrupt_loop();
+void __attribute__ ((noinline)) isr_hazard_interrupt();
+void __attribute__ ((noinline)) isr_infinite_jmp_mulh();
+void __attribute__ ((noinline)) isr_infinite_hw_loop();
+
+
+#define change_mepc(dest_mepc)     asm volatile ("csrrw x0, mepc, %[s]" :  : [s] "r"  (dest_mepc))
+#define disable_mpie()             asm volatile ("csrrw x0, mstatus, %[s]": : [s] "r" (0x1800))
+#define get_mstatus(mstatus)       asm volatile ("csrrs %[d], mstatus, x0" : [d] "=r" (mstatus))
 
 testcase_t testcases[] = {
   { .name = " 1. test_infinite_jmp_loop",     .test = test_infinite_jmp_loop     },
   { .name = " 2. test_infinite_branch_loop",  .test = test_infinite_branch_loop  },
-  { .name = " 3. test_interrupt_loop",         .test = test_interrupt_loop       },
+  { .name = " 3. test_interrupt_loop",        .test = test_interrupt_loop        },
+  { .name = " 4. test_hazard_interrupt",      .test = test_hazard_interrupt      },
 #if defined(GCC_ETH) && defined(USE_RISCY)
-  { .name = " 4. test_infinite_hw_loop",      .test = test_infinite_hw_loop      },
+  { .name = " 6. test_infinite_hw_loop",      .test = test_infinite_hw_loop      },
 #endif
 #ifdef USE_RISCY
   { .name = " 5. test_infinite_jmp_mulh",     .test = test_infinite_jmp_mulh     },
@@ -34,11 +48,13 @@ testcase_t testcases[] = {
 
 volatile uint32_t testcase_current = 0;
 volatile uint32_t irq_trig = 0;
+volatile uint32_t irq_hazard = 0;
 volatile uint32_t tb_errors = 0;
 volatile int mepc_jmp;
 volatile int mepc_branch;
 volatile int mepc_loop;
 volatile int mepc_mulh;
+volatile int mepc_hazard;
 
 int main() {
   return run_suite(testcases);
@@ -122,7 +138,7 @@ void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*sto
 
 }
 //----------------------------------------------------------------------------
-// 2. for loop interrupted
+// 3. for loop interrupted
 //----------------------------------------------------------------------------
 void test_interrupt_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
@@ -153,7 +169,7 @@ void test_interrupt_loop(testresult_t *result, void (*start)(), void (*stop)()) 
                 : [act] "+r" (act),
                   [ctr] "+r" (ctr)
                 : [newmepc_loop] "r" (&mepc_loop),
-                  [m] "r" ((0x0))
+                  [m] "r" ((0x1800))
                 );
 
   // disable timer
@@ -165,49 +181,52 @@ void test_interrupt_loop(testresult_t *result, void (*start)(), void (*stop)()) 
   irq_trig = 0;
 
 }
-#if defined(GCC_ETH) && defined(USE_RISCY)
-//----------------------------------------------------------------------------
-// 3. while(i < N) with hw loop
-//----------------------------------------------------------------------------
-void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
-  volatile uint32_t act = 0;
+
+//----------------------------------------------------------------------------
+// 4. hazard interrupted
+//----------------------------------------------------------------------------
+void test_hazard_interrupt(testresult_t *result, void (*start)(), void (*stop)()) {
+
   testcase_current = 4;
   irq_trig = 0;
 
   ECP = 0xFFFFFFFF;
   IER = 1 << 29;
-  int_enable();
 
-  // enable timer and wait for 1000 cycles before triggering
+  // enable timer and wait for 10 cycles before triggering
   TPRA  = 0x0;
   TIRA  = 0x0;
-  TOCRA = 999;
+  TOCRA = 40;
   TPRA  = 0x1;
 
-  asm volatile ("lp.counti x1, %[N];"
-                "add %[a], x0, x0;"
-                "lp.starti x1, lbl_start_hw1;"
-                "lp.endi   x1, lbl_end_hw1;"
-                "lbl_start_hw1: addi %[a], %[a], 1;"
-                "lbl_end_hw1: nop;"
-                : [a] "+r" (act)
-                : [N] "i"  (0xFFF));
+  asm volatile ("la x16, after_jump;"
+                "sw x16, 0(%[newmepc_hazard]);"
+                "haz_loop: csrrw x0, mstatus, %[dis];"
+                "csrrw x0, mstatus, %[en];"
+                "j haz_loop;"
+                "after_jump: nop;"
+                : 
+                : [newmepc_hazard] "r" (&mepc_hazard),
+                  [dis]            "r" (0x1800),
+                  [en]             "r" (0x1808)
+                : "x16"
+                );
 
   // disable timer
   TPRA = 0x0;
   ECP = 0x1;
-  int_disable();
 
-  check_uint32(result, "while(1) hw loop",   act, 0xFFF);
+  check_uint32(result, "interrupt hazard", irq_trig, 30);
+  check_uint32(result, "interrupt hazard", irq_hazard, 0);
 
   irq_trig = 0;
 
 }
-#endif
+
 #ifdef USE_RISCY
 //----------------------------------------------------------------------------
-// 4. while(1) mulh
+// 5. while(1) mulh
 //----------------------------------------------------------------------------
 void test_infinite_jmp_mulh(testresult_t *result, void (*start)(), void (*stop)()) {
 
@@ -249,40 +268,178 @@ void test_infinite_jmp_mulh(testresult_t *result, void (*start)(), void (*stop)(
 
 }
 #endif
+
+
+#if defined(GCC_ETH) && defined(USE_RISCY)
+//----------------------------------------------------------------------------
+// 6. while(i < N) with hw loop
+//----------------------------------------------------------------------------
+void test_infinite_hw_loop(testresult_t *result, void (*start)(), void (*stop)()) {
+
+  volatile uint32_t act = 0;
+  testcase_current = 6;
+  irq_trig = 0;
+
+  ECP = 0xFFFFFFFF;
+  IER = 1 << 29;
+  int_enable();
+
+  // enable timer and wait for 1000 cycles before triggering
+  TPRA  = 0x0;
+  TIRA  = 0x0;
+  TOCRA = 999;
+  TPRA  = 0x1;
+
+  asm volatile ("lp.counti x1, %[N];"
+                "add %[a], x0, x0;"
+                "lp.starti x1, lbl_start_hw1;"
+                "lp.endi   x1, lbl_end_hw1;"
+                "lbl_start_hw1: addi %[a], %[a], 1;"
+                "lbl_end_hw1: nop;"
+                : [a] "+r" (act)
+                : [N] "i"  (0xFFF));
+
+  // disable timer
+  TPRA = 0x0;
+  ECP = 0x1;
+  int_disable();
+
+  check_uint32(result, "while(1) hw loop",   act, 0xFFF);
+
+  irq_trig = 0;
+
+}
+#endif
+
+
 void ISR_TA_CMP(void) {
+
   ICP = (1 << 29);
-  int dest_mepc, source_mepc;
-  int nextMSTATUS = 0x0;
-  int currMSTATUS = 0x0;
-  source_mepc = 0;
+
+  switch (testcase_current) {
+  case 1:
+     isr_infinite_jmp_loop();
+     break;
+  case 2:
+     isr_infinite_branch_loop();
+     break;
+  case 3:
+     isr_interrupt_loop();
+     break;
+  case 4:
+     isr_hazard_interrupt();
+     break;
+  case 5:
+     isr_infinite_jmp_mulh();
+     break;
+  case 6:
+     isr_infinite_hw_loop();
+     break;
+  default:
+     exit(1);
+     break;
+  }
+}
+
+/*
+  -- ISR 1
+*/
+
+void __attribute__ ((noinline)) isr_infinite_jmp_loop()
+{
+  int dest_mepc;
   irq_trig++;
 
   if(irq_trig > 10) {
-    if(testcase_current == 1)
-      dest_mepc = mepc_jmp; //jump
-    else if (testcase_current == 2)
-      dest_mepc = mepc_branch; //branch
-    else if (testcase_current == 5)
-      dest_mepc = mepc_mulh; //mulh
-    asm volatile ("csrrw %[d], mepc, %[s]"
-      : [d] "=r" (source_mepc)
-      : [s] "r"  (dest_mepc));
+    dest_mepc = mepc_jmp;
+    change_mepc(dest_mepc);
   }
-  else if(irq_trig == 10) {
-    if (testcase_current == 3) {
-      dest_mepc = mepc_loop; //interrupt loop
-    asm volatile ("csrrw %[d], mepc, %[s]"
-      : [d] "=r" (source_mepc)
-      : [s] "r"  (dest_mepc));
-    //disable interrupt when it goes out from here
-     asm volatile ("csrrw %[d], mstatus, %[s]"
-      : [d] "=r" (currMSTATUS)
-      : [s] "r"  (nextMSTATUS));
-    }
+}
+
+/*
+  -- ISR 2
+*/
+
+void __attribute__ ((noinline)) isr_infinite_branch_loop()
+{
+  int dest_mepc;
+  irq_trig++;
+
+  if(irq_trig > 10) {
+    dest_mepc = mepc_branch;
+    change_mepc(dest_mepc);
+  }
+}
+
+/*
+  -- ISR 3
+*/
+
+void __attribute__ ((noinline)) isr_interrupt_loop()
+{
+  int dest_mepc;
+  irq_trig++;
+
+  if(irq_trig == 10) {
+    dest_mepc = mepc_loop;
+    change_mepc(dest_mepc);
+    disable_mpie();
+  }
+
+  TIRA = 0x0;
+  TOCRA = TOCRA + 999*irq_trig;
+}
+
+/*
+  -- ISR 4
+*/
+
+void __attribute__ ((noinline)) isr_hazard_interrupt()
+{
+  int dest_mepc;
+  volatile int mstatus;
+  irq_trig++;
+
+  // disable timer
+  TPRA = 0x0;
+  ECP  = 0x1;
+
+  get_mstatus(mstatus);
+  //check right contex
+  if(mstatus!=0x1880)
+    irq_hazard++;
+
+  if(irq_trig == 30) {
+    dest_mepc = mepc_hazard;
+    change_mepc(dest_mepc);
+    disable_mpie();
   }
   // re-arm timer
-  TIRA = 0x0;
-  if(testcase_current == 3)
-    TOCRA = TOCRA + 999*irq_trig;
+  TIRA  = 0x0;
+  TOCRA = TOCRA + 1;
+  TPRA  = 0x1;
 
+}
+
+/*
+  -- ISR 5
+*/
+
+void __attribute__ ((noinline)) isr_infinite_jmp_mulh()
+{
+  int dest_mepc;
+  irq_trig++;
+
+  if(irq_trig > 10) {
+    dest_mepc = mepc_mulh;
+    change_mepc(dest_mepc);
+  }
+}
+
+/*
+  -- ISR 6
+*/
+
+void __attribute__ ((noinline)) isr_infinite_hw_loop()
+{
 }

@@ -21,14 +21,12 @@
 
 void check_flush(testresult_t *result, void (*start)(), void (*stop)());
 void check_sleep_irq(testresult_t *result, void (*start)(), void (*stop)());
-void check_branch_irq(testresult_t *result, void (*start)(), void (*stop)());
 
 volatile unsigned int killme=0;
 volatile unsigned int global_counter_branch=0;
 testcase_t testcases[] = {
   { .name = "flush",        .test = check_flush        },
   { .name = "sleep_irq",    .test = check_sleep_irq    },
-  { .name = "branch_irq",   .test = check_branch_irq   },
   {0, 0}
 };
 
@@ -119,49 +117,6 @@ void check_sleep_irq(testresult_t *result, void (*start)(), void (*stop)()) {
   if((EPR & 0x1) != 0x1) {
     result->errors++;
     printf("Event was not triggered\n");
-  }
-
-  ECP = 0x1;
-  int_disable();
-}
-
-void check_branch_irq(testresult_t *result, void (*start)(), void (*stop)()) {
-  int act;
-  int exp;
-  int cmp,val;
-
-  g_sleep_irq_global = 0;
-  ECP = 0xFFFFFFFF;
-  IER = 1 << 29;
-  int_enable();
-
-  // enable timer and wait for 2000 cycles before triggering
-  TPRA  = 0x0;
-  TIRA  = 0x0;
-  TOCRA = 1848;
-  //TODO
-  /* For compiler version gcc 2.2.30, this specific 1948 value let the interrupt arriver exatly when 
-     the branch checking the if global_counter_branch < 1 is exactly in the EX stage
-     Check manually if it is the case, meanwhile find a better solution */
-
-  TPRA  = 0x1;
-
-
-  exp = 1;
-  act = 0;
-  global_counter_branch = 0; //written by ISR
-
-  while(global_counter_branch < 1);
-  global_counter_branch =0;
-  while(global_counter_branch < 1);
-
-  act = global_counter_branch;
-
-  TPRA = 0x0;
-
-  if(act != exp) {
-    result->errors++;
-    printf("Timer with branch: %X, expected %X\n", act, exp);
   }
 
   ECP = 0x1;
