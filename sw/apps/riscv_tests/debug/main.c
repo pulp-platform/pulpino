@@ -258,7 +258,7 @@ void test_single_step(testresult_t *result, void (*start)(), void (*stop)()) {
   asm volatile ("ebreak;"
                 "la x16, tb_jump;"
                 "tb_start: beq x0, x0, tb_start;"
-                "tb_jump:  nop;");
+                "tb_jump:  nop;" : : : "x16");
 
   //----------------------------------------------------------------------------
   // check tight loop with no exit, so we have to jump out
@@ -266,7 +266,18 @@ void test_single_step(testresult_t *result, void (*start)(), void (*stop)()) {
   asm volatile ("ebreak;"
                 "la x16, tl_jump;"
                 "tl_start: j tl_start;"
-                "tl_jump:  nop;");
+                "tl_jump:  nop;" : : : "x16");
+
+  //----------------------------------------------------------------------------
+  // check tight loop with no exit, so we have to jump out
+  //----------------------------------------------------------------------------
+  asm volatile (
+                "la x16, tc_jump;"
+                "la x17, tc_ecall;"
+                "la x18, 0x88;"
+                "ebreak;"
+                "tc_ecall: ecall;"
+                "tc_jump:  nop;" : : : "x16", "x17", "x18");
 }
 
 //----------------------------------------------------------------------------

@@ -37,11 +37,9 @@ testcase_t testcases[] = {
   { .name = " 2. test_infinite_branch_loop",  .test = test_infinite_branch_loop  },
   { .name = " 3. test_interrupt_loop",        .test = test_interrupt_loop        },
   { .name = " 4. test_hazard_interrupt",      .test = test_hazard_interrupt      },
+  { .name = " 5. test_infinite_jmp_mulh",     .test = test_infinite_jmp_mulh     },
 #if defined(GCC_ETH) && defined(USE_RISCY)
   { .name = " 6. test_infinite_hw_loop",      .test = test_infinite_hw_loop      },
-#endif
-#ifdef USE_RISCY
-  { .name = " 5. test_infinite_jmp_mulh",     .test = test_infinite_jmp_mulh     },
 #endif
   {0, 0}
 };
@@ -170,6 +168,7 @@ void test_interrupt_loop(testresult_t *result, void (*start)(), void (*stop)()) 
                   [ctr] "+r" (ctr)
                 : [newmepc_loop] "r" (&mepc_loop),
                   [m] "r" ((0x1800))
+                : "x16"
                 );
 
   // disable timer
@@ -224,7 +223,6 @@ void test_hazard_interrupt(testresult_t *result, void (*start)(), void (*stop)()
 
 }
 
-#ifdef USE_RISCY
 //----------------------------------------------------------------------------
 // 5. while(1) mulh
 //----------------------------------------------------------------------------
@@ -267,8 +265,6 @@ void test_infinite_jmp_mulh(testresult_t *result, void (*start)(), void (*stop)(
   irq_trig = 0;
 
 }
-#endif
-
 
 #if defined(GCC_ETH) && defined(USE_RISCY)
 //----------------------------------------------------------------------------

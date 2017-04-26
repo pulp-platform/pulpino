@@ -741,6 +741,67 @@
       debug_gpr_read(5'd16, data);
       debug_write(`DBG_NPC_REG, data);
       debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, and no Single Step
+
+      //--------------------------------------------------------------------------
+      // now the tight loop with 1 instruction (ecall)
+      //--------------------------------------------------------------------------
+      debug_wait_for_stall();
+      debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
+      debug_gpr_read(5'd18, npc_last);
+      debug_gpr_read(5'd17, ppc_last);
+
+      debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+      debug_wait_for_stall();
+
+      debug_read(`DBG_NPC_REG, npc);
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (ppc !== ppc_last) begin
+        $display("ERROR: a) PPC is not equal to last PPC: act %X, expected %X", ppc, ppc_last);
+        dbg_tb_errors++;
+      end
+
+      if (npc !== npc_last) begin
+        $display("ERROR: a) NPC is not equal to last PPC: act %X, expected %X", npc, npc_last);
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_NPC_REG, ppc);
+
+      debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+
+      for(i = 0; i < 100; i++) begin
+        debug_wait_for_stall();
+        // read NPC and PPC
+        debug_read(`DBG_NPC_REG, npc);
+        debug_read(`DBG_PPC_REG, ppc);
+
+        if (ppc !== ppc_last) begin
+          $display("ERROR: PPC is not equal to last PPC: act %X, expected %X", ppc, ppc_last);
+          dbg_tb_errors++;
+        end
+
+        if (npc !== npc_last) begin
+          $display("ERROR: NPC is not equal to last NPC: act %X, expected %X", npc, npc_last);
+          dbg_tb_errors++;
+        end
+
+        debug_read(`DBG_HIT_REG, data);
+        if (~data[0]) begin
+          $display("ERROR: SSTH is not set");
+          dbg_tb_errors++;
+        end
+
+        debug_write(`DBG_NPC_REG, ppc);
+
+        debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+      end
+
+      debug_wait_for_stall();
+      debug_gpr_read(5'd16, data);
+      debug_write(`DBG_NPC_REG, data);
+      debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, and no Single Step
+
     end
   endtask
 
