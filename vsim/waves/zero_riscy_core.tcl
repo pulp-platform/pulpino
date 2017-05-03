@@ -12,7 +12,7 @@ if {$rvcores ne ""} {
   add wave -group "RF"                                       $rvcores/id_stage_i/registers_i/mem
   add wave -group "Decoder"                                  $rvcores/id_stage_i/decoder_i/*
   add wave -group "Controller"                               $rvcores/id_stage_i/controller_i/*
-  add wave -group "Exc Ctrl"                                 $rvcores/id_stage_i/exc_controller_i/*
+  add wave -group "Int Ctrl"                                 $rvcores/id_stage_i/int_controller_i/*
   add wave -group "EX Block" -group "ALU"                    $rvcores/ex_block_i/alu_i/*
   add wave -group "EX Block" -group "MULDIV"                 $rvcores/ex_block_i/multdiv_slow/multdiv_i/*
   add wave -group "EX Block"                                 $rvcores/ex_block_i/*
