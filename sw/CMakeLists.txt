@@ -32,14 +32,19 @@ if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IMXpulpslimdev -mnobitop -Wa,-march=IMXpulpslimdev")
       set(CMAKE_OBJDUMP_FLAGS -Mmarch=IMXpulpslimdev -d)
     else()
-      message("NOTE: GCC_ETH RISCV compiler selected")
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IMXpulpv2 -Wa,-march=IMXpulpv2")
-      set(CMAKE_OBJDUMP_FLAGS -Mmarch=IMXpulpv2 -d)
+       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IMXpulpv2 -Wa,-march=IMXpulpv2")
+       set(CMAKE_OBJDUMP_FLAGS -Mmarch=IMXpulpv2 -d)
     endif()
   else()
-      message("NOTE: Official RISCV compiler selected")
-      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=RV32IM -Wa,-march=RV32IM")
-      set(CMAKE_OBJDUMP_FLAGS -Mmarch=RV32IM -d)
+      if(${USE_RV32M})
+        message("NOTE: Official RISCV compiler selected with RVM")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=RV32IM -Wa,-march=RV32IM")
+        set(CMAKE_OBJDUMP_FLAGS -Mmarch=RV32IM -d)
+      else()
+        message("NOTE: Official RISCV compiler selected")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=RV32I -Wa,-march=RV32I")
+        set(CMAKE_OBJDUMP_FLAGS -Mmarch=RV32I -d)
+      endif()
   endif()
 
   if(${RVC})
@@ -47,12 +52,12 @@ if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
   endif()
 
-  if(${GCC_ETH})
+  #if(${GCC_ETH})
     if(${USE_RV32E})
       message("NOTE: Using RV32E ISA")
       set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m16r")
     endif()
-  endif()
+  #endif()
 
 
 
@@ -143,7 +148,7 @@ add_custom_target(vcompile.ps
   ${USES_TERMINAL})
 
 add_custom_target(vcompile.pl
-  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./vcompile/vcompile_pl.csh"
+  COMMAND tcsh -c "env PL_NETLIST=${PL_NETLIST} ./vcompile/vcompile_pl.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 

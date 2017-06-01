@@ -495,9 +495,9 @@
     $display("[SPI] Received %X", recv_data);
     if (recv_data != '0) begin
       exit_code = `EXIT_FAIL;
-      $display("Test FAILED");
+      $display("[SPI] Test FAILED");
     end else begin
       exit_code = `EXIT_SUCCESS;
-      $display("Test OK");
+      $display("[SPI] Test OK");
     end
   endtask

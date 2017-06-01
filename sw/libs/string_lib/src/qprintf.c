@@ -62,8 +62,12 @@ static unsigned remu10(unsigned n) {
 
 int putchar(int s)
 {
+  #ifndef POWER_MES
+  #warning "POWER_MES Not defined"
   uart_sendchar(s);
-
+  #else
+  #warning "POWER_MES defined"
+  #endif
   return s;
 }
 
@@ -246,8 +250,8 @@ int printf(const char *format, ...)
   va_end(va);
 
   return pc;
-}
 
+}
 
 int puts(const char *s)
 {
@@ -292,6 +296,16 @@ int strcmp (const char *s1, const char *s2)
     s2++;
   }
   return (*(unsigned char *) s1) - (*(unsigned char *) s2);
+}
+
+void * memset (void *dest, int val, int length)
+{
+  unsigned char *ptr = dest;
+  while (length > 0) {
+    *ptr++ = val;
+    length --;
+  }
+  return dest;
 }
 
 char* strcpy (char *s1, const char *s2)

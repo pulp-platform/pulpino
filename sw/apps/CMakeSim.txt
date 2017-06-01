@@ -1,8 +1,9 @@
 MESSAGE(STATUS "USE_RISCY= ${USE_RISCY}")
 MESSAGE(STATUS "USE_ZERO_RISCY= ${USE_ZERO_RISCY}")
+MESSAGE(STATUS "PL_NETLIST= ${PL_NETLIST}")
 
 macro(add_sim_targets NAME)
-  set(SETENV "env PULP_CORE=${PULP_CORE} VSIM_DIR=${PULP_MODELSIM_DIRECTORY} USE_RISCY=${USE_RISCY} USE_ZERO_RISCY=${USE_ZERO_RISCY} TB_TEST=\"$<TARGET_PROPERTY:${NAME}.elf,TB_TEST>\"")
+  set(SETENV "env PULP_CORE=${PULP_CORE} VSIM_DIR=${PULP_MODELSIM_DIRECTORY} USE_RISCY=${USE_RISCY} USE_ZERO_RISCY=${USE_ZERO_RISCY} PL_NETLIST=${PL_NETLIST} TB_TEST=\"$<TARGET_PROPERTY:${NAME}.elf,TB_TEST>\"")
 
   # generate s19 file
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19
@@ -145,6 +146,16 @@ macro(add_sim_targets NAME)
     COMMAND ${CMAKE_COMMAND} -E remove stdout/*
     COMMAND ${CMAKE_COMMAND} -E remove FS/*
     COMMAND tcsh -c "${SETENV} ${VSIM}  -64 -do 'source tcl_files/run_spi_pl.tcl\\;'"
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
+    COMMENT "Running ${NAME} in ModelSim (post layout)"
+    ${USES_TERMINAL})
+
+  # run in modelsim in console post layout
+  add_custom_target(${NAME}.vsimc.spi.pl
+    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
+    COMMAND ${CMAKE_COMMAND} -E remove FS/*
+    COMMAND tcsh -c "${SETENV} ${VSIM} -c -64 -do 'source tcl_files/run_spi_pl.tcl\\; run -a\\; exit'"
     WORKING_DIRECTORY ./${SUBDIR}
     DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
     COMMENT "Running ${NAME} in ModelSim (post layout)"
