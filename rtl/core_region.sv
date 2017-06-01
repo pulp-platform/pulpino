@@ -20,7 +20,11 @@ module core_region
     parameter AXI_USER_WIDTH       = 0,
     parameter DATA_RAM_SIZE        = 32768, // in bytes
     parameter INSTR_RAM_SIZE       = 32768, // in bytes
-    parameter USE_ZERO_RISCY       = 0
+    parameter USE_ZERO_RISCY       = 0,
+    parameter RISCY_RV32F          = 0,
+    parameter ZERO_RV32M           = 1,
+    parameter ZERO_RV32E           = 0
+
   )
 (
     // Clock and Reset
@@ -152,7 +156,9 @@ module core_region
   if(USE_ZERO_RISCY) begin
       zeroriscy_core
       #(
-        .N_EXT_PERF_COUNTERS ( 0 )
+        .N_EXT_PERF_COUNTERS (     0      ),
+        .RV32E               ( ZERO_RV32E ),
+        .RV32M               ( ZERO_RV32M )
       )
       RISCV_CORE
       (
@@ -185,7 +191,6 @@ module core_region
         .irq_i           ( (|irq_i)          ),
         .irq_id_i        ( irq_id            ),
         .irq_ack_o       (                   ),
-
         .debug_req_i     ( debug.req         ),
         .debug_gnt_o     ( debug.gnt         ),
         .debug_rvalid_o  ( debug.rvalid      ),
@@ -205,7 +210,8 @@ module core_region
 
     riscv_core
     #(
-      .N_EXT_PERF_COUNTERS ( 0 )
+      .N_EXT_PERF_COUNTERS (     0       ),
+      .FPU                 ( RISCY_RV32F )
     )
     RISCV_CORE
     (
@@ -238,6 +244,7 @@ module core_region
       .irq_i           ( (|irq_i)          ),
       .irq_id_i        ( irq_id            ),
       .irq_ack_o       (                   ),
+      .irq_id_o        (                   ),
       .irq_sec_i       ( 1'b0              ),
       .sec_lvl_o       (                   ),
 

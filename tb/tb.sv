@@ -18,6 +18,9 @@ module tb;
   parameter  CLK_USE_FLL    = 0;  // 0 or 1
   parameter  TEST           = ""; //valid values are "" (NONE), "DEBUG"
   parameter  USE_ZERO_RISCY = 0;
+  parameter  RISCY_RV32F    = 0;
+  parameter  ZERO_RV32M     = 1;
+  parameter  ZERO_RV32E     = 0;
 
   int           exit_status = `EXIT_ERROR; // modelsim exit code, will be overwritten when successful
 
@@ -108,7 +111,10 @@ module tb;
 
   pulpino_top
   #(
-    .USE_ZERO_RISCY    ( USE_ZERO_RISCY )
+    .USE_ZERO_RISCY    ( USE_ZERO_RISCY ),
+    .RISCY_RV32F       ( RISCY_RV32F    ),
+    .ZERO_RV32M        ( ZERO_RV32M     ),
+    .ZERO_RV32E        ( ZERO_RV32E     )
    )
   top_i
   (

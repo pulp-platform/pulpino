@@ -8,6 +8,9 @@ set cmd "vsim -quiet $TB \
   +nowarnTFMPC \
   +MEMLOAD=$MEMLOAD \
   -gUSE_ZERO_RISCY=$env(USE_ZERO_RISCY) \
+  -gRISCY_RV32F=$env(RISCY_RV32F) \
+  -gUSE_ZERO_RV32M=$env(ZERO_RV32M) \
+  -gUSE_ZERO_RV32E=$env(ZERO_RV32E) \
   -t ps \
   -voptargs=\"+acc -suppress 2103\" \
   $VSIM_FLAGS"

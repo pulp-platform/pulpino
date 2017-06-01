@@ -19,7 +19,10 @@
 
 module pulpino_top
   #(
-    parameter USE_ZERO_RISCY       = 0
+    parameter USE_ZERO_RISCY       = 0,
+    parameter RISCY_RV32F          = 0,
+    parameter ZERO_RV32M           = 1,
+    parameter ZERO_RV32E           = 0
   )
   (
     // Clock and Reset

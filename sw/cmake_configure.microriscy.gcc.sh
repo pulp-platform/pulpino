@@ -15,19 +15,17 @@ TARGET_C_FLAGS="-O3 -m32 -g"
 RVC=0
 
 # if you are using riscy, set this to 1
-USE_RISCY=1
+USE_RISCY=0
 # set this to 1 if you are using the Floating Point extensions for riscy
 RISCY_RV32F=0
 
 # if you are using zero-riscy, set this to 1
-USE_ZERO_RISCY=0
-# zeroriscy with the multiplier
-ZERO_RV32M=1
+USE_ZERO_RISCY=1
 # zeroriscy with only 16 registers
-ZERO_RV32E=0
+ZERO_RV32E=1
 
 # riscy with PULPextensions, it is assumed you use the ETH GCC Compiler
-GCC_MARCH="IMXpulpv2"
+GCC_MARCH="RV32I"
 #compile arduino lib
 ARDUINO_LIB=1
 
