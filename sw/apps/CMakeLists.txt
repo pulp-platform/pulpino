@@ -18,15 +18,25 @@ macro(add_application NAME SOURCE_FILES)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   set(SUBDIR ${ARG_SUBDIR})
 
-  include_directories(
-    ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
-    ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
-    ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
-    ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/core_libs/inc
-    ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/separate_libs/inc
-    ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
-    ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
-  )
+  if(${ARDUINO_LIB})
+    include_directories(
+      ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
+      ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
+      ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
+      ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/core_libs/inc
+      ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/separate_libs/inc
+      ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
+      ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
+    )
+  else()
+    include_directories(
+        ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
+        ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
+        ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
+        ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
+        ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
+      )
+  endif()
 
   add_executable(${NAME}.elf $<TARGET_OBJECTS:crt0> ${SOURCE_FILES})
 
@@ -43,7 +53,11 @@ macro(add_application NAME SOURCE_FILES)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
 
   # link libraries
-  target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench Arduino_separate Arduino_core bench string sys m)
+  if(${ARDUINO_LIB})
+    target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench Arduino_separate Arduino_core bench string sys m)
+  else()
+    target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench bench string sys m)
+  endif()
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
@@ -170,9 +184,13 @@ endmacro()
 ################################################################################
 
 add_subdirectory(helloworld)
-add_subdirectory(Arduino_tests)
+
+if(${ARDUINO_LIB})
+  add_subdirectory(Arduino_tests)
+endif()
+
 add_subdirectory(dhrystone)
-# add_subdirectory(debug)
+add_subdirectory(coremark)
 add_subdirectory(bench)
 add_subdirectory(beebs)
 

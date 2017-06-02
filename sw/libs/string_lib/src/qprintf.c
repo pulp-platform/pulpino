@@ -298,7 +298,7 @@ int strcmp (const char *s1, const char *s2)
   return (*(unsigned char *) s1) - (*(unsigned char *) s2);
 }
 
-void * memset (void *dest, int val, int length)
+void * memset (void *dest, int val, size_t length)
 {
   unsigned char *ptr = dest;
   while (length > 0) {

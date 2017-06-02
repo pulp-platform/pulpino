@@ -25,7 +25,7 @@ int  strcmp (const char *s1, const char *s2);
 char* strcpy (char *s1, const char *s2);
 int puts(const char *s);
 int printf(const char *format, ...);
-void * memset (void *dest, int val, int len);
+void * memset (void *dest, int val, size_t len);
 int putchar(int s);
 
 #endif

@@ -8,6 +8,8 @@ OBJCOPY=`which riscv32-unknown-elf-objcopy`
 COMPILER=`which riscv32-unknown-elf-gcc`
 RANLIB=`which riscv32-unknown-elf-ranlib`
 
+VSIM=`which vsim`
+
 TARGET_C_FLAGS="-O3 -m32 -g"
 #TARGET_C_FLAGS="-O2 -g -falign-functions=16  -funroll-all-loops"
 

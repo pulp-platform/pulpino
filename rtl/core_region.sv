@@ -191,6 +191,8 @@ module core_region
         .irq_i           ( (|irq_i)          ),
         .irq_id_i        ( irq_id            ),
         .irq_ack_o       (                   ),
+        .irq_id_o        (                   ),
+
         .debug_req_i     ( debug.req         ),
         .debug_gnt_o     ( debug.gnt         ),
         .debug_rvalid_o  ( debug.rvalid      ),
