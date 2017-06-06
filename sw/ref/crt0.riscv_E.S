@@ -175,6 +175,7 @@ store_regs:
   sw x12, 0x1c(x2)  // a2
   sw x13, 0x20(x2)  // a3
   sw x14, 0x24(x2)  // a4
+  sw x15, 0x28(x2)  // a5
   jalr x0, x1
 
 // load back registers from stack
@@ -189,6 +190,7 @@ end_except:
   lw x12, 0x1c(x2)
   lw x13, 0x20(x2)
   lw x14, 0x24(x2)
+  lw x15, 0x28(x2)
   lw  x1, 0x5C(x2)
   addi x2, x2, EXCEPTION_STACK_SIZE
   mret
