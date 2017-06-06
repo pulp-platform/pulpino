@@ -1,6 +1,6 @@
 \chapter{CPU Core}
 
-\pulpino supports both the OpenRISC \orion core and the \riscv \rvcore. The two
+\pulpino supports both the \riscv \rvcore and the \riscv \zerocore. The two
 cores have the same external interfaces and are thus plug-compatible.
 
 The core use a very simple data and instruction interface to talk to data and
@@ -20,11 +20,7 @@ port.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=\textwidth]{./figures/riscv_overview}
+  \includegraphics[width=\textwidth]{./figures/riscv_overview.eps}
   \caption{RISC-V core overview}
   \label{fig1}
 \end{figure}
-
-
-Additional information is available in the core datasheet, see
-\textit{ips/riscv/docs/datasheet}.
