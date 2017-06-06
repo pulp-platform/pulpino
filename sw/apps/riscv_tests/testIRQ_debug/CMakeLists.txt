@@ -1,7 +1,0 @@
-if (${GCC_ETH})
-    if (${USE_RISCY})
-        add_application(testIRQ_debug main.c TB run_debug_irq.tcl FLAGS "-DUSE_RISCY -DGCC_ETH" LABELS "riscv_tests")
-    endif()
-else()
-    add_application(testIRQ_debug main.c TB run_debug_irq.tcl LABELS "riscv_tests")
-endif()

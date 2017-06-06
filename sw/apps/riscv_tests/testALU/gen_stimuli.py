@@ -263,31 +263,6 @@ write_hex32_arr(f, 'g_sra_exp', exp_res)
 
 
 ################################################################################
-# generate testdata for l.ror
-################################################################################
-ops_a    = []
-ops_b    = []
-exp_res  = []
-
-for i in range(N):
-    a = random.randint(0, 2**32-1)
-    b = random.randint(0, 31)
-
-    r = a >> b
-    r |= a << (32 - b)
-    r &= 0xFFFFFFFF
-
-    ops_a.append(a)
-    ops_b.append(b)
-    exp_res.append(r)
-
-write_hex32_arr(f, 'g_ror_a', ops_a)
-write_hex32_arr(f, 'g_ror_b', ops_b)
-write_hex32_arr(f, 'g_ror_act', ops_a)
-write_hex32_arr(f, 'g_ror_exp', exp_res)
-
-
-################################################################################
 # generate testdata for l.slli
 ################################################################################
 ops_a    = []

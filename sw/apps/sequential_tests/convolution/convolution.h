@@ -37,7 +37,7 @@ void __attribute__ ((noinline))  Conv3x3_Vector     (Pixel * In, Pixel * Out, in
 void __attribute__ ((noinline))  Conv5x5_Scalar     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
 void __attribute__ ((noinline))  Conv5x5_Vector     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
 
-void __attribute__ ((noinline))  perf_enable_id         (int eventid);
+void __attribute__ ((noinline))  perf_enable_id         (int eventid, char all);
 
 void __attribute__ ((noinline))  InitData               (Pixel * __restrict__ Img,    int size);
 void __attribute__ ((noinline))  InitZero               (Pixel * __restrict__ Img,    int size);

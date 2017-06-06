@@ -34,6 +34,5 @@ add_subdirectory(testCSR)
 # add_subdirectory(testDebug)
 
 add_subdirectory(debug)
-add_subdirectory(testIRQ_debug)
 add_subdirectory(testIRQ)
 #add_subdirectory(testPriv)

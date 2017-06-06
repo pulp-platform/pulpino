@@ -1,5 +1,3 @@
-if (${GCC_ETH})
-    if (${USE_RISCY})
-        add_application(testDotMul testDotMul.c LABELS "riscv_tests" "verilator_tests")
-    endif()
+if (${GCC_MARCH} MATCHES "IMXpulpv2")
+  add_application(testDotMul testDotMul.c LABELS "riscv_tests" "verilator_tests")
 endif()

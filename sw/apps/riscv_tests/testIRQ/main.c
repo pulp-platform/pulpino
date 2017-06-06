@@ -37,8 +37,10 @@ testcase_t testcases[] = {
   { .name = " 2. test_infinite_branch_loop",  .test = test_infinite_branch_loop  },
   { .name = " 3. test_interrupt_loop",        .test = test_interrupt_loop        },
   { .name = " 4. test_hazard_interrupt",      .test = test_hazard_interrupt      },
+#ifdef USE_MUL
   { .name = " 5. test_infinite_jmp_mulh",     .test = test_infinite_jmp_mulh     },
-#if defined(GCC_ETH) && defined(USE_RISCY)
+#endif
+#ifdef PULP_EXT
   { .name = " 6. test_infinite_hw_loop",      .test = test_infinite_hw_loop      },
 #endif
   {0, 0}
@@ -64,6 +66,7 @@ int main() {
 void test_infinite_jmp_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
   volatile uint32_t act = 0;
+  volatile uint32_t label = 0;
   testcase_current = 1;
   irq_trig = 0;
 
@@ -77,13 +80,14 @@ void test_infinite_jmp_loop(testresult_t *result, void (*start)(), void (*stop)(
   TOCRA = 3500;
   TPRA  = 0x1;
 
-  asm volatile ("la x16, jmp1;"
-                "sw x16, 0(%[newmepc_jmp]);"
+  asm volatile ("la %[lbl], jmp1;"
+                "sw %[lbl], 0(%[newmepc_jmp]);"
                 "lblj1: j lblj1;"
                 "jmp1: addi %[a], %[a], 4;"
-                : [a] "+r" (act)
+                : [a] "+r" (act),
+                  [lbl] "+r" (label)
                 : [newmepc_jmp] "r" (&mepc_jmp)
-                : "x16", "x17");
+                );
 
   // disable timer
   TPRA = 0x0;
@@ -102,6 +106,7 @@ void test_infinite_jmp_loop(testresult_t *result, void (*start)(), void (*stop)(
 void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
   volatile uint32_t act = 0;
+  volatile uint32_t label = 0;
   testcase_current = 2;
   irq_trig = 0;
 
@@ -115,15 +120,16 @@ void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*sto
   TOCRA = 1000;
   TPRA  = 0x1;
 
-  asm volatile ("la x16, branch1;"
-                "sw x16, 0(%[newmepc_branch]);"
-                "addi x16, x0, 0x10;"
-                "lblb1: bne x16, x0, lblb1;"
-                "branch1: addi x16, x16, 0x4;"
-                "mv %[a], x16;"
-                : [a] "+r" (act)
+  asm volatile ("la %[lbl], branch1;"
+                "sw %[lbl], 0(%[newmepc_branch]);"
+                "addi %[lbl], x0, 0x10;"
+                "lblb1: bne %[lbl], x0, lblb1;"
+                "branch1: addi %[lbl], %[lbl], 0x4;"
+                "mv %[a], %[lbl];"
+                : [a] "+r" (act),
+                  [lbl] "+r" (label)
                 : [newmepc_branch] "r" (&mepc_branch)
-                : "x16", "x17");
+                );
 
   // disable timer
   TPRA = 0x0;
@@ -141,6 +147,7 @@ void test_infinite_branch_loop(testresult_t *result, void (*start)(), void (*sto
 void test_interrupt_loop(testresult_t *result, void (*start)(), void (*stop)()) {
 
   volatile uint32_t act = 0;
+  volatile uint32_t label = 0;
   volatile uint32_t cnt = 0;
   volatile uint32_t ctr = 0;
   testcase_current = 3;
@@ -156,8 +163,8 @@ void test_interrupt_loop(testresult_t *result, void (*start)(), void (*stop)()) 
   TOCRA = 1000;
   TPRA  = 0x1;
 
-  asm volatile ("la x16, after_loop;"
-                "sw x16, 0(%[newmepc_loop]);"
+  asm volatile ("la %[lbl], after_loop;"
+                "sw %[lbl], 0(%[newmepc_loop]);"
                 "mv  %[act], x0;"
                 "mv  %[ctr], x0;"
                 "for_loop: addi %[act], %[act], 0x01;"
@@ -165,10 +172,10 @@ void test_interrupt_loop(testresult_t *result, void (*start)(), void (*stop)()) 
                 "beq %[ctr], %[act], for_loop;"
                 "after_loop: csrrw x0, mstatus, %[m];"
                 : [act] "+r" (act),
-                  [ctr] "+r" (ctr)
+                  [ctr] "+r" (ctr),
+                  [lbl] "+r" (label)
                 : [newmepc_loop] "r" (&mepc_loop),
                   [m] "r" ((0x1800))
-                : "x16"
                 );
 
   // disable timer
@@ -188,6 +195,7 @@ void test_interrupt_loop(testresult_t *result, void (*start)(), void (*stop)()) 
 void test_hazard_interrupt(testresult_t *result, void (*start)(), void (*stop)()) {
 
   testcase_current = 4;
+    volatile uint32_t label = 0;
   irq_trig = 0;
 
   ECP = 0xFFFFFFFF;
@@ -199,17 +207,16 @@ void test_hazard_interrupt(testresult_t *result, void (*start)(), void (*stop)()
   TOCRA = 40;
   TPRA  = 0x1;
 
-  asm volatile ("la x16, after_jump;"
-                "sw x16, 0(%[newmepc_hazard]);"
+  asm volatile ("la %[lbl], after_jump;"
+                "sw %[lbl], 0(%[newmepc_hazard]);"
                 "haz_loop: csrrw x0, mstatus, %[dis];"
                 "csrrw x0, mstatus, %[en];"
                 "j haz_loop;"
                 "after_jump: nop;"
-                : 
+                : [lbl] "+r" (label)
                 : [newmepc_hazard] "r" (&mepc_hazard),
                   [dis]            "r" (0x1800),
                   [en]             "r" (0x1808)
-                : "x16"
                 );
 
   // disable timer
@@ -223,12 +230,14 @@ void test_hazard_interrupt(testresult_t *result, void (*start)(), void (*stop)()
 
 }
 
+#ifdef USE_MUL
 //----------------------------------------------------------------------------
 // 5. while(1) mulh
 //----------------------------------------------------------------------------
 void test_infinite_jmp_mulh(testresult_t *result, void (*start)(), void (*stop)()) {
 
   volatile uint32_t act = 0;
+  volatile uint32_t label = 0;
   volatile int32_t res_mulh = 0;
   testcase_current = 5;
   irq_trig = 0;
@@ -243,16 +252,17 @@ void test_infinite_jmp_mulh(testresult_t *result, void (*start)(), void (*stop)(
   TOCRA = 3500;
   TPRA  = 0x1;
 
-  asm volatile ("la x16, jmp2;"
-                "sw x16, 0(%[newmepc_mulh]);"
+  asm volatile ("la %[lbl], jmp2;"
+                "sw %[lbl], 0(%[newmepc_mulh]);"
                 "lbl_mulh: mulh %[res], %[m], %[m];"
                 "j lbl_mulh;"
                 "jmp2: addi %[a], %[a], 4;"
                 : [a] "+r" (act),
-                  [res] "+r" (res_mulh)
+                  [res] "+r" (res_mulh),
+                  [lbl] "+r" (label)
                 : [newmepc_mulh] "r" (&mepc_mulh),
                   [m] "r" (0x000FFFFF)
-                : "x16", "x17");
+                );
 
   // disable timer
   TPRA = 0x0;
@@ -265,8 +275,9 @@ void test_infinite_jmp_mulh(testresult_t *result, void (*start)(), void (*stop)(
   irq_trig = 0;
 
 }
+#endif
 
-#if defined(GCC_ETH) && defined(USE_RISCY)
+#ifdef PULP_EXT
 //----------------------------------------------------------------------------
 // 6. while(i < N) with hw loop
 //----------------------------------------------------------------------------
