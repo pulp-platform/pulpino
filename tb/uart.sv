@@ -93,6 +93,7 @@ interface uart_bus
     for (i = 0; i < 8; i++) begin
       #(BIT_PERIOD);
       tx = c[i];
+      $display("[UART] Sent %x",c[i]);
     end
 
     // stop bit
