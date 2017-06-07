@@ -14,7 +14,7 @@ rtl_riscy:
 rtl_riscy_sequential:
   stage: test
   script:
-    - ./ci/rtl_riscy-sequential.csh
+    - ./ci/rtl-riscy-sequential.csh
 
 rtl_riscy_rvc:
   stage: test
@@ -34,7 +34,7 @@ rtl_zero:
 rtl_zero_sequential:
   stage: test
   script:
-    - ./ci/rtl_zero-sequential.csh
+    - ./ci/rtl-zero-sequential.csh
 
 rtl_zero_rvc:
   stage: test
@@ -54,7 +54,7 @@ rtl_micro:
 rtl_micro_sequential:
   stage: test
   script:
-    - ./ci/rtl_micro-sequential.csh
+    - ./ci/rtl-micro-sequential.csh
 
 rtl_micro_rvc:
   stage: test
