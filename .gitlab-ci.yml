@@ -3,7 +3,6 @@ stages:
   - test
 
 before_script:
-  - ./ci/install-verilator.csh
   - ./ci/setup_riscy.csh
   - ./ci/setup_zero.csh
 
@@ -66,13 +65,3 @@ rtl_micro_sequential_rvc:
   stage: test
   script:
     - ./ci/rtl-micro_sequential-rvc.csh
-
-verilator:
-  stage: test
-  script:
-    - ./ci/verilator.csh
-
-verilator-rvc:
-  stage: test
-  script:
-    - ./ci/verilator-rvc.csh
