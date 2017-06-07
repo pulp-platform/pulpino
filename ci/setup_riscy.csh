@@ -31,17 +31,9 @@ set SW_DIR="$GIT_DIR/sw"
 
 rm -rf ./sw/build_riscy || true
 rm -rf ./sw/build-rvc_riscy || true
-#rm -rf ./sw/build_zero || true
-#rm -rf ./sw/build-rvc_zero || true
-#rm -rf ./sw/build_micro || true
-#rm -rf ./sw/build-rvc_micro || true
 
 mkdir -p ./sw/build_riscy
 mkdir -p ./sw/build-rvc_riscy
-#mkdir -p ./sw/build_zero
-#mkdir -p ./sw/build-rvc_zero
-#mkdir -p ./sw/build_micro
-#mkdir -p ./sw/build-rvc_micro
 
 
 cd ./sw/build_riscy
@@ -77,7 +69,6 @@ cd ../../
 
 cd ./sw/build-rvc_riscy
 
-#set TARGET_C_FLAGS="$TARGET_C_FLAGS -mrvc"
 set RVC=1
 
 cmake-3.3.0 "$SW_DIR" \

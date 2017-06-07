@@ -4,27 +4,68 @@ stages:
 
 before_script:
   - ./ci/install-verilator.csh
-  - ./ci/setup.csh
+  - ./ci/setup_riscy.csh
+  - ./ci/setup_zero.csh
 
-rtl_riscv:
+rtl_riscy:
   stage: test
   script:
-    - ./ci/rtl-riscv.csh
+    - ./ci/rtl-riscy.csh
 
-rtl_sequential:
+rtl_riscy_sequential:
   stage: test
   script:
-    - ./ci/rtl-sequential.csh
+    - ./ci/rtl_riscy_sequential.csh
 
-rtl_riscv_rvc:
+rtl_riscy_rvc:
   stage: test
   script:
-    - ./ci/rtl-riscv-rvc.csh
+    - ./ci/rtl-riscy-rvc.csh
 
-rtl_sequential_rvc:
+rtl_riscy_sequential_rvc:
   stage: test
   script:
-    - ./ci/rtl-sequential-rvc.csh
+    - ./ci/rtl-riscy_sequential-rvc.csh
+
+rtl_zero:
+  stage: test
+  script:
+    - ./ci/rtl-zero.csh
+
+rtl_zero_sequential:
+  stage: test
+  script:
+    - ./ci/rtl_zero_sequential.csh
+
+rtl_zero_rvc:
+  stage: test
+  script:
+    - ./ci/rtl-zero-rvc.csh
+
+rtl_zero_sequential_rvc:
+  stage: test
+  script:
+    - ./ci/rtl-zero_sequential-rvc.csh
+
+rtl_micro:
+  stage: test
+  script:
+    - ./ci/rtl-micro.csh
+
+rtl_micro_sequential:
+  stage: test
+  script:
+    - ./ci/rtl_micro_sequential.csh
+
+rtl_micro_rvc:
+  stage: test
+  script:
+    - ./ci/rtl-micro-rvc.csh
+
+rtl_micro_sequential_rvc:
+  stage: test
+  script:
+    - ./ci/rtl-micro_sequential-rvc.csh
 
 verilator:
   stage: test
