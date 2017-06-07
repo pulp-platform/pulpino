@@ -14,7 +14,7 @@ rtl_riscy:
 rtl_riscy_sequential:
   stage: test
   script:
-    - ./ci/rtl_riscy_sequential.csh
+    - ./ci/rtl_riscy-sequential.csh
 
 rtl_riscy_rvc:
   stage: test
@@ -24,7 +24,7 @@ rtl_riscy_rvc:
 rtl_riscy_sequential_rvc:
   stage: test
   script:
-    - ./ci/rtl-riscy_sequential-rvc.csh
+    - ./ci/rtl-riscy-sequential-rvc.csh
 
 rtl_zero:
   stage: test
@@ -34,7 +34,7 @@ rtl_zero:
 rtl_zero_sequential:
   stage: test
   script:
-    - ./ci/rtl_zero_sequential.csh
+    - ./ci/rtl_zero-sequential.csh
 
 rtl_zero_rvc:
   stage: test
@@ -44,7 +44,7 @@ rtl_zero_rvc:
 rtl_zero_sequential_rvc:
   stage: test
   script:
-    - ./ci/rtl-zero_sequential-rvc.csh
+    - ./ci/rtl-zero-sequential-rvc.csh
 
 rtl_micro:
   stage: test
@@ -54,7 +54,7 @@ rtl_micro:
 rtl_micro_sequential:
   stage: test
   script:
-    - ./ci/rtl_micro_sequential.csh
+    - ./ci/rtl_micro-sequential.csh
 
 rtl_micro_rvc:
   stage: test
@@ -64,4 +64,4 @@ rtl_micro_rvc:
 rtl_micro_sequential_rvc:
   stage: test
   script:
-    - ./ci/rtl-micro_sequential-rvc.csh
+    - ./ci/rtl-micro-sequential-rvc.csh
