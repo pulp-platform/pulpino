@@ -129,6 +129,10 @@ endif()
 
 add_subdirectory(libs/bench_lib)
 
-#add_subdirectory(libs/beebs_lib)
+set(BEEBS_LIB 0)
+
+if(${BEEBS_LIB})
+ add_subdirectory(libs/beebs_lib)
+endif()
 
 add_subdirectory(apps)

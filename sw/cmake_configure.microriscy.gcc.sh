@@ -23,6 +23,8 @@ RISCY_RV32F=0
 
 # if you are using zero-riscy, set this to 1
 USE_ZERO_RISCY=1
+# zeroriscy with the multiplier
+ZERO_RV32M=0
 # zeroriscy with only 16 registers
 ZERO_RV32E=1
 
@@ -30,6 +32,7 @@ ZERO_RV32E=1
 GCC_MARCH="RV32I"
 #compile arduino lib
 ARDUINO_LIB=1
+
 
 PULP_GIT_DIRECTORY=../../
 SIM_DIRECTORY="$PULP_GIT_DIRECTORY/vsim"
