@@ -26,7 +26,7 @@ macro(add_application NAME SOURCE_FILES)
       ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/core_libs/inc
       ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/separate_libs/inc
       ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
-      ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
+      #${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
     )
   else()
     include_directories(
@@ -34,7 +34,7 @@ macro(add_application NAME SOURCE_FILES)
         ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
         ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
         ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
-        ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
+       # ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
       )
   endif()
 
@@ -54,9 +54,11 @@ macro(add_application NAME SOURCE_FILES)
 
   # link libraries
   if(${ARDUINO_LIB})
-    target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench Arduino_separate Arduino_core bench string sys m)
+    #target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench Arduino_separate Arduino_core bench string sys m)
+  target_link_libraries(${NAME}.elf ${ARG_LIBS}  bench Arduino_separate Arduino_core bench string sys m)
   else()
-    target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench bench string sys m)
+    #target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench bench string sys m)
+    target_link_libraries(${NAME}.elf ${ARG_LIBS} bench Arduino_separate Arduino_core bench string sys m)
   endif()
 
   # this specifies the testbench to use for simulation
@@ -192,7 +194,7 @@ endif()
 #add_subdirectory(dhrystone)
 #add_subdirectory(coremark)
 add_subdirectory(bench)
-add_subdirectory(beebs)
+#add_subdirectory(beebs)
 
 # RISCV only tests
 if(${RISCV})

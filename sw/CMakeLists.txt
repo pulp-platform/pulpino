@@ -128,6 +128,7 @@ if(${ARDUINO_LIB})
 endif()
 
 add_subdirectory(libs/bench_lib)
-add_subdirectory(libs/beebs_lib)
+
+#add_subdirectory(libs/beebs_lib)
 
 add_subdirectory(apps)
