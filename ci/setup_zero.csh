@@ -64,7 +64,7 @@ cmake-3.3.0 "$SW_DIR" \
 # compile RTL
 ninja vcompile || exit 1
 # compile verilator
-ninja vericompile || exit 1
+#ninja vericompile || exit 1
 
 # compile SW
 ninja || exit 1
