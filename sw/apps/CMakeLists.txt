@@ -197,8 +197,6 @@ if(${ARDUINO_LIB})
   add_subdirectory(Arduino_tests)
 endif()
 
-#add_subdirectory(dhrystone)
-#add_subdirectory(coremark)
 add_subdirectory(bench)
 
 if(${BEEBS_LIB})
