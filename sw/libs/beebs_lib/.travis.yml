@@ -1,6 +1,0 @@
-language: c
-compiler: gcc
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install dejagnu texinfo
-script: ./travis_test.sh
