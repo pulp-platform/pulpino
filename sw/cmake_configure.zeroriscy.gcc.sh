@@ -16,13 +16,12 @@ TARGET_C_FLAGS="-O3 -m32 -g"
 # if you want to have compressed instructions, set this to 1
 RVC=0
 
-# if you are using riscy, set this to 1
-USE_RISCY=0
-# set this to 1 if you are using the Floating Point extensions for riscy
+# if you are using zero-riscy, set this to 1, otherwise it uses RISCY
+USE_ZERO_RISCY=1
+
+# set this to 1 if you are using the Floating Point extensions for riscy only
 RISCY_RV32F=0
 
-# if you are using zero-riscy, set this to 1
-USE_ZERO_RISCY=1
 # zeroriscy with the multiplier
 ZERO_RV32M=1
 # zeroriscy with only 16 registers
@@ -43,7 +42,6 @@ cmake-3.3.0 "$PULP_GIT_DIRECTORY"/sw/ \
     -DCMAKE_C_COMPILER="$COMPILER" \
     -DVSIM="$VSIM" \
     -DRVC="$RVC" \
-    -DUSE_RISCY="$USE_RISCY" \
     -DRISCY_RV32F="$RISCY_RV32F" \
     -DUSE_ZERO_RISCY="$USE_ZERO_RISCY" \
     -DZERO_RV32M="$ZERO_RV32M" \
