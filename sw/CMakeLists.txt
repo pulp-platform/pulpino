@@ -22,24 +22,62 @@ project (pulp_software C)
 
 enable_testing()
 
- set(RISCV 1)
+set(RISCV 1)
 
- message(STATUS "GCC_MARCH= ${GCC_MARCH}")
- set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=${GCC_MARCH} -Wa,-march=${GCC_MARCH}")
- set(CMAKE_OBJDUMP_FLAGS -Mmarch=${GCC_MARCH} -d)
+# check some silly combinations and throw errors
+if(${USE_RISCY} AND ${USE_ZERO_RISCY})
+  message(SEND_ERROR "Only one core can be defined at the time!")
+endif()
 
- if(${RVC})
-   message("NOTE: Using compressed instructions")
-   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
- endif()
+if(${RISCY_RV32F} AND ${USE_ZERO_RISCY})
+  message(SEND_ERROR "Floating Point Extensions are not supported on zero-riscy")
+endif()
 
- if(${ZERO_RV32E})
-   message("NOTE: Using RV32E ISA")
-   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m16r")
- endif()
+# assign default architecture flags if not defined
+string(COMPARE EQUAL "${GCC_MARCH}" "" GCC_MARCH_NOT_SET)
 
- set(LDSCRIPT      "link.riscv.ld")
- set(LDSCRIPT_BOOT "link.boot.ld" )
+if(GCC_MARCH_NOT_SET)
+   message("\nUsing default architecture flags!!\n")
+
+   if(${USE_RISCY})
+      if(${RISCY_RV32F})
+         set(GCC_MARCH "IMFDXpulpv2")
+      else()
+         set(GCC_MARCH "IMXpulpv2")
+      endif()
+   else()
+      if(${ZERO_RV32M})
+        set(GCC_MARCH "RV32IM")
+      else()
+        set(GCC_MARCH "RV32I")
+      endif()
+   endif()
+endif()
+
+
+message(STATUS "GCC_MARCH= ${GCC_MARCH}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=${GCC_MARCH} -Wa,-march=${GCC_MARCH}")
+set(CMAKE_OBJDUMP_FLAGS -Mmarch=${GCC_MARCH} -d)
+
+if(${GCC_MARCH} MATCHES "IMFDXpulpv2")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mhard-float")
+endif()
+
+if(${RVC})
+  message("NOTE: Using compressed instructions")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
+endif()
+
+if(${ZERO_RV32E})
+  if (${USE_RISCY})
+    message(SEND_ERROR "RV32E can only be used with Zero-riscy")
+  endif()
+  message("NOTE: Using RV32E ISA")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m16r")
+endif()
+
+set(LDSCRIPT      "link.riscv.ld")
+set(LDSCRIPT_BOOT "link.boot.ld" )
 
 
 set(PULP_PC_ANALYZE "pulp-pc-analyze" CACHE PATH "path to pulp pc analyze binary")
@@ -72,6 +110,10 @@ set(VSIM "vsim" CACHE FILEPATH "Path to the vsim executable")
  if(${ARDUINO_LIB})
   include_directories(libs/Arduino_lib/core_libs/inc)
   include_directories(libs/Arduino_lib/separate_libs/inc)
+ endif()
+
+ if(${RISCY_RV32F})
+   include_directories(libs/math_fns_lib/inc)
  endif()
 
  set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
@@ -122,6 +164,10 @@ add_custom_target(vericompile
 
 add_subdirectory(libs/string_lib)
 add_subdirectory(libs/sys_lib)
+
+if(${RISCY_RV32F})
+ add_subdirectory(libs/math_fns_lib)
+endif()
 
 if(${ARDUINO_LIB})
  add_subdirectory(libs/Arduino_lib)

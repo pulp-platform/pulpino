@@ -213,7 +213,9 @@ module core_region
     riscv_core
     #(
       .N_EXT_PERF_COUNTERS (     0       ),
-      .FPU                 ( RISCY_RV32F )
+      .FPU                 ( RISCY_RV32F ),
+      .SHARED_FP           (     0       ),
+      .SHARED_FP_DIVSQRT   (     2       )
     )
     RISCV_CORE
     (

@@ -36,3 +36,5 @@ add_subdirectory(testCSR)
 add_subdirectory(debug)
 add_subdirectory(testIRQ)
 #add_subdirectory(testPriv)
+
+add_subdirectory(testFPU)

@@ -18,29 +18,23 @@ macro(add_application NAME SOURCE_FILES)
   cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
   set(SUBDIR ${ARG_SUBDIR})
 
+  include_directories(
+    ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
+    ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
+    ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
+    ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
+  )
+
   if(${ARDUINO_LIB})
     include_directories(
-      ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
-      ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
-      ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
       ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/core_libs/inc
       ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/separate_libs/inc
-      ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
     )
-  elseif(${BEEBS_LIB})
+  endif()
+
+  if(${BEEBS_LIB})
     include_directories(
-        ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
-        ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
-        ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
-        ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
         ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
-      )
-  else()
-    include_directories(
-        ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
-        ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
-        ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
-        ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
       )
   endif()
 
@@ -58,14 +52,28 @@ macro(add_application NAME SOURCE_FILES)
 
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
 
-  # link libraries
-  if(${ARDUINO_LIB})
-    target_link_libraries(${NAME}.elf ${ARG_LIBS}  Arduino_separate Arduino_core bench string sys m)
-  elseif(${BEEBS_LIB})
-    target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench string sys m)
+  if(${RISCY_RV32F})
+    set(MATH_FNS_LIB "math_fns")
   else()
-    target_link_libraries(${NAME}.elf ${ARG_LIBS} bench string sys m)
+    set(MATH_FNS_LIB "")
   endif()
+
+  if(${BEEBS_LIB})
+    set(BEEBS_LIB_NAME "beebs")
+  else()
+    set(BEEBS_LIB_NAME "")
+  endif()
+
+  if(${ARDUINO_LIB})
+    set(ARDUINO_CORE "Arduino_core")
+    set(ARDUINO_SEP "Arduino_separate")
+  else()
+    set(ARDUINO_CORE "")
+    set(ARDUINO_SEP "")
+  endif()
+
+  # link libraries
+  target_link_libraries(${NAME}.elf ${ARG_LIBS} ${ARDUINO_SEP} ${ARDUINO_CORE} ${BEEBS_LIB_NAME} bench ${MATH_FNS_LIB} string sys m)
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
@@ -201,6 +209,10 @@ add_subdirectory(bench)
 
 if(${BEEBS_LIB})
   add_subdirectory(beebs)
+endif()
+
+if(${RISCY_RV32F})
+  add_subdirectory(ml_tests)
 endif()
 
 # RISCV only tests
