@@ -230,6 +230,7 @@
     input    [7:0] command;
     input    [7:0] reg_val;
     begin
+      padmode_spi_master = use_qspi ? `SPI_QUAD_TX : `SPI_STD;
       spi_csn  = 1'b0;
       #100;
       if (use_qspi)
