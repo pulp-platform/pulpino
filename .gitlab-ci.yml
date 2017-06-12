@@ -1,87 +1,87 @@
 stages:
-  - build
-  - test
+  - build_riscy
+  - test_riscy
+  - build_zero
+  - test_zero
+  - build_micro
+  - test_micro
 
-before_script:
-  - ./ci/setup_riscy.csh
+build_riscy:
+  stage: build_riscy
+  script:
+    - ./ci/setup-riscy.csh
+
+build_zero:
+  stage: build_zero
+  script:
+    - ./ci/setup-zero.csh
+
+build_micro:
+  stage: build_micro
+  script:
+    - ./ci/setup-zero.csh
 
 rtl_riscy:
-  stage: test
+  stage: test_riscy
   script:
     - ./ci/rtl-riscy.csh
 
 rtl_riscy_sequential:
-  stage: test
+  stage: test_riscy
   script:
     - ./ci/rtl-riscy-sequential.csh
 
 rtl_riscy_rvc:
-  stage: test
+  stage: test_riscy
   script:
     - ./ci/rtl-riscy-rvc.csh
 
 rtl_riscy_sequential_rvc:
-  stage: test
+  stage: test_riscy
   script:
     - ./ci/rtl-riscy-sequential-rvc.csh
 
 rtl_zero:
-  stage: test
+  stage: test_zero
   script:
     - ./ci/rtl-zero.csh
-  before_script:
-    - ./ci/setup_zero.csh
 
 rtl_zero_sequential:
-  stage: test
+  stage: test_zero
   script:
     - ./ci/rtl-zero-sequential.csh
-  before_script:
-    - ./ci/setup_zero.csh
 
 rtl_zero_rvc:
-  stage: test
+  stage: test_zero
   script:
     - ./ci/rtl-zero-rvc.csh
-  before_script:
-    - ./ci/setup_zero.csh
 
 
 rtl_zero_sequential_rvc:
-  stage: test
+  stage: test_zero
   script:
     - ./ci/rtl-zero-sequential-rvc.csh
-  before_script:
-    - ./ci/setup_zero.csh
 
 
 rtl_micro:
-  stage: test
+  stage: test_micro
   script:
     - ./ci/rtl-micro.csh
-  before_script:
-    - ./ci/setup_zero.csh
 
 
 rtl_micro_sequential:
-  stage: test
+  stage: test_micro
   script:
     - ./ci/rtl-micro-sequential.csh
-  before_script:
-    - ./ci/setup_zero.csh
 
 
 rtl_micro_rvc:
-  stage: test
+  stage: test_micro
   script:
     - ./ci/rtl-micro-rvc.csh
-  before_script:
-    - ./ci/setup_zero.csh
 
 rtl_micro_sequential_rvc:
-  stage: test
+  stage: test_micro
   script:
     - ./ci/rtl-micro-sequential-rvc.csh
-  before_script:
-    - ./ci/setup_zero.csh
 
