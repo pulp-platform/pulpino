@@ -11,21 +11,24 @@ build_riscy:
   script:
     - ./ci/setup_riscy.csh
   artifacts:
-    - ./sw/
+    paths:
+      - ./sw/
 
 build_zero:
   stage: setup_zero
   script:
     - ./ci/setup_zero.csh
   artifacts:
-    - ./sw/
+    paths:
+      - ./sw/
 
 build_micro:
   stage: setup_micro
   script:
     - ./ci/setup_zero.csh
   artifacts:
-    - ./sw/
+    paths:
+      - ./sw/
 
 rtl_riscy:
   stage: test_riscy
