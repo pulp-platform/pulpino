@@ -92,3 +92,6 @@ cmake-3.3.0 "$SW_DIR" \
 
 # compile SW
 ninja || exit 1
+
+pwd
+cd ../../
