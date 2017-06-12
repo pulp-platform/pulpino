@@ -30,6 +30,7 @@ rtl_riscy_sequential:
   stage: test_riscy
   script:
     - ./ci/rtl-riscy-sequential.csh
+  dependencies: build_riscy
 
 rtl_riscy_rvc:
   stage: test_riscy
