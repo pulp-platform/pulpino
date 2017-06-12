@@ -34,7 +34,6 @@ rtl_riscy:
   stage: test_riscy
   script:
     - ./ci/rtl-riscy.csh
-  dependencies: [build_riscy]
   variables:
     GIT_STRATEGY: none
 
@@ -42,7 +41,6 @@ rtl_riscy_sequential:
   stage: test_riscy
   script:
     - ./ci/rtl-riscy-sequential.csh
-  dependencies: [build_riscy]
   variables:
     GIT_STRATEGY: none
 
@@ -50,7 +48,6 @@ rtl_riscy_rvc:
   stage: test_riscy
   script:
     - ./ci/rtl-riscy-rvc.csh
-  dependencies: [build_riscy]
   variables:
     GIT_STRATEGY: none
 
@@ -58,7 +55,6 @@ rtl_riscy_sequential_rvc:
   stage: test_riscy
   script:
     - ./ci/rtl-riscy-sequential-rvc.csh
-  dependencies: [build_riscy]
   variables:
     GIT_STRATEGY: none
 
