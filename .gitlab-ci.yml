@@ -9,17 +9,17 @@ stages:
 build_riscy:
   stage: build_riscy
   script:
-    - ./ci/setup-riscy.csh
+    - ./ci/setup_riscy.csh
 
 build_zero:
   stage: build_zero
   script:
-    - ./ci/setup-zero.csh
+    - ./ci/setup_zero.csh
 
 build_micro:
   stage: build_micro
   script:
-    - ./ci/setup-zero.csh
+    - ./ci/setup_zero.csh
 
 rtl_riscy:
   stage: test_riscy
