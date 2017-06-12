@@ -45,7 +45,7 @@ void check_illegal(testresult_t *result, void (*start)(), void (*stop)()) {
     unsigned int act = 0;
     unsigned int exp = 1+2;
     asm volatile ("addi %[act], %[act], 1\n"
-                  ".word 0xF0F0F0F0\n"
+                  ".word 0x90F090F0\n"
                   "addi %[act], %[act], 2\n"
                   : [act] "+r" (act));
 

@@ -1,4 +1,4 @@
-if (${GCC_MARCH} MATCHES "IMXpulpv2")
+if (${GCC_MARCH} MATCHES "[*pulpv2]")
         add_application(motion_detection motion_detection.c FLAGS "-DDOTP" LABELS "sequential_tests" "verilator_tests")
 else()
         add_application(motion_detection motion_detection.c FLAGS LABELS "sequential_tests" "verilator_tests")
