@@ -12,6 +12,7 @@ rtl_riscy:
     - ./ci/rtl-basic.csh
   before_script:
     - ./ci/setup_riscy.csh
+  when: always
 
 rtl_riscy_sequential:
   stage: test_riscy
@@ -19,6 +20,7 @@ rtl_riscy_sequential:
     - ./ci/rtl-sequential.csh
   before_script:
     - ./ci/setup_riscy.csh
+  when: always
 
 rtl_riscy_rvc:
   stage: test_riscy
@@ -26,6 +28,7 @@ rtl_riscy_rvc:
     - ./ci/rtl-basic-rvc.csh
   before_script:
     - ./ci/setup_riscy.csh
+  when: always
 
 rtl_riscy_sequential_rvc:
   stage: test_riscy
@@ -33,7 +36,7 @@ rtl_riscy_sequential_rvc:
     - ./ci/rtl-sequential-rvc.csh
   before_script:
     - ./ci/setup_riscy.csh
-
+  when: always
 
 
 rtl_riscy_fp:
@@ -42,6 +45,7 @@ rtl_riscy_fp:
     - ./ci/rtl-basic.csh
   before_script:
     - ./ci/setup_riscy_fp.csh
+  when: always
 
 rtl_riscy_fp_sequential:
   stage: test_riscy_fp
@@ -49,6 +53,7 @@ rtl_riscy_fp_sequential:
     - ./ci/rtl-sequential.csh
   before_script:
     - ./ci/setup_riscy_fp.csh
+  when: always
 
 rtl_riscy_fp_ml:
   stage: test_riscy_fp
@@ -56,6 +61,7 @@ rtl_riscy_fp_ml:
     - ./ci/rtl-ml.csh
   before_script:
     - ./ci/setup_riscy_fp.csh
+  when: always
 
 rtl_riscy_fp_rvc:
   stage: test_riscy_fp
@@ -63,6 +69,7 @@ rtl_riscy_fp_rvc:
     - ./ci/rtl-basic-rvc.csh
   before_script:
     - ./ci/setup_riscy_fp.csh
+  when: always
 
 rtl_riscy_fp_sequential_rvc:
   stage: test_riscy_fp
@@ -70,6 +77,7 @@ rtl_riscy_fp_sequential_rvc:
     - ./ci/rtl-sequential-rvc.csh
   before_script:
     - ./ci/setup_riscy_fp.csh
+  when: always
 
 rtl_riscy_fp_ml_rvc:
   stage: test_riscy_fp
@@ -77,6 +85,7 @@ rtl_riscy_fp_ml_rvc:
     - ./ci/rtl-ml-rvc.csh
   before_script:
     - ./ci/setup_riscy_fp.csh
+  when: always
 
 
 
@@ -87,6 +96,7 @@ rtl_zero:
     - ./ci/rtl-basic.csh
   before_script:
     - ./ci/setup_zero.csh
+  when: always
 
 rtl_zero_sequential:
   stage: test_zero
@@ -94,6 +104,7 @@ rtl_zero_sequential:
     - ./ci/rtl-sequential.csh
   before_script:
     - ./ci/setup_zero.csh
+  when: always
 
 rtl_zero_rvc:
   stage: test_zero
@@ -101,6 +112,7 @@ rtl_zero_rvc:
     - ./ci/rtl-basic-rvc.csh
   before_script:
     - ./ci/setup_zero.csh
+  when: always
 
 rtl_zero_sequential_rvc:
   stage: test_zero
@@ -108,6 +120,7 @@ rtl_zero_sequential_rvc:
     - ./ci/rtl-sequential-rvc.csh
   before_script:
     - ./ci/setup_zero.csh
+  when: always
 
 
 
@@ -118,6 +131,7 @@ rtl_micro:
     - ./ci/rtl-basic.csh
   before_script:
     - ./ci/setup_micro.csh
+  when: always
 
 rtl_micro_sequential:
   stage: test_micro
@@ -125,6 +139,7 @@ rtl_micro_sequential:
     - ./ci/rtl-sequential.csh
   before_script:
     - ./ci/setup_micro.csh
+  when: always
 
 rtl_micro_rvc:
   stage: test_micro
@@ -132,6 +147,7 @@ rtl_micro_rvc:
     - ./ci/rtl-basic-rvc.csh
   before_script:
     - ./ci/setup_micro.csh
+  when: always
 
 rtl_micro_sequential_rvc:
   stage: test_micro
@@ -139,4 +155,4 @@ rtl_micro_sequential_rvc:
     - ./ci/rtl-sequential-rvc.csh
   before_script:
     - ./ci/setup_micro.csh
-
+  when: always
