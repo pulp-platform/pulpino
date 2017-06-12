@@ -25,6 +25,7 @@ rtl_riscy:
   stage: test_riscy
   script:
     - ./ci/rtl-riscy.csh
+  dependencies: [build_riscy]
 
 rtl_riscy_sequential:
   stage: test_riscy
@@ -36,11 +37,13 @@ rtl_riscy_rvc:
   stage: test_riscy
   script:
     - ./ci/rtl-riscy-rvc.csh
+  dependencies: [build_riscy]
 
 rtl_riscy_sequential_rvc:
   stage: test_riscy
   script:
     - ./ci/rtl-riscy-sequential-rvc.csh
+  dependencies: [build_riscy]
 
 rtl_zero:
   stage: test_zero
