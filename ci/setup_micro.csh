@@ -36,9 +36,6 @@ mkdir -p ./sw/build_micro
 mkdir -p ./sw/build-rvc_micro
 
 ####### MICRO RISCY ########
-
-cd ../../
-
 cd ./sw/build_micro
 
 cmake-3.3.0 "$SW_DIR" \
