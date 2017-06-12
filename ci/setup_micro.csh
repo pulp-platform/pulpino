@@ -29,14 +29,14 @@ set SIM_DIR="$GIT_DIR/vsim"
 set SW_DIR="$GIT_DIR/sw"
 
 
-rm -rf ./sw/build_micro || true
-rm -rf ./sw/build-rvc_micro || true
+rm -rf ./sw/build || true
+rm -rf ./sw/build-rvc || true
 
-mkdir -p ./sw/build_micro
-mkdir -p ./sw/build-rvc_micro
+mkdir -p ./sw/build
+mkdir -p ./sw/build-rvc
 
 ####### MICRO RISCY ########
-cd ./sw/build_micro
+cd ./sw/build
 
 cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_BUILD_TYPE=Release \
@@ -67,7 +67,7 @@ ninja || exit 1
 
 cd ../../
 
-cd ./sw/build-rvc_micro
+cd ./sw/build-rvc
 
 set RVC=1
 
