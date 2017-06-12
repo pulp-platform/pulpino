@@ -1,23 +1,23 @@
 stages:
-  - build_riscy
+  - setup_riscy
   - test_riscy
-  - build_zero
+  - setup_zero
   - test_zero
-  - build_micro
+  - setup_micro
   - test_micro
 
 build_riscy:
-  stage: build_riscy
+  stage: setup_riscy
   script:
     - ./ci/setup_riscy.csh
 
 build_zero:
-  stage: build_zero
+  stage: setup_zero
   script:
     - ./ci/setup_zero.csh
 
 build_micro:
-  stage: build_micro
+  stage: setup_micro
   script:
     - ./ci/setup_zero.csh
 
@@ -30,7 +30,7 @@ rtl_riscy_sequential:
   stage: test_riscy
   script:
     - ./ci/rtl-riscy-sequential.csh
-  dependencies: build_riscy
+  dependencies: [build_riscy]
 
 rtl_riscy_rvc:
   stage: test_riscy
