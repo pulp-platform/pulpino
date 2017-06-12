@@ -5,16 +5,6 @@ stages:
 before_script:
   - ./ci/setup_riscy.csh
 
-configure_zero: 
-  stage: build
-  script:
-    - ./ci/setup_zero.csh
-  dependencies:
-    - rtl_riscy
-    - rtl_riscy_rvc
-    - rtl_riscy_sequential
-    - rtl_riscy_sequential_rvc
-
 rtl_riscy:
   stage: test
   script:
@@ -39,60 +29,59 @@ rtl_zero:
   stage: test
   script:
     - ./ci/rtl-zero.csh
-  dependencies:
-    - configure_zero
+  before_script:
+    - ./ci/setup_zero.csh
 
 rtl_zero_sequential:
   stage: test
   script:
     - ./ci/rtl-zero-sequential.csh
-  dependencies:
-    - configure_zero
+  before_script:
+    - ./ci/setup_zero.csh
 
 rtl_zero_rvc:
   stage: test
   script:
     - ./ci/rtl-zero-rvc.csh
-  dependencies:
-    - configure_zero
+  before_script:
+    - ./ci/setup_zero.csh
 
 
 rtl_zero_sequential_rvc:
   stage: test
   script:
     - ./ci/rtl-zero-sequential-rvc.csh
-  dependencies:
-    - configure_zero
+  before_script:
+    - ./ci/setup_zero.csh
 
 
 rtl_micro:
   stage: test
   script:
     - ./ci/rtl-micro.csh
-  dependencies:
-    - configure_zero
+  before_script:
+    - ./ci/setup_zero.csh
 
 
 rtl_micro_sequential:
   stage: test
   script:
     - ./ci/rtl-micro-sequential.csh
-  dependencies:
-    - configure_zero
+  before_script:
+    - ./ci/setup_zero.csh
 
 
 rtl_micro_rvc:
   stage: test
   script:
     - ./ci/rtl-micro-rvc.csh
-  dependencies:
-    - configure_zero
-
+  before_script:
+    - ./ci/setup_zero.csh
 
 rtl_micro_sequential_rvc:
   stage: test
   script:
     - ./ci/rtl-micro-sequential-rvc.csh
-  dependencies:
-    - configure_zero
+  before_script:
+    - ./ci/setup_zero.csh
 
