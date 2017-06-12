@@ -1,4 +1,4 @@
-if (${GCC_MARCH} MATCHES "[*pulpv2]")
+if (${GCC_MARCH} MATCHES "[pulp]+")
   set(RISCV_FLAGS "-DUSE_MUL -DPULP_EXT")
 elseif(${GCC_MARCH} MATCHES "RV32IM")
   set(RISCV_FLAGS "-DUSE_MUL")

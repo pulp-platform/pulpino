@@ -1,7 +1,7 @@
 set(MATMUL_SOURCES matrixMul.c matmul_kernels.c)
 
-if (${GCC_MARCH} MATCHES "[*pulpv2]")
-    add_application(matrixMul8_dotp "${MATMUL_SOURCES}" FLAGS "-DUSE_VEC" "sequential_tests" "verilator_tests")
+if (${GCC_MARCH} MATCHES "[pulp]+")
+    add_application(matrixMul8_dotp "${MATMUL_SOURCES}" FLAGS "-DUSE_VEC" LABELS "sequential_tests" "verilator_tests")
 else()
     add_application(matrixMul8_dotp "${MATMUL_SOURCES}" FLAGS LABELS "sequential_tests" "verilator_tests")
 endif()
