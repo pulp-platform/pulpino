@@ -64,26 +64,26 @@ rtl_micro:
   script:
     - ./ci/rtl-micro.csh
   before_script:
-    - ./ci/setup_zero.csh
+    - ./ci/setup_micro.csh
 
 rtl_micro_sequential:
   stage: test_micro
   script:
     - ./ci/rtl-micro-sequential.csh
   before_script:
-    - ./ci/setup_zero.csh
+    - ./ci/setup_micro.csh
 
 rtl_micro_rvc:
   stage: test_micro
   script:
     - ./ci/rtl-micro-rvc.csh
   before_script:
-    - ./ci/setup_zero.csh
+    - ./ci/setup_micro.csh
 
 rtl_micro_sequential_rvc:
   stage: test_micro
   script:
     - ./ci/rtl-micro-sequential-rvc.csh
   before_script:
-    - ./ci/setup_zero.csh
+    - ./ci/setup_micro.csh
 

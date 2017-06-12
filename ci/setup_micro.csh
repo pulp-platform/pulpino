@@ -8,14 +8,14 @@ set OBJDUMP=`which riscv32-unknown-elf-objdump`
 set OBJCOPY=`which riscv32-unknown-elf-objcopy`
 set TARGET_C_FLAGS="-m32 -O3"
 set COMPILER=`which riscv32-unknown-elf-gcc`
-set GCC_MARCH="RV32IM"
+set GCC_MARCH="RV32I"
 
 set RVC=0
 set USE_RISCY=0
 set RISCY_RV32F=0
 set USE_ZERO_RISCY=1
-set ZERO_RV32M=1
-set ZERO_RV32E=0
+set ZERO_RV32M=0
+set ZERO_RV32E=1
 set ARDUINO_LIB=1
 
 set TB="run.tcl"
@@ -29,14 +29,17 @@ set SIM_DIR="$GIT_DIR/vsim"
 set SW_DIR="$GIT_DIR/sw"
 
 
-rm -rf ./sw/build_zero || true
-rm -rf ./sw/build-rvc_zero || true
+rm -rf ./sw/build_micro || true
+rm -rf ./sw/build-rvc_micro || true
 
-mkdir -p ./sw/build_zero
-mkdir -p ./sw/build-rvc_zero
+mkdir -p ./sw/build_micro
+mkdir -p ./sw/build-rvc_micro
 
-############# ZERO RISCY ###############
-cd ./sw/build_zero
+####### MICRO RISCY ########
+
+cd ../../
+
+cd ./sw/build_micro
 
 cmake-3.3.0 "$SW_DIR" \
     -DCMAKE_BUILD_TYPE=Release \
@@ -67,7 +70,7 @@ ninja || exit 1
 
 cd ../../
 
-cd ./sw/build-rvc_zero
+cd ./sw/build-rvc_micro
 
 set RVC=1
 
@@ -92,4 +95,3 @@ cmake-3.3.0 "$SW_DIR" \
 
 # compile SW
 ninja || exit 1
-
