@@ -236,8 +236,6 @@
 | shared function implementations. 
 *----------------------------------------------------------------------------*/
 
-#ifndef TRIG
-
 // this is the actual implementation of atan(x)
 // uses a polynomial approximation (nr. 4991)
 // which is precise up to about 7 digits over the range [0,1]
@@ -263,7 +261,6 @@ static float fatan_70(float x)
   return x * v;
 
 }
-
 
 
 float fAtan2(float y, float x)
@@ -411,5 +408,3 @@ float fCos(float x)
   }
 
 }
-#endif
-

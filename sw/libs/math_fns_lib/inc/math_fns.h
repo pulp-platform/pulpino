@@ -74,14 +74,10 @@
 #endif
   
   // squareroot based on inverse newton raphson squareroot
-#ifdef LINUX
-  float fSqrt(float x);
-#else
 #if (HWSQRT==1)
   static inline float fSqrt(float x);
 #else
   float fSqrt(float x);
-#endif
 #endif
   // // uses 3 iterations newton raphson 
   // // initial estimate is generated using
@@ -119,32 +115,21 @@
 *----------------------------------------------------------------------------*/
 
 // enable this for trigonometric intrinsics
-#ifdef TRIG
-  static inline float fCos(float x);
-  static inline float fAtan2(float y, float x);
-  static inline float fSin(float x);
-  static inline float fTan(float x);
-  static inline float fCot(float x);
-  static inline float fAtan(float x);
-  static inline float fAsin(float x);
-  static inline float fAcos(float x);
-#else
-  // wrapper functions which determine 
-  // the quadrant and call the actual implementation
-  // precise to about 6.7 digits
-  float fCos(float x);
-  // precise to around 6.4 digits
-  float fAtan2(float y, float x);
+// wrapper functions which determine 
+// the quadrant and call the actual implementation
+// precise to about 6.7 digits
+float fCos(float x);
+// precise to around 6.4 digits
+float fAtan2(float y, float x);
 
-  // these functions are derived from the cos and atan2 subroutines
-  // (they just perform a different range reduction)  
-  static inline float fSin(float x);
-  static inline float fTan(float x);
-  static inline float fCot(float x);
-  static inline float fAtan(float x);
-  static inline float fAsin(float x);
-  static inline float fAcos(float x);
-#endif
+// these functions are derived from the cos and atan2 subroutines
+// (they just perform a different range reduction)  
+static inline float fSin(float x);
+static inline float fTan(float x);
+static inline float fCot(float x);
+static inline float fAtan(float x);
+static inline float fAsin(float x);
+static inline float fAcos(float x);
 
 // mask away the sign bit
 static inline float fAbs(float x);
@@ -187,7 +172,6 @@ static inline char fIsInf(float x);
 | implementation of shared inline functions
 *----------------------------------------------------------------------------*/
 #if (HWSQRT==1)
-#ifndef LINUX
 static inline float fSqrt(float a)
 {
   float c;
@@ -197,87 +181,33 @@ static inline float fSqrt(float a)
   return c;
 }
 #endif
-#endif
 
 #if (HWDIV==1)
 static inline float fDiv(float a, float b)
 {
-#ifndef LINUX
-#ifndef FP_SW_EMUL
   float c;
   asm ("fdiv.s %[c], %[a], %[b]\n"
 		: [c] "=f" (c)
 		: [a] "f"  (a), [b] "f" (b));
   return c;
-#else
-return a / b;
-#endif
-#else
-return a / b;
-#endif
 }
 #endif
 
 static inline float fSin(float x)
 {
-#ifdef TRIG
-  float pi2 = MATH_0_5PI;
-  asm ("lf.sca.s %[c], %[a], %[b]": [c] "=r" (x): [a] "r"  (x), [b] "r" (pi2));
-  asm ("lf.sin.s %[c], %[a]"      : [c] "=r" (x): [a] "r"  (x));
-  return x;
-#else
   return fCos(MATH_0_5PI - x);
-#endif
 }
 
-#ifdef TRIG
-static inline float fCos(float x)
-{
-  float pi2 = MATH_0_5PI;
-  asm ("lf.sca.s %[c], %[a], %[b]": [c] "=r" (x): [a] "r"  (x), [b] "r" (pi2));
-  asm ("lf.cos.s %[c], %[a]"      : [c] "=r" (x): [a] "r"  (x));
-  return x;
-}
-#endif
-
-#ifdef TRIG
-static inline float fAtan2(float y, float x)
-{
-  float pi2 = MATH_0_5PI;
-  asm ("lf.ata.s  %[c], %[a], %[b]"     : [c] "=r" (x): [a] "r"  (y), [b] "r"(x));
-  asm ("lf.atan.s %[c], %[a], %[b]"     : [c] "=r" (x): [a] "r"  (x), [b] "r"(y));
-  asm ("lf.atl.s  %[c], %[a]"           : [c] "=r" (x): [a] "r"  (x));
-  return (x*pi2);
-}
-#endif
 
 // derived trig functions
 static inline float fTan(float x)
 {
-  #ifdef TRIG
-    float pi2 = MATH_0_5PI;
-    float y;
-    asm ("lf.sca.s %[c], %[a], %[b]": [c] "=r" (x): [a] "r"  (x), [b] "r" (pi2));
-    asm ("lf.sin.s %[c], %[a]"      : [c] "=r" (y): [a] "r"  (x));
-    asm ("lf.cos.s %[c], %[a]"      : [c] "=r" (x): [a] "r"  (x));
-    return y/x;
-  #else
     return fDiv(fSin(x),fCos(x));
-  #endif
 }
 
 static inline float fCot(float x)
 {
-  #ifdef TRIG  
-    float pi2 = MATH_0_5PI;
-    float y;
-    asm ("lf.sca.s %[c], %[a], %[b]": [c] "=r" (x): [a] "r"  (x), [b] "r" (pi2));
-    asm ("lf.sin.s %[c], %[a]"      : [c] "=r" (y): [a] "r"  (x));
-    asm ("lf.cos.s %[c], %[a]"      : [c] "=r" (x): [a] "r"  (x));
-    return x/y;
-  #else
     return fDiv(fCos(x),fSin(x));
-  #endif  
 }
 
 static inline float fAtan(float x)
@@ -310,20 +240,10 @@ static inline char fIsNan(float x)
 static inline char fIsInf(float x)
 { 
 
-#ifndef LINUX
-#ifndef FP_SW_EMUL
   int class;
   asm ("fclass.s %[c], %[a]\n"
        : [c] "=r" (class)
        : [a] "f"  (x));
   return ((class & CLASS_INF_MASK)!=0);
-#else
-  x = fAbs(x);
-  return (*(unsigned int *)&x == (MATH_INF_HI<<16));
-#endif
-#else
-  x = fAbs(x);
-  return (*(unsigned int *)&x == (MATH_INF_HI<<16));
-#endif
 }
 #endif
