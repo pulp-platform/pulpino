@@ -166,8 +166,8 @@
       debug_resume();
 
       debug_wait_for_stall();
-      debug_gpr_read(16, dbg_testcase_addr);
-      debug_gpr_read(17, dbg_tb_errors_addr);
+      debug_gpr_read(14, dbg_testcase_addr);
+      debug_gpr_read(15, dbg_tb_errors_addr);
 
       debug_resume();
     end
@@ -233,15 +233,15 @@
         dbg_tb_errors++;
       end
 
-      debug_gpr_read(18, data);
+      debug_gpr_read(8, data);
       if (data !== 32'h0000_0088) begin
-        $display("ERROR: x18 is not 0x00000088, but %X", data);
+        $display("ERROR: x8 is not 0x00000088, but %X", data);
         dbg_tb_errors++;
       end
 
-      debug_gpr_read(31, data);
+      debug_gpr_read(15, data);
       if (data !== 32'h0000_0031) begin
-        $display("ERROR: x31 is not 0x00000031, but %X", data);
+        $display("ERROR: x15 is not 0x00000031, but %X", data);
         dbg_tb_errors++;
       end
 
@@ -251,7 +251,7 @@
       // and finally write some stuff to the GPRs
       debug_gpr_write(5,  32'h5432_1089);
       debug_gpr_write(6,  32'h1122_3344);
-      debug_gpr_write(31, 32'hFEDC_BA09);
+      debug_gpr_write(15, 32'hFEDC_BA09);
 
       debug_resume();
     end
@@ -341,7 +341,7 @@
       debug_wait_for_stall();
 
       // get the address of changeme to break the loop later
-      debug_gpr_read(5'd16, addr_changeme);
+      debug_gpr_read(5'd14, addr_changeme);
 
 
       debug_resume();
@@ -448,9 +448,9 @@
       debug_read(`DBG_NPC_REG, npc);
       debug_read(`DBG_PPC_REG, ppc);
 
-      debug_gpr_read(5'd16, ppc_exp);
-      debug_gpr_read(5'd17, npc_exp);
-      debug_gpr_read(5'd18, npc_new);
+      debug_gpr_read(5'd13, ppc_exp);
+      debug_gpr_read(5'd14, npc_exp);
+      debug_gpr_read(5'd15, npc_new);
 
       if (npc !== npc_exp) begin
         $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp);
@@ -507,9 +507,9 @@
       debug_read(`DBG_NPC_REG, npc);
       debug_read(`DBG_PPC_REG, ppc);
 
-      debug_gpr_read(5'd16, ppc_exp);
-      debug_gpr_read(5'd17, npc_exp);
-      debug_gpr_read(5'd18, npc_new);
+      debug_gpr_read(5'd13, ppc_exp);
+      debug_gpr_read(5'd14, npc_exp);
+      debug_gpr_read(5'd15, npc_new);
 
       if (npc !== npc_exp) begin
         $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, npc_exp);
@@ -636,7 +636,7 @@
         debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
       end
 
-      debug_gpr_read(5'd16, data);
+      debug_gpr_read(5'd14, data);
       debug_mem_sw(data, 32'h0);
       debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, and no Single Step
 
@@ -687,7 +687,7 @@
       end
 
       debug_wait_for_stall();
-      debug_gpr_read(5'd16, data);
+      debug_gpr_read(5'd14, data);
       debug_write(`DBG_NPC_REG, data);
       debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, and no Single Step
 
@@ -738,9 +738,70 @@
       end
 
       debug_wait_for_stall();
-      debug_gpr_read(5'd16, data);
+      debug_gpr_read(5'd15, data);
       debug_write(`DBG_NPC_REG, data);
       debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, and no Single Step
+
+      //--------------------------------------------------------------------------
+      // now the tight loop with 1 instruction (ecall)
+      //--------------------------------------------------------------------------
+      debug_wait_for_stall();
+      debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
+      debug_gpr_read(5'd15, npc_last);
+      debug_gpr_read(5'd14, ppc_last);
+
+      debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+      debug_wait_for_stall();
+
+      debug_read(`DBG_NPC_REG, npc);
+      debug_read(`DBG_PPC_REG, ppc);
+
+      if (ppc !== ppc_last) begin
+        $display("ERROR: a) PPC is not equal to last PPC: act %X, expected %X", ppc, ppc_last);
+        dbg_tb_errors++;
+      end
+
+      if (npc !== npc_last) begin
+        $display("ERROR: a) NPC is not equal to last PPC: act %X, expected %X", npc, npc_last);
+        dbg_tb_errors++;
+      end
+
+      debug_write(`DBG_NPC_REG, ppc);
+
+      debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+
+      for(i = 0; i < 100; i++) begin
+        debug_wait_for_stall();
+        // read NPC and PPC
+        debug_read(`DBG_NPC_REG, npc);
+        debug_read(`DBG_PPC_REG, ppc);
+
+        if (ppc !== ppc_last) begin
+          $display("ERROR: PPC is not equal to last PPC: act %X, expected %X", ppc, ppc_last);
+          dbg_tb_errors++;
+        end
+
+        if (npc !== npc_last) begin
+          $display("ERROR: NPC is not equal to last NPC: act %X, expected %X", npc, npc_last);
+          dbg_tb_errors++;
+        end
+
+        debug_read(`DBG_HIT_REG, data);
+        if (~data[0]) begin
+          $display("ERROR: SSTH is not set");
+          dbg_tb_errors++;
+        end
+
+        debug_write(`DBG_NPC_REG, ppc);
+
+        debug_write(`DBG_CTRL_REG, 32'h0000_0001); // RESUME, but Single Step
+      end
+
+      debug_wait_for_stall();
+      debug_gpr_read(5'd13, data);
+      debug_write(`DBG_NPC_REG, data);
+      debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, and no Single Step
+
     end
   endtask
 
@@ -751,7 +812,7 @@
       $display("[DEBUG] Running test_jumps");
 
       debug_wait_for_stall();
-      debug_gpr_read(5'd16, data);
+      debug_gpr_read(5'd15, data);
       debug_write(`DBG_NPC_REG, data);
       debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME
 
@@ -760,7 +821,7 @@
 
       // jump to ebreak
       debug_wait_for_stall();
-      debug_gpr_read(5'd16, data);
+      debug_gpr_read(5'd15, data);
       debug_write(`DBG_NPC_REG, data);
       debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME
 
@@ -789,10 +850,10 @@
 
       debug_wait_for_stall();
 
-      debug_gpr_read(5'd16, bt);
-      debug_gpr_read(5'd17, jmp);
-      debug_gpr_read(5'd18, pc0);
-      debug_gpr_read(5'd19, pc1);
+      debug_gpr_read(5'd12, bt);
+      debug_gpr_read(5'd13, jmp);
+      debug_gpr_read(5'd14, pc0);
+      debug_gpr_read(5'd15, pc1);
 
       debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
 
@@ -868,10 +929,10 @@
       //------------------------------------------------------------------------------
       debug_wait_for_stall();
 
-      debug_gpr_read(5'd16, pc2);
-      debug_gpr_read(5'd17, jmp);
-      debug_gpr_read(5'd18, pc0);
-      debug_gpr_read(5'd19, pc1);
+      debug_gpr_read(5'd12, pc2);
+      debug_gpr_read(5'd13, jmp);
+      debug_gpr_read(5'd14, pc0);
+      debug_gpr_read(5'd15, pc1);
 
       debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
 
@@ -958,10 +1019,10 @@
       // TAKEN TOWARD
       debug_wait_for_stall();
 
-      debug_gpr_read(5'd16, pc0);
-      debug_gpr_read(5'd17, pc1);
-      debug_gpr_read(5'd18, pc2);
-      debug_gpr_read(5'd19, pc3);
+      debug_gpr_read(5'd12, pc0);
+      debug_gpr_read(5'd13, pc1);
+      debug_gpr_read(5'd14, pc2);
+      debug_gpr_read(5'd15, pc3);
 
       debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
 
@@ -1023,10 +1084,10 @@
       // NOT TAKEN TOWARD
       debug_wait_for_stall();
 
-      debug_gpr_read(5'd16, pc0);
-      debug_gpr_read(5'd17, pc1);
-      debug_gpr_read(5'd18, pc2);
-      debug_gpr_read(5'd19, pc3);
+      debug_gpr_read(5'd12, pc0);
+      debug_gpr_read(5'd13, pc1);
+      debug_gpr_read(5'd14, pc2);
+      debug_gpr_read(5'd15, pc3);
 
       debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
 
@@ -1083,10 +1144,10 @@
       // TAKEN BACKWARD
       debug_wait_for_stall();
 
-      debug_gpr_read(5'd16, pc0);
-      debug_gpr_read(5'd17, pc1);
-      debug_gpr_read(5'd18, pc2);
-      debug_gpr_read(5'd19, pc3);
+      debug_gpr_read(5'd12, pc0);
+      debug_gpr_read(5'd13, pc1);
+      debug_gpr_read(5'd14, pc2);
+      debug_gpr_read(5'd15, pc3);
 
       debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
       debug_resume();
@@ -1179,10 +1240,10 @@
       // NOT TAKEN BACKWARD
       debug_wait_for_stall();
 
-      debug_gpr_read(5'd16, pc0);
-      debug_gpr_read(5'd17, pc1);
-      debug_gpr_read(5'd18, pc2);
-      debug_gpr_read(5'd19, pc3);
+      debug_gpr_read(5'd12, pc0);
+      debug_gpr_read(5'd13, pc1);
+      debug_gpr_read(5'd14, pc2);
+      debug_gpr_read(5'd15, pc3);
 
       debug_write(`DBG_CTRL_REG, 32'h0001_0001); // set single-step
 
@@ -1810,9 +1871,9 @@
       // WFI
       debug_wait_for_stall();
 
-      debug_gpr_read(5'd16, ppc_exp);
-      debug_gpr_read(5'd17, npc_exp_1);
-      debug_gpr_read(5'd18, npc_exp_2);
+      debug_gpr_read(5'd13, ppc_exp);
+      debug_gpr_read(5'd14, npc_exp_1);
+      debug_gpr_read(5'd15, npc_exp_2);
 
       debug_read(`DBG_HIT_REG, data);
       if (data[0]) begin
@@ -1875,11 +1936,11 @@
       //------------------------------------------------------------------------------
       debug_wait_for_stall(); //ebreak
 
-      debug_gpr_read(5'd16, ppc_exp);
-      debug_gpr_read(5'd17, npc_exp_1);
-      debug_gpr_read(5'd18, npc_exp_2);
-      debug_gpr_read(5'd19, npc_exp_3);
-      debug_gpr_read(5'd20, npc_exp_4);
+      debug_gpr_read(5'd11, ppc_exp);
+      debug_gpr_read(5'd12, npc_exp_1);
+      debug_gpr_read(5'd13, npc_exp_2);
+      debug_gpr_read(5'd14, npc_exp_3);
+      debug_gpr_read(5'd15, npc_exp_4);
 
       jmp_to = npc_exp_3;
 
@@ -1956,8 +2017,12 @@
         dbg_tb_errors++;
       end
 
-      debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, but NO Single Step
+      // wake-up core in EU
+      debug_mem_sw(`EVENT_UNIT_BASE_ADDR + 32'h14, 32'hFFFF_FFFF);
+      // clear buffer
+      debug_mem_sw(`EVENT_UNIT_BASE_ADDR + 32'h14, 32'h0000_0000);
 
+      debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, but NO Single Step
 
       //------------------------------------------------------------------------------
       // third time, but with bells and whistles
@@ -1969,7 +2034,7 @@
 
       //------------------------------------------------------------------------------
       // sw
-      debug_gpr_read(5'd16, data);
+      debug_gpr_read(5'd13, data);
       debug_read(`DBG_PPC_REG, ppc);
       if (ppc !== data) begin
         $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, data);
@@ -1981,14 +2046,14 @@
 
         //------------------------------------------------------------------------------
         // wfi
-        debug_gpr_read(5'd17, data);
+        debug_gpr_read(5'd14, data);
         debug_read(`DBG_PPC_REG, ppc);
         if (ppc !== data) begin
           $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, data);
           dbg_tb_errors++;
         end
 
-        debug_gpr_read(5'd18, data);
+        debug_gpr_read(5'd15, data);
         debug_read(`DBG_NPC_REG, npc);
         if (npc !== data) begin
           $display("ERROR: NPC has not the correct value: act %X, expected %X", npc, data);
@@ -1996,7 +2061,7 @@
         end
       end
 
-      // wake-up core
+      // wake-up core in EU
       debug_mem_sw(`EVENT_UNIT_BASE_ADDR + 32'h14, 32'hFFFF_FFFF);
 
       debug_write(`DBG_CTRL_REG, 32'h0000_0000); // RESUME, but NO Single Step
@@ -2022,13 +2087,13 @@
       debug_read(`DBG_PPC_REG, ppc);
       debug_read(`DBG_NPC_REG, npc);
 
-      debug_gpr_read(5'd16, data);
+      debug_gpr_read(5'd13, data);
       if (data !== 32'h16161616) begin
-        $display("ERROR: x16 has not the correct value: act %X, expected %X", data, 32'h16161616);
+        $display("ERROR: x13 has not the correct value: act %X, expected %X", data, 32'h16161616);
         dbg_tb_errors++;
       end
 
-      debug_gpr_read(5'd17, data);
+      debug_gpr_read(5'd14, data);
       if (data !== 32'h17171717) begin
         $display("ERROR: x17 has not the correct value: act %X, expected %X", data, 32'h17171717);
         dbg_tb_errors++;
@@ -2040,10 +2105,10 @@
         dbg_tb_errors++;
       end
 
-      debug_gpr_write(5'd16,   32'hFEDCBA00);
+      debug_gpr_write(5'd13,   32'hFEDCBA00);
       debug_csr_write(12'h780, 32'hC0DE1234);
 
-      debug_gpr_read(5'd18, data);
+      debug_gpr_read(5'd15, data);
       if (data !== ppc) begin
         $display("ERROR: PPC has not the correct value: act %X, expected %X", ppc, data);
         dbg_tb_errors++;
@@ -2063,10 +2128,10 @@
 
       debug_halt();
 
-      debug_gpr_write(5'd16,   32'hFEDCBA00);
+      debug_gpr_write(5'd13,   32'hFEDCBA00);
       debug_csr_write(12'h780, 32'hC0DE1234);
 
-      debug_gpr_read(5'd18, data);
+      debug_gpr_read(5'd15, data);
       debug_write(`DBG_NPC_REG, data);
       debug_read(`DBG_NPC_REG, npc);
       if (npc !== data) begin

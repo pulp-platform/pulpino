@@ -8,11 +8,13 @@ typedef signed short      Pixel;
 typedef signed short      FiltcV    __attribute__((vector_size (4)));
 typedef signed short      PixelV    __attribute__((vector_size (4)));
 
-#define sumdotp(a, b, c)            __builtin_pulp_sdotsp2(a, b, c)
-#define dotp(a, b)                  __builtin_pulp_dotsp2(a, b)
-#define shuffle(a, b, c)            __builtin_pulp_shuffle2h(a, b, c)
-#define max_vec(a, b)               __builtin_pulp_max2(a, b)
-#define addnr(S, Norm, Round)       __builtin_pulp_addRN(S, 0, Norm, Round);
+#ifdef VEC
+    #define sumdotp(a, b, c)            __builtin_pulp_sdotsp2(a, b, c)
+    #define dotp(a, b)                  __builtin_pulp_dotsp2(a, b)
+    #define shuffle(a, b, c)            __builtin_pulp_shuffle2h(a, b, c)
+    #define max_vec(a, b)               __builtin_pulp_max2(a, b)
+    #define addnr(S, Norm, Round)       __builtin_pulp_addRN(S, 0, Norm, Round);
+#endif
 
 #include "data_image.h" //generate by matlab
 

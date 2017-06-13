@@ -9,21 +9,22 @@
     typedef signed char      Pixel;
     typedef signed char      FiltcV     __attribute__((vector_size (4)));
     typedef signed char      PixelV     __attribute__((vector_size (4)));
-
+ #ifdef DOTP
     #define sumdotp(a, b, c)            __builtin_pulp_sdotsp4(a, b, c)
     #define dotp(a, b)                  __builtin_pulp_dotsp4(a, b)
     #define shuffle(a, b, c)            __builtin_pulp_shuffle2b(a, b, c)
-
+ #endif
 #else
 
     typedef signed short      Filtc;
     typedef signed short      Pixel;
     typedef signed short      FiltcV    __attribute__((vector_size (4)));
     typedef signed short      PixelV    __attribute__((vector_size (4)));
-
+ #ifdef DOTP
     #define sumdotp(a, b, c)            __builtin_pulp_sdotsp2(a, b, c)
     #define dotp(a, b)                  __builtin_pulp_dotsp2(a, b)
     #define shuffle(a, b, c)            __builtin_pulp_shuffle2h(a, b, c)
+ #endif
 #endif
 
 #include "data_image.h" //generate by matlab
@@ -36,7 +37,7 @@ void __attribute__ ((noinline))  Conv3x3_Vector     (Pixel * In, Pixel * Out, in
 void __attribute__ ((noinline))  Conv5x5_Scalar     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
 void __attribute__ ((noinline))  Conv5x5_Vector     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
 
-void __attribute__ ((noinline))  perf_enable_id         (int eventid);
+void __attribute__ ((noinline))  perf_enable_id         (int eventid, char all);
 
 void __attribute__ ((noinline))  InitData               (Pixel * __restrict__ Img,    int size);
 void __attribute__ ((noinline))  InitZero               (Pixel * __restrict__ Img,    int size);

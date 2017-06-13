@@ -91,6 +91,7 @@ void __attribute__ ((noinline)) CNN_layer_Scalar_Fused (Pixel * In_Img, Pixel * 
 
 }
 
+#ifdef VEC
 //using the SHUFFLE version makes the kernel slower
 //#define USE_SHUFFLE
 void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
@@ -592,3 +593,4 @@ void __attribute__ ((noinline)) CNN_layer_Vector_Fused (Pixel * In_Img, Pixel * 
 #endif
   }
 }
+#endif

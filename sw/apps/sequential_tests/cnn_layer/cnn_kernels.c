@@ -59,7 +59,7 @@ void __attribute__ ((noinline)) Conv5x5_Scalar  (Pixel * In_Img, Pixel * Out_Img
   }
 }
 
-
+#ifdef VEC
 void __attribute__ ((noinline)) CNN_layer_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
 
@@ -228,7 +228,7 @@ void __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img
 
   }
 }
-
+#endif
 void __attribute__ ((noinline)) Pool2x2 (Pixel * In_Img, Pixel * Out_Img, int R, int C)
 {
   int r, c, t0, t1,k0, k1, r0, r1, c0, c1, i;

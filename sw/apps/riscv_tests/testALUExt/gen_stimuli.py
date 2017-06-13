@@ -47,6 +47,9 @@ def instr_rr(prefix, func):
 def instr_rr_u(prefix, func):
     instr_rr_base(prefix, func, 0, 2**32-1, 0, 2**32-1)
 
+def instr_rr_u_ror(prefix, func):
+    instr_rr_base(prefix, func, 0, 2**32-1, 0, 31)
+
 
 ################################################################################
 # Instructions with one read register
@@ -74,18 +77,31 @@ def instr_32_r(prefix, func):
 # generate testdata for l.avg and l.avgu
 ################################################################################
 
-def avg_32(a, b):
-    r = ((a + b) & 0xFFFFFFFF) >> 1
-    if(r >> 30):
-        r = r | 0x80000000;
+##def avg_32(a, b):
+##    r = ((a + b) & 0xFFFFFFFF) >> 1
+##    if(r >> 30):
+##        r = r | 0x80000000;
+##    return r
+##
+##def avgu_32(a, b):
+##    r = ((a + b) & 0xFFFFFFFF) >> 1
+##    return r
+##
+##instr_rr  ('g_avg',  avg_32)
+##instr_rr_u('g_avgu', avgu_32)
+
+################################################################################
+# generate testdata for l.ror
+################################################################################
+
+def ror(a,b):
+    r = a >> b
+    r |= a << (32 - b)
+    r &= 0xFFFFFFFF
     return r
 
-def avgu_32(a, b):
-    r = ((a + b) & 0xFFFFFFFF) >> 1
-    return r
+instr_rr_u_ror('g_ror',  ror)
 
-instr_rr  ('g_avg',  avg_32)
-instr_rr_u('g_avgu', avgu_32)
 
 ################################################################################
 # generate testdata for l.min and l.minu
@@ -134,4 +150,3 @@ instr_32_r('g_ext_hs', sext_16)
 instr_32_r('g_ext_hz', zext_16)
 instr_32_r('g_ext_bs', sext_8)
 instr_32_r('g_ext_bz', zext_8)
-

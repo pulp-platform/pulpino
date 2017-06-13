@@ -12,9 +12,13 @@ void check_CNN_5x5_Vector_Fused    (testresult_t *result, void (*start)(), void 
 
 testcase_t testcases[] = {
   { .name = "CNN_5x5_Scalar"        , .test = check_CNN_5x5_Scalar        },
+#ifdef VEC
   { .name = "CNN_5x5_Vector"        , .test = check_CNN_5x5_Vector        },
+#endif
   { .name = "CNN_5x5_Scalar_Fused"  , .test = check_CNN_5x5_Scalar_Fused  },
+#ifdef VEC
   { .name = "CNN_5x5_Vector_Fused"  , .test = check_CNN_5x5_Vector_Fused  },
+#endif
   {0, 0}
 };
 

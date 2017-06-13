@@ -1,0 +1,1940 @@
+diff --git a/mlAxpy/mlAxpy.c b/mlAxpy/mlAxpy.c
+index 57818ac..93b14b0 100644
+--- a/mlAxpy/mlAxpy.c
++++ b/mlAxpy/mlAxpy.c
+@@ -195,6 +195,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -236,29 +239,25 @@ int main(int argc, const char * const argv[])
+   }
+   synch_barrier();
+   
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    c_y *= 1.0F/99.0F;
+-    check[0] = b_y;
+-    check[1] = c_y;
+-    pass = true;
+-    flag = true;
++  c_y *= 1.0F/99.0F;
++  check[0] = b_y;
++  check[1] = c_y;
++  pass = true;
++  flag = true;
+ 
+-    for (ix = 0; ix < 2; ix++) {
+-      for (b_k = 0; b_k < 2; b_k++) {
+-	golden[b_k + (ix << 1)] = fv3[(b_k + (ix << 1)) + (coreid << 2)];
+-      }
+-      flag = true;
+-      flag = (check[ix] <= golden[ix << 1]);
+-      flag = flag && (check[ix] >= golden[1 + (ix << 1)]);
+-      printErrors(!flag, ix, check[ix], golden[1 + (ix << 1)], golden[ix << 1]);
+-      pass = pass && flag;
++  for (ix = 0; ix < 2; ix++) {
++    for (b_k = 0; b_k < 2; b_k++) {
++      golden[b_k + (ix << 1)] = fv3[(b_k + (ix << 1)) + (coreid << 2)];
+     }
+-  
+-    flagPassFail(pass, coreid);
++    flag = true;
++    flag = (check[ix] <= golden[ix << 1]);
++    flag = flag && (check[ix] >= golden[1 + (ix << 1)]);
++    printErrors(!flag, ix, check[ix], golden[1 + (ix << 1)], golden[ix << 1]);
++    pass = pass && flag;
+   }
+-
++  
++  flagPassFail(pass, get_core_id());
++  
+ /////////////////////////////////////////////////////////
+ // exit
+ /////////////////////////////////////////////////////////
+diff --git a/mlAxpy/testset.ini b/mlAxpy/testset.ini
+index a82b447..50b390e 100644
+--- a/mlAxpy/testset.ini
++++ b/mlAxpy/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlAxpy_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlBilat/mlBilat.c b/mlBilat/mlBilat.c
+index d7259d2..e05b2c2 100644
+--- a/mlBilat/mlBilat.c
++++ b/mlBilat/mlBilat.c
+@@ -388,6 +388,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -406,16 +409,13 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    tmp[0] = sum(y);
+-    tmp[1] = var(y);
++  tmp[0] = sum(y);
++  tmp[1] = var(y);
+ 
+-    pass = checkRes(tmp, *(float (*)[4])&fv3[coreid << 2]);
++  pass = checkRes(tmp, *(float (*)[4])&fv3[coreid << 2]);
+     
+-    flagPassFail(pass, coreid);
+-  }
++  flagPassFail(pass, get_core_id());
++  
+   synch_barrier();
+    
+ /////////////////////////////////////////////////////////
+diff --git a/mlBilat/testset.ini b/mlBilat/testset.ini
+index e7f8ac9..4fb0c19 100644
+--- a/mlBilat/testset.ini
++++ b/mlBilat/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlBilat_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlButter/mlButter.c b/mlButter/mlButter.c
+index e02033f..854bca6 100644
+--- a/mlButter/mlButter.c
++++ b/mlButter/mlButter.c
+@@ -300,6 +300,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -321,15 +324,11 @@ int main(int argc, const char * const argv[])
+   synch_barrier();
+ 
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    tmp[0] = sum(filt);
+-    tmp[1] = var(filt);
+-    pass   = checkRes(tmp, *(float (*)[4])&fv2[coreid << 2]);
++  tmp[0] = sum(filt);
++  tmp[1] = var(filt);
++  pass   = checkRes(tmp, *(float (*)[4])&fv2[coreid << 2]);
+   
+-    flagPassFail(pass, coreid);
+-  }
++  flagPassFail(pass, get_core_id());
+ 
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+diff --git a/mlButter/testset.ini b/mlButter/testset.ini
+index 51e522c..ac2e6c9 100644
+--- a/mlButter/testset.ini
++++ b/mlButter/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlButter_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlChol/mlChol.c b/mlChol/mlChol.c
+index 266b454..5859232 100644
+--- a/mlChol/mlChol.c
++++ b/mlChol/mlChol.c
+@@ -132,6 +132,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -251,23 +254,19 @@ int main(int argc, const char * const argv[])
+   
+   synch_barrier();
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    for (i0 = 0; i0 < 2; i0++) {
+-      for (jmax = 0; jmax < 2; jmax++) {
+-	golden[jmax + (i0 << 1)] = fv1[(jmax + (i0 << 1)) + (coreid << 2)];
+-      }
+-      flag = true;
+-      flag = flag && (check[i0] <= golden[i0 << 1]);
+-      flag = flag && (check[i0] >= golden[1 + (i0 << 1)]);
+-      printErrors(!flag, i0, check[i0] ,golden[i0 << 1] ,golden[1 + (i0 << 1)]);
+-      pass = pass && flag;
++  for (i0 = 0; i0 < 2; i0++) {
++    for (jmax = 0; jmax < 2; jmax++) {
++      golden[jmax + (i0 << 1)] = fv1[(jmax + (i0 << 1)) + (coreid << 2)];
+     }
+-
+-    flagPassFail(pass, coreid);
++    flag = true;
++    flag = flag && (check[i0] <= golden[i0 << 1]);
++    flag = flag && (check[i0] >= golden[1 + (i0 << 1)]);
++    printErrors(!flag, i0, check[i0] ,golden[i0 << 1] ,golden[1 + (i0 << 1)]);
++    pass = pass && flag;
+   }
+ 
++  flagPassFail(pass, get_core_id());
++  
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+ /////////////////////////////////////////////////////////
+diff --git a/mlChol/testset.ini b/mlChol/testset.ini
+index a8267a6..1bd8ce8 100644
+--- a/mlChol/testset.ini
++++ b/mlChol/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlChol_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlDct/mlDct.c b/mlDct/mlDct.c
+index 2930c29..f4e7a20 100644
+--- a/mlDct/mlDct.c
++++ b/mlDct/mlDct.c
+@@ -506,6 +506,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -552,47 +555,43 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    y = x[0];
+-    ix = 0;
+-    xbar = f[0];
+-    for (b_k = 0; b_k < 31; b_k++) {
+-      y += x[b_k + 1];
+-      ix++;
+-      xbar += f[ix];
+-    }
++  y = x[0];
++  ix = 0;
++  xbar = f[0];
++  for (b_k = 0; b_k < 31; b_k++) {
++    y += x[b_k + 1];
++    ix++;
++    xbar += f[ix];
++  }
+ 
+-    xbar *= 1.0F/32.0F;
+-    ix = 0;
+-    r = f[0] - xbar;
+-    b_y = r * r;
+-    for (b_k = 0; b_k < 31; b_k++) {
+-      ix++;
+-      r = f[ix] - xbar;
+-      b_y += r * r;
+-    }
++  xbar *= 1.0F/32.0F;
++  ix = 0;
++  r = f[0] - xbar;
++  b_y = r * r;
++  for (b_k = 0; b_k < 31; b_k++) {
++    ix++;
++    r = f[ix] - xbar;
++    b_y += r * r;
++  }
+ 
+-    b_y *= 1.0F/31.0F;
+-    tmp[0] = y;
+-    tmp[1] = b_y;
++  b_y *= 1.0F/31.0F;
++  tmp[0] = y;
++  tmp[1] = b_y;
+ 
+-    pass = true;
+-    for (ix = 0; ix < 2; ix++) {
+-      for (b_k = 0; b_k < 2; b_k++) {
+-	golden[b_k + (ix << 1)] = fv0[(b_k + (ix << 1)) + (coreid << 2)];
+-      }
+-      flag = true;
+-      flag = flag && (tmp[ix] <= golden[ix << 1]);
+-      flag = flag && (tmp[ix] >= golden[1 + (ix << 1)]);
+-      printErrors(!flag, ix, tmp[ix] ,golden[(ix << 1)] ,golden[1 + (ix << 1)]);
+-      pass = pass && flag;
++  pass = true;
++  for (ix = 0; ix < 2; ix++) {
++    for (b_k = 0; b_k < 2; b_k++) {
++      golden[b_k + (ix << 1)] = fv0[(b_k + (ix << 1)) + (coreid << 2)];
+     }
+-
+-    flagPassFail(pass, coreid);
++    flag = true;
++    flag = flag && (tmp[ix] <= golden[ix << 1]);
++    flag = flag && (tmp[ix] >= golden[1 + (ix << 1)]);
++    printErrors(!flag, ix, tmp[ix] ,golden[(ix << 1)] ,golden[1 + (ix << 1)]);
++    pass = pass && flag;
+   }
+ 
++  flagPassFail(pass, get_core_id());
++
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+ /////////////////////////////////////////////////////////
+diff --git a/mlDct/testset.ini b/mlDct/testset.ini
+index 1b2c72c..cb847f2 100644
+--- a/mlDct/testset.ini
++++ b/mlDct/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlDct_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlDist/mlDist.c b/mlDist/mlDist.c
+index de33cfc..7ffc348 100644
+--- a/mlDist/mlDist.c
++++ b/mlDist/mlDist.c
+@@ -319,6 +319,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+   
+   perf_begin();
+@@ -347,15 +350,12 @@ int main(int argc, const char * const argv[])
+   /////////////////////////////////////////////////////////
+   // check results
+   /////////////////////////////////////////////////////////
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    tmp[0] = sum(d);
+-    tmp[1] = var(d);
+-    pass = checkRes(tmp, *(float (*)[4])&fv1[coreid << 2]);
++  tmp[0] = sum(d);
++  tmp[1] = var(d);
++  pass = checkRes(tmp, *(float (*)[4])&fv1[coreid << 2]);
+ 
+-    flagPassFail(pass, coreid);
+-  }
++  flagPassFail(pass, get_core_id());
++  
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+ /////////////////////////////////////////////////////////
+diff --git a/mlDist/testset.ini b/mlDist/testset.ini
+index c5cbe95..94280e6 100644
+--- a/mlDist/testset.ini
++++ b/mlDist/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlDist_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlDotp/mlDotp.c b/mlDotp/mlDotp.c
+index 71af5f5..d2a3f4c 100644
+--- a/mlDotp/mlDotp.c
++++ b/mlDotp/mlDotp.c
+@@ -184,6 +184,9 @@ int main(int argc, const char * const argv[])
+ 
+   synch_barrier();
+   
++  if (coreid>3)
++    coreid=coreid-4;
++
+   perf_begin();
+   
+   for(it = 0; it < getKernelIts(); it++)
+@@ -204,14 +207,10 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    pass = (f0 <= fv2[0 + (coreid << 1)]) && (f0 >= fv2[1 + (coreid << 1)]);
+-    printErrors(!pass, 0, f0 ,fv2[0 + (coreid << 1)] ,fv2[1 + (coreid << 1)]);
++  pass = (f0 <= fv2[0 + (coreid << 1)]) && (f0 >= fv2[1 + (coreid << 1)]);
++  printErrors(!pass, 0, f0 ,fv2[0 + (coreid << 1)] ,fv2[1 + (coreid << 1)]);
+ 
+-    flagPassFail(pass, coreid);
+-  }
++  flagPassFail(pass, get_core_id());
+   
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+diff --git a/mlDotp/testset.ini b/mlDotp/testset.ini
+index dbc7092..e7b413a 100644
+--- a/mlDotp/testset.ini
++++ b/mlDotp/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlDotp_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlFir/mlFir.c b/mlFir/mlFir.c
+index d0a5e1f..36f02bf 100644
+--- a/mlFir/mlFir.c
++++ b/mlFir/mlFir.c
+@@ -347,6 +347,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -367,15 +370,12 @@ int main(int argc, const char * const argv[])
+ 
+   synch_barrier();
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    tmp[0] = sum(y);
+-    tmp[1] = var(y);
+-    pass   = checkRes(tmp, *(float (*)[4])&fv1[coreid << 2]);
++  tmp[0] = sum(y);
++  tmp[1] = var(y);
++  pass   = checkRes(tmp, *(float (*)[4])&fv1[coreid << 2]);
+   
+-    flagPassFail(pass, coreid);
+-  }
++  flagPassFail(pass, get_core_id());
++
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+ /////////////////////////////////////////////////////////
+diff --git a/mlFir/testset.ini b/mlFir/testset.ini
+index e3454f4..b3b78c4 100644
+--- a/mlFir/testset.ini
++++ b/mlFir/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlFir_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlGemm/mlGemm.c b/mlGemm/mlGemm.c
+index 743ee68..3c6d351 100644
+--- a/mlGemm/mlGemm.c
++++ b/mlGemm/mlGemm.c
+@@ -341,6 +341,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -367,14 +370,11 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+   
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    tmp[0] = sum(C);
+-    tmp[1] = var(C);
+-    pass = checkRes(tmp, *(float (*)[4])&fv5[coreid << 2]);
+-    flagPassFail(pass, coreid);
+-  }
++  tmp[0] = sum(C);
++  tmp[1] = var(C);
++  pass = checkRes(tmp, *(float (*)[4])&fv5[coreid << 2]);
++  flagPassFail(pass, get_core_id());
++  
+ 
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+diff --git a/mlGemm/testset.ini b/mlGemm/testset.ini
+index 8754fbe..8a9519f 100644
+--- a/mlGemm/testset.ini
++++ b/mlGemm/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlGemm_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlGemv/mlGemv.c b/mlGemv/mlGemv.c
+index c36ad9b..9a398b9 100644
+--- a/mlGemv/mlGemv.c
++++ b/mlGemv/mlGemv.c
+@@ -147,6 +147,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -173,44 +176,41 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    b_y = y[0];
+-    ix = 0;
+-    xbar = y[0];
+-    for (b_k = 0; b_k < 9; b_k++) {
+-      b_y += y[b_k + 1];
+-      ix++;
+-      xbar += y[ix];
+-    }
++  b_y = y[0];
++  ix = 0;
++  xbar = y[0];
++  for (b_k = 0; b_k < 9; b_k++) {
++    b_y += y[b_k + 1];
++    ix++;
++    xbar += y[ix];
++  }
+ 
+-    xbar *= 1.0F/10.0F;
+-    ix = 0;
+-    r = y[0] - xbar;
+-    c_y = r * r;
+-    for (b_k = 0; b_k < 9; b_k++) {
+-      ix++;
+-      r = y[ix] - xbar;
+-      c_y += r * r;
+-    }
++  xbar *= 1.0F/10.0F;
++  ix = 0;
++  r = y[0] - xbar;
++  c_y = r * r;
++  for (b_k = 0; b_k < 9; b_k++) {
++    ix++;
++    r = y[ix] - xbar;
++    c_y += r * r;
++  }
+ 
+-    c_y *= 1.0F/9.0F;
+-    check[0] = b_y;
+-    check[1] = c_y;
+-    pass = true;
+-    for (ix = 0; ix < 2; ix++) {
+-      for (b_k = 0; b_k < 2; b_k++) {
+-	golden[b_k + (ix << 1)] = fv4[(b_k + (ix << 1)) + (coreid << 2)];
+-      }
+-      flag = true;
+-      flag = pass && (check[ix] <= golden[ix << 1]);
+-      flag = pass && (check[ix] >= golden[1 + (ix << 1)]);
+-      printErrors(!flag, ix, check[ix], golden[ix<<1], golden[1+(ix<<1)]);
+-      pass = pass && flag;
++  c_y *= 1.0F/9.0F;
++  check[0] = b_y;
++  check[1] = c_y;
++  pass = true;
++  for (ix = 0; ix < 2; ix++) {
++    for (b_k = 0; b_k < 2; b_k++) {
++      golden[b_k + (ix << 1)] = fv4[(b_k + (ix << 1)) + (coreid << 2)];
+     }
+-    flagPassFail(pass, coreid);
++    flag = true;
++    flag = pass && (check[ix] <= golden[ix << 1]);
++    flag = pass && (check[ix] >= golden[1 + (ix << 1)]);
++    printErrors(!flag, ix, check[ix], golden[ix<<1], golden[1+(ix<<1)]);
++    pass = pass && flag;
+   }
++  flagPassFail(pass, get_core_id());
++
+ 
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+diff --git a/mlGemv/testset.ini b/mlGemv/testset.ini
+index 9bbe6a3..2edf4ae 100644
+--- a/mlGemv/testset.ini
++++ b/mlGemv/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlGemv_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlGivens/mlGivens.c b/mlGivens/mlGivens.c
+index 2bcb53b..bf29082 100644
+--- a/mlGivens/mlGivens.c
++++ b/mlGivens/mlGivens.c
+@@ -229,6 +229,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+   
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -250,41 +253,37 @@ int main(int argc, const char * const argv[])
+ 
+   synch_barrier();
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    y = b_vects[0];
+-    ix = 0;
+-    xbar = b_vects[0];
+-    for (b_k = 0; b_k < 119; b_k++) {
+-      y += b_vects[b_k + 1];
+-      ix++;
+-      xbar += b_vects[ix];
+-    }
+-
+-    xbar = fDiv(xbar, 120.0F);
+-    ix = 0;
+-    r = b_vects[0] - xbar;
+-    b_y = r * r;
+-    for (b_k = 0; b_k < 119; b_k++) {
+-      ix++;
+-      r = b_vects[ix] - xbar;
+-      b_y += r * r;
+-    }
++  y = b_vects[0];
++  ix = 0;
++  xbar = b_vects[0];
++  for (b_k = 0; b_k < 119; b_k++) {
++    y += b_vects[b_k + 1];
++    ix++;
++    xbar += b_vects[ix];
++  }
+ 
+-    b_y = fDiv(b_y, 119.0F);
+-    tmp[0] = y;
+-    tmp[1] = b_y;
++  xbar = fDiv(xbar, 120.0F);
++  ix = 0;
++  r = b_vects[0] - xbar;
++  b_y = r * r;
++  for (b_k = 0; b_k < 119; b_k++) {
++    ix++;
++    r = b_vects[ix] - xbar;
++    b_y += r * r;
++  }
+ 
+-    pass = true;
+-    for (i0 = 0; i0 < 2; i0++) {
+-      pass = pass && (tmp[i0] <= fv2[      (i0 << 1) + (coreid << 2)]);
+-      pass = pass && (tmp[i0] >= fv2[(1 + (i0 << 1)) + (coreid << 2)]);
+-    }
++  b_y = fDiv(b_y, 119.0F);
++  tmp[0] = y;
++  tmp[1] = b_y;
+ 
+-    flagPassFail(pass, coreid);
++  pass = true;
++  for (i0 = 0; i0 < 2; i0++) {
++    pass = pass && (tmp[i0] <= fv2[      (i0 << 1) + (coreid << 2)]);
++    pass = pass && (tmp[i0] >= fv2[(1 + (i0 << 1)) + (coreid << 2)]);
+   }
+ 
++  flagPassFail(pass, get_core_id());
++
+   synch_barrier();
+ 
+ 
+diff --git a/mlGivens/testset.ini b/mlGivens/testset.ini
+index 902eed8..9ff2518 100644
+--- a/mlGivens/testset.ini
++++ b/mlGivens/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlGivens_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlGrad/mlGrad.c b/mlGrad/mlGrad.c
+index d17398c..e2af682 100644
+--- a/mlGrad/mlGrad.c
++++ b/mlGrad/mlGrad.c
+@@ -311,6 +311,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+   
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -331,15 +334,11 @@ int main(int argc, const char * const argv[])
+ 
+   synch_barrier();
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    tmp[0] = sum(y);
+-    tmp[1] = var(y);
+-    pass   = checkRes(tmp, *(float (*)[4])&fv1[coreid << 2]);
+-
+-    flagPassFail(pass, coreid);
+-  }
++  tmp[0] = sum(y);
++  tmp[1] = var(y);
++  pass   = checkRes(tmp, *(float (*)[4])&fv1[coreid << 2]);
++  
++  flagPassFail(pass, get_core_id());
+   
+   synch_barrier();
+ 
+diff --git a/mlGrad/testset.ini b/mlGrad/testset.ini
+index d9691e3..bf1d7bc 100644
+--- a/mlGrad/testset.ini
++++ b/mlGrad/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlGrad_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlGradDir/mlGradDir.c b/mlGradDir/mlGradDir.c
+index 5f14179..7a4d024 100644
+--- a/mlGradDir/mlGradDir.c
++++ b/mlGradDir/mlGradDir.c
+@@ -311,6 +311,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+   
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -329,16 +332,12 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+ 
+-    tmp[0] = sum(y);
+-    tmp[1] = var(y);
+-    pass   = checkRes(tmp, *(float (*)[4])&fv1[coreid << 2], coreid);
++  tmp[0] = sum(y);
++  tmp[1] = var(y);
++  pass   = checkRes(tmp, *(float (*)[4])&fv1[coreid << 2], coreid);
+     
+-    flagPassFail(pass, coreid);
+-  }
++  flagPassFail(pass, get_core_id());
+ 
+   synch_barrier();
+ 
+diff --git a/mlGradDir/testset.ini b/mlGradDir/testset.ini
+index 44ff250..6bb7e7c 100644
+--- a/mlGradDir/testset.ini
++++ b/mlGradDir/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlGradDir_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlHom/mlHom.c b/mlHom/mlHom.c
+index fad4adc..fd48d4b 100644
+--- a/mlHom/mlHom.c
++++ b/mlHom/mlHom.c
+@@ -176,6 +176,8 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
+ 
+   synch_barrier();
+ 
+@@ -242,26 +244,23 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    b_tmp[0] = b_y;
+-    b_tmp[1] = c_y;
+-    b_tmp[2] = var(d_y);
+-    b_tmp[3] = var(e_y);
+-    pass = true;
+-    for (jcol = 0; jcol < 4; jcol++) {
+-      for (ibmat = 0; ibmat < 2; ibmat++) {
+-	golden[ibmat + (jcol << 1)] = fv3[(ibmat + (jcol << 1)) + (coreid << 3)];
+-      }
+-      flag = true;
+-      flag = flag && (b_tmp[jcol] <= golden[jcol << 1]);
+-      flag = flag && (b_tmp[jcol] >= golden[1 + (jcol << 1)]);
+-      printErrors(!pass, jcol, b_tmp[jcol] ,golden[jcol << 1] ,golden[1 + (jcol << 1)]);
+-      pass = flag && pass;
++  b_tmp[0] = b_y;
++  b_tmp[1] = c_y;
++  b_tmp[2] = var(d_y);
++  b_tmp[3] = var(e_y);
++  pass = true;
++  for (jcol = 0; jcol < 4; jcol++) {
++    for (ibmat = 0; ibmat < 2; ibmat++) {
++      golden[ibmat + (jcol << 1)] = fv3[(ibmat + (jcol << 1)) + (coreid << 3)];
+     }
+-    flagPassFail(pass, coreid);
++    flag = true;
++    flag = flag && (b_tmp[jcol] <= golden[jcol << 1]);
++    flag = flag && (b_tmp[jcol] >= golden[1 + (jcol << 1)]);
++    printErrors(!pass, jcol, b_tmp[jcol] ,golden[jcol << 1] ,golden[1 + (jcol << 1)]);
++    pass = flag && pass;
+   }
++  flagPassFail(pass, get_core_id());
++
+   synch_barrier();
+ 
+ /////////////////////////////////////////////////////////
+diff --git a/mlHom/testset.ini b/mlHom/testset.ini
+index cb8d45d..a932ec9 100644
+--- a/mlHom/testset.ini
++++ b/mlHom/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlHom_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlHomErr/mlHomErr.c b/mlHomErr/mlHomErr.c
+index 982f23e..f9378d7 100644
+--- a/mlHomErr/mlHomErr.c
++++ b/mlHomErr/mlHomErr.c
+@@ -328,6 +328,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -345,20 +348,17 @@ int main(int argc, const char * const argv[])
+   /////////////////////////////////////////////////////////
+   // check results
+   /////////////////////////////////////////////////////////
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    pass = true;
+-    for(it = 0; it < KERNEL_ITS; it++)
+-      {
+-	flag = (err[it] <= fv3[0 + (coreid << 1)]) && (err[it] >= fv3[1 + (coreid << 1)]);
+-	pass = pass & flag;
++  pass = true;
++  for(it = 0; it < KERNEL_ITS; it++)
++    {
++      flag = (err[it] <= fv3[0 + (coreid << 1)]) && (err[it] >= fv3[1 + (coreid << 1)]);
++      pass = pass & flag;
+     
+-	printErrors(!flag, it, err[it] ,fv3[0 + (coreid << 1)] ,fv3[1 + (coreid << 1)]);
+-      }
++      printErrors(!flag, it, err[it] ,fv3[0 + (coreid << 1)] ,fv3[1 + (coreid << 1)]);
++    }
++
++  flagPassFail(pass, get_core_id());
+ 
+-    flagPassFail(pass, coreid);
+-  }
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+ /////////////////////////////////////////////////////////
+diff --git a/mlHomErr/testset.ini b/mlHomErr/testset.ini
+index 3d064a6..b82559e 100644
+--- a/mlHomErr/testset.ini
++++ b/mlHomErr/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlHomErr_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlLog/mlLog.c b/mlLog/mlLog.c
+index f071aac..15d9a45 100644
+--- a/mlLog/mlLog.c
++++ b/mlLog/mlLog.c
+@@ -123,6 +123,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -145,48 +148,44 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    pass = true;
+-    b_y = y[0];
+-    ix = 0;
+-    xbar = y[0];
+-    for (k = 0; k < 99; k++) {
+-      b_y += y[k + 1];
+-      ix++;
+-      xbar += y[ix];
+-    }
++  pass = true;
++  b_y = y[0];
++  ix = 0;
++  xbar = y[0];
++  for (k = 0; k < 99; k++) {
++    b_y += y[k + 1];
++    ix++;
++    xbar += y[ix];
++  }
+ 
+-    xbar *= 1.0F/100.0F;
+-    ix = 0;
+-    r = y[0] - xbar;
+-    c_y = r * r;
+-    for (k = 0; k < 99; k++) {
+-      ix++;
+-      r = y[ix] - xbar;
+-      c_y += r * r;
+-    }
++  xbar *= 1.0F/100.0F;
++  ix = 0;
++  r = y[0] - xbar;
++  c_y = r * r;
++  for (k = 0; k < 99; k++) {
++    ix++;
++    r = y[ix] - xbar;
++    c_y += r * r;
++  }
+ 
+-    c_y *= 1.0F/99.0F;
+-    tmp[0] = b_y;
+-    tmp[1] = c_y;
+-    pass  = true;
+-
+-    for (ix = 0; ix < 2; ix++) {
+-      for (k = 0; k < 2; k++) {
+-	golden[k + (ix << 1)] = fv1[(k + (ix << 1)) + (coreid << 2)];
+-      }
+-      flag = true;
+-      flag = flag && (tmp[ix] <= golden[ix << 1]);
+-      flag = flag && (tmp[ix] >= golden[1 + (ix << 1)]);
+-      printErrors(!flag, ix, tmp[ix] ,golden[(ix << 1)] ,golden[1 + (ix << 1)]);
+-      pass = pass && flag;
+-    }
++  c_y *= 1.0F/99.0F;
++  tmp[0] = b_y;
++  tmp[1] = c_y;
++  pass  = true;
+ 
+-    flagPassFail(pass, coreid);
++  for (ix = 0; ix < 2; ix++) {
++    for (k = 0; k < 2; k++) {
++      golden[k + (ix << 1)] = fv1[(k + (ix << 1)) + (coreid << 2)];
++    }
++    flag = true;
++    flag = flag && (tmp[ix] <= golden[ix << 1]);
++    flag = flag && (tmp[ix] >= golden[1 + (ix << 1)]);
++    printErrors(!flag, ix, tmp[ix] ,golden[(ix << 1)] ,golden[1 + (ix << 1)]);
++    pass = pass && flag;
+   }
+ 
++  flagPassFail(pass, get_core_id());
++  
+   synch_barrier();
+ 
+ /////////////////////////////////////////////////////////
+diff --git a/mlLog/testset.ini b/mlLog/testset.ini
+index 80045ec..d84b20f 100644
+--- a/mlLog/testset.ini
++++ b/mlLog/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlLog_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlQr/Makefile b/mlQr/Makefile
+index 474cae5..ab04fcf 100644
+--- a/mlQr/Makefile
++++ b/mlQr/Makefile
+@@ -2,6 +2,6 @@ PULP_APP = mlQr
+ PULP_APP_SRCS = mlQr.c math_fns.c
+ PULP_CFLAGS += -O3 -fno-tree-loop-distribute-patterns
+ 
+-stackSize = 8192
++stackSize = 4096
+ 
+ include $(PULP_SDK_HOME)/install/rules/pulp.mk
+diff --git a/mlQr/mlQr.c b/mlQr/mlQr.c
+index dfd24e0..cb70ac3 100644
+--- a/mlQr/mlQr.c
++++ b/mlQr/mlQr.c
+@@ -551,6 +551,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -572,35 +575,32 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    y = Q[0];
+-    b_y = R[0];
+-    for (b_k = 0; b_k < 99; b_k++) {
+-      y += Q[b_k + 1];
+-      b_y += R[b_k + 1];
+-    }
++  y = Q[0];
++  b_y = R[0];
++  for (b_k = 0; b_k < 99; b_k++) {
++    y += Q[b_k + 1];
++    b_y += R[b_k + 1];
++  }
+ 
+-    tmp[0] = y;
+-    tmp[1] = b_y;
+-    tmp[2] = var(Q);
+-    tmp[3] = var(R);
++  tmp[0] = y;
++  tmp[1] = b_y;
++  tmp[2] = var(Q);
++  tmp[3] = var(R);
+ 
+-    pass   = true;
+-    for (b_k = 0; b_k < 4; b_k++) {
+-      for (i0 = 0; i0 < 2; i0++) {
+-	golden[i0 + (b_k << 1)] = fv1[(i0 + (b_k << 1)) + (coreid << 3)];
+-      }
+-      flag = true;
+-      flag = flag && (tmp[b_k] <= golden[b_k << 1]);
+-      flag = flag && (tmp[b_k] >= golden[1 + (b_k << 1)]);
+-      printErrors(!flag, b_k, tmp[b_k] ,golden[(b_k << 1)] ,golden[1 + (b_k << 1)]);
+-      pass = pass && flag;
++  pass   = true;
++  for (b_k = 0; b_k < 4; b_k++) {
++    for (i0 = 0; i0 < 2; i0++) {
++      golden[i0 + (b_k << 1)] = fv1[(i0 + (b_k << 1)) + (coreid << 3)];
+     }
+-
+-    flagPassFail(pass, coreid);
++    flag = true;
++    flag = flag && (tmp[b_k] <= golden[b_k << 1]);
++    flag = flag && (tmp[b_k] >= golden[1 + (b_k << 1)]);
++    printErrors(!flag, b_k, tmp[b_k] ,golden[(b_k << 1)] ,golden[1 + (b_k << 1)]);
++    pass = pass && flag;
+   }
++
++  flagPassFail(pass, get_core_id());
++  
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+ /////////////////////////////////////////////////////////
+diff --git a/mlQr/testset.ini b/mlQr/testset.ini
+index b41d4fc..0ec7d40 100644
+--- a/mlQr/testset.ini
++++ b/mlQr/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlQr_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlRbf/mlRbf.c b/mlRbf/mlRbf.c
+index 50a2cda..94a1c75 100644
+--- a/mlRbf/mlRbf.c
++++ b/mlRbf/mlRbf.c
+@@ -173,6 +173,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -247,34 +250,31 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+   
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    b_y = y_hat[0];
+-    c_y = y_hat[1];
++  b_y = y_hat[0];
++  c_y = y_hat[1];
+   
+-    for (b_k = 0; b_k < 9; b_k++) {
+-      b_y += y_hat[(b_k + 1) << 1];
+-      c_y += y_hat[1 + ((b_k + 1) << 1)];
+-    }
++  for (b_k = 0; b_k < 9; b_k++) {
++    b_y += y_hat[(b_k + 1) << 1];
++    c_y += y_hat[1 + ((b_k + 1) << 1)];
++  }
+ 
+-    pass   = true;
+-    flag   = true;
++  pass   = true;
++  flag   = true;
+ 
+-    flag = flag && (b_y <= fv4[0 + (coreid << 2)]);
+-    flag = flag && (b_y >= fv4[1 + (coreid << 2)]);
++  flag = flag && (b_y <= fv4[0 + (coreid << 2)]);
++  flag = flag && (b_y >= fv4[1 + (coreid << 2)]);
+   
+-    pass = pass && (c_y <= fv4[2 + (coreid << 2)]);
+-    pass = pass && (c_y >= fv4[3 + (coreid << 2)]);
++  pass = pass && (c_y <= fv4[2 + (coreid << 2)]);
++  pass = pass && (c_y >= fv4[3 + (coreid << 2)]);
+ 
+ 
+-    printErrors(!flag, 0, b_y, fv4[0 + (coreid << 2)],fv4[1 + (coreid << 2)]);
+-    printErrors(!pass, 1, c_y, fv4[2 + (coreid << 2)],fv4[3 + (coreid << 2)]);
++  printErrors(!flag, 0, b_y, fv4[0 + (coreid << 2)],fv4[1 + (coreid << 2)]);
++  printErrors(!pass, 1, c_y, fv4[2 + (coreid << 2)],fv4[3 + (coreid << 2)]);
+   
+-    pass = flag && pass;
++  pass = flag && pass;
++  
++  flagPassFail(pass, get_core_id);
+   
+-    flagPassFail(pass, coreid);
+-  }
+   synch_barrier();
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+diff --git a/mlRbf/testset.ini b/mlRbf/testset.ini
+index 88026c3..f1ebfb5 100644
+--- a/mlRbf/testset.ini
++++ b/mlRbf/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlRbf_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlSchur/mlSchur.c b/mlSchur/mlSchur.c
+index d8e38f5..c6cddb8 100644
+--- a/mlSchur/mlSchur.c
++++ b/mlSchur/mlSchur.c
+@@ -1277,6 +1277,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+   
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -1318,79 +1321,75 @@ int main(int argc, const char * const argv[])
+ 
+   synch_barrier();
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    for (ix = 0; ix < 5; ix++) {
+-      d[ix] = A[ix * 6];
+-    }
++  for (ix = 0; ix < 5; ix++) {
++    d[ix] = A[ix * 6];
++  }
+ 
+-    y = fAbs(U[0]);
+-    for (istart = 0; istart < 24; istart++) {
+-      y += fAbs(U[istart + 1]);
+-    }
++  y = fAbs(U[0]);
++  for (istart = 0; istart < 24; istart++) {
++    y += fAbs(U[istart + 1]);
++  }
+ 
+-    b_y = d[0];
+-    for (istart = 0; istart < 4; istart++) {
+-      b_y += d[istart + 1];
+-    }
++  b_y = d[0];
++  for (istart = 0; istart < 4; istart++) {
++    b_y += d[istart + 1];
++  }
+ 
+-    ix = 0;
+-    xbar = fAbs(U[0]);
+-    for (istart = 0; istart < 24; istart++) {
+-      ix++;
+-      xbar += fAbs(U[ix]);
+-    }
++  ix = 0;
++  xbar = fAbs(U[0]);
++  for (istart = 0; istart < 24; istart++) {
++    ix++;
++    xbar += fAbs(U[ix]);
++  }
+ 
+-    xbar = fDiv(xbar,25.0F);
+-    ix = 0;
+-    r = fAbs(U[0]) - xbar;
+-    c_y = r * r;
+-    for (istart = 0; istart < 24; istart++) {
+-      ix++;
+-      r = fAbs(U[ix]) - xbar;
+-      c_y += r * r;
+-    }
++  xbar = fDiv(xbar,25.0F);
++  ix = 0;
++  r = fAbs(U[0]) - xbar;
++  c_y = r * r;
++  for (istart = 0; istart < 24; istart++) {
++    ix++;
++    r = fAbs(U[ix]) - xbar;
++    c_y += r * r;
++  }
+ 
+-    c_y = fDiv(c_y,24.0F);
+-    ix = 0;
+-    xbar = d[0];
+-    for (istart = 0; istart < 4; istart++) {
+-      ix++;
+-      xbar += d[ix];
+-    }
++  c_y = fDiv(c_y,24.0F);
++  ix = 0;
++  xbar = d[0];
++  for (istart = 0; istart < 4; istart++) {
++    ix++;
++    xbar += d[ix];
++  }
+ 
+-    xbar = fDiv(xbar,5.0F);
+-    ix = 0;
+-    r = d[0] - xbar;
+-    d_y = r * r;
+-    for (istart = 0; istart < 4; istart++) {
+-      ix++;
+-      r = d[ix] - xbar;
+-      d_y += r * r;
+-    }
++  xbar = fDiv(xbar,5.0F);
++  ix = 0;
++  r = d[0] - xbar;
++  d_y = r * r;
++  for (istart = 0; istart < 4; istart++) {
++    ix++;
++    r = d[ix] - xbar;
++    d_y += r * r;
++  }
+ 
+-    d_y *= 0.25F;
+-    tmp[0] = y;
+-    tmp[1] = b_y;
+-    tmp[2] = c_y;
+-    tmp[3] = d_y;
++  d_y *= 0.25F;
++  tmp[0] = y;
++  tmp[1] = b_y;
++  tmp[2] = c_y;
++  tmp[3] = d_y;
+   
+-    pass   = true;
+-
+-    for (i = 0; i < 4; i++) {
+-      flag = true;
+-      flag = flag && (tmp[i] <= fv1[(0 + (i << 1)) + (coreid << 3)]);
+-      flag = flag && (tmp[i] >= fv1[(1 + (i << 1)) + (coreid << 3)]);
+-      printErrors(!flag, i, tmp[i] ,fv1[(0 + (i << 1)) + (coreid << 3)] ,fv1[(1 + (i << 1)) + (coreid << 3)]);
+-      pass = flag && pass;
+-    }
+-
+-    synch_barrier();
++  pass   = true;
+ 
+-    flagPassFail(pass, coreid);
++  for (i = 0; i < 4; i++) {
++    flag = true;
++    flag = flag && (tmp[i] <= fv1[(0 + (i << 1)) + (coreid << 3)]);
++    flag = flag && (tmp[i] >= fv1[(1 + (i << 1)) + (coreid << 3)]);
++    printErrors(!flag, i, tmp[i] ,fv1[(0 + (i << 1)) + (coreid << 3)] ,fv1[(1 + (i << 1)) + (coreid << 3)]);
++    pass = flag && pass;
+   }
+ 
++  synch_barrier();
++
++  flagPassFail(pass, get_core_id());
++
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+ /////////////////////////////////////////////////////////
+diff --git a/mlSchur/testset.ini b/mlSchur/testset.ini
+index f232059..ca8344d 100644
+--- a/mlSchur/testset.ini
++++ b/mlSchur/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlSchur_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlSin/mlSin.c b/mlSin/mlSin.c
+index ef7a6ac..cb59a09 100644
+--- a/mlSin/mlSin.c
++++ b/mlSin/mlSin.c
+@@ -68,6 +68,9 @@ int main(int argc, const char * const argv[])
+   coreid = get_core_id();
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
++  
++  if (coreid>3)
++    coreid=coreid-4;
+ 
+   synch_barrier();
+   
+@@ -103,47 +106,43 @@ int main(int argc, const char * const argv[])
+   synch_barrier();
+ 
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    y = sig[0];
+-    ix = 0;
+-    xbar = sig[0];
+-    for (k = 0; k < 199; k++) {
+-      y += sig[k + 1];
+-      ix++;
+-      xbar += sig[ix];
+-    }
++  y = sig[0];
++  ix = 0;
++  xbar = sig[0];
++  for (k = 0; k < 199; k++) {
++    y += sig[k + 1];
++    ix++;
++    xbar += sig[ix];
++  }
+ 
+-    xbar = fDiv(xbar,200.0F);
+-    ix = 0;
+-    r = sig[0] - xbar;
+-    b_y = r * r;
+-    for (k = 0; k < 199; k++) {
+-      ix++;
+-      r = sig[ix] - xbar;
+-      b_y += r * r;
+-    }
++  xbar = fDiv(xbar,200.0F);
++  ix = 0;
++  r = sig[0] - xbar;
++  b_y = r * r;
++  for (k = 0; k < 199; k++) {
++    ix++;
++    r = sig[ix] - xbar;
++    b_y += r * r;
++  }
+ 
+-    b_y = fDiv(b_y,199.0F);
+-    tmp[0] = y;
+-    tmp[1] = b_y;
+-
+-    pass = true;
+-    for (k = 0; k < 2; k++) {
+-      for (ix = 0; ix < 2; ix++) {
+-	golden[ix + (k << 1)] = fv0[(ix + (k << 1)) + (coreid << 2)];
+-      }
+-      flag = true;
+-      flag = flag && (tmp[k] <= golden[k << 1]);
+-      flag = flag && (tmp[k] >= golden[1 + (k << 1)]);
+-      printErrors(!flag, k, tmp[k] ,golden[k << 1], golden[1 + (k << 1)]);
+-      pass = pass && flag;
+-    }
++  b_y = fDiv(b_y,199.0F);
++  tmp[0] = y;
++  tmp[1] = b_y;
+ 
+-    flagPassFail(pass, coreid);
++  pass = true;
++  for (k = 0; k < 2; k++) {
++    for (ix = 0; ix < 2; ix++) {
++      golden[ix + (k << 1)] = fv0[(ix + (k << 1)) + (coreid << 2)];
++    }
++    flag = true;
++    flag = flag && (tmp[k] <= golden[k << 1]);
++    flag = flag && (tmp[k] >= golden[1 + (k << 1)]);
++    printErrors(!flag, k, tmp[k] ,golden[k << 1], golden[1 + (k << 1)]);
++    pass = pass && flag;
+   }
+ 
++  flagPassFail(pass, get_core_id());
++
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+ /////////////////////////////////////////////////////////
+diff --git a/mlSin/testset.ini b/mlSin/testset.ini
+index 70337f5..5196e30 100644
+--- a/mlSin/testset.ini
++++ b/mlSin/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlSin_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlSvd/mlSvd.c b/mlSvd/mlSvd.c
+index c61a9ac..c0431d6 100644
+--- a/mlSvd/mlSvd.c
++++ b/mlSvd/mlSvd.c
+@@ -723,6 +723,9 @@ int main(int argc, const char * const argv[])
+   coreid = get_core_id();
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
++  
++  if (coreid>3)
++    coreid=coreid-4;
+ 
+   synch_barrier();
+   
+@@ -746,45 +749,41 @@ int main(int argc, const char * const argv[])
+   
+   synch_barrier();
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    for (b_k = 0; b_k < 25; b_k++) {
+-      y[b_k] = fAbs(U[b_k]);
+-    }
++  for (b_k = 0; b_k < 25; b_k++) {
++    y[b_k] = fAbs(U[b_k]);
++  }
+ 
+-    b_y = y[0];
+-    c_y = s[0];
++  b_y = y[0];
++  c_y = s[0];
+   
+-    for (b_k = 0; b_k < 4; b_k++) {
+-      c_y += s[b_k + 1];
+-    }
++  for (b_k = 0; b_k < 4; b_k++) {
++    c_y += s[b_k + 1];
++  }
+ 
+-    for (b_k = 0; b_k < 24; b_k++) {
+-      b_y += y[b_k + 1];
+-    }
++  for (b_k = 0; b_k < 24; b_k++) {
++    b_y += y[b_k + 1];
++  }
+ 
+-    for (b_k = 0; b_k < 25; b_k++) {
+-      y[b_k] = fAbs(V[b_k]);
+-    }
++  for (b_k = 0; b_k < 25; b_k++) {
++    y[b_k] = fAbs(V[b_k]);
++  }
+ 
+-    d_y = y[0];
+-    for (b_k = 0; b_k < 24; b_k++) {
+-      d_y += y[b_k + 1];
+-    }
++  d_y = y[0];
++  for (b_k = 0; b_k < 24; b_k++) {
++    d_y += y[b_k + 1];
++  }
+ 
+-    tmp[0] = b_y;
+-    tmp[1] = c_y;
+-    tmp[2] = d_y;
++  tmp[0] = b_y;
++  tmp[1] = c_y;
++  tmp[2] = d_y;
+   
+-    pass = true;
+-    for (b_k = 0; b_k < 3; b_k++) {
+-      pass = pass && (tmp[b_k] <= fv1[(0 + (b_k << 1)) + 6 * coreid]);
+-      pass = pass && (tmp[b_k] >= fv1[(1 + (b_k << 1)) + 6 * coreid]);
+-    }
+-
+-    flagPassFail(pass, coreid);
++  pass = true;
++  for (b_k = 0; b_k < 3; b_k++) {
++    pass = pass && (tmp[b_k] <= fv1[(0 + (b_k << 1)) + 6 * coreid]);
++    pass = pass && (tmp[b_k] >= fv1[(1 + (b_k << 1)) + 6 * coreid]);
+   }
++
++  flagPassFail(pass, get_core_id());
+   
+   synch_barrier();
+ 
+diff --git a/mlSvd/testset.ini b/mlSvd/testset.ini
+index b1f0a6e..b5c8654 100644
+--- a/mlSvd/testset.ini
++++ b/mlSvd/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlSvd_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/mlWdotp/mlWdotp.c b/mlWdotp/mlWdotp.c
+index e48fe33..21619b1 100644
+--- a/mlWdotp/mlWdotp.c
++++ b/mlWdotp/mlWdotp.c
+@@ -140,6 +140,9 @@ int main(int argc, const char * const argv[])
+   coreid = get_core_id();
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+ 
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -167,15 +170,11 @@ int main(int argc, const char * const argv[])
+   // check results
+   /////////////////////////////////////////////////////////
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    pass = (f0 <= fv4[(coreid << 1)]) && (f0 >= fv4[1 + (coreid << 1)]);
+-    printErrors(!pass, 0, f0 ,fv4[(coreid << 1)] ,fv4[1 + (coreid << 1)]);
+-
+-    flagPassFail(pass, coreid);
+-  }
+-
++  pass = (f0 <= fv4[(coreid << 1)]) && (f0 >= fv4[1 + (coreid << 1)]);
++  printErrors(!pass, 0, f0 ,fv4[(coreid << 1)] ,fv4[1 + (coreid << 1)]);
++  
++  flagPassFail(pass, get_core_id());
++  
+   synch_barrier();
+ 
+ /////////////////////////////////////////////////////////
+diff --git a/mlWdotp/testset.ini b/mlWdotp/testset.ini
+index b305db1..8d59112 100644
+--- a/mlWdotp/testset.ini
++++ b/mlWdotp/testset.ini
+@@ -5,6 +5,6 @@ timeout=1000000
+ 
+ [test:mlWdotp_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/seizure/seizure-detection_dma/Makefile b/seizure/seizure-detection_dma/Makefile
+index 2cb6d77..da3757e 100755
+--- a/seizure/seizure-detection_dma/Makefile
++++ b/seizure/seizure-detection_dma/Makefile
+@@ -11,7 +11,7 @@ l1Size= 65536 # 64kB
+ #l1Size= 131072 #128kB
+ 
+ stackSize ?= 2048 #2kB
+-
++pulpFpu=1
+ 
+ include $(PULP_SDK_HOME)/install/rules/pulp.mk
+ 
+diff --git a/seizure/seizure-detection_dma/testset.ini b/seizure/seizure-detection_dma/testset.ini
+index 66e44e1..8e3e0eb 100644
+--- a/seizure/seizure-detection_dma/testset.ini
++++ b/seizure/seizure-detection_dma/testset.ini
+@@ -18,8 +18,8 @@ tags=cluster float
+ command.all=make clean all run systemConfig=%(config)s CORE=1 buildDirExt=_1cores
+ timeout=1000000
+ 
+-[test:seizure_1_cores_fc]
+-tags=fc float
+-configs=hasFc=1
+-command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+-timeout=1000000
++#[test:seizure_1_cores_fc]
++#tags=fc float
++#configs=hasFc=1
++#command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
++#timeout=1000000
+diff --git a/testAPU/Makefile b/testAPU/Makefile
+index 30b53bf..487fd29 100644
+--- a/testAPU/Makefile
++++ b/testAPU/Makefile
+@@ -4,10 +4,4 @@ PULP_CFLAGS += -O2 -fno-unroll-loops
+ 
+ stackSize = 4096
+ 
+-patch:
+-	riscv32-unknown-elf-objcopy --rename-section=.srodata.cst4=.heapsram /usr/scratch/zuort/gautschi/FP_PULP/pulp-dev/pulp_pipeline/ml_tests/${PULP_APP}/build/ri5cyv2-rvc_pulp4_0_gcc_debug_bare_libgomp/math_fns.o
+-	riscv32-unknown-elf-gcc -mrvc -D__GCC__ -m32 -march=IMFDXpulpv2 -D__riscv__ -fno-jump-tables -MMD -MP -o /usr/scratch/zuort/gautschi/FP_PULP/pulp-dev/pulp_pipeline/ml_tests/${PULP_APP}/build/ri5cyv2-rvc_pulp4_0_gcc_debug_bare_libgomp/${PULP_APP} /usr/scratch/zuort/gautschi/FP_PULP/pulp-dev/pulp_pipeline/ml_tests/${PULP_APP}/build/ri5cyv2-rvc_pulp4_0_gcc_debug_bare_libgomp/${PULP_APP}.o /usr/scratch/zuort/gautschi/FP_PULP/pulp-dev/pulp_pipeline/ml_tests/${PULP_APP}/build/ri5cyv2-rvc_pulp4_0_gcc_debug_bare_libgomp/math_fns.o /usr/scratch/zuort/gautschi/FP_PULP/pulp-dev/pulp_pipeline/ml_tests/${PULP_APP}/build/ri5cyv2-rvc_pulp4_0_gcc_debug_bare_libgomp/crt0.o -Wl,--section-start -Wl,.heapscm=0x10000 -Wl,--defsym=heapscmLoad=0x10010000 -Wl,--section-start -Wl,.heapsram=0x700 -mhard-float -T/usr/scratch/zuort/gautschi/FP_PULP/pulp-dev/pulp_pipeline/pkg/sdk/dev/install/src/link-bare-pulp4.riscv.ld -nostartfiles -nostdlib -Wl,--gc-sections -L/usr/scratch/zuort/gautschi/FP_PULP/pulp-dev/pulp_pipeline/pkg/sdk/dev/install/ri5cyv2-rvc/lib -lbench-pulp4_0-gcc-debug -lmalloc-pulp4_0-gcc-debug -lgomp-pulp4_0-gcc-debug -lstdio-pulp4_0-gcc-debug -lstring-pulp4_0-gcc-debug -lsys-pulp4_0-gcc-debug -lmalloc-pulp4_0-gcc-debug -Wl,--gc-sections -lc -lcompilerrt-pulp4_0-gcc-debug -lgcc
+-
+-	pulp-run --platform=rtl --dir=/usr/scratch/zuort/gautschi/FP_PULP/pulp-dev/pulp_pipeline/ml_tests/${PULP_APP}/build/ri5cyv2-rvc_pulp4_0_gcc_debug_bare_libgomp --binary=${PULP_APP} --pulp-archi=pulp4-riscv prepare
+-
+ include $(PULP_SDK_HOME)/install/rules/pulp.mk
+diff --git a/testAPU/testAPU.c b/testAPU/testAPU.c
+index f2b6b1e..c034217 100644
+--- a/testAPU/testAPU.c
++++ b/testAPU/testAPU.c
+@@ -36,8 +36,8 @@ void check_explog  (testresult_t *result, void (*start)(), void (*stop)());
+ void create_ld_store_activity(testresult_t* result);
+ 
+ #define SIZE 512
+-__attribute__ ((section(".heapsram"))) char src[SIZE*4];
+-__attribute__ ((section(".heapsram"))) char dest[SIZE*4];
++__attribute__ ((section(".heapsram"))) char src[SIZE*8];
++__attribute__ ((section(".heapsram"))) char dest[SIZE*8];
+ 
+ 
+ /////////////////////////////////////////////////////////
+diff --git a/testAPU/testset.ini b/testAPU/testset.ini
+index 7f365bf..42a794d 100644
+--- a/testAPU/testset.ini
++++ b/testAPU/testset.ini
+@@ -1,10 +1,10 @@
+ [test:testAPU]
+ tags=cluster float
+-command.all=make clean all patch run systemConfig=%(config)s
++command.all=make clean all run systemConfig=%(config)s
+ timeout=1000000
+ 
+ [test:testAPU_fc]
+ tags=fc float
+-configs=hasFc=1
++#configs=hasFc=1
+ command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+ timeout=1000000
+diff --git a/testFPU/testFPU.c b/testFPU/testFPU.c
+index d52a528..980f003 100644
+--- a/testFPU/testFPU.c
++++ b/testFPU/testFPU.c
+@@ -32,6 +32,7 @@ void check_basic   (testresult_t *result, void (*start)(), void (*stop)());
+ void check_trig    (testresult_t *result, void (*start)(), void (*stop)());
+ void check_fma     (testresult_t *result, void (*start)(), void (*stop)());
+ void check_explog  (testresult_t *result, void (*start)(), void (*stop)());
++void check_special (testresult_t *result, void (*start)(), void (*stop)());
+ 
+ 
+ 
+@@ -43,6 +44,7 @@ testcase_t testcases[] = {
+   {  .name = "trig",           .test = check_trig         },
+   {  .name = "fma",            .test = check_fma          },
+   {  .name = "explog",         .test = check_explog       },
++  {  .name = "special",        .test = check_special      },
+   {0, 0}
+ };
+ 
+@@ -286,3 +288,197 @@ void check_fma(testresult_t *result, void (*start)(), void (*stop)()) {
+   
+   stop();
+ }
++
++void check_special(testresult_t *result, void (*start)(), void (*stop)()) {
++  unsigned int i;
++  float in_a = 3.1F;
++  float in_zero = 0.0F;
++  float in_inf = 0.0F;
++  float res;
++  int flag_zero = 0;
++  int flag_init;
++  int flag_test;
++  int flags;
++  int flag_swap;
++  
++  start();
++  //-----------------------------------------------------------------
++  // Check read/write flags
++  //-----------------------------------------------------------------
++  asm volatile ("fsflags %[c]" :: [c] "r"  (flag_zero));
++  flag_test = 31;
++  flag_init = flag_test+32+64; // high bits should be ignored!
++  asm volatile ("fsflags %[c]" :: [c] "r"  (flag_init));
++  asm volatile ("frflags %[c]" :  [c] "=r" (flags));
++  if (flags != flag_test)
++    result->errors +=1;
++  asm volatile ("fsflags %[c]" :: [c] "r"  (flag_zero));
++
++  //-----------------------------------------------------------------
++  // Check read/write frm
++  //-----------------------------------------------------------------
++  asm volatile ("fsrm %[c]" :: [c] "r"  (flag_zero));
++  flag_test = 7;
++  flag_init = flag_test+8+16; // high bits should be ignored!
++  asm volatile ("fsrm %[c]" :: [c] "r"  (flag_init));
++  asm volatile ("frrm %[c]" :  [c] "=r" (flags));
++  if (flags != flag_test)
++    result->errors +=1;
++  asm volatile ("fsrm %[c]" :: [c] "r"  (flag_zero));
++
++  //-----------------------------------------------------------------
++  // Check read/write fcsr
++  //-----------------------------------------------------------------
++  asm volatile ("fscsr %[c]" :: [c] "r"  (flag_zero));
++  flag_test = 255;
++  flag_init = flag_test+256+512; // high bits should be ignored!
++  asm volatile ("fscsr %[c]" :: [c] "r"  (flag_init));
++  asm volatile ("frcsr %[c]" :  [c] "=r" (flags));
++  if (flags != flag_test)
++    result->errors +=1;
++  asm volatile ("fscsr %[c]" :: [c] "r"  (flag_zero));
++
++  //-----------------------------------------------------------------
++  // Check read/write fprec
++  //-----------------------------------------------------------------
++  asm volatile ("csrrw %[d], 0x6, %[c] " : [d] "=r"(flag_zero) : [c] "r"  (flag_zero));
++  flag_test = 31;
++  flag_init = flag_test+32+64; // high bits should be ignored!
++  asm volatile ("csrrw %[d], 0x6, %[c] " : [d] "=r"(flag_swap) : [c] "r"  (flag_init));
++  asm volatile ("csrrs %[d], 0x6, x0 " : [d] "=r"(flags));
++  if (flags != flag_test)
++    result->errors +=1;
++  if (flag_swap != 0)
++    result->errors +=1;
++
++  // swap zero flag in and compare swap
++  asm volatile ("csrrw %[d], 0x6, %[c] " : [d] "=r"(flag_swap) : [c] "r"  (flag_zero));
++  if (flag_swap != flag_test)
++    result->errors +=1;
++
++  /* //----------------------------------------------------------------- */
++  /* // Check fdiv.s divide zero by zero -> NaN */
++  /* //----------------------------------------------------------------- */
++  /* asm volatile ("fsflags %[c]" :: [c] "r" (flag_zero)); */
++  /* asm volatile ("fdiv.s %[c], %[a], %[b]\n" */
++  /* 		: [c] "=f" (res) */
++  /* 		: [a] "f"  (in_zero), [b] "f" (in_zero)); */
++  /* asm volatile ("frflags %[c]" : [c] "=r" (flags)); */
++
++  /* // flag should be 24 (divide by 0 + invalid operation) */
++  /* if (flags != 24) { */
++  /*   result->errors +=1; */
++  /*   printf("flags: is: %d; should: 24\n",flags); */
++  /* } */
++  /* asm volatile ("fsflags %[c]" :: [c] "r" (flag_zero)); */
++
++  /* // res should be NaN -> comparison should fail! */
++  /* if (res==res) { */
++  /*   result->errors +=1; */
++    /* printf("result is: ");printFloat(res); */
++    /* printf("; should be NaN\n"); */
++  /*   printFloat(res); */
++  /* } */
++
++  //-----------------------------------------------------------------
++  // check fdiv.s divide a by 0 -> Inf
++  //-----------------------------------------------------------------
++  asm volatile ("fsflags %[c]" :: [c] "r" (flag_zero));
++  asm volatile ("fdiv.s %[c], %[a], %[b]\n"
++  		: [c] "=f" (res)
++  		: [a] "f"  (in_a), [b] "f" (in_zero));
++  asm volatile ("frflags %[c]" : [c] "=r" (flags));
++
++  // flag should be 8 (divide by 0)
++  if (flags != 8) {
++    result->errors +=1;
++    printf("flags: is: %d; should: 8\n",flags);
++  }
++
++  // res should be Inf
++  if (!fIsInf(res)) { 
++    result->errors +=1;
++    printf("result is: ");
++    printFloat(res);
++    printf("; should be Inf\n");
++  }
++
++  //-----------------------------------------------------------------
++  // check fadd.s add large numbers to cause overflow
++  //-----------------------------------------------------------------
++  float in_max = 3.4028235E38F;
++  float in_big = 1.0E38F;
++  asm volatile ("fadd.s %[c], %[a], %[b]\n"
++  		: [c] "=f" (res)
++  		: [a] "f"  (in_big), [b] "f" (in_max));
++  asm volatile ("frflags %[c]" : [c] "=r" (flags));
++
++  // flag should be 13 (divide by 0, + overflow)
++  if (flags != 13) {
++    result->errors +=1;
++    printf("flags: is: %d; should: 13\n",flags);
++  }
++
++  // res should be Inf
++  if (!fIsInf(res)) {
++    result->errors +=1;
++    printf("result is: ");
++    printFloat(res);
++    printf("; should be Inf\n");
++  }
++
++  //-----------------------------------------------------------------
++  // check fsub.s subtract small numbers to cause underflow
++  //-----------------------------------------------------------------
++  float in_min = 1.4E-45F;
++  float in_tiny = 10.0F;
++  asm volatile ("fdiv.s %[c], %[a], %[b]\n"
++  		: [c] "=f" (res)
++  		: [a] "f"  (in_min), [b] "f" (in_tiny));
++  asm volatile ("frflags %[c]" : [c] "=r" (flags));
++
++  // flag should be 15 (divide by 0, + overflow, + underflow)
++  if (flags != 15) {
++    result->errors +=1;
++    printf("flags: is: %d; should: 15\n",flags);
++  }
++
++  // underflow: res should be 0
++  if (res!=0.0F) {
++    result->errors +=1;
++    printf("result is: ");
++    printFloat(res);
++    printf("; should be 0.0F\n");
++  }
++  // reset flags
++  asm volatile ("fsflags %[c]" :: [c] "r" (flag_zero));
++  
++  //-----------------------------------------------------------------
++  // TP division
++  //-----------------------------------------------------------------
++  /* float in_min = 1.4E-45F; */
++  /* float in_tiny = 10.0F; */
++  /* asm volatile ("fdiv.s %[c], %[a], %[b]\n" */
++  /* 		: [c] "=f" (res) */
++  /* 		: [a] "f"  (in_min), [b] "f" (in_tiny)); */
++  /* asm volatile ("frflags %[c]" : [c] "=r" (flags)); */
++
++  /* // flag should be 15 (divide by 0, + overflow, + underflow) */
++  /* if (flags != 15) { */
++  /*   result->errors +=1; */
++  /*   printf("flags: is: %d; should: 15\n",flags); */
++  /* } */
++
++  /* // underflow: res should be 0 */
++  /* if (res!=0.0F) { */
++  /*   result->errors +=1; */
++  /*   printf("result is: "); */
++  /*   printFloat(res); */
++  /*   printf("; should be 0.0F\n"); */
++  /* } */
++  /* // reset flags */
++  /* asm volatile ("fsflags %[c]" :: [c] "r" (flag_zero)); */
++  
++
++  stop();
++}
+diff --git a/testFPU/testset.ini b/testFPU/testset.ini
+index 58ecebe..5832795 100644
+--- a/testFPU/testset.ini
++++ b/testFPU/testset.ini
+@@ -3,8 +3,8 @@ tags=cluster float
+ command.all=make clean all run systemConfig=%(config)s
+ timeout=1000000
+ 
+-[test:testFPU_fc]
+-tags=fc float
+-configs=hasFc=1
+-command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
+-timeout=1000000
++#[test:testFPU_fc]
++#tags=fc float
++#configs=hasFc=1
++#command.all=make clean all run pulpFc=1 noCluster=1 buildDirExt=_fc systemConfig=%(config)s
++#timeout=1000000

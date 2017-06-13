@@ -1,0 +1,152 @@
+diff --git a/mlSchur/mlSchur.c b/mlSchur/mlSchur.c
+index d8e38f5..c6cddb8 100644
+--- a/mlSchur/mlSchur.c
++++ b/mlSchur/mlSchur.c
+@@ -1277,6 +1277,9 @@ int main(int argc, const char * const argv[])
+ 
+   printf("starting %d kernel iterations... (coreid = %d)\n",KERNEL_ITS,coreid);
+   
++  if (coreid>3)
++    coreid=coreid-4;
++
+   synch_barrier();
+ 
+   perf_begin();
+@@ -1318,79 +1321,75 @@ int main(int argc, const char * const argv[])
+ 
+   synch_barrier();
+ 
+-  if(coreid>=N_CORES)
+-    pass =true;
+-  else{
+-    for (ix = 0; ix < 5; ix++) {
+-      d[ix] = A[ix * 6];
+-    }
++  for (ix = 0; ix < 5; ix++) {
++    d[ix] = A[ix * 6];
++  }
+ 
+-    y = fAbs(U[0]);
+-    for (istart = 0; istart < 24; istart++) {
+-      y += fAbs(U[istart + 1]);
+-    }
++  y = fAbs(U[0]);
++  for (istart = 0; istart < 24; istart++) {
++    y += fAbs(U[istart + 1]);
++  }
+ 
+-    b_y = d[0];
+-    for (istart = 0; istart < 4; istart++) {
+-      b_y += d[istart + 1];
+-    }
++  b_y = d[0];
++  for (istart = 0; istart < 4; istart++) {
++    b_y += d[istart + 1];
++  }
+ 
+-    ix = 0;
+-    xbar = fAbs(U[0]);
+-    for (istart = 0; istart < 24; istart++) {
+-      ix++;
+-      xbar += fAbs(U[ix]);
+-    }
++  ix = 0;
++  xbar = fAbs(U[0]);
++  for (istart = 0; istart < 24; istart++) {
++    ix++;
++    xbar += fAbs(U[ix]);
++  }
+ 
+-    xbar = fDiv(xbar,25.0F);
+-    ix = 0;
+-    r = fAbs(U[0]) - xbar;
+-    c_y = r * r;
+-    for (istart = 0; istart < 24; istart++) {
+-      ix++;
+-      r = fAbs(U[ix]) - xbar;
+-      c_y += r * r;
+-    }
++  xbar = fDiv(xbar,25.0F);
++  ix = 0;
++  r = fAbs(U[0]) - xbar;
++  c_y = r * r;
++  for (istart = 0; istart < 24; istart++) {
++    ix++;
++    r = fAbs(U[ix]) - xbar;
++    c_y += r * r;
++  }
+ 
+-    c_y = fDiv(c_y,24.0F);
+-    ix = 0;
+-    xbar = d[0];
+-    for (istart = 0; istart < 4; istart++) {
+-      ix++;
+-      xbar += d[ix];
+-    }
++  c_y = fDiv(c_y,24.0F);
++  ix = 0;
++  xbar = d[0];
++  for (istart = 0; istart < 4; istart++) {
++    ix++;
++    xbar += d[ix];
++  }
+ 
+-    xbar = fDiv(xbar,5.0F);
+-    ix = 0;
+-    r = d[0] - xbar;
+-    d_y = r * r;
+-    for (istart = 0; istart < 4; istart++) {
+-      ix++;
+-      r = d[ix] - xbar;
+-      d_y += r * r;
+-    }
++  xbar = fDiv(xbar,5.0F);
++  ix = 0;
++  r = d[0] - xbar;
++  d_y = r * r;
++  for (istart = 0; istart < 4; istart++) {
++    ix++;
++    r = d[ix] - xbar;
++    d_y += r * r;
++  }
+ 
+-    d_y *= 0.25F;
+-    tmp[0] = y;
+-    tmp[1] = b_y;
+-    tmp[2] = c_y;
+-    tmp[3] = d_y;
++  d_y *= 0.25F;
++  tmp[0] = y;
++  tmp[1] = b_y;
++  tmp[2] = c_y;
++  tmp[3] = d_y;
+   
+-    pass   = true;
+-
+-    for (i = 0; i < 4; i++) {
+-      flag = true;
+-      flag = flag && (tmp[i] <= fv1[(0 + (i << 1)) + (coreid << 3)]);
+-      flag = flag && (tmp[i] >= fv1[(1 + (i << 1)) + (coreid << 3)]);
+-      printErrors(!flag, i, tmp[i] ,fv1[(0 + (i << 1)) + (coreid << 3)] ,fv1[(1 + (i << 1)) + (coreid << 3)]);
+-      pass = flag && pass;
+-    }
+-
+-    synch_barrier();
++  pass   = true;
+ 
+-    flagPassFail(pass, coreid);
++  for (i = 0; i < 4; i++) {
++    flag = true;
++    flag = flag && (tmp[i] <= fv1[(0 + (i << 1)) + (coreid << 3)]);
++    flag = flag && (tmp[i] >= fv1[(1 + (i << 1)) + (coreid << 3)]);
++    printErrors(!flag, i, tmp[i] ,fv1[(0 + (i << 1)) + (coreid << 3)] ,fv1[(1 + (i << 1)) + (coreid << 3)]);
++    pass = flag && pass;
+   }
+ 
++  synch_barrier();
++
++  flagPassFail(pass, get_core_id());
++
+ /////////////////////////////////////////////////////////
+ // synchronize and exit
+ /////////////////////////////////////////////////////////

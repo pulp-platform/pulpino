@@ -1,7 +1,6 @@
 \chapter{Overview}
 
-\pulpino is a single-core System-on-a-Chip built for the OpenRISC \orion core and the
-\riscv \rvcore core.
+\pulpino is a single-core System-on-a-Chip built for the \riscv \rvcore and \zerocore core.
 \pulpino reuses most components from its bigger brother \pulp.
 It uses separate single-port data and instruction RAMs. It includes a boot ROM
 that contains a boot loader that can load a program via SPI from an external
@@ -16,7 +15,7 @@ Both RAMs are connected to the AXI bus via bus adapters.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{./figures/pulpino_block}
+  \includegraphics[width=0.9\textwidth]{./figures/pulpino_block.eps}
   \caption{\pulpino Overview.}
   \label{fig:pulpino_overview}
 \end{figure}

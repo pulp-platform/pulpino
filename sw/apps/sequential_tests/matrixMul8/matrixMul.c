@@ -96,7 +96,7 @@ unsigned int matrix_check() {
   for (int i = 0; i < SIZE; i++) {
     for (int j = 0; j < SIZE; j++) {
       if (g_mC[i][j] != m_exp[i * SIZE + j]) {
-        printf("At index %d, %d\n", i, j);
+        printf("result[%d][%d] is %d, expected %d\n", i, j, g_mC[i][j], m_exp[i * SIZE + j]);
         errors++;
       }
     }

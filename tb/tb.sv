@@ -13,10 +13,14 @@ module tb;
   timeprecision 1ps;
 
   // +MEMLOAD= valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
-  parameter  SPI           = "QUAD";    // valid values are "SINGLE", "QUAD"
-  parameter  BAUDRATE      = 781250;    // 1562500
-  parameter  CLK_USE_FLL   = 0;  // 0 or 1
-  parameter  TEST          = ""; //valid values are "" (NONE), "DEBUG"
+  parameter  SPI            = "QUAD";    // valid values are "SINGLE", "QUAD"
+  parameter  BAUDRATE       = 781250;    // 1562500
+  parameter  CLK_USE_FLL    = 0;  // 0 or 1
+  parameter  TEST           = ""; //valid values are "" (NONE), "DEBUG"
+  parameter  USE_ZERO_RISCY = 0;
+  parameter  RISCY_RV32F    = 0;
+  parameter  ZERO_RV32M     = 1;
+  parameter  ZERO_RV32E     = 0;
 
   int           exit_status = `EXIT_ERROR; // modelsim exit code, will be overwritten when successful
 
@@ -105,7 +109,14 @@ module tb;
     .rst_ni ( s_rst_n )
   );
 
-  pulpino_top top_i
+  pulpino_top
+  #(
+    .USE_ZERO_RISCY    ( USE_ZERO_RISCY ),
+    .RISCY_RV32F       ( RISCY_RV32F    ),
+    .ZERO_RV32M        ( ZERO_RV32M     ),
+    .ZERO_RV32E        ( ZERO_RV32E     )
+   )
+  top_i
   (
     .clk               ( s_clk        ),
     .rst_n             ( s_rst_n      ),
@@ -196,6 +207,8 @@ module tb;
       memload = "PRELOAD";
 
     $display("Using MEMLOAD method: %s", memload);
+
+    $display("Using %s core", USE_ZERO_RISCY ? "zero-riscy" : "ri5cy");
 
     use_qspi = SPI == "QUAD" ? 1'b1 : 1'b0;
 

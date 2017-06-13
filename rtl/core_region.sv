@@ -19,7 +19,12 @@ module core_region
     parameter AXI_ID_SLAVE_WIDTH   = 10,
     parameter AXI_USER_WIDTH       = 0,
     parameter DATA_RAM_SIZE        = 32768, // in bytes
-    parameter INSTR_RAM_SIZE       = 32768  // in bytes
+    parameter INSTR_RAM_SIZE       = 32768, // in bytes
+    parameter USE_ZERO_RISCY       = 0,
+    parameter RISCY_RV32F          = 0,
+    parameter ZERO_RV32M           = 1,
+    parameter ZERO_RV32E           = 0
+
   )
 (
     // Clock and Reset
@@ -148,76 +153,137 @@ module core_region
     end
   end
 
-  riscv_core
-  #(
-    .N_EXT_PERF_COUNTERS ( 0 )
-  )
-  RISCV_CORE
-  (
-    .clk_i           ( clk               ),
-    .rst_ni          ( rst_n             ),
+  if(USE_ZERO_RISCY) begin
+      zeroriscy_core
+      #(
+        .N_EXT_PERF_COUNTERS (     0      ),
+        .RV32E               ( ZERO_RV32E ),
+        .RV32M               ( ZERO_RV32M )
+      )
+      RISCV_CORE
+      (
+        .clk_i           ( clk               ),
+        .rst_ni          ( rst_n             ),
 
-    .clock_en_i      ( clock_gating_i    ),
-    .test_en_i       ( testmode_i        ),
+        .clock_en_i      ( clock_gating_i    ),
+        .test_en_i       ( testmode_i        ),
 
-    .boot_addr_i     ( boot_addr_i       ),
-    .core_id_i       ( 4'h0              ),
-    .cluster_id_i    ( 6'h0              ),
+        .boot_addr_i     ( boot_addr_i       ),
+        .core_id_i       ( 4'h0              ),
+        .cluster_id_i    ( 6'h0              ),
 
-    .instr_addr_o    ( core_instr_addr   ),
-    .instr_req_o     ( core_instr_req    ),
-    .instr_rdata_i   ( core_instr_rdata  ),
-    .instr_gnt_i     ( core_instr_gnt    ),
-    .instr_rvalid_i  ( core_instr_rvalid ),
+        .instr_addr_o    ( core_instr_addr   ),
+        .instr_req_o     ( core_instr_req    ),
+        .instr_rdata_i   ( core_instr_rdata  ),
+        .instr_gnt_i     ( core_instr_gnt    ),
+        .instr_rvalid_i  ( core_instr_rvalid ),
 
-    .data_addr_o     ( core_lsu_addr     ),
-    .data_wdata_o    ( core_lsu_wdata    ),
-    .data_we_o       ( core_lsu_we       ),
-    .data_req_o      ( core_lsu_req      ),
-    .data_be_o       ( core_lsu_be       ),
-    .data_rdata_i    ( core_lsu_rdata    ),
-    .data_gnt_i      ( core_lsu_gnt      ),
-    .data_rvalid_i   ( core_lsu_rvalid   ),
-    .data_err_i      ( 1'b0              ),
+        .data_addr_o     ( core_lsu_addr     ),
+        .data_wdata_o    ( core_lsu_wdata    ),
+        .data_we_o       ( core_lsu_we       ),
+        .data_req_o      ( core_lsu_req      ),
+        .data_be_o       ( core_lsu_be       ),
+        .data_rdata_i    ( core_lsu_rdata    ),
+        .data_gnt_i      ( core_lsu_gnt      ),
+        .data_rvalid_i   ( core_lsu_rvalid   ),
+        .data_err_i      ( 1'b0              ),
 
-    .irq_i           ( (|irq_i)          ),
-    .irq_id_i        ( irq_id            ),
-    .irq_ack_o       (                   ),
-    .irq_sec_i       ( 1'b0              ),
-    .sec_lvl_o       (                   ),
+        .irq_i           ( (|irq_i)          ),
+        .irq_id_i        ( irq_id            ),
+        .irq_ack_o       (                   ),
+        .irq_id_o        (                   ),
 
-    .debug_req_i     ( debug.req         ),
-    .debug_gnt_o     ( debug.gnt         ),
-    .debug_rvalid_o  ( debug.rvalid      ),
-    .debug_addr_i    ( debug.addr        ),
-    .debug_we_i      ( debug.we          ),
-    .debug_wdata_i   ( debug.wdata       ),
-    .debug_rdata_o   ( debug.rdata       ),
-    .debug_halted_o  (                   ),
-    .debug_halt_i    ( 1'b0              ),
-    .debug_resume_i  ( 1'b0              ),
+        .debug_req_i     ( debug.req         ),
+        .debug_gnt_o     ( debug.gnt         ),
+        .debug_rvalid_o  ( debug.rvalid      ),
+        .debug_addr_i    ( debug.addr        ),
+        .debug_we_i      ( debug.we          ),
+        .debug_wdata_i   ( debug.wdata       ),
+        .debug_rdata_o   ( debug.rdata       ),
+        .debug_halted_o  (                   ),
+        .debug_halt_i    ( 1'b0              ),
+        .debug_resume_i  ( 1'b0              ),
 
-    .fetch_enable_i  ( fetch_enable_i    ),
-    .core_busy_o     ( core_busy_o       ),
+        .fetch_enable_i  ( fetch_enable_i    ),
+        .core_busy_o     ( core_busy_o       ),
+        .ext_perf_counters_i (               )
+      );
+  end else begin
 
-    // apu-interconnect
-    // handshake signals
-    .apu_master_req_o      (             ),
-    .apu_master_ready_o    (             ),
-    .apu_master_gnt_i      ( 1'b1        ),
-    // request channel
-    .apu_master_operands_o (             ),
-    .apu_master_op_o       (             ),
-    .apu_master_type_o     (             ),
-    .apu_master_flags_o    (             ),
-    // response channel
-    .apu_master_valid_i    ( '0          ),
-    .apu_master_result_i   ( '0          ),
-    .apu_master_flags_i    ( '0          ),
+    riscv_core
+    #(
+      .N_EXT_PERF_COUNTERS (     0       ),
+      .FPU                 ( RISCY_RV32F ),
+      .SHARED_FP           (     0       ),
+      .SHARED_FP_DIVSQRT   (     2       )
+    )
+    RISCV_CORE
+    (
+      .clk_i           ( clk               ),
+      .rst_ni          ( rst_n             ),
 
-    .ext_perf_counters_i (               )
-  );
+      .clock_en_i      ( clock_gating_i    ),
+      .test_en_i       ( testmode_i        ),
 
+      .boot_addr_i     ( boot_addr_i       ),
+      .core_id_i       ( 4'h0              ),
+      .cluster_id_i    ( 6'h0              ),
+
+      .instr_addr_o    ( core_instr_addr   ),
+      .instr_req_o     ( core_instr_req    ),
+      .instr_rdata_i   ( core_instr_rdata  ),
+      .instr_gnt_i     ( core_instr_gnt    ),
+      .instr_rvalid_i  ( core_instr_rvalid ),
+
+      .data_addr_o     ( core_lsu_addr     ),
+      .data_wdata_o    ( core_lsu_wdata    ),
+      .data_we_o       ( core_lsu_we       ),
+      .data_req_o      ( core_lsu_req      ),
+      .data_be_o       ( core_lsu_be       ),
+      .data_rdata_i    ( core_lsu_rdata    ),
+      .data_gnt_i      ( core_lsu_gnt      ),
+      .data_rvalid_i   ( core_lsu_rvalid   ),
+      .data_err_i      ( 1'b0              ),
+
+      .irq_i           ( (|irq_i)          ),
+      .irq_id_i        ( irq_id            ),
+      .irq_ack_o       (                   ),
+      .irq_id_o        (                   ),
+      .irq_sec_i       ( 1'b0              ),
+      .sec_lvl_o       (                   ),
+
+      .debug_req_i     ( debug.req         ),
+      .debug_gnt_o     ( debug.gnt         ),
+      .debug_rvalid_o  ( debug.rvalid      ),
+      .debug_addr_i    ( debug.addr        ),
+      .debug_we_i      ( debug.we          ),
+      .debug_wdata_i   ( debug.wdata       ),
+      .debug_rdata_o   ( debug.rdata       ),
+      .debug_halted_o  (                   ),
+      .debug_halt_i    ( 1'b0              ),
+      .debug_resume_i  ( 1'b0              ),
+
+      .fetch_enable_i  ( fetch_enable_i    ),
+      .core_busy_o     ( core_busy_o       ),
+
+      // apu-interconnect
+      // handshake signals
+      .apu_master_req_o      (             ),
+      .apu_master_ready_o    (             ),
+      .apu_master_gnt_i      ( 1'b1        ),
+      // request channel
+      .apu_master_operands_o (             ),
+      .apu_master_op_o       (             ),
+      .apu_master_type_o     (             ),
+      .apu_master_flags_o    (             ),
+      // response channel
+      .apu_master_valid_i    ( '0          ),
+      .apu_master_result_i   ( '0          ),
+      .apu_master_flags_i    ( '0          ),
+
+      .ext_perf_counters_i (               )
+      );
+  end
 
   core2axi_wrap
   #(

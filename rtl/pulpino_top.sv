@@ -18,6 +18,12 @@
 `define AXI_USER_WIDTH          1
 
 module pulpino_top
+  #(
+    parameter USE_ZERO_RISCY       = 0,
+    parameter RISCY_RV32F          = 0,
+    parameter ZERO_RV32M           = 1,
+    parameter ZERO_RV32E           = 0
+  )
   (
     // Clock and Reset
     input logic               clk /*verilator clocker*/,
@@ -165,7 +171,8 @@ module pulpino_top
     .AXI_DATA_WIDTH       ( `AXI_DATA_WIDTH      ),
     .AXI_ID_MASTER_WIDTH  ( `AXI_ID_MASTER_WIDTH ),
     .AXI_ID_SLAVE_WIDTH   ( `AXI_ID_SLAVE_WIDTH  ),
-    .AXI_USER_WIDTH       ( `AXI_USER_WIDTH      )
+    .AXI_USER_WIDTH       ( `AXI_USER_WIDTH      ),
+    .USE_ZERO_RISCY       (  USE_ZERO_RISCY      )
   )
   core_region_i
   (

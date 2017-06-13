@@ -13,7 +13,6 @@ add_subdirectory(testExceptions)
 # arithmetic operations
 add_subdirectory(testALU)
 add_subdirectory(testALUExt)
-# disabled for now since opcodes clash
 add_subdirectory(testMUL)
 
 # ETH specific features
@@ -35,6 +34,7 @@ add_subdirectory(testCSR)
 # add_subdirectory(testDebug)
 
 add_subdirectory(debug)
-add_subdirectory(testIRQ_debug)
 add_subdirectory(testIRQ)
 #add_subdirectory(testPriv)
+
+add_subdirectory(testFPU)

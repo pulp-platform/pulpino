@@ -6,8 +6,10 @@
 typedef signed short      Pixel;
 typedef signed short      PixelV    __attribute__((vector_size (4)));
 
-#define shuffle(a, b, c)            __builtin_pulp_shuffle2h(a, b, c)
-#define max_vec(a, b)               __builtin_pulp_max2(a, b)
+#ifdef VEC
+    #define shuffle(a, b, c)            __builtin_pulp_shuffle2h(a, b, c)
+    #define max_vec(a, b)               __builtin_pulp_max2(a, b)
+#endif
 
 void __attribute__ ((noinline)) Pool2x2_Scalar (Pixel * In_Img, Pixel * Out_Img, int R, int C);
 void __attribute__ ((noinline)) Pool2x2_Vector (Pixel * In_Img, Pixel * Out_Img, int R, int C);

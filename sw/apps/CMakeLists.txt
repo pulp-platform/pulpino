@@ -22,11 +22,21 @@ macro(add_application NAME SOURCE_FILES)
     ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
-    ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/core_libs/inc
-    ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/separate_libs/inc
     ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
-    ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
   )
+
+  if(${ARDUINO_LIB})
+    include_directories(
+      ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/core_libs/inc
+      ${CMAKE_SOURCE_DIR}/libs/Arduino_lib/separate_libs/inc
+    )
+  endif()
+
+  if(${BEEBS_LIB})
+    include_directories(
+        ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
+      )
+  endif()
 
   add_executable(${NAME}.elf $<TARGET_OBJECTS:crt0> ${SOURCE_FILES})
 
@@ -42,8 +52,28 @@ macro(add_application NAME SOURCE_FILES)
 
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lm")
 
+  if(${RISCY_RV32F})
+    set(MATH_FNS_LIB "math_fns")
+  else()
+    set(MATH_FNS_LIB "")
+  endif()
+
+  if(${BEEBS_LIB})
+    set(BEEBS_LIB_NAME "beebs")
+  else()
+    set(BEEBS_LIB_NAME "")
+  endif()
+
+  if(${ARDUINO_LIB})
+    set(ARDUINO_CORE "Arduino_core")
+    set(ARDUINO_SEP "Arduino_separate")
+  else()
+    set(ARDUINO_CORE "")
+    set(ARDUINO_SEP "")
+  endif()
+
   # link libraries
-  target_link_libraries(${NAME}.elf ${ARG_LIBS}  beebs bench Arduino_separate Arduino_core bench string sys m)
+  target_link_libraries(${NAME}.elf ${ARG_LIBS} ${ARDUINO_SEP} ${ARDUINO_CORE} ${BEEBS_LIB_NAME} bench ${MATH_FNS_LIB} string sys m)
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
@@ -170,11 +200,20 @@ endmacro()
 ################################################################################
 
 add_subdirectory(helloworld)
-add_subdirectory(Arduino_tests)
-add_subdirectory(dhrystone)
-# add_subdirectory(debug)
+
+if(${ARDUINO_LIB})
+  add_subdirectory(Arduino_tests)
+endif()
+
 add_subdirectory(bench)
-add_subdirectory(beebs)
+
+if(${BEEBS_LIB})
+  add_subdirectory(beebs)
+endif()
+
+if(${RISCY_RV32F})
+  add_subdirectory(ml_tests)
+endif()
 
 # RISCV only tests
 if(${RISCV})

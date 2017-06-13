@@ -5,7 +5,7 @@
 
 /* Bubble sort code */
 
-#define N 100
+#define N 20
 
 void check_bubbleSort(testresult_t *result, void (*start)(), void (*stop)());
 
@@ -32,14 +32,10 @@ void check_bubbleSort(testresult_t *result, void (*start)(), void (*stop)()) {
 
   start();
 
-  for (j = 0; j<2; j++) {
+  for (i=0;i<n;i++)
+    array[i] = 2*n-i;
 
-    for (i=0;i<n;i++)
-      array[i] = 2*n-i;
-
-    bubbleSort(array, n);
-
-  }
+  bubbleSort(array, n);
 
   stop();
 

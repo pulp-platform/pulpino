@@ -24,11 +24,6 @@
 #define PASS1_BITS  2
 
 
-#ifndef REPEAT_FACTOR
-#define REPEAT_FACTOR   (4096)
-#endif
-
-
 #define BLOCKSIZE 64
 
 

@@ -8,7 +8,9 @@ void check_Pool2x2_Scalar          (testresult_t *result, void (*start)(), void 
 void check_Pool2x2_Vector          (testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
+#ifdef VEC
   { .name = "Pool2x2_Vector"    , .test = check_Pool2x2_Vector    },
+#endif
   { .name = "Pool2x2_Scalar"    , .test = check_Pool2x2_Scalar    },
   {0, 0}
 };
