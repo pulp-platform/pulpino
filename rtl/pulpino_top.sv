@@ -172,7 +172,10 @@ module pulpino_top
     .AXI_ID_MASTER_WIDTH  ( `AXI_ID_MASTER_WIDTH ),
     .AXI_ID_SLAVE_WIDTH   ( `AXI_ID_SLAVE_WIDTH  ),
     .AXI_USER_WIDTH       ( `AXI_USER_WIDTH      ),
-    .USE_ZERO_RISCY       (  USE_ZERO_RISCY      )
+    .USE_ZERO_RISCY       (  USE_ZERO_RISCY      ),
+    .RISCY_RV32F          (  RISCY_RV32F         ),
+    .ZERO_RV32M           (  ZERO_RV32M          ),
+    .ZERO_RV32E           (  ZERO_RV32E          )
   )
   core_region_i
   (

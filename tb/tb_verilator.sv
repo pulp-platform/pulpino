@@ -1,6 +1,10 @@
 module tb_verilator
 #(
-  parameter CLK_DIV = 16'h3
+  parameter  CLK_DIV        = 16'h3,
+  parameter  USE_ZERO_RISCY = 0,
+  parameter  RISCY_RV32F    = 1,
+  parameter  ZERO_RV32M     = 0,
+  parameter  ZERO_RV32E     = 0
 )
 (
   input  logic                  clk,
@@ -28,7 +32,14 @@ module tb_verilator
   logic parity_error;
   logic [7:0] rx_data;
 
-  pulpino_top top_i
+  pulpino_top
+  #(
+    .USE_ZERO_RISCY    ( USE_ZERO_RISCY ),
+    .RISCY_RV32F       ( RISCY_RV32F    ),
+    .ZERO_RV32M        ( ZERO_RV32M     ),
+    .ZERO_RV32E        ( ZERO_RV32E     )
+   )
+  top_i
   (
     .clk               ( clk            ),
     .rst_n             ( rst_n          ),
