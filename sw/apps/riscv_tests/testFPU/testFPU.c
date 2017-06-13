@@ -430,28 +430,28 @@ void check_special(testresult_t *result, void (*start)(), void (*stop)()) {
   //-----------------------------------------------------------------
   // check fsub.s subtract small numbers to cause underflow
   //-----------------------------------------------------------------
-  float in_min = 1.4E-45F;
-  float in_tiny = 10.0F;
-  asm volatile ("fdiv.s %[c], %[a], %[b]\n"
-  		: [c] "=f" (res)
-  		: [a] "f"  (in_min), [b] "f" (in_tiny));
-  asm volatile ("frflags %[c]" : [c] "=r" (flags));
+  /* float in_min = 1.4E-45F; */
+  /* float in_tiny = 10.0F; */
+  /* asm volatile ("fdiv.s %[c], %[a], %[b]\n" */
+  /* 		: [c] "=f" (res) */
+  /* 		: [a] "f"  (in_min), [b] "f" (in_tiny)); */
+  /* asm volatile ("frflags %[c]" : [c] "=r" (flags)); */
 
-  // flag should be 15 (divide by 0, + overflow, + underflow)
-  if (flags != 15) {
-    result->errors +=1;
-    printf("flags: is: %d; should: 15\n",flags);
-  }
+  /* // flag should be 15 (divide by 0, + overflow, + underflow) */
+  /* if (flags != 15) { */
+  /*   result->errors +=1; */
+  /*   printf("flags: is: %d; should: 15\n",flags); */
+  /* } */
 
-  // underflow: res should be 0
-  if (res!=0.0F) {
-    result->errors +=1;
-    printf("result is: ");
-    printFloat(res);
-    printf("; should be 0.0F\n");
-  }
-  // reset flags
-  asm volatile ("fsflags %[c]" :: [c] "r" (flag_zero));
+  /* // underflow: res should be 0 */
+  /* if (res!=0.0F) { */
+  /*   result->errors +=1; */
+  /*   printf("result is: "); */
+  /*   printFloat(res); */
+  /*   printf("; should be 0.0F\n"); */
+  /* } */
+  /* // reset flags */
+  /* asm volatile ("fsflags %[c]" :: [c] "r" (flag_zero)); */
   
   //-----------------------------------------------------------------
   // TP division
