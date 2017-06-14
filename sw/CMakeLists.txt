@@ -134,7 +134,7 @@ add_custom_target(vcompile
   ${USES_TERMINAL})
 
 add_custom_target(vcompile.ps
-  COMMAND tcsh -c "./vcompile/vcompile_ps.csh"
+  COMMAND tcsh -c "env PL_NETLIST=${PL_NETLIST} ./vcompile/vcompile_ps.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
