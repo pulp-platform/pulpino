@@ -125,7 +125,14 @@ module pulpino(
   output tdo_o;
 
   // PULP SoC
-  pulpino_top pulpino_i
+  pulpino_top
+  #(
+    .USE_ZERO_RISCY    ( `USE_ZERO_RISCY ),
+    .RISCY_RV32F       ( `RISCY_RV32F    ),
+    .ZERO_RV32M        ( `ZERO_RV32M     ),
+    .ZERO_RV32E        ( `ZERO_RV32E     )
+  )
+  pulpino_i
   (
     .clk               ( clk               ),
     .rst_n             ( rst_n             ),

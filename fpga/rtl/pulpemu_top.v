@@ -326,7 +326,7 @@ module pulpemu_top(
 );
 
   // PULPino SoC
-  pulpino pulpino_wrap_i (
+  pulpino  pulpino_wrap_i (
     .clk               ( s_clk_pulpino  ),
     .rst_n             ( s_rstn_pulpino ),
 
