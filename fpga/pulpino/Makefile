@@ -1,3 +1,4 @@
+NAME:=RISCY
 PROJECT:=pulpino
 
 all:

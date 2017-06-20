@@ -124,13 +124,18 @@ module pulpino(
   input  tdi_i;
   output tdo_o;
 
+  parameter USE_ZERO_RISCY = 0;
+  parameter RISCY_RV32F = 0;
+  parameter ZERO_RV32M = 0;
+  parameter ZERO_RV32E = 0;
+   
   // PULP SoC
   pulpino_top
   #(
-    .USE_ZERO_RISCY    ( `USE_ZERO_RISCY ),
-    .RISCY_RV32F       ( `RISCY_RV32F    ),
-    .ZERO_RV32M        ( `ZERO_RV32M     ),
-    .ZERO_RV32E        ( `ZERO_RV32E     )
+    .USE_ZERO_RISCY    ( USE_ZERO_RISCY ),
+    .RISCY_RV32F       ( RISCY_RV32F    ),
+    .ZERO_RV32M        ( ZERO_RV32M     ),
+    .ZERO_RV32E        ( ZERO_RV32E     )
   )
   pulpino_i
   (

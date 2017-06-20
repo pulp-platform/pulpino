@@ -11,16 +11,30 @@ if { ![info exists ::env(XILINX_BOARD)] } {
 }
 
 if { ![info exists ::env(USE_ZERO_RISCY)] } {
-  set USE_ZERO_RISCY 0
+  set ::env(USE_ZERO_RISCY) 0
 }
 if { ![info exists ::env(RISCY_RV32F)] } {
-  set RISCY_RV32F 0
+  set ::env(RISCY_RV32F) 0
 }
 if { ![info exists ::env(ZERO_RV32M)] } {
-  set ZERO_RV32M 0
+  set ::env(ZERO_RV32M) 0
 }
 if { ![info exists ::env(ZERO_RV32E)] } {
-  set ZERO_RV32E 0
+  set ::env(ZERO_RV32E) 0
+}
+
+if { $::env(USE_ZERO_RISCY)==1} {
+    if {$::env(ZERO_RV32E)} {
+	set NAME "MICRO_RISCY"
+    } else { 
+	set NAME "ZERO_RISCY"
+    }
+} else {
+    if {$::env(RISCY_RV32F)} {
+	set NAME "RISCY_FP"
+    } else { 
+	set NAME "RISCY"
+    }
 }
 
 
@@ -41,7 +55,7 @@ source tcl/src_files.tcl
 add_files -norecurse $FPGA_IPS/xilinx_mem_8192x32/ip/xilinx_mem_8192x32.dcp
 
 source ./tcl/ips_add_files.tcl
-if {${USE_ZERO_RISCY}==0} {
+if {$::env(USE_ZERO_RISCY)==0} {
  remove_files $SRC_ZERORISCY_REGFILE_FPGA
  remove_files $SRC_ZERORISCY
  add_files -norecurse -scan_for_includes $SRC_RISCV
@@ -72,11 +86,11 @@ set_property strategy Flow_AreaOptimized_High [get_runs synth_1]
 
 # run synthesis
 # first try will fail
-catch {synth_design -rtl -name rtl_1 -verilog_define USE_ZERO_RISCY=${USE_ZERO_RISCY} -verilog_define RISCY_RV32F=${RISCY_RV32F} -verilog_define ZERO_RV32M=${ZERO_RV32M} -verilog_define ZERO_RV32E=${ZERO_RV32E} -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1}
+catch {synth_design -rtl -name rtl_1 -generic USE_ZERO_RISCY=$::env(USE_ZERO_RISCY) -generic RISCY_RV32F=$::env(RISCY_RV32F) -generic ZERO_RV32M=$::env(ZERO_RV32M) -generic ZERO_RV32E=$::env(ZERO_RV32E) -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1}
 
 update_compile_order -fileset sources_1
 
-synth_design -rtl -name rtl_1 -verilog_define USE_ZERO_RISCY=${USE_ZERO_RISCY} -verilog_define RISCY_RV32F=${RISCY_RV32F} -verilog_define ZERO_RV32M=${ZERO_RV32M} -verilog_define ZERO_RV32E=${ZERO_RV32E} -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1
+synth_design -rtl -name rtl_1 -generic USE_ZERO_RISCY=$::env(USE_ZERO_RISCY) -generic RISCY_RV32F=$::env(RISCY_RV32F) -generic ZERO_RV32M=$::env(ZERO_RV32M) -generic ZERO_RV32E=$::env(ZERO_RV32E) -verilog_define PULP_FPGA_EMUL=1 -verilog_define RISCV -flatten_hierarchy full -gated_clock_conversion on -constrset constrs_1
 
 #set_property STEPS.SYNTH_DESIGN.ARGS.KEEP_EQUIVALENT_REGISTERS true [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.RESOURCE_SHARING off [get_runs synth_1]
@@ -87,12 +101,12 @@ wait_on_run synth_1
 open_run synth_1
 
 # create reports
-exec mkdir -p reports/
-exec rm -rf reports/*
-check_timing                                                            -file reports/pulpino.check_timing.rpt 
-report_timing -max_paths 100 -nworst 100 -delay_type max -sort_by slack -file reports/pulpino.timing_WORST_100.rpt
-report_timing -nworst 1 -delay_type max -sort_by group                  -file reports/pulpino.timing.rpt
-report_utilization -hierarchical                                        -file reports/pulpino.utilization.rpt
+exec mkdir -p reports_${NAME}/
+exec rm -rf reports_${NAME}/*
+check_timing                                                            -file reports_${NAME}/pulpino.check_timing.rpt 
+report_timing -max_paths 100 -nworst 100 -delay_type max -sort_by slack -file reports_${NAME}/pulpino.timing_WORST_100.rpt
+report_timing -nworst 1 -delay_type max -sort_by group                  -file reports_${NAME}/pulpino.timing.rpt
+report_utilization -hierarchical                                        -file reports_${NAME}/pulpino.utilization.rpt
 
 # save EDIF netlist
 write_edif -force pulpino.edf
