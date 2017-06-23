@@ -43,6 +43,7 @@ validate_bd_design
 generate_target all [get_files ./pulpemu.srcs/sources_1/bd/ps7/ps7.bd]
 make_wrapper -files [get_files ./pulpemu.srcs/sources_1/bd/ps7/ps7.bd] -top
 add_files -norecurse ./pulpemu.srcs/sources_1/bd/ps7/hdl/ps7_wrapper.v
+
 update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 
@@ -53,11 +54,19 @@ update_compile_order -fileset sources_1
 update_compile_order -fileset sim_1
 
 # add pulpino
-add_files -norecurse ../pulpino/pulpino.edf \
+add_files -norecurse ../pulpino/pulpino.edn \
                      ../pulpino/pulpino_stub.v \
+                     ../ips/xilinx_fp_fma/ip/xilinx_fp_fma_stub.vhdl \
+                     ../ips/xilinx_fp_fma/ip/xilinx_fp_fma_stub.v \
+                     ../pulpino/xilinx_fp_fma_floating_point_v7_0_viv.edn \
+                     ../pulpino/xilinx_fp_fma_mult_gen_v12_0_viv.edn \
                      ../ips/xilinx_clock_manager/ip/xilinx_clock_manager.dcp
 
 update_compile_order -fileset sources_1
+update_compile_order -fileset sim_1
+get_property source_mgmt_mode [current_project]
+set_property source_mgmt_mode DisplayOnly [current_project]
+get_property source_mgmt_mode [current_project]
 
 # save area
 set_property strategy Flow_AreaOptimized_High [get_runs synth_1]

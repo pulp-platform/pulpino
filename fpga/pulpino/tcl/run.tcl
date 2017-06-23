@@ -53,6 +53,7 @@ source tcl/src_files.tcl
 
 # add memory cuts
 add_files -norecurse $FPGA_IPS/xilinx_mem_8192x32/ip/xilinx_mem_8192x32.dcp
+add_files -norecurse $FPGA_IPS/xilinx_fp_fma/ip/xilinx_fp_fma.dcp
 
 source ./tcl/ips_add_files.tcl
 if {$::env(USE_ZERO_RISCY)==0} {
@@ -109,6 +110,6 @@ report_timing -nworst 1 -delay_type max -sort_by group                  -file re
 report_utilization -hierarchical                                        -file reports_${NAME}/pulpino.utilization.rpt
 
 # save EDIF netlist
-write_edif -force pulpino.edf
+write_edif -force pulpino.edn
 write_verilog -force -mode synth_stub pulpino_stub.v
 write_verilog -force -mode funcsim pulpino_funcsim.v

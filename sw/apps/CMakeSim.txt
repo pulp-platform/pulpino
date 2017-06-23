@@ -239,7 +239,7 @@ macro(add_sim_targets NAME)
   add_custom_target(${NAME}.fpga
     COMMAND ${UTILS_DIR}/run-on-fpga.sh ${NAME}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}
-    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
     COMMENT "Running ${NAME} on FPGA"
     ${USES_TERMINAL})
 

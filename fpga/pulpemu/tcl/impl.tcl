@@ -1,5 +1,5 @@
 # clocks
-create_clock -period 25.000 -name clk      [get_nets {pulpino_wrap_i/clk}]
+create_clock -period 50.000 -name clk      [get_nets {pulpino_wrap_i/clk}]
 create_clock -period 40.000 -name spi_sck  [get_nets {pulpino_wrap_i/spi_clk_i}]
 create_clock -period 40.000 -name tck      [get_nets {pulpino_wrap_i/tck_i}]
 
