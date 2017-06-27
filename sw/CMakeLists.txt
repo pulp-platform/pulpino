@@ -24,11 +24,6 @@ enable_testing()
 
 set(RISCV 1)
 
-# check some silly combinations and throw errors
-if(${USE_RISCY} AND ${USE_ZERO_RISCY})
-  message(SEND_ERROR "Only one core can be defined at the time!")
-endif()
-
 if(${RISCY_RV32F} AND ${USE_ZERO_RISCY})
   message(SEND_ERROR "Floating Point Extensions are not supported on zero-riscy")
 endif()
