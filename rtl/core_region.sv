@@ -153,7 +153,7 @@ module core_region
     end
   end
 
-  if(USE_ZERO_RISCY) begin
+  if(USE_ZERO_RISCY) begin: CORE
       zeroriscy_core
       #(
         .N_EXT_PERF_COUNTERS (     0      ),
@@ -208,7 +208,7 @@ module core_region
         .core_busy_o     ( core_busy_o       ),
         .ext_perf_counters_i (               )
       );
-  end else begin
+  end else begin: CORE
 
     riscv_core
     #(
@@ -651,11 +651,11 @@ module core_region
   (
     .clk           ( clk                     ),
 
-    .core_req_i    ( RISCV_CORE.data_req_o   ),
-    .core_addr_i   ( RISCV_CORE.data_addr_o  ),
-    .core_we_i     ( RISCV_CORE.data_we_o    ),
-    .core_be_i     ( RISCV_CORE.data_be_o    ),
-    .core_wdata_i  ( RISCV_CORE.data_wdata_o ),
+    .core_req_i    ( CORE.RISCV_CORE.data_req_o   ),
+    .core_addr_i   ( CORE.RISCV_CORE.data_addr_o  ),
+    .core_we_i     ( CORE.RISCV_CORE.data_we_o    ),
+    .core_be_i     ( CORE.RISCV_CORE.data_be_o    ),
+    .core_wdata_i  ( CORE.RISCV_CORE.data_wdata_o ),
     .core_gnt_o    (                         ),
     .core_rdata_o  (                         ),
     .core_rvalid_o (                         ),
@@ -671,9 +671,9 @@ module core_region
   );
 
   initial begin
-    force RISCV_CORE.data_gnt_i    = data_stalls_i.core_gnt_o;
-    force RISCV_CORE.data_rvalid_i = data_stalls_i.core_rvalid_o;
-    force RISCV_CORE.data_rdata_i  = data_stalls_i.core_rdata_o;
+    force CORE.RISCV_CORE.data_gnt_i    = data_stalls_i.core_gnt_o;
+    force CORE.RISCV_CORE.data_rvalid_i = data_stalls_i.core_rvalid_o;
+    force CORE.RISCV_CORE.data_rdata_i  = data_stalls_i.core_rdata_o;
 
     force core_lsu_req   = data_stalls_i.data_req_o;
     force core_lsu_addr  = data_stalls_i.data_addr_o;
@@ -690,8 +690,8 @@ module core_region
   (
     .clk           ( clk                     ),
 
-    .core_req_i    ( RISCV_CORE.instr_req_o  ),
-    .core_addr_i   ( RISCV_CORE.instr_addr_o ),
+    .core_req_i    ( CORE.RISCV_CORE.instr_req_o  ),
+    .core_addr_i   ( CORE.RISCV_CORE.instr_addr_o ),
     .core_we_i     (                         ),
     .core_be_i     (                         ),
     .core_wdata_i  (                         ),
@@ -710,9 +710,9 @@ module core_region
   );
 
   initial begin
-    force RISCV_CORE.instr_gnt_i    = instr_stalls_i.core_gnt_o;
-    force RISCV_CORE.instr_rvalid_i = instr_stalls_i.core_rvalid_o;
-    force RISCV_CORE.instr_rdata_i  = instr_stalls_i.core_rdata_o;
+    force CORE.RISCV_CORE.instr_gnt_i    = instr_stalls_i.core_gnt_o;
+    force CORE.RISCV_CORE.instr_rvalid_i = instr_stalls_i.core_rvalid_o;
+    force CORE.RISCV_CORE.instr_rdata_i  = instr_stalls_i.core_rdata_o;
 
     force core_instr_req   = instr_stalls_i.data_req_o;
     force core_instr_addr  = instr_stalls_i.data_addr_o;

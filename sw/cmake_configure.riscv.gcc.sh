@@ -28,7 +28,7 @@ ZERO_RV32M=0
 ZERO_RV32E=0
 
 # riscy with PULPextensions, it is assumed you use the ETH GCC Compiler
-GCC_MARCH="RV32IM"
+GCC_MARCH="IMXpulpv2"
 #compile arduino lib
 ARDUINO_LIB=1
 
