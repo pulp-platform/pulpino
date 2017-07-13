@@ -6,4 +6,4 @@ else()
   set(RISCV_FLAGS "")
 endif()
 
-add_application(debug main.c TB run_debug.tcl FLAGS ${RISCV_FLAGS} LABELS "riscv_tests")
+add_application(testDebug main.c TB run_debug.tcl FLAGS ${RISCV_FLAGS} LABELS "riscv_tests")

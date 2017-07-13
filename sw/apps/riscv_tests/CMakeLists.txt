@@ -33,7 +33,7 @@ add_subdirectory(testCSR)
 
 # add_subdirectory(testDebug)
 
-add_subdirectory(debug)
+add_subdirectory(testDebug)
 add_subdirectory(testIRQ)
 #add_subdirectory(testPriv)
 
