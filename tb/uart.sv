@@ -24,7 +24,7 @@ interface uart_bus
  
   initial
   begin
-    tx   = 1'bZ;
+    tx   = 1'b1;
     file = $fopen("stdout/uart", "w");
   end
 
@@ -93,7 +93,7 @@ interface uart_bus
     for (i = 0; i < 8; i++) begin
       #(BIT_PERIOD);
       tx = c[i];
-      $display("[UART] Sent %x",c[i]);
+      $display("[UART] Sent %x at time %t",c[i],$time);
     end
 
     // stop bit
