@@ -52,11 +52,11 @@ vlog -quiet -sv -work ${LIB_NAME} +incdir+${TB_PATH}                            
 vlog -quiet -sv -work ${LIB_NAME} +incdir+${TB_PATH} +incdir+${RTL_PATH}/includes/                  ${TB_PATH}/tb.sv               || goto error
 
 vlog -quiet -sv -work ${LIB_NAME}     +incdir+${TB_PATH} -dpiheader ${TB_PATH}/jtag_dpi/dpiheader.h ${TB_PATH}/jtag_dpi.sv         || goto error
-vlog -quiet -64 -work ${LIB_NAME} -ccflags "-I${TB_PATH}/jtag_dpi/"                                 ${TB_PATH}/jtag_dpi/jtag_dpi.c || goto error
-
+vlog -quiet -64 -work ${LIB_NAME} -ccflags "-I${TB_PATH}/jtag_dpi/ -m64" -dpicpppath `which gcc`    ${TB_PATH}/jtag_dpi/jtag_dpi.c || goto error
+# 
 vlog -quiet -sv -work ${LIB_NAME} +incdir+${TB_PATH} +incdir+${RTL_PATH}/includes/ -dpiheader ${TB_PATH}/mem_dpi/dpiheader.h    ${TB_PATH}/tb.sv || goto error
-vlog -quiet -64 -work ${LIB_NAME} -ccflags "-I${TB_PATH}/mem_dpi/"                                  ${TB_PATH}/mem_dpi/mem_dpi.c                 || goto error
-
+vlog -quiet -64 -work ${LIB_NAME} -ccflags "-I${TB_PATH}/mem_dpi/  -m64" -dpicpppath `which gcc`    ${TB_PATH}/mem_dpi/mem_dpi.c                 || goto error
+# 
 echo "${Cyan}--> ${IP_NAME} compilation complete! ${NC}"
 exit 0
 

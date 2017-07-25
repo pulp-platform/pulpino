@@ -37,7 +37,7 @@ SIM_DIRECTORY="$PULP_GIT_DIRECTORY/vsim"
 #insert here your post-layout netlist if you are using IMPERIO
 PL_NETLIST=""
 
-cmake-3.3.0 "$PULP_GIT_DIRECTORY"/sw/ \
+cmake "$PULP_GIT_DIRECTORY"/sw/ \
     -DPULP_MODELSIM_DIRECTORY="$SIM_DIRECTORY" \
     -DCMAKE_C_COMPILER="$COMPILER" \
     -DVSIM="$VSIM" \
