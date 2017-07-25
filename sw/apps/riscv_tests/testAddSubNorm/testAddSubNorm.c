@@ -1,19 +1,22 @@
-
 // This testbench checks the basic functionality of:
-//
-
-//l.addNr
-//l.adduRN
-//l.addNl
-//l.addNrR
-//l.addNrRu
-//
-//l.subNr
-//l.subNru
-//l.subNl
-//l.subNrR
-//l.subNrRu
-
+/*
+p.addun
+p.addn
+p.addurn
+p.addrn
+p.subun
+p.subn
+p.suburn
+p.subrn
+p.addunr
+p.addnr
+p.addurnr
+p.addrnr
+p.subunr
+p.subnr
+p.suburnr
+p.subrnr
+*/
 #include <stdio.h>
 #include "utils.h"
 #include "bench.h"

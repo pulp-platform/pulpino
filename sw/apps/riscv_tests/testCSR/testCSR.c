@@ -17,8 +17,7 @@
 // and writeable:
 // - mepc
 // - mstatus
-// - mimpid
-// - mhartid
+
 
 #include <stdio.h>
 #include "utils.h"

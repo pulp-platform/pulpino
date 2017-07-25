@@ -8,6 +8,10 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
+/*
+  Beta version. Not included in Tests yet
+*/
+
 #include <stdio.h>
 #include "utils.h"
 #include "bench.h"

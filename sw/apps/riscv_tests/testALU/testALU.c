@@ -14,19 +14,17 @@
 // addi
 // sub
 // and
-// andi   1 test
+// andi
 // or
-// ori    1 test
+// ori
 // xor
-// xori   1 test
+// xori
 // sll
 // slli
 // sra
 // srai
 // srl
 // srli
-//
-// (p.cmov)
 
 
 #include <stdio.h>

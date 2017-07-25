@@ -4,10 +4,8 @@
 // p.minu
 // p.max
 // p.maxu
-// p.avg
-// p.avgu
 // p.abs
-//
+// p.ror
 // p.exthz
 // p.exths
 // p.extbz
