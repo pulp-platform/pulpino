@@ -267,25 +267,59 @@ module tb;
       gpio_in[4]=1'b1;
       gpio_in[7]=1'b1;
     end else if (TEST == "ARDUINO_SHIFT") begin
+
       if (~gpio_out[0])
         wait(gpio_out[0]);
+      //start TEST
 
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b1;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b1;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b0;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b0;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b1;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b0;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b0;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b1;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
     end else if (TEST == "ARDUINO_PULSEIN") begin
       if (~gpio_out[0])
         wait(gpio_out[0]);
