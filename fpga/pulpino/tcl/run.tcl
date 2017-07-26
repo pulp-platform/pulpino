@@ -11,29 +11,45 @@ if { ![info exists ::env(XILINX_BOARD)] } {
 }
 
 if { ![info exists ::env(USE_ZERO_RISCY)] } {
+  puts "USE_ZERO_RISCY = 0"
   set ::env(USE_ZERO_RISCY) 0
+} else {
+  puts "USE_ZERO_RISCY = 1"
 }
 if { ![info exists ::env(RISCY_RV32F)] } {
+  puts "RISCY_RV32F = 0"
   set ::env(RISCY_RV32F) 0
+} else {
+  puts "RISCY_RV32F = 1"
 }
 if { ![info exists ::env(ZERO_RV32M)] } {
+  puts "ZERO_RV32M = 0"
   set ::env(ZERO_RV32M) 0
+} else {
+  puts "ZERO_RV32M = 1"
 }
 if { ![info exists ::env(ZERO_RV32E)] } {
+  puts "ZERO_RV32E = 0"
   set ::env(ZERO_RV32E) 0
+} else {
+  puts "ZERO_RV32E = 1"
 }
 
 if { $::env(USE_ZERO_RISCY)==1} {
     if {$::env(ZERO_RV32E)} {
-	set NAME "MICRO_RISCY"
-    } else { 
-	set NAME "ZERO_RISCY"
+          set NAME "MICRO_RISCY"
+          puts "MICRO_RISCY COMPILATION"
+    } else {
+          set NAME "ZERO_RISCY"
+          puts "ZERO_RISCY COMPILATION"
     }
 } else {
     if {$::env(RISCY_RV32F)} {
-	set NAME "RISCY_FP"
+          set NAME "RISCY_FP"
+          puts "RISCY_FP COMPILATION"
     } else { 
-	set NAME "RISCY"
+          set NAME "RISCY"
+          puts "RISCY COMPILATION"
     }
 }
 
