@@ -62,12 +62,7 @@ static unsigned remu10(unsigned n) {
 
 int putchar(int s)
 {
-  #ifndef POWER_MES
-  #warning "POWER_MES Not defined"
   uart_sendchar(s);
-  #else
-  #warning "POWER_MES defined"
-  #endif
   return s;
 }
 
