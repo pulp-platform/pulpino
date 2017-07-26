@@ -273,7 +273,7 @@ int main(int argc, const char * const argv[])
   
   pass = flag && pass;
   
-  flagPassFail(pass, get_core_id);
+  flagPassFail(pass, coreid);
   
   synch_barrier();
 /////////////////////////////////////////////////////////
