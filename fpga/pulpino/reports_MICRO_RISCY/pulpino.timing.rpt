@@ -1,0 +1,319 @@
+Copyright 1986-2015 Xilinx, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2015.1 (lin64) Build 1215546 Mon Apr 27 19:07:21 MDT 2015
+| Date         : Thu Jul 27 09:49:22 2017
+| Host         : maipo.ee.ethz.ch running 64-bit CentOS release 6.5 (Final)
+| Command      : report_timing -nworst 1 -delay_type max -sort_by group -file reports_MICRO_RISCY/pulpino.timing.rpt
+| Design       : pulpino
+| Device       : 7z020-clg484
+| Speed File   : -1  PRODUCTION 1.11 2014-09-11
+---------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             11.613ns  (required time - arrival time)
+  Source:                 pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/word_count_reg[11]/C
+                            (rising edge-triggered cell FDCE clocked by tck  {rise@0.000ns fall@20.000ns period=40.000ns})
+  Destination:            pulpino_i/core_region_i/adv_dbg_if_i/cluster_tap_i/tdo_pad_o_reg/D
+                            (falling edge-triggered cell FDCE clocked by tck  {rise@0.000ns fall@20.000ns period=40.000ns})
+  Path Group:             tck
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (tck fall@20.000ns - tck rise@0.000ns)
+  Data Path Delay:        8.359ns  (logic 2.137ns (25.565%)  route 6.222ns (74.435%))
+  Logic Levels:           12  (LUT2=2 LUT4=2 LUT5=3 LUT6=5)
+  Clock Path Skew:        -0.040ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.399ns = ( 22.399 - 20.000 ) 
+    Source Clock Delay      (SCD):    2.622ns
+    Clock Pessimism Removal (CPR):    0.183ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock tck rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  tck_i (IN)
+                         net (fo=0)                   0.000     0.000    tck_i
+                         IBUF (Prop_ibuf_I_O)         0.921     0.921 r  tck_i_IBUF_inst/O
+                         net (fo=1, unplaced)         0.800     1.721    tck_i_IBUF
+                         BUFG (Prop_bufg_I_O)         0.101     1.822 r  tck_i_IBUF_BUFG_inst/O
+                         net (fo=411, unplaced)       0.800     2.622    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/tck_i
+                         FDCE                                         r  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/word_count_reg[11]/C
+  -------------------------------------------------------------------    -------------------
+                         FDCE (Prop_fdce_C_Q)         0.478     3.100 f  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/word_count_reg[11]/Q
+                         net (fo=3, unplaced)         0.759     3.859    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_biu_i/word_count_reg[11]
+                         LUT4 (Prop_lut4_I1_O)        0.295     4.154 f  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_biu_i/wr_reg_i_12/O
+                         net (fo=1, unplaced)         0.449     4.603    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_biu_i/wr_reg_i_12_n_0
+                         LUT6 (Prop_lut6_I2_O)        0.124     4.727 f  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_biu_i/wr_reg_i_8/O
+                         net (fo=3, unplaced)         0.467     5.194    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_crc_i/word_count_reg[9]
+                         LUT2 (Prop_lut2_I1_O)        0.124     5.318 r  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_crc_i/FSM_sequential_module_state[2]_i_4/O
+                         net (fo=12, unplaced)        0.467     5.785    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_crc_i/FSM_sequential_module_state_reg[0]
+                         LUT2 (Prop_lut2_I0_O)        0.124     5.909 r  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_crc_i/operation[3]_i_16/O
+                         net (fo=1, unplaced)         0.449     6.358    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_crc_i/operation[3]_i_16_n_0
+                         LUT6 (Prop_lut6_I1_O)        0.124     6.482 r  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_crc_i/operation[3]_i_9/O
+                         net (fo=1, unplaced)         0.449     6.931    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_biu_i/FSM_sequential_module_state_reg[3]_1
+                         LUT5 (Prop_lut5_I4_O)        0.124     7.055 r  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_biu_i/operation[3]_i_3/O
+                         net (fo=4, unplaced)         0.926     7.981    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i_n_40
+                         LUT4 (Prop_lut4_I1_O)        0.124     8.105 r  pulpino_i/core_region_i/adv_dbg_if_i/tdo_pad_o_i_24/O
+                         net (fo=2, unplaced)         0.460     8.565    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_biu_i/FSM_sequential_module_state_reg[0]_1
+                         LUT5 (Prop_lut5_I0_O)        0.124     8.689 r  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_biu_i/tdo_pad_o_i_12/O
+                         net (fo=1, unplaced)         0.449     9.138    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_biu_i/tdo_output_sel[1]
+                         LUT6 (Prop_lut6_I2_O)        0.124     9.262 r  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_axi/axi_biu_i/tdo_pad_o_i_7/O
+                         net (fo=1, unplaced)         0.449     9.711    pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_cpu_or1k/or1k_biu_i/crc_reg[0]
+                         LUT5 (Prop_lut5_I3_O)        0.124     9.835 r  pulpino_i/core_region_i/adv_dbg_if_i/dbg_module_i/i_dbg_cpu_or1k/or1k_biu_i/tdo_pad_o_i_3/O
+                         net (fo=1, unplaced)         0.449    10.284    pulpino_i/core_region_i/adv_dbg_if_i/cluster_tap_i/module_id_reg_reg[0]
+                         LUT6 (Prop_lut6_I1_O)        0.124    10.408 r  pulpino_i/core_region_i/adv_dbg_if_i/cluster_tap_i/tdo_pad_o_i_2/O
+                         net (fo=1, unplaced)         0.449    10.857    pulpino_i/core_region_i/adv_dbg_if_i/cluster_tap_i/tdo_pad_o_i_2_n_0
+                         LUT6 (Prop_lut6_I5_O)        0.124    10.981 r  pulpino_i/core_region_i/adv_dbg_if_i/cluster_tap_i/tdo_pad_o_i_1/O
+                         net (fo=1, unplaced)         0.000    10.981    pulpino_i/core_region_i/adv_dbg_if_i/cluster_tap_i/tdo_pad_o_i_1_n_0
+                         FDCE                                         r  pulpino_i/core_region_i/adv_dbg_if_i/cluster_tap_i/tdo_pad_o_reg/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock tck fall edge)       20.000    20.000 f  
+                                                      0.000    20.000 f  tck_i (IN)
+                         net (fo=0)                   0.000    20.000    tck_i
+                         IBUF (Prop_ibuf_I_O)         0.788    20.788 f  tck_i_IBUF_inst/O
+                         net (fo=1, unplaced)         0.760    21.548    tck_i_IBUF
+                         BUFG (Prop_bufg_I_O)         0.091    21.639 f  tck_i_IBUF_BUFG_inst/O
+                         net (fo=411, unplaced)       0.760    22.399    pulpino_i/core_region_i/adv_dbg_if_i/cluster_tap_i/CLK
+                         FDCE                                         r  pulpino_i/core_region_i/adv_dbg_if_i/cluster_tap_i/tdo_pad_o_reg/C  (IS_INVERTED)
+                         clock pessimism              0.183    22.582    
+                         clock uncertainty           -0.035    22.547    
+                         FDCE (Setup_fdce_C_D)        0.047    22.594    pulpino_i/core_region_i/adv_dbg_if_i/cluster_tap_i/tdo_pad_o_reg
+  -------------------------------------------------------------------
+                         required time                         22.594    
+                         arrival time                         -10.981    
+  -------------------------------------------------------------------
+                         slack                                 11.613    
+
+Slack (MET) :             16.773ns  (required time - arrival time)
+  Source:                 pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_txreg/counter_reg[1]/C
+                            (falling edge-triggered cell FDCE clocked by spi_sck  {rise@0.000ns fall@20.000ns period=40.000ns})
+  Destination:            pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_slave_sm/tx_done_reg_reg/D
+                            (rising edge-triggered cell FDCE clocked by spi_sck  {rise@0.000ns fall@20.000ns period=40.000ns})
+  Path Group:             spi_sck
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            20.000ns  (spi_sck rise@40.000ns - spi_sck fall@20.000ns)
+  Data Path Delay:        3.196ns  (logic 1.040ns (32.541%)  route 2.156ns (67.459%))
+  Logic Levels:           3  (LUT3=1 LUT4=1 LUT5=1)
+  Clock Path Skew:        -0.040ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.399ns = ( 42.399 - 40.000 ) 
+    Source Clock Delay      (SCD):    2.622ns = ( 22.622 - 20.000 ) 
+    Clock Pessimism Removal (CPR):    0.183ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock spi_sck fall edge)   20.000    20.000 f  
+                                                      0.000    20.000 f  spi_clk_i (IN)
+                         net (fo=0)                   0.000    20.000    spi_clk_i
+                         IBUF (Prop_ibuf_I_O)         0.921    20.921 f  spi_clk_i_IBUF_inst/O
+                         net (fo=1, unplaced)         0.800    21.721    spi_clk_i_IBUF
+                         BUFG (Prop_bufg_I_O)         0.101    21.822 f  spi_clk_i_IBUF_BUFG_inst/O
+                         net (fo=497, unplaced)       0.800    22.622    pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_txreg/sclk_test
+                         FDCE                                         r  pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_txreg/counter_reg[1]/C  (IS_INVERTED)
+  -------------------------------------------------------------------    -------------------
+                         FDCE (Prop_fdce_C_Q)         0.481    23.103 r  pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_txreg/counter_reg[1]/Q
+                         net (fo=6, unplaced)         0.773    23.876    pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_txreg/counter_reg[1]
+                         LUT4 (Prop_lut4_I1_O)        0.287    24.163 f  pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_txreg/tx_done_reg_i_3/O
+                         net (fo=1, unplaced)         0.449    24.612    pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_txreg/tx_done_reg_i_3_n_0
+                         LUT5 (Prop_lut5_I0_O)        0.124    24.736 r  pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_txreg/tx_done_reg_i_2/O
+                         net (fo=6, unplaced)         0.934    25.670    pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_txreg/counter_reg[0]_0
+                         LUT3 (Prop_lut3_I0_O)        0.148    25.818 r  pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_txreg/tx_done_reg_i_1/O
+                         net (fo=1, unplaced)         0.000    25.818    pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_slave_sm/tx_done
+                         FDCE                                         r  pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_slave_sm/tx_done_reg_reg/D
+  -------------------------------------------------------------------    -------------------
+
+                         (clock spi_sck rise edge)   40.000    40.000 r  
+                                                      0.000    40.000 r  spi_clk_i (IN)
+                         net (fo=0)                   0.000    40.000    spi_clk_i
+                         IBUF (Prop_ibuf_I_O)         0.788    40.788 r  spi_clk_i_IBUF_inst/O
+                         net (fo=1, unplaced)         0.760    41.548    spi_clk_i_IBUF
+                         BUFG (Prop_bufg_I_O)         0.091    41.639 r  spi_clk_i_IBUF_BUFG_inst/O
+                         net (fo=497, unplaced)       0.760    42.399    pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_slave_sm/spi_clk_i_IBUF_BUFG
+                         FDCE                                         r  pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_slave_sm/tx_done_reg_reg/C
+                         clock pessimism              0.183    42.582    
+                         clock uncertainty           -0.035    42.547    
+                         FDCE (Setup_fdce_C_D)        0.044    42.591    pulpino_i/peripherals_i/axi_spi_slave_i/axi_spi_slave_i/u_slave_sm/tx_done_reg_reg
+  -------------------------------------------------------------------
+                         required time                         42.591    
+                         arrival time                         -25.818    
+  -------------------------------------------------------------------
+                         slack                                 16.773    
+
+Slack (MET) :             33.814ns  (required time - arrival time)
+  Source:                 pulpino_i/core_region_i/CORE.RISCV_CORE/load_store_unit_i/data_misaligned_q_reg/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@25.000ns period=50.000ns})
+  Destination:            pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/prefetch_buffer_i/fifo_i/rdata_Q_reg[0][0]/CE
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@25.000ns period=50.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            50.000ns  (clk rise@50.000ns - clk rise@0.000ns)
+  Data Path Delay:        15.909ns  (logic 4.666ns (29.329%)  route 11.243ns (70.671%))
+  Logic Levels:           26  (CARRY4=7 LUT3=3 LUT4=3 LUT5=2 LUT6=11)
+  Clock Path Skew:        -0.040ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.399ns = ( 52.399 - 50.000 ) 
+    Source Clock Delay      (SCD):    2.622ns
+    Clock Pessimism Removal (CPR):    0.183ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+                         IBUF (Prop_ibuf_I_O)         0.921     0.921 r  clk_IBUF_inst/O
+                         net (fo=1, unplaced)         0.800     1.721    clk_IBUF
+                         BUFG (Prop_bufg_I_O)         0.101     1.822 r  clk_IBUF_BUFG_inst/O
+                         net (fo=7671, unplaced)      0.800     2.622    pulpino_i/core_region_i/CORE.RISCV_CORE/load_store_unit_i/clk_IBUF_BUFG
+                         FDCE                                         r  pulpino_i/core_region_i/CORE.RISCV_CORE/load_store_unit_i/data_misaligned_q_reg/C
+  -------------------------------------------------------------------    -------------------
+                         FDCE (Prop_fdce_C_Q)         0.478     3.100 f  pulpino_i/core_region_i/CORE.RISCV_CORE/load_store_unit_i/data_misaligned_q_reg/Q
+                         net (fo=40, unplaced)        0.818     3.918    pulpino_i/core_region_i/CORE.RISCV_CORE/load_store_unit_i/rdata_q_reg[0]_0
+                         LUT4 (Prop_lut4_I1_O)        0.295     4.213 f  pulpino_i/core_region_i/CORE.RISCV_CORE/load_store_unit_i/rdata_offset_q[1]_i_21/O
+                         net (fo=42, unplaced)        0.743     4.956    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/data_misaligned
+                         LUT4 (Prop_lut4_I0_O)        0.124     5.080 f  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/rdata_offset_q[1]_i_38/O
+                         net (fo=1, unplaced)         0.449     5.529    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/rdata_offset_q[1]_i_38_n_0
+                         LUT6 (Prop_lut6_I1_O)        0.124     5.653 r  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/rdata_offset_q[1]_i_16/O
+                         net (fo=32, unplaced)        0.520     6.173    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/rdata_offset_q[1]_i_16_n_0
+                         LUT5 (Prop_lut5_I0_O)        0.124     6.297 r  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/rdata_offset_q[1]_i_17/O
+                         net (fo=31, unplaced)        0.519     6.816    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/rdata_offset_q[1]_i_17_n_0
+                         LUT6 (Prop_lut6_I4_O)        0.124     6.940 r  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/rdata_offset_q[1]_i_5/O
+                         net (fo=7, unplaced)         0.937     7.877    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/alu_operand_a_ex[1]
+                         LUT3 (Prop_lut3_I0_O)        0.124     8.001 r  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/rdata_offset_q[1]_i_9/O
+                         net (fo=1, unplaced)         0.000     8.001    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/rdata_offset_q[1]_i_9_n_0
+                         CARRY4 (Prop_carry4_S[1]_CO[3])
+                                                      0.533     8.534 r  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/rdata_offset_q_reg[1]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.009     8.543    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/rdata_offset_q_reg[1]_i_1_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     8.660 r  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[7]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     8.660    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[7]_i_1_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     8.777 r  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[11]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     8.777    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[11]_i_1_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     8.894 r  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[15]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     8.894    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[15]_i_1_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     9.011 r  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[19]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     9.011    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[19]_i_1_n_0
+                         CARRY4 (Prop_carry4_CI_CO[3])
+                                                      0.117     9.128 r  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[23]_i_1/CO[3]
+                         net (fo=1, unplaced)         0.000     9.128    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[23]_i_1_n_0
+                         CARRY4 (Prop_carry4_CI_O[1])
+                                                      0.337     9.465 f  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/misaligned_addr_o_reg[27]_i_1/O[1]
+                         net (fo=9, unplaced)         0.758    10.223    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/adder_result_ext_o[25]
+                         LUT4 (Prop_lut4_I0_O)        0.306    10.529 f  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/branch_set_q_i_24/O
+                         net (fo=1, unplaced)         0.449    10.978    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/branch_set_q_i_24_n_0
+                         LUT5 (Prop_lut5_I4_O)        0.124    11.102 f  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/branch_set_q_i_22/O
+                         net (fo=1, unplaced)         0.449    11.551    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/branch_set_q_i_22_n_0
+                         LUT6 (Prop_lut6_I5_O)        0.124    11.675 r  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/branch_set_q_i_13/O
+                         net (fo=1, unplaced)         0.449    12.124    pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/branch_set_q_i_13_n_0
+                         LUT6 (Prop_lut6_I0_O)        0.124    12.248 r  pulpino_i/core_region_i/CORE.RISCV_CORE/ex_block_i/alu_i/branch_set_q_i_8/O
+                         net (fo=2, unplaced)         0.460    12.708    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/pc_id_o_reg[15]_0
+                         LUT6 (Prop_lut6_I4_O)        0.124    12.832 r  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/branch_set_q_i_4/O
+                         net (fo=1, unplaced)         0.449    13.281    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/branch_set_q_i_4_n_0
+                         LUT6 (Prop_lut6_I0_O)        0.124    13.405 r  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/branch_set_q_i_3/O
+                         net (fo=4, unplaced)         0.443    13.848    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/branch_decision
+                         LUT3 (Prop_lut3_I1_O)        0.124    13.972 r  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/branch_set_q_i_1/O
+                         net (fo=3, unplaced)         0.467    14.439    pulpino_i/core_region_i/CORE.RISCV_CORE/id_stage_i/int_controller_i/branch_stall
+                         LUT6 (Prop_lut6_I3_O)        0.124    14.563 f  pulpino_i/core_region_i/CORE.RISCV_CORE/id_stage_i/int_controller_i/ctrl_fsm_cs[0]_i_4/O
+                         net (fo=4, unplaced)         0.473    15.036    pulpino_i/core_region_i/CORE.RISCV_CORE/id_stage_i/controller_i/branch_set_q_reg_0
+                         LUT6 (Prop_lut6_I2_O)        0.124    15.160 f  pulpino_i/core_region_i/CORE.RISCV_CORE/id_stage_i/controller_i/addr_Q[0][1]_i_11/O
+                         net (fo=1, unplaced)         0.449    15.609    pulpino_i/core_region_i/CORE.RISCV_CORE/id_stage_i/controller_i/addr_Q[0][1]_i_11_n_0
+                         LUT6 (Prop_lut6_I5_O)        0.124    15.733 f  pulpino_i/core_region_i/CORE.RISCV_CORE/id_stage_i/controller_i/addr_Q[0][1]_i_6/O
+                         net (fo=2, unplaced)         0.460    16.193    pulpino_i/core_region_i/CORE.RISCV_CORE/id_stage_i/controller_i/offset_fsm_cs_reg[0]_1
+                         LUT6 (Prop_lut6_I1_O)        0.124    16.317 r  pulpino_i/core_region_i/CORE.RISCV_CORE/id_stage_i/controller_i/addr_Q[0][1]_i_4/O
+                         net (fo=5, unplaced)         0.930    17.247    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/prefetch_buffer_i/fifo_i/ctrl_fsm_cs_reg[2]_0
+                         LUT3 (Prop_lut3_I0_O)        0.148    17.395 r  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/prefetch_buffer_i/fifo_i/valid_Q[0]_i_4/O
+                         net (fo=3, unplaced)         0.467    17.862    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/prefetch_buffer_i/fifo_i/valid_Q[0]_i_4_n_0
+                         LUT6 (Prop_lut6_I0_O)        0.124    17.986 r  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/prefetch_buffer_i/fifo_i/rdata_Q[0][31]_i_1/O
+                         net (fo=32, unplaced)        0.545    18.531    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/prefetch_buffer_i/fifo_i/rdata_Q[0][31]_i_1_n_0
+                         FDCE                                         r  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/prefetch_buffer_i/fifo_i/rdata_Q_reg[0][0]/CE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       50.000    50.000 r  
+                                                      0.000    50.000 r  clk (IN)
+                         net (fo=0)                   0.000    50.000    clk
+                         IBUF (Prop_ibuf_I_O)         0.788    50.788 r  clk_IBUF_inst/O
+                         net (fo=1, unplaced)         0.760    51.548    clk_IBUF
+                         BUFG (Prop_bufg_I_O)         0.091    51.639 r  clk_IBUF_BUFG_inst/O
+                         net (fo=7671, unplaced)      0.760    52.399    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/prefetch_buffer_i/fifo_i/clk_IBUF_BUFG
+                         FDCE                                         r  pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/prefetch_buffer_i/fifo_i/rdata_Q_reg[0][0]/C
+                         clock pessimism              0.183    52.582    
+                         clock uncertainty           -0.035    52.547    
+                         FDCE (Setup_fdce_C_CE)      -0.202    52.345    pulpino_i/core_region_i/CORE.RISCV_CORE/if_stage_i/prefetch_buffer_i/fifo_i/rdata_Q_reg[0][0]
+  -------------------------------------------------------------------
+                         required time                         52.345    
+                         arrival time                         -18.531    
+  -------------------------------------------------------------------
+                         slack                                 33.814    
+
+Slack (MET) :             47.530ns  (required time - arrival time)
+  Source:                 pulpino_i/clk_rst_gen_i/i_rst_gen_soc/s_rst_n_reg/C
+                            (rising edge-triggered cell FDCE clocked by clk  {rise@0.000ns fall@25.000ns period=50.000ns})
+  Destination:            pulpino_i/core_region_i/CORE.RISCV_CORE/cs_registers_i/PCMR_q_reg[0]/PRE
+                            (recovery check against rising-edge clock clk  {rise@0.000ns fall@25.000ns period=50.000ns})
+  Path Group:             **async_default**
+  Path Type:              Recovery (Max at Slow Process Corner)
+  Requirement:            50.000ns  (clk rise@50.000ns - clk rise@0.000ns)
+  Data Path Delay:        2.001ns  (logic 0.773ns (38.631%)  route 1.228ns (61.369%))
+  Logic Levels:           1  (LUT1=1)
+  Clock Path Skew:        -0.040ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    2.399ns = ( 52.399 - 50.000 ) 
+    Source Clock Delay      (SCD):    2.622ns
+    Clock Pessimism Removal (CPR):    0.183ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                                                      0.000     0.000 r  clk (IN)
+                         net (fo=0)                   0.000     0.000    clk
+                         IBUF (Prop_ibuf_I_O)         0.921     0.921 r  clk_IBUF_inst/O
+                         net (fo=1, unplaced)         0.800     1.721    clk_IBUF
+                         BUFG (Prop_bufg_I_O)         0.101     1.822 r  clk_IBUF_BUFG_inst/O
+                         net (fo=7671, unplaced)      0.800     2.622    pulpino_i/clk_rst_gen_i/i_rst_gen_soc/clk_IBUF_BUFG
+                         FDCE                                         r  pulpino_i/clk_rst_gen_i/i_rst_gen_soc/s_rst_n_reg/C
+  -------------------------------------------------------------------    -------------------
+                         FDCE (Prop_fdce_C_Q)         0.478     3.100 r  pulpino_i/clk_rst_gen_i/i_rst_gen_soc/s_rst_n_reg/Q
+                         net (fo=1, unplaced)         0.311     3.411    pulpino_i/clk_rst_gen_i/i_rst_gen_soc/rstn_int
+                         LUT1 (Prop_lut1_I0_O)        0.295     3.706 f  pulpino_i/clk_rst_gen_i/i_rst_gen_soc/valid_Q[0]_i_2/O
+                         net (fo=7953, unplaced)      0.917     4.623    pulpino_i/core_region_i/CORE.RISCV_CORE/cs_registers_i/s_rst_n_reg
+                         FDPE                                         f  pulpino_i/core_region_i/CORE.RISCV_CORE/cs_registers_i/PCMR_q_reg[0]/PRE
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       50.000    50.000 r  
+                                                      0.000    50.000 r  clk (IN)
+                         net (fo=0)                   0.000    50.000    clk
+                         IBUF (Prop_ibuf_I_O)         0.788    50.788 r  clk_IBUF_inst/O
+                         net (fo=1, unplaced)         0.760    51.548    clk_IBUF
+                         BUFG (Prop_bufg_I_O)         0.091    51.639 r  clk_IBUF_BUFG_inst/O
+                         net (fo=7671, unplaced)      0.760    52.399    pulpino_i/core_region_i/CORE.RISCV_CORE/cs_registers_i/clk_IBUF_BUFG
+                         FDPE                                         r  pulpino_i/core_region_i/CORE.RISCV_CORE/cs_registers_i/PCMR_q_reg[0]/C
+                         clock pessimism              0.183    52.582    
+                         clock uncertainty           -0.035    52.547    
+                         FDPE (Recov_fdpe_C_PRE)     -0.394    52.153    pulpino_i/core_region_i/CORE.RISCV_CORE/cs_registers_i/PCMR_q_reg[0]
+  -------------------------------------------------------------------
+                         required time                         52.153    
+                         arrival time                          -4.623    
+  -------------------------------------------------------------------
+                         slack                                 47.530    
+
+
+
+

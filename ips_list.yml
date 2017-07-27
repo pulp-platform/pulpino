@@ -26,7 +26,7 @@ apb/apb_event_unit:
 apb/apb_fll_if:
   commit: master
 apb/apb_gpio:
-  commit: master
+  commit: pulpinov1
 apb/apb_i2c:
   commit: master
 apb/apb_pulpino:
@@ -53,11 +53,11 @@ axi/axi_node:
 axi/axi_slice:
   commit: master
 axi/axi_slice_dc:
-  commit: 53e61a33cb6f80ed8fd119e8add9bdd19ed1fcdd
+  commit: pulpinov1
 axi/axi_spi_master:
   commit: master
 axi/axi_spi_slave:
-  commit: master
+  commit: pulpinov1
 axi/core2axi:
   commit: master
 
