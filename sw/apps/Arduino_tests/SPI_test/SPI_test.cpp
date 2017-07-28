@@ -38,8 +38,14 @@ void loop()
   SPI.endTransaction();
   delay(1);
 
-  if (y == 28)
+  if (y == 28) {
+    Serial.print("Test Success\n");
+    delay(1);
     exit(0);
-  else
+  }
+  else {
+    Serial.print("Test Fail\n");
+    delay(1);
     exit(1);
+  }
 }
