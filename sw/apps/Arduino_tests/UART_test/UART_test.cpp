@@ -53,8 +53,14 @@ void loop(){
   // prints value as string in binary (base 2)
   // also prints ending line break:
   Serial.println(thisByte, BIN);
-  
-  delay(1); 
-	 
-  exit(0);	//to end simulation properly
+
+  if(thisByte == 0x65){
+    Serial.print("TEST Success\n");
+    delay(1);
+    exit(0);
+  } else{
+    Serial.print("TEST Fail\n");
+    delay(1);
+    exit(-1);
+  }
 }

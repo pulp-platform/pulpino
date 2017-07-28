@@ -274,13 +274,20 @@ module tb;
       uart.send_char(8'h65);
     end else if (TEST == "ARDUINO_GPIO") begin
       // Here  test for GPIO Starts
-      #50us;
+      if (~gpio_out[0])
+        wait(gpio_out[0]);
+
       gpio_in[4]=1'b1;
-      #10us;
-      gpio_in[4]=1'b0;
-      #10us;
-      gpio_in[4]=1'b1;
+
+      if (~gpio_out[1])
+        wait(gpio_out[1]);
+      if (~gpio_out[2])
+        wait(gpio_out[2]);
+      if (~gpio_out[3])
+        wait(gpio_out[3]);
+
       gpio_in[7]=1'b1;
+
     end else if (TEST == "ARDUINO_SHIFT") begin
 
       if (~gpio_out[0])
