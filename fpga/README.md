@@ -56,9 +56,9 @@ Linux running on the ARM cores of the ZYNQ.
    `setenv USE_ZERO_RISCY 1`  and `setenv ZERO_RV32M 1`for zero-riscy.
    If `USE_ZERO_RISCY` is set, `setenv ZERO_RV32E 1` for zero-riscy with 16 registers and no RVM extensions.
    If you want to use the riscy core, do not set `USE_ZERO_RISCY` and set
-   `RISCY_FP` for riscy with floating point extensions.
+   `RISCY_RV32F` for riscy with floating point extensions.
 
-3. Type `make all` in the fpga directory (or `vivado-2015.1 make all`).
+3. Type `make all` in the fpga directory (or `vivado-2015.1 make clean all`).
    This builds the FPGA bitstream for the ZedBoard, downloads and compiles linux
    and u-boot, prepares the fsbl and devicetree, downloads and compiles buildroot
    and builds the boot.bin image for booting the ZYNQ.
