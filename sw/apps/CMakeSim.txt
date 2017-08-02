@@ -38,17 +38,11 @@ macro(add_sim_targets NAME)
   add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/waves
     COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/waves        ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/waves)
 
-  add_custom_command(OUTPUT                                                            ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/verilator_libs
-    COMMAND ${CMAKE_COMMAND} -E create_symlink ${PULP_MODELSIM_DIRECTORY}/verilator_libs        ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/verilator_libs)
-
   add_custom_target(${NAME}.links ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/modelsim.ini
                                               ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/work
                                               ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/tcl_files
                                               ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/waves)
 
-
-  add_custom_target(${NAME}.links_verilator ALL DEPENDS
-                                              ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/verilator_libs)
 
   ##############################################################################
   # Stimuli generation
@@ -78,14 +72,6 @@ macro(add_sim_targets NAME)
   ##############################################################################
   # Run simulation
   ##############################################################################
-
-  # run in modelsim with GUI
-  add_custom_target(${NAME}.verilate
-    WORKING_DIRECTORY ./${SUBDIR}
-    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links_verilator
-    COMMAND ./verilator_libs/Vtb_verilator ./slm_files/l2_stim.slm ./slm_files/tcdm_bank0.slm
-    COMMENT "Running ${NAME} with Verilator"
-    ${USES_TERMINAL})
 
   # run in modelsim with GUI
   add_custom_target(${NAME}.vsim
@@ -250,9 +236,6 @@ macro(add_sim_targets NAME)
     COMMAND tcsh -c "${SETENV} ${VSIM}  -c -64 -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>; run_and_exit;'"
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
 
-  add_test(NAME ${NAME}.verilate
-    COMMAND ./verilator_libs/Vtb_verilator ./slm_files/l2_stim.slm ./slm_files/tcdm_bank0.slm
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
   ##############################################################################
   # Convenience
   ##############################################################################

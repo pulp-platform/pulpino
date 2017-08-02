@@ -1,1 +1,1 @@
-add_application(testALU testALU.c LABELS "riscv_tests" "verilator_tests")
+add_application(testALU testALU.c LABELS "riscv_tests")

@@ -1,6 +1,6 @@
 set(CONV_SOURCES convolution.c conv_kernels.c)
 if (${GCC_MARCH} MATCHES "[pulp]+")
-    add_application(convolution "${CONV_SOURCES}" FLAGS "-DPROFILE -DDOTP" LABELS "sequential_tests" "verilator_tests")
+    add_application(convolution "${CONV_SOURCES}" FLAGS "-DPROFILE -DDOTP" LABELS "sequential_tests")
 else()
-    add_application(convolution "${CONV_SOURCES}" FLAGS "-DPROFILE" LABELS "sequential_tests" "verilator_tests")
+    add_application(convolution "${CONV_SOURCES}" FLAGS "-DPROFILE" LABELS "sequential_tests")
 endif()

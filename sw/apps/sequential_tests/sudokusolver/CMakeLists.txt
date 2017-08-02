@@ -1,1 +1,1 @@
-add_application(sudokusolver sudokusolver.c LABELS "sequential_tests" "verilator_tests")
+add_application(sudokusolver sudokusolver.c LABELS "sequential_tests")

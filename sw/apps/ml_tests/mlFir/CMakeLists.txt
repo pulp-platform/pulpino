@@ -1,5 +1,5 @@
 set(FP_SOURCES mlFir.c)
 
 if (${RISCY_RV32F})
-  add_application(mlFir "${FP_SOURCES}" LABELS "ml_tests" "verilator_tests")
+  add_application(mlFir "${FP_SOURCES}" LABELS "ml_tests")
 endif()
