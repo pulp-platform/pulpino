@@ -1,4 +1,17 @@
-
+/* Copyright (C) 2017 ETH Zurich, University of Bologna
+ * All rights reserved.
+ *
+ * This code is under development and not yet released to the public.
+ * Until it is released, the code is under the copyright of ETH Zurich and
+ * the University of Bologna, and may contain confidential and/or unpublished
+ * work. Any reuse/redistribution is strictly forbidden without written
+ * permission from ETH Zurich.
+ *
+ * Bug fixes and contributions will eventually be released under the
+ * SolderPad open hardware license in the context of the PULP platform
+ * (http://www.pulp-platform.org), under the copyright of ETH Zurich and the
+ * University of Bologna.
+ */
 short int Y_test[64][80] =
 {
   88,90,92,92,91,58,80,89,74,65,136,138,82,82,79,131,136,137,106,99,137,137,137,136,136,136,135,134,135,135,135,120,82,135,135,134,134,133,102,94,130,131,77,78,130,131,129,148,131,107,122,124,124,124,121,116,73,78,78,73,89,92,84,88,77,90,107,88,58,88,131,156,118,114,130,111,143,169,172,173,
