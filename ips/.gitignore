@@ -2,5 +2,6 @@ adv_dbg_if
 apb
 axi
 riscv
+zero_riscy
 or10n
 fpu

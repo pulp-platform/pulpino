@@ -110,7 +110,7 @@ It automatically selects the RISCY cores and compiles SW with all the PULP-exten
 and the RV32IM support.
 The GCC ETH compiler is needed and the GCC march flag set to "IMXpulpv2".
 
-2) cmake_configure.riscv.float.gcc.sh
+2) cmake_configure.riscvfloat.gcc.sh
 
 It automatically selects the RISCY cores and compiles SW with all the PULP-extensions 
 and the RV32IMF support.
