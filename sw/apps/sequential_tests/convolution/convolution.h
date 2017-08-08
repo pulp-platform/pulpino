@@ -1,3 +1,12 @@
+// Copyright 2017 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
 #ifndef _CONF_HEADER_
 #define _CONF_HEADER_
 
@@ -9,21 +18,22 @@
     typedef signed char      Pixel;
     typedef signed char      FiltcV     __attribute__((vector_size (4)));
     typedef signed char      PixelV     __attribute__((vector_size (4)));
-
+ #ifdef DOTP
     #define sumdotp(a, b, c)            __builtin_pulp_sdotsp4(a, b, c)
     #define dotp(a, b)                  __builtin_pulp_dotsp4(a, b)
     #define shuffle(a, b, c)            __builtin_pulp_shuffle2b(a, b, c)
-
+ #endif
 #else
 
     typedef signed short      Filtc;
     typedef signed short      Pixel;
     typedef signed short      FiltcV    __attribute__((vector_size (4)));
     typedef signed short      PixelV    __attribute__((vector_size (4)));
-
+ #ifdef DOTP
     #define sumdotp(a, b, c)            __builtin_pulp_sdotsp2(a, b, c)
     #define dotp(a, b)                  __builtin_pulp_dotsp2(a, b)
     #define shuffle(a, b, c)            __builtin_pulp_shuffle2h(a, b, c)
+ #endif
 #endif
 
 #include "data_image.h" //generate by matlab
@@ -36,7 +46,7 @@ void __attribute__ ((noinline))  Conv3x3_Vector     (Pixel * In, Pixel * Out, in
 void __attribute__ ((noinline))  Conv5x5_Scalar     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
 void __attribute__ ((noinline))  Conv5x5_Vector     (Pixel * In, Pixel * Out, int R, int C, Filtc  * Kernel);
 
-void __attribute__ ((noinline))  perf_enable_id         (int eventid);
+void __attribute__ ((noinline))  perf_enable_id         (int eventid, char all);
 
 void __attribute__ ((noinline))  InitData               (Pixel * __restrict__ Img,    int size);
 void __attribute__ ((noinline))  InitZero               (Pixel * __restrict__ Img,    int size);

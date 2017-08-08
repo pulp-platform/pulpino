@@ -1,4 +1,4 @@
-// Copyright 2015 ETH Zurich and University of Bologna.
+// Copyright 2017 ETH Zurich and University of Bologna.
 // Copyright and related rights are licensed under the Solderpad Hardware
 // License, Version 0.51 (the “License”); you may not use this file except in
 // compliance with the License.  You may obtain a copy of the License at
@@ -17,9 +17,7 @@
 // and writeable:
 // - mepc
 // - mstatus
-// - mcpuid
-// - mimpid
-// - mhartid
+
 
 #include <stdio.h>
 #include "utils.h"
@@ -150,8 +148,7 @@ void check_csr_rw(testresult_t *result, void (*start)(), void (*stop)()) {
   util_check_rw(mstatus, "mstatus", i, act, last);
 
   // constants
-  util_check_rw(mcpuid,  "0xF00", i, act, last);
-  util_check_rw(mimpid,  "0xF01", i, act, last);
-  util_check_rw(mhartid, "0xF10", i, act, last);
+  util_check_rw(mimpid,  "0xF13", i, act, last);
+  util_check_rw(mhartid, "0xF14", i, act, last);
 }
 

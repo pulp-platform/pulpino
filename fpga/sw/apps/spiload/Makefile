@@ -11,7 +11,7 @@ spiload: main.c arg_parsing.c console_read.c
 	$(CC) $(CFLAGS) -pthread -o $@ $^
 
 push: spiload
-	scp ./spiload $(FPGA_HOSTNAME):/root/
+	scp ./spiload root@$(FPGA_HOSTNAME):/root/
 
 clean:
 	@rm -f ./*.o spiload

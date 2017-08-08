@@ -1,4 +1,12 @@
-//Output shoud be : 101 decimal
+// Copyright 2017 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
 
 #include "main.cpp"
 
@@ -6,10 +14,8 @@ byte thisByte=0;
 
 
 void setup() {
-  
   pinMode(0,OUTPUT);
   Serial.begin(781250);
-	 
 }
 
 void loop(){
@@ -18,9 +24,7 @@ void loop(){
   delayMicroseconds(100);
 
   if (Serial.available())
-  thisByte=Serial.read();
-	   
-  
+    thisByte=Serial.read();
 
   Serial.write(thisByte);
   Serial.print(", dec: ");
@@ -44,8 +48,14 @@ void loop(){
   // prints value as string in binary (base 2)
   // also prints ending line break:
   Serial.println(thisByte, BIN);
-  
-  delay(1); 
-	 
-  exit(0);	//to end simulation properly
+
+  if(thisByte == 0x65){
+    Serial.print("TEST Success\n");
+    delay(1);
+    exit(0);
+  } else{
+    Serial.print("TEST Fail\n");
+    delay(1);
+    exit(-1);
+  }
 }

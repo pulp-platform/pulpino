@@ -10,10 +10,11 @@ top-level SystemVerilog file.
 
   \begin{bytefield}{24}
   \begin{rightwordgroup}{Instruction Memory}
-  \memsection{0x0000 0000}{0x0008 0000}{7}{32kB RAM}
+  \memsection{0x0000 0000}{0x0000 8000}{7}{32kB RAM}
   \end{rightwordgroup}\\
+  \memsection{}{}{2}{}\\
   \begin{rightwordgroup}{Boot ROM (r/o)}
-  \memsection{0x0000 8000}{0x0008 8000}{3}{512B ROM}
+  \memsection{0x0008 0000}{0x0008 0200}{3}{512B ROM}
   \end{rightwordgroup}\\
   \memsection{}{}{3}{} \\
   \begin{rightwordgroup}{Data Memory}

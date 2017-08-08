@@ -1,3 +1,13 @@
+// Copyright 2017 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
 
 // This testbench checks the basic functionality of:
 //
@@ -8,20 +18,29 @@
 #include "testClip_stimuli.h"
 
 #ifdef __riscv
-#define CLIP "p.clip"
-#define CLIPU "p.clipu"
+#define CLIP   "p.clip"
+#define CLIPU  "p.clipu"
+#define CLIPR  "p.clipr"
+#define CLIPUR "p.clipur"
 #else
-#define CLIP "l.clip"
-#define CLIPU "l.clipu"
+#define CLIP   "l.clip"
+#define CLIPU  "l.clipu"
 #endif
 
-void check_clip    (testresult_t *result, void (*start)(), void (*stop)());
-void check_clipu   (testresult_t *result, void (*start)(), void (*stop)());
-
+void check_clip       (testresult_t *result, void (*start)(), void (*stop)());
+void check_clipu      (testresult_t *result, void (*start)(), void (*stop)());
+#ifdef __riscv
+void check_clip_reg   (testresult_t *result, void (*start)(), void (*stop)());
+void check_clipu_reg  (testresult_t *result, void (*start)(), void (*stop)());
+#endif
 
 testcase_t testcases[] = {
   { .name = "clip"        , .test = check_clip       },
   { .name = "clipu"       , .test = check_clipu      },
+#ifdef __riscv
+  { .name = "clipr"       , .test = check_clip_reg   },
+  { .name = "clipur"      , .test = check_clipu_reg  },
+#endif
   {0, 0}
 };
 
@@ -172,3 +191,37 @@ void check_clipu(testresult_t *result, void (*start)(), void (*stop)()) {
 
   check_uint32(result, "clipu", res,  res_clipu[9]);
 }
+
+#ifdef __riscv
+void check_clip_reg(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  unsigned int res;
+
+  //-----------------------------------------------------------------
+  // Check p.clipr
+  //-----------------------------------------------------------------
+  for(i=0;i<NumberOfStimuli;i++) {
+    asm volatile (CLIPR " %[c], %[a],%[b]\n"
+        : [c] "=r" (res)
+        : [a] "r"  (op_a_clip_reg[i]), [b] "r" (op_b_clip_reg[i]));
+
+    check_uint32(result, "clipr", res,  res_clip_reg[i]);
+  }
+}
+void check_clipu_reg(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  unsigned int res;
+
+  //-----------------------------------------------------------------
+  // Check p.clipur
+  //-----------------------------------------------------------------
+  for(i=0;i<NumberOfStimuli;i++) {
+    asm volatile (CLIPUR " %[c], %[a],%[b]\n"
+        : [c] "=r" (res)
+        : [a] "r"  (op_a_clipu_reg[i]), [b] "r" (op_b_clipu_reg[i]));
+
+    check_uint32(result, "clipr", res,  res_clipu_reg[i]);
+  }
+}
+
+#endif

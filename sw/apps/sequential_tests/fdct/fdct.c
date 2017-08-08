@@ -1,3 +1,13 @@
+// Copyright 2017 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
 // *********************************************************************************************************
 // *                        FDCT.C                                                                         *
 // *                                                                                                       *
@@ -23,57 +33,62 @@
 // *  Number of clock cycles (with these inputs) -> 2132                                                   *
 // *********************************************************************************************************
 
+#include "bench.h"
 #include "utils.h"
 #include "bar.h"
-#include "bench.h"
-#include "mchan.h"
+#include "timer.h"
 #include "string_lib.h"
-
 #include "fdct.h"
 
-__attribute__ ((section(".heapscm"))) __attribute__ ((aligned (64))) short int block[BLOCKSIZE];
+short int block[BLOCKSIZE];
 
 
 void initialize_block();
 void fdct(short int *, int);
-void MCHAN_LD128(short int*, short int*);
 
-unsigned int test_dma() {
-  int i;
-  int error=0;
-  for (i=0;i<64;i++){
-    if (block_init[i]!=block[i]){
-      printf("index %d not ok: expected: %x, actual: %x; %x\n",i,block_init[i],block[i],&block_init[i]);
-      error ++;
+
+
+void check_fdct(testresult_t *result, void (*start)(), void (*stop)());
+
+testcase_t testcases[] = {
+  { .name = "fdct",          .test = check_fdct        },
+  {0, 0}
+};
+
+int main()
+{
+  return run_suite(testcases);
+}
+
+
+void check_fdct(testresult_t *result, void (*start)(), void (*stop)()) {
+  int i, n;
+
+  // initialize block for fdct
+  initialize_block();
+
+  start();
+
+ fdct (block, 8);  // 8x8 Blocks, DC precision value = 0, Quantization coefficient (mquant) = 64
+
+  stop();
+
+  // check results
+  for (i = 0; i < 64; i++) {
+    if (block[i] != check_block[i]) {
+      result->errors++;
+      printf("Error occurred! expected result: %d does not match actual result %d\n",check_block[i],block[i],0,0);
     }
   }
-  if (error == 0) {
-    printf ("DMA OK!!!!!!\n",0,0,0,0);
-  }
-  else
-    printf ("DMA Not OK!! %d\n",error,0,0,0);
-
-  return error;
 }
+
+
 
 void initialize_block(){
   int i;
-  // to be replaced with dma
-  /* for (i=0;i<BLOCKSIZE;i++){ */
-  /*   block[i] = block_init[i]; */
-  /* } */
-  //  printf("block: %x, block_init: %x\n",&block,&block_init,0,0);
-  MCHAN_LD128((short int*)block,(short int*)block_init);
-  dma_barrier();
-  //  synch_barrier();
+  for (i=0;i<BLOCKSIZE;i++)
+     block[i] = block_init[i];
 }
-
-void MCHAN_LD128(short int* tcdm_addr, short int* ext_addr){
-  set_tcdm_addr((int) tcdm_addr);
-  set_ext_addr((int) ext_addr);
-  push_cmd(LD128);
-}
-
 
 /* Fast Discrete Cosine Transform */
 
@@ -91,10 +106,8 @@ void fdct(short int *block, int lx)
    /* Note results are scaled up by sqrt(8) compared to a true DCT; */
    /* furthermore, we scale the results by 2**PASS1_BITS. */
 
-   //printf("block init: %d\n",block,0,0,0);
 
-   for (i=0; i<8; i++)
-   {
+   for (i=0; i<8; i++) {
       tmp0 = block[0] + block[7];
       tmp7 = block[0] - block[7];
       tmp1 = block[1] + block[6];
@@ -166,15 +179,11 @@ void fdct(short int *block, int lx)
       block += lx;
 
    }
-   //printf("block after pass 1: %d\n",block,0,0,0);
 
    /* Pass 2: process columns. */
    block -= 64;
-   //   block=blk;
-   //printf("block after -64: %d\n",block,0,0,0);
 
-   for (i = 0; i<8; i++)
-   {
+   for (i = 0; i<8; i++) {
       tmp0 = block[0] + block[7*lx];
       tmp7 = block[0] - block[7*lx];
       tmp1 = block[lx] + block[6*lx];
@@ -243,49 +252,6 @@ void fdct(short int *block, int lx)
       /* advance to next column */
       block++;
    }
-   //printf("block after pass 2: %d\n",block,0,0,0);
-
-   block -=8;
-   //printf("block after -8: %d\n",block,0,0,0);
-}
-
-void check_fdct(testresult_t *result, void (*start)(), void (*stop)());
-
-testcase_t testcases[] = {
-  { .name = "fdct",          .test = check_fdct        },
-  {0, 0}
-};
-
-int main()
-{
-  return run_suite(testcases);
-}
-
-
-void check_fdct(testresult_t *result, void (*start)(), void (*stop)()) {
-  int i, n;
-
-  // initialize block for fdct
-  initialize_block();
-
-  if(test_dma() != 0) {
-    result->errors++;
-    return;
-  }
-
-  start();
-
-  for(n = 0; n < REPEAT_FACTOR; ++n){
-    fdct (block, 8);  // 8x8 Blocks, DC precision value = 0, Quantization coefficient (mquant) = 64
-  }
-
-  stop();
-
-  // check results
-  for (i = 0; i < 64; i++) {
-    if (block[i] != check_block[i]) {
-      result->errors++;
-      printf("Error occurred! expected result: %d does not match actual result %d\n",check_block[i],block[i],0,0);
-    }
-  }
+   block-= 8;
+   return;
 }

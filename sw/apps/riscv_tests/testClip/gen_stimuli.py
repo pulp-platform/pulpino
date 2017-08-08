@@ -3,6 +3,16 @@
 import sys
 import random
 
+# Copyright 2017 ETH Zurich and University of Bologna.
+# Copyright and related rights are licensed under the Solderpad Hardware
+# License, Version 0.51 (the License); you may not use this file except in
+# compliance with the License.  You may obtain a copy of the License at
+# http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+# or agreed to in writing, software, hardware and materials distributed under
+# this License is distributed on an AS IS BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
+
 def write_hex8_arr(f, name, arr):
     f.write('unsigned int %s[] = {\n' % name)
     for v in arr:
@@ -89,3 +99,46 @@ write_hex32_arr(f, 'op_a_clipu' , ops_a_u)
 write_hex32_arr(f, 'res_clip'     , exp_clip_res)
 write_hex32_arr(f, 'res_clipu'    , exp_clipu_res)
 
+ops_a_s  = []
+ops_a_u  = []
+ops_b_s  = []
+ops_b_u  = []
+exp_clip_res   = []
+exp_clipu_res  = []
+
+for i in range(0,NumberOfStimuli):
+
+    a_u = random.randint(-2**20, 2**21 -1)
+    a_s = random.randint(-2**20, 2**21 -1)
+    b_u = random.randint(-2**20, 2**21 -1)
+    b_s = random.randint(-2**20, 2**21 -1)
+
+    if(a_s >= b_s):
+        clip = b_s
+    elif(a_s <= -(b_s +1)):
+        clip = -(b_s +1)
+    else:
+        clip = a_s
+
+    if(a_u >= b_u):
+        clipu = b_u
+    elif(a_u < 0):
+        clipu = 0
+    else:
+        clipu = a_u
+
+    ops_a_s.append(a_s)
+    ops_a_u.append(a_u)
+    ops_b_s.append(b_s)
+    ops_b_u.append(b_u)
+
+    exp_clip_res.append((clip) & 0xFFFFFFFF)
+    exp_clipu_res.append((clipu) & 0xFFFFFFFF)
+
+
+write_hex32_arr(f, 'op_a_clip_reg' , ops_a_s)
+write_hex32_arr(f, 'op_b_clip_reg' , ops_b_s)
+write_hex32_arr(f, 'res_clip_reg'     , exp_clip_res)
+write_hex32_arr(f, 'op_a_clipu_reg' , ops_a_u)
+write_hex32_arr(f, 'op_b_clipu_reg' , ops_b_u)
+write_hex32_arr(f, 'res_clipu_reg'    , exp_clipu_res)

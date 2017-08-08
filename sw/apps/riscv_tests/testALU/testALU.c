@@ -1,4 +1,4 @@
-// Copyright 2015 ETH Zurich and University of Bologna.
+// Copyright 2017 ETH Zurich and University of Bologna.
 // Copyright and related rights are licensed under the Solderpad Hardware
 // License, Version 0.51 (the “License”); you may not use this file except in
 // compliance with the License.  You may obtain a copy of the License at
@@ -8,26 +8,24 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
+
 // This testbench checks the basic functionality of:
 //
 // add
 // addi
 // sub
 // and
-// andi   1 test
+// andi
 // or
-// ori    1 test
+// ori
 // xor
-// xori   1 test
-// p.ror
+// xori
 // sll
 // slli
 // sra
 // srai
 // srl
 // srli
-//
-// (p.cmov)
 
 
 #include <stdio.h>
@@ -209,35 +207,6 @@ void check_shifts(testresult_t *result, void (*start)(), void (*stop)()) {
 
     check_uint32(result, "sra", g_sra_act[i],  g_sra_exp[i]);
   }
-
-  //-----------------------------------------------------------------
-  // Check p.ror
-  //-----------------------------------------------------------------
-  for(i = 0; i < (sizeof(g_ror_act)/4); i++) {
-    asm volatile ("p.ror %[c], %[a], %[b]\n"
-                  : [c] "+r" (g_ror_act[i])
-                  : [a] "r"  (g_ror_a[i]), [b] "r" (g_ror_b[i]));
-
-    check_uint32(result, "p.ror", g_ror_act[i],  g_ror_exp[i]);
-  }
-
-  asm volatile ("p.ror %[c], %[a], %[b]\n"
-                : [c] "=r" (act)
-                : [a] "r"  (0x12345678), [b] "r" (0));
-
-  check_uint32(result, "p.ror", act, 0x12345678);
-
-  asm volatile ("p.ror %[c], %[a], %[b]\n"
-                : [c] "=r" (act)
-                : [a] "r"  (0x12345678), [b] "r" (1));
-
-  check_uint32(result, "p.ror", act, 0x091A2B3C);
-
-  asm volatile ("p.ror %[c], %[a], %[b]\n"
-                : [c] "=r" (act)
-                : [a] "r"  (0x12345678), [b] "r" (31));
-
-  check_uint32(result, "p.ror", act, 0x2468ACF0);
 }
 
 void check_shifts_imm(testresult_t *result, void (*start)(), void (*stop)()) {

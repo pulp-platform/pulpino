@@ -1,0 +1,10 @@
+ip/
+vivado.jou
+vivado.log
+vivado*.backup.jou
+vivado*.backup.log
+*.cache/
+*.hw/
+*.runs/
+*.srcs/
+*.xpr

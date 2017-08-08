@@ -53,7 +53,7 @@ static volatile uint8_t twi_rxBufferIndex;
 static volatile uint8_t twi_error;
 static volatile uint8_t Address_ACK;
 
-/* 
+/*
  * Function twi_init
  * Desc     readys twi pins and sets twi bitrate
  * Input    none
@@ -65,17 +65,17 @@ void twi_init(void)
   twi_state = TWI_READY;
   twi_sendStop = true;		// default value
   twi_inRepStart = false;
-  
+
   // activate internal pullups for twi. 	###Check Later### mux
 
   // initialize twi prescaler and bit rate
   I2C_PRE = (uint16_t)(F_CPU / TWI_FREQ);
-  // enable twi 		
+  // enable twi
   I2C_CTR = I2C_CTR_EN;
   IER |= (1<<23);	//enable I2C interrupt for PULPino event handler
 }
 
-/* 
+/*
  * Function twi_disable
  * Desc     disables twi pins
  * Input    none
@@ -92,7 +92,7 @@ void twi_disable(void)
 }
 
 
-/* 
+/*
  * Function twi_setClock
  * Desc     sets twi bit rate
  * Input    Clock Frequency
@@ -101,10 +101,10 @@ void twi_disable(void)
 void twi_setFrequency(uint32_t frequency)
 {
   I2C_PRE = (uint16_t)(F_CPU / frequency);
-  
+
 }
 
-/* 
+/*
  * Function twi_readFrom	##Check Later ###
  * Desc     attempts to become twi bus master and read a
  *          series of bytes from a device on the bus
@@ -134,15 +134,15 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
   }
 
   twi_sendStop = sendStop;
-  
-  // reset error state (0xFF.. no error occured)
+
+  // reset error state (0xFF.. no error occurred)
   twi_error = 0xFF;
 
   // initialize buffer iteration vars
   twi_masterBufferIndex = 0;
   twi_masterBufferLength = length;  // This is not intuitive, read on...			### Check Later ###
   // On receive, the previously configured ACK/NACK setting is transmitted in
-  // response to the received byte before the interrupt is signalled. 
+  // response to the received byte before the interrupt is signalled.
   // Therefor we must actually set NACK when the _next_ to last byte is
   // received, causing that NACK to be sent in response to receiving the last
   // expected byte of data.
@@ -150,22 +150,22 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
   // put address in the TX
   I2C_TX  = (address <<1) | 0x01;	//Device address should be only 7 bits the 8th bit determine read or write (here read as one)
   I2C_CTR =  I2C_CTR_EN_INTEN;	//Enable interrupt
-  
+
   if (true == twi_inRepStart) {	//###Check Later ###
     // if we're in the repeated start state, then we've already sent the start,
     // (@@@ we hope), and the TWI statemachine is just waiting for the address byte.
     // We need to remove ourselves from the repeated start state before we enable interrupts,
     // since the ISR is ASYNC, and we could get confused if we hit the ISR before cleaning
-    // up. Also, don't enable the START interrupt. There may be one pending from the 
+    // up. Also, don't enable the START interrupt. There may be one pending from the
     // repeated start that we sent ourselves, and that would really confuse things.
     twi_inRepStart = false;			// remember, we're dealing with an ASYNC ISR
      // write without start bit (already sent)
     I2C_CMD = I2C_WRITE;
   }
   else
-    // send start condition and write 
+    // send start condition and write
     I2C_CMD = I2C_START_WRITE;
-  
+
   twi_state = TWI_MRX;
 
   Address_ACK=1;	//indicate we have just sent the addresss
@@ -182,14 +182,14 @@ uint8_t twi_readFrom(uint8_t address, uint8_t* data, uint8_t length, uint8_t sen
   // copy twi buffer to data
   for(i = 0; i < length; ++i)
     data[i] = twi_masterBuffer[i];
-   
-	
+
+
   return length;
 }
 
 
 
-/* 
+/*
  * Function twi_writeTo
  * Desc     attempts to become twi bus master and write a
  *          series of bytes to a device on the bus
@@ -222,20 +222,20 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
   while((I2C_STATUS & I2C_STATUS_BUSY) == I2C_STATUS_BUSY ){
     continue;
   }
-  
+
   twi_sendStop = sendStop;
-  // reset error state (0xFF.. no error occured)
-  twi_error = 0xFF;	
+  // reset error state (0xFF.. no error occurred)
+  twi_error = 0xFF;
 
   // initialize buffer iteration vars
   twi_masterBufferIndex = 0;
   twi_masterBufferLength = length;
-  
+
   // copy data to twi buffer
   for(i = 0; i < length; ++i){
     twi_masterBuffer[i] = data[i];
   }
-  
+
   // put address in the TX
   I2C_TX  = address <<1;	//Device address should be only 7 bits the 8th bit determine read or write (here Write as Zero)
   I2C_CTR =  I2C_CTR_EN_INTEN;	//Enable interrupt
@@ -247,23 +247,23 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
     // (@@@ we hope), and the TWI statemachine is just waiting for the address byte.
     // We need to remove ourselves from the repeated start state before we enable interrupts,
     // since the ISR is ASYNC, and we could get confused if we hit the ISR before cleaning
-    // up. Also, don't enable the START interrupt. There may be one pending from the 
+    // up. Also, don't enable the START interrupt. There may be one pending from the
     // repeated start that we sent outselves, and that would really confuse things.
     twi_inRepStart = false;			// remember, we're dealing with an ASYNC ISR
     // write without start bit (already sent)
     I2C_CMD = I2C_WRITE;
   }
   else
-    // send start condition and write     
+    // send start condition and write
     I2C_CMD = I2C_START_WRITE;
-    
+
   twi_state = TWI_MTX;	//postponed to here because interrupt is asserted at the end of each transmission which leads to unwanted behaviourm So updating the satate should be late so the previous interrupt doesn't act at all
 
 // wait for write operation to complete
   while(wait && (TWI_MTX == twi_state)){
     continue;
   }
-  
+
   if (twi_error == 0xFF)
     return 0;	// success
   else if (twi_error == TW_MT_SLA_NACK)
@@ -275,7 +275,7 @@ uint8_t twi_writeTo(uint8_t address, uint8_t* data, uint8_t length, uint8_t wait
 }
 
 
-/* 
+/*
  * Function twi_stop
  * Desc     relinquishes bus master status
  * Input    none
@@ -291,7 +291,7 @@ void twi_stop(void)
   twi_state = TWI_READY;
 }
 
-/* 
+/*
  * Function twi_releaseBus
  * Desc     releases bus control
  * Input    none
@@ -316,16 +316,16 @@ void ISR_I2C(void)
   else if ((status & I2C_STATUS_RXACK) == 0){ //Ack is active low
 	if(twi_state == TWI_MTX){
 		if(twi_masterBufferIndex < twi_masterBufferLength){
-		// copy data to output register	
+		// copy data to output register
 		I2C_TX = twi_masterBuffer[twi_masterBufferIndex++];
 		I2C_CMD = I2C_WRITE;
 		}
-		else{   
+		else{
 			if (twi_sendStop)
 			  twi_stop();
 			else{
 			  twi_inRepStart = true;	// we're gonna send the START
-			  // don't enable the interrupt. We'll generate the start, but we 
+			  // don't enable the interrupt. We'll generate the start, but we
 			  // avoid handling the interrupt until we're in the next transaction,
 			  // at the point where we would normally issue the start.
 			  I2C_CTR = I2C_CTR_EN;		//disable interrupt
@@ -343,12 +343,12 @@ void ISR_I2C(void)
 
 		if(twi_masterBufferIndex < twi_masterBufferLength)
 			I2C_CMD = I2C_READ;
-		else{   
+		else{
 			if (twi_sendStop)
 			  twi_stop();
 			else{
 			  twi_inRepStart = true;	// we're gonna send the START
-			  // don't enable the interrupt. We'll generate the start, but we 
+			  // don't enable the interrupt. We'll generate the start, but we
 			  // avoid handling the interrupt until we're in the next transaction,
 			  // at the point where we would normally issue the start.
 			  I2C_CTR = I2C_CTR_EN;		//disable interrupt
@@ -360,7 +360,7 @@ void ISR_I2C(void)
   }
   else{
   	if(twi_state == TWI_MTX)
-	  	if(!twi_masterBufferIndex)	
+	  	if(!twi_masterBufferIndex)
 	  		twi_error = TW_MT_SLA_NACK;	//Address was not Acknowledged
 	  	else
 			twi_error = TW_MT_DATA_NACK;	//Data was not Acknowledged
@@ -370,4 +370,3 @@ void ISR_I2C(void)
   I2C_CMD |= 0x01;	//clear I2C interrupt pending
   ICP|= (1<<23);		//clear I2C interrupt pending
 }
-

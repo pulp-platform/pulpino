@@ -20,50 +20,55 @@
 
 # APB IPs
 apb/apb_node:
-  commit: master
+  commit: pulpinov1
 apb/apb_event_unit:
-  commit: master
+  commit: pulpinov1
 apb/apb_fll_if:
-  commit: master
+  commit: pulpinov1
 apb/apb_gpio:
-  commit: master
+  commit: pulpinov1
 apb/apb_i2c:
-  commit: master
+  commit: pulpinov1
 apb/apb_pulpino:
-  commit: master
+  commit: pulpinov1
 apb/apb_spi_master:
-  commit: master
+  commit: pulpinov1
 apb/apb_timer:
-  commit: master
+  commit: pulpinov1
 apb/apb_uart:
-  commit: master
+  commit: pulpinov1
+apb/apb_uart_sv:
+  commit: pulpinov1
 apb/apb2per:
-  commit: master
+  commit: pulpinov1
+
 
 # AXI IPs
 axi/axi2apb:
-  commit: master
+  commit: pulpinov1
 axi/axi_mem_if_DP:
-  commit: master
+  commit: pulpinov1
 axi/axi_node:
-  commit: master
+  commit: pulpinov1
 axi/axi_slice:
-  commit: master
+  commit: pulpinov1
 axi/axi_slice_dc:
-  commit: master
+  commit: pulpinov1
 axi/axi_spi_master:
-  commit: master
+  commit: pulpinov1
 axi/axi_spi_slave:
-  commit: master
+  commit: pulpinov1
 axi/core2axi:
-  commit: master
+  commit: pulpinov1
 
 adv_dbg_if:
-  commit: master
+  commit: pulpinov1
 
 riscv:
-  commit: master
-  alternatives: [or10n,riscv]
-#or10n:
-#  commit: master
-#  alternatives: [or10n,riscv]
+  commit: pulpinov1
+
+zero-riscy:
+  commit: pulpinov1
+
+fpu:
+  commit: pulpinov1

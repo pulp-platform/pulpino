@@ -1,4 +1,4 @@
-// Copyright 2015 ETH Zurich and University of Bologna.
+// Copyright 2017 ETH Zurich and University of Bologna.
 // Copyright and related rights are licensed under the Solderpad Hardware
 // License, Version 0.51 (the “License”); you may not use this file except in
 // compliance with the License.  You may obtain a copy of the License at
@@ -120,7 +120,6 @@ module peripherals
   logic [31:0]  clk_int;
   logic         s_uart_event;
   logic         i2c_event;
-  logic         s_power_event;
   logic         s_gpio_event;
 
   //////////////////////////////////////////////////////////////////
@@ -237,8 +236,8 @@ module peripherals
   ///                                                            ///
   //////////////////////////////////////////////////////////////////
 
-  apb_uart i_apb_uart
-  (
+  `ifndef VERILATOR
+  apb_uart apb_uart_i (
     .CLK      ( clk_int[1]   ),
     .RSTN     ( rst_n        ),
 
@@ -264,6 +263,30 @@ module peripherals
     .SIN      ( uart_rx     ),
     .SOUT     ( uart_tx     )
   );
+  `else
+  apb_uart_sv
+    #(
+       .APB_ADDR_WIDTH( 3 )
+    )
+    apb_uart_i
+    (
+      .CLK      ( clk_int[1]            ),
+      .RSTN     ( rst_n                 ),
+
+      .PSEL     ( s_uart_bus.psel       ),
+      .PENABLE  ( s_uart_bus.penable    ),
+      .PWRITE   ( s_uart_bus.pwrite     ),
+      .PADDR    ( s_uart_bus.paddr[4:2] ),
+      .PWDATA   ( s_uart_bus.pwdata     ),
+      .PRDATA   ( s_uart_bus.prdata     ),
+      .PREADY   ( s_uart_bus.pready     ),
+      .PSLVERR  ( s_uart_bus.pslverr    ),
+
+      .rx_i     ( uart_rx               ),
+      .tx_o     ( uart_tx               ),
+      .event_o  ( s_uart_event          )
+    );
+  `endif
 
   //////////////////////////////////////////////////////////////////
   ///                                                            ///
@@ -289,7 +312,6 @@ module peripherals
     .gpio_out     ( gpio_out      ),
     .gpio_dir     ( gpio_dir      ),
     .gpio_padcfg  ( gpio_padcfg   ),
-    .power_event  ( s_power_event ),
     .interrupt    ( s_gpio_event  )
   );
 

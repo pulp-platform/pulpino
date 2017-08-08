@@ -39,39 +39,53 @@ Linux running on the ARM cores of the ZYNQ.
 
 ## Get Started
 
+0. Check what board you have: we support Xilinx Zedboard. but the boards depend on the vendor!
+   The following build process needs to be aware of what board you have. you can set the
+   enviornment variables XILINX_BOARD and XILINX_PART to control the board and part number.
+   if you don't specify these, the following defaults values are used:
+   XILINX_PART "xc7z020clg484-1"
+   XILINX_BOARD "em.avnet.com:zynq:zed:c"
+
+
 1. Make sure you have the Vivado toolchain and the Xilinx SDK toolchain in your
    PATH before continuing. The Vivado toolchain is required to generate the
    bitstream, while the SDK contains the ARM compiler that is used for
    cross-compiling linux and applications.
 
-2. Type `make all` in the fpga directory
+2. Set the enviroment variable to select which core you want to synthesize.
+   `setenv USE_ZERO_RISCY 1`  and `setenv ZERO_RV32M 1`for zero-riscy.
+   If `USE_ZERO_RISCY` is set, `setenv ZERO_RV32E 1` for zero-riscy with 16 registers and no RVM extensions.
+   If you want to use the riscy core, do not set `USE_ZERO_RISCY` and set
+   `RISCY_RV32F` for riscy with floating point extensions.
+
+3. Type `make all` in the fpga directory (or `vivado-2015.1 make clean all`).
    This builds the FPGA bitstream for the ZedBoard, downloads and compiles linux
    and u-boot, prepares the fsbl and devicetree, downloads and compiles buildroot
    and builds the boot.bin image for booting the ZYNQ.
 
-3. Prepare the SD card and the ZedBoard for booting via SD card.
+4. Prepare the SD card and the ZedBoard for booting via SD card.
    To prepare the card, follow the Xilinx guide [1].
 
-4. Copy the BOOT.BIN, uImage and devicetree.dtb files to the first partition of the SD card.
+5. Copy the BOOT.BIN, uImage and devicetree.dtb files to the first partition of the SD card.
    Those files can be found inside the `fpga/sw/sd_image` folder.
 
-5. Extract the content of the rootfs.tar archive and put it on the second
+6. Extract the content of the rootfs.tar archive and put it on the second
    partition of the SD card.
    You are ready now
 
-6. Put the SD card into the ZedBoard and boot the system.
+7. Put the SD card into the ZedBoard and boot the system.
    You can use minicom or any other terminal emulator tool to communicate with
    the UART of the ZedBoard.
 
-7. You should now be able to login to the ZYNQ and have a fully working Linux
+8. You should now be able to login to the ZYNQ and have a fully working Linux
    running on it.
 
-8. To be able to login to Linux via ssh, you have to make sure that Linux is
+9. To be able to login to Linux via ssh, you have to make sure that Linux is
    able to access the local network. By default it will try to get an IP
    address via dhcp. You can check with `ifconfig` and friends if your device
    has gotten an IP address and use it to connect to it via a host.
 
-9. In order to login use the following credentials:
+10. In order to login use the following credentials:
 
        username: root
 
@@ -95,6 +109,7 @@ The boot.bin and rootfs.tar files can be found under the folder sw/sd_image.
 
 3. Compile the spiload application for the ZYNQ.
    Just type `make` inside the sw/apps/spiload folder.
+   eg: `vivado-2015.1 make`
 
 4. Transfer this program to the ZYNQ. We suggest using scp, but any other
    method works as well of course.

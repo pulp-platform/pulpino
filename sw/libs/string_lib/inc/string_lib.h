@@ -1,7 +1,7 @@
-// Copyright 2016 ETH Zurich and University of Bologna.
+// Copyright 2017 ETH Zurich and University of Bologna.
 // Copyright and related rights are licensed under the Solderpad Hardware
 // License, Version 0.51 (the “License”); you may not use this file except in
-// compliance with the License. You may obtain a copy of the License at
+// compliance with the License.  You may obtain a copy of the License at
 // http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
 // or agreed to in writing, software, hardware and materials distributed under
 // this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
@@ -25,6 +25,7 @@ int  strcmp (const char *s1, const char *s2);
 char* strcpy (char *s1, const char *s2);
 int puts(const char *s);
 int printf(const char *format, ...);
+void * memset (void *dest, int val, size_t len);
 int putchar(int s);
 
 #endif

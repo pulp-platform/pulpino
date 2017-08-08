@@ -86,7 +86,7 @@ unsigned int micros() {
 
 	csrw(mstatus, oldMstatus);
 	
-	return ((m << 14) + t) * (1.0 / clockCyclesPerMicrosecond());
+	return ((m << 14) + t) * (1.0F / clockCyclesPerMicrosecond());
 }
 
 void delay(unsigned int ms)

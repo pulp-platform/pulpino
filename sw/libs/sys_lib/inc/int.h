@@ -1,13 +1,12 @@
-// Copyright 2016 ETH Zurich and University of Bologna.
+// Copyright 2017 ETH Zurich and University of Bologna.
 // Copyright and related rights are licensed under the Solderpad Hardware
 // License, Version 0.51 (the “License”); you may not use this file except in
-// compliance with the License. You may obtain a copy of the License at
+// compliance with the License.  You may obtain a copy of the License at
 // http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
 // or agreed to in writing, software, hardware and materials distributed under
 // this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
-
 /**
  * @file
  * @brief Interrupt library for PULPino.
@@ -46,7 +45,7 @@ static inline void int_disable(void) {
   // read-modify-write
   int mstatus;
   asm volatile ("csrr %0, mstatus": "=r" (mstatus));
-  mstatus &= 0xFFFFFFFE;
+  mstatus &= 0xFFFFFFF7;
   asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
   asm("csrw 0x300, %0" : : "r" (0x0) );
 #else
@@ -69,7 +68,7 @@ static inline void int_enable(void) {
   // read-modify-write
   int mstatus;
   asm volatile ("csrr %0, mstatus": "=r" (mstatus));
-  mstatus |= 0x01;
+  mstatus |= 0x08;
   asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
 #else
   mtspr(SPR_SR, mfspr(SPR_SR) | (SPR_SR_IEE));

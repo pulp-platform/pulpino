@@ -1,4 +1,4 @@
-// Copyright 2015 ETH Zurich and University of Bologna.
+// Copyright 2017 ETH Zurich and University of Bologna.
 // Copyright and related rights are licensed under the Solderpad Hardware
 // License, Version 0.51 (the “License”); you may not use this file except in
 // compliance with the License.  You may obtain a copy of the License at
@@ -22,7 +22,8 @@
 void check_flush(testresult_t *result, void (*start)(), void (*stop)());
 void check_sleep_irq(testresult_t *result, void (*start)(), void (*stop)());
 
-// TODO: hwloops are not yet supported and thus commented
+volatile unsigned int killme=0;
+volatile unsigned int global_counter_branch=0;
 testcase_t testcases[] = {
   { .name = "flush",        .test = check_flush        },
   { .name = "sleep_irq",    .test = check_sleep_irq    },
@@ -122,10 +123,10 @@ void check_sleep_irq(testresult_t *result, void (*start)(), void (*stop)()) {
   int_disable();
 }
 
-
 void ISR_TA_CMP(void) {
   ICP = (1 << 29);
 
+  global_counter_branch++;
   switch (g_sleep_irq_global) {
     case 0:
       g_sleep_irq_global = 1;

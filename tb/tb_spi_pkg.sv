@@ -1,3 +1,13 @@
+// Copyright 2017 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
   `define SPI_STD     2'b00
   `define SPI_QUAD_TX 2'b01
   `define SPI_QUAD_RX 2'b10
@@ -230,6 +240,7 @@
     input    [7:0] command;
     input    [7:0] reg_val;
     begin
+      padmode_spi_master = use_qspi ? `SPI_QUAD_TX : `SPI_STD;
       spi_csn  = 1'b0;
       #100;
       if (use_qspi)
@@ -495,9 +506,9 @@
     $display("[SPI] Received %X", recv_data);
     if (recv_data != '0) begin
       exit_code = `EXIT_FAIL;
-      $display("Test FAILED");
+      $display("[SPI] Test FAILED");
     end else begin
       exit_code = `EXIT_SUCCESS;
-      $display("Test OK");
+      $display("[SPI] Test OK");
     end
   endtask

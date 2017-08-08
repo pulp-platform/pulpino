@@ -4,6 +4,16 @@ import sys
 import random
 import argparse
 
+# Copyright 2017 ETH Zurich and University of Bologna.
+# Copyright and related rights are licensed under the Solderpad Hardware
+# License, Version 0.51 (the License); you may not use this file except in
+# compliance with the License.  You may obtain a copy of the License at
+# http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+# or agreed to in writing, software, hardware and materials distributed under
+# this License is distributed on an AS IS BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
+
 parser = argparse.ArgumentParser(description='Generate stimuli')
 
 parser.add_argument("--riscv", dest="riscv", default=False, action="store_true", help="Generate for riscv")
@@ -120,3 +130,73 @@ write_hex32_arr(f, 'res_bclr'     , exp_bclr_res)
 write_hex32_arr(f, 'res_bextract' , exp_bextract_res)
 write_hex32_arr(f, 'res_bextractu', exp_bextractu_res)
 write_hex32_arr(f, 'res_binsert'  , exp_binsert_res)
+
+ops_a    = []
+ops_b    = []
+ops_c    = []
+
+exp_bset_res  = []
+exp_bclr_res  = []
+exp_bextract_res  = []
+exp_bextractu_res  = []
+exp_binsert_res  = []
+
+for i in range(0,NumberOfStimuli):
+
+    a = random.randint(lowerboundA, upperboundA)
+    c = random.randint(lowerboundA, upperboundA)
+
+    #imm + leng must be <= 32
+    imm = random.randint(0, 31)
+
+    for j in range(0,4): #5 tentatives
+      if args.riscv: leng = random.randint(1, 32)
+      else: leng = random.randint(0, 31)
+      if leng + imm <= 32: break
+
+    if leng + imm > 32:
+      leng = 32 - imm
+
+    Mask = (((1 << leng) -1 ) << imm) & 0xFFFFFFFF
+    print 'Mask is %08x' % Mask
+
+    b = imm | ((leng-1) << 5)
+
+    ops_a.append(a)
+    ops_b.append(b)
+    ops_c.append(c)
+
+    bset = a | Mask
+    bclr = a & ~Mask
+
+    bextract = (a & Mask)
+
+    if leng + imm < 32: lshift = 32 - leng - imm
+    else: lshift = 0
+
+    bextract = bextract << lshift
+    if(bextract & (1 << 31) != 0):
+        bextract = bextract | 0xFFFFFFFF00000000
+
+    bextract = (bextract >> (imm + lshift)) & 0xFFFFFFFF
+    bextractu = ((a & Mask) >> imm) & 0xFFFFFFFF
+
+    binsert = (((a << imm) & Mask) | (c & ~Mask)) & 0xFFFFFFFF
+
+    exp_bset_res.append(bset)
+    exp_bclr_res.append(bclr)
+    exp_bextract_res.append(bextract)
+    exp_bextractu_res.append(bextractu)
+    exp_binsert_res.append(binsert)
+
+
+
+write_hex32_arr(f, 'op_a_reg' , ops_a)
+write_hex32_arr(f, 'op_b_reg' , ops_b)
+write_hex32_arr(f, 'op_c_reg' , ops_c)
+
+write_hex32_arr(f, 'res_bset_reg'     , exp_bset_res)
+write_hex32_arr(f, 'res_bclr_reg'     , exp_bclr_res)
+write_hex32_arr(f, 'res_bextract_reg' , exp_bextract_res)
+write_hex32_arr(f, 'res_bextractu_reg', exp_bextractu_res)
+write_hex32_arr(f, 'res_binsert_reg'  , exp_binsert_res)

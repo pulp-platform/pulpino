@@ -1,3 +1,13 @@
+// Copyright 2017 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
 #include "utils.h"
 #include <stdio.h>
 #include "bar.h"
@@ -5,7 +15,7 @@
 
 /* Bubble sort code */
 
-#define N 100
+#define N 20
 
 void check_bubbleSort(testresult_t *result, void (*start)(), void (*stop)());
 
@@ -32,14 +42,10 @@ void check_bubbleSort(testresult_t *result, void (*start)(), void (*stop)()) {
 
   start();
 
-  for (j = 0; j<2; j++) {
+  for (i=0;i<n;i++)
+    array[i] = 2*n-i;
 
-    for (i=0;i<n;i++)
-      array[i] = 2*n-i;
-
-    bubbleSort(array, n);
-
-  }
+  bubbleSort(array, n);
 
   stop();
 

@@ -1,13 +1,21 @@
+// Copyright 2017 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
 // This testbench checks the basic functionality of:
 //
 // p.min
 // p.minu
 // p.max
 // p.maxu
-// p.avg
-// p.avgu
 // p.abs
-//
+// p.ror
 // p.exthz
 // p.exths
 // p.extbz
@@ -22,14 +30,14 @@
 
 void check_min(testresult_t *result, void (*start)(), void (*stop)());
 void check_max(testresult_t *result, void (*start)(), void (*stop)());
-// void check_avg(testresult_t *result, void (*start)(), void (*stop)());
+void check_ror(testresult_t *result, void (*start)(), void (*stop)());
 void check_abs(testresult_t *result, void (*start)(), void (*stop)());
 void check_ext(testresult_t *result, void (*start)(), void (*stop)());
 
 testcase_t testcases[] = {
   { .name = "min", .test = check_min },
   { .name = "max", .test = check_max },
-//  { .name = "avg", .test = check_avg },
+  { .name = "ror", .test = check_ror },
   { .name = "abs", .test = check_abs },
   { .name = "ext", .test = check_ext },
   {0, 0},
@@ -64,14 +72,13 @@ int main()
     }
 
 
-// p.avg and p.avgu are replaced by addN
-// void check_avg(testresult_t *result, void (*start)(), void (*stop)()) {
-//   unsigned int i;
-//   unsigned int act;
-//
-//   util_check_rr("p.avg",  i, g_avg);
-//   util_check_rr("p.avgu", i, g_avgu);
-// }
+
+void check_ror(testresult_t *result, void (*start)(), void (*stop)()) {
+   unsigned int i;
+   unsigned int act;
+
+   util_check_rr("p.ror",  i, g_ror);
+}
 
 void check_min(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i;

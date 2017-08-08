@@ -1,7 +1,7 @@
-// Copyright 2016 ETH Zurich and University of Bologna.
+// Copyright 2017 ETH Zurich and University of Bologna.
 // Copyright and related rights are licensed under the Solderpad Hardware
 // License, Version 0.51 (the “License”); you may not use this file except in
-// compliance with the License. You may obtain a copy of the License at
+// compliance with the License.  You may obtain a copy of the License at
 // http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
 // or agreed to in writing, software, hardware and materials distributed under
 // this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
@@ -36,23 +36,18 @@
 #define UART_REG_MSR ( UART_BASE_ADDR + 0x18) // MODEM Status Register
 #define UART_REG_SCR ( UART_BASE_ADDR + 0x1C) // Scratch Register
 
-
-
-
-#define RBR_UART REGP_8(UART_REG_RBR) 
-#define DLL_UART REGP_8(UART_REG_DLL) 
+#define RBR_UART REGP_8(UART_REG_RBR)
+#define DLL_UART REGP_8(UART_REG_DLL)
 #define THR_UART REGP_8(UART_REG_THR)
 #define DLM_UART REGP_8(UART_REG_DLM)
-#define IER_UART REGP_8(UART_REG_IER) 
-#define IIR_UART REGP_8(UART_REG_IIR) 
-#define FCR_UART REGP_8(UART_REG_FCR) 
-#define LCR_UART REGP_8(UART_REG_LCR) 
-#define MCR_UART REGP_8(UART_REG_MCR) 
-#define LSR_UART REGP_8(UART_REG_LSR) 
-#define MSR_UART REGP_8(UART_REG_MSR) 
-#define SCR_UART REGP_8(UART_REG_SCR) 
-
-
+#define IER_UART REGP_8(UART_REG_IER)
+#define IIR_UART REGP_8(UART_REG_IIR)
+#define FCR_UART REGP_8(UART_REG_FCR)
+#define LCR_UART REGP_8(UART_REG_LCR)
+#define MCR_UART REGP_8(UART_REG_MCR)
+#define LSR_UART REGP_8(UART_REG_LSR)
+#define MSR_UART REGP_8(UART_REG_MSR)
+#define SCR_UART REGP_8(UART_REG_SCR)
 
 #define DLAB 1<<7 	//DLAB bit in LCR reg
 #define ERBFI 1 	//ERBFI bit in IER reg
@@ -65,7 +60,7 @@
 #define UART_FIFO_DEPTH 64
 
 //UART_FIFO_DEPTH but to be compatible with Arduino_libs and also if in future designs it differed
-#define SERIAL_RX_BUFFER_SIZE UART_FIFO_DEPTH 	
+#define SERIAL_RX_BUFFER_SIZE UART_FIFO_DEPTH
 #define SERIAL_TX_BUFFER_SIZE UART_FIFO_DEPTH
 
 void uart_set_cfg(int parity, uint16_t clk_counter);

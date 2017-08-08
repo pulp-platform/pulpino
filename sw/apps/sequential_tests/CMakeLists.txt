@@ -13,9 +13,12 @@ add_subdirectory(matrixMul16_dotp)
 add_subdirectory(matrixMul32)
 add_subdirectory(motion_detection)
 add_subdirectory(convolution)
+add_subdirectory(pooling)
+add_subdirectory(cnn_layer)
 add_subdirectory(stencil)
-
-
+add_subdirectory(dct)
+add_subdirectory(fdct)
+add_subdirectory(non_separable_2d_filter)
 
 # region `ram' overflowed by 15978072 bytes, N constant is way too big
 #add_subdirectory(fdtd-1d)
@@ -25,21 +28,5 @@ add_subdirectory(stencil)
 #add_subdirectory(jacobi-1d-imper)
 # region `ram' overflowed by 63978248 bytes, N constant is way too big
 #add_subdirectory(jacobi-2d-imper)
-# region `dataram' overflowed by 5572 bytes
-#add_subdirectory(matrixMul32)
 # region `ram' overflowed by 1044 bytes
 #add_subdirectory(rijndael)
-
-
-# does not yet compile with llvm, thus not added per default
-#add_subdirectory(non_separable_2d_filter)
-
-
-# Look into these tests more carefully
-#add_subdirectory(blowfish) 
-#add_subdirectory(gauss-2d)
-
-# MULHU instruction
-#add_subdirectory(dct)
-#add_subdirectory(fdct)
-

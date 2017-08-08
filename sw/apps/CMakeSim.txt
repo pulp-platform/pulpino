@@ -1,7 +1,11 @@
-
+MESSAGE(STATUS "USE_ZERO_RISCY= ${USE_ZERO_RISCY}")
+MESSAGE(STATUS "RISCY_RV32F= ${RISCY_RV32F}")
+MESSAGE(STATUS "ZERO_RV32M= ${ZERO_RV32M}")
+MESSAGE(STATUS "ZERO_RV32E= ${ZERO_RV32E}")
+MESSAGE(STATUS "PL_NETLIST= ${PL_NETLIST}")
 
 macro(add_sim_targets NAME)
-  set(SETENV "env PULP_CORE=${PULP_CORE} VSIM_DIR=${PULP_MODELSIM_DIRECTORY} TB_TEST=\"$<TARGET_PROPERTY:${NAME}.elf,TB_TEST>\"")
+  set(SETENV "env VSIM_DIR=${PULP_MODELSIM_DIRECTORY} USE_ZERO_RISCY=${USE_ZERO_RISCY} RISCY_RV32F=${RISCY_RV32F} ZERO_RV32M=${ZERO_RV32M} ZERO_RV32E=${ZERO_RV32E} PL_NETLIST=${PL_NETLIST} TB_TEST=\"$<TARGET_PROPERTY:${NAME}.elf,TB_TEST>\"")
 
   # generate s19 file
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19
@@ -56,7 +60,7 @@ macro(add_sim_targets NAME)
 
   file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/vectors/)
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/vectors/stim.txt
-    COMMAND ${UTILS_DIR}/parse_s19.pl ./${NAME}.s19 > ./vectors/stim.txt
+#    COMMAND ${UTILS_DIR}/parse_s19.pl ./${NAME}.s19 > ./vectors/stim.txt
     WORKING_DIRECTORY ./${SUBDIR}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}/${NAME}.s19)
   add_custom_target(${NAME}.stim.txt ALL
@@ -130,6 +134,16 @@ macro(add_sim_targets NAME)
     COMMAND ${CMAKE_COMMAND} -E remove stdout/*
     COMMAND ${CMAKE_COMMAND} -E remove FS/*
     COMMAND tcsh -c "${SETENV} ${VSIM}  -64 -do 'source tcl_files/run_spi_pl.tcl\\;'"
+    WORKING_DIRECTORY ./${SUBDIR}
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
+    COMMENT "Running ${NAME} in ModelSim (post layout)"
+    ${USES_TERMINAL})
+
+  # run in modelsim in console post layout
+  add_custom_target(${NAME}.vsimc.spi.pl
+    COMMAND ${CMAKE_COMMAND} -E remove stdout/*
+    COMMAND ${CMAKE_COMMAND} -E remove FS/*
+    COMMAND tcsh -c "${SETENV} ${VSIM} -c -64 -do 'source tcl_files/run_spi_pl.tcl\\; run -a\\; exit'"
     WORKING_DIRECTORY ./${SUBDIR}
     DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
     COMMENT "Running ${NAME} in ModelSim (post layout)"
@@ -211,7 +225,7 @@ macro(add_sim_targets NAME)
   add_custom_target(${NAME}.fpga
     COMMAND ${UTILS_DIR}/run-on-fpga.sh ${NAME}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR}
-    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt
+    DEPENDS ${NAME}.slm.cmd ${NAME}.stim.txt ${NAME}.links
     COMMENT "Running ${NAME} on FPGA"
     ${USES_TERMINAL})
 
@@ -221,7 +235,6 @@ macro(add_sim_targets NAME)
   add_test(NAME ${NAME}.test
     COMMAND tcsh -c "${SETENV} ${VSIM}  -c -64 -do 'source tcl_files/$<TARGET_PROPERTY:${NAME}.elf,TB>; run_and_exit;'"
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${SUBDIR})
-
 
   ##############################################################################
   # Convenience

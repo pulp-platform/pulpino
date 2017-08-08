@@ -1,7 +1,9 @@
 \chapter{CPU Core}
 
-\pulpino supports both the OpenRISC \orion core and the \riscv \rvcore. The two
+\pulpino supports both the \riscv \rvcore and the \riscv \zerocore. The two
 cores have the same external interfaces and are thus plug-compatible.
+Figure \ref{fig:riscy_core} and \ref{fig:zero_core} show the two cores
+architectures.
 
 The core use a very simple data and instruction interface to talk to data and
 instruction memories. To interface with AXI, a core2axi protocol converter is
@@ -20,11 +22,14 @@ port.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[width=\textwidth]{./figures/riscv_overview}
-  \caption{RISC-V core overview}
-  \label{fig1}
+  \includegraphics[width=\textwidth]{./figures/riscy_archi.png}
+  \caption{RISCY core overview}
+  \label{fig:riscy_core}
 \end{figure}
 
-
-Additional information is available in the core datasheet, see
-\textit{ips/riscv/docs/datasheet}.
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{./figures/zeroriscy_archi.png}
+  \caption{zero-riscy core overview}
+  \label{fig:zero_core}
+\end{figure}

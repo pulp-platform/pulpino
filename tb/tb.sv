@@ -1,3 +1,13 @@
+// Copyright 2017 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
 `include "config.sv"
 `include "tb_jtag_pkg.sv"
 
@@ -13,10 +23,14 @@ module tb;
   timeprecision 1ps;
 
   // +MEMLOAD= valid values are "SPI", "STANDALONE" "PRELOAD", "" (no load of L2)
-  parameter  SPI           = "QUAD";    // valid values are "SINGLE", "QUAD"
-  parameter  BAUDRATE      = 781250; // 1562500
-  parameter  CLK_USE_FLL   = 0;  // 0 or 1
-  parameter  TEST          = ""; //valid values are "" (NONE), "DEBUG"
+  parameter  SPI            = "QUAD";    // valid values are "SINGLE", "QUAD"
+  parameter  BAUDRATE       = 781250;    // 1562500
+  parameter  CLK_USE_FLL    = 0;  // 0 or 1
+  parameter  TEST           = ""; //valid values are "" (NONE), "DEBUG"
+  parameter  USE_ZERO_RISCY = 0;
+  parameter  RISCY_RV32F    = 0;
+  parameter  ZERO_RV32M     = 1;
+  parameter  ZERO_RV32E     = 0;
 
   int           exit_status = `EXIT_ERROR; // modelsim exit code, will be overwritten when successful
 
@@ -105,7 +119,14 @@ module tb;
     .rst_ni ( s_rst_n )
   );
 
-  pulpino_top top_i
+  pulpino_top
+  #(
+    .USE_ZERO_RISCY    ( USE_ZERO_RISCY ),
+    .RISCY_RV32F       ( RISCY_RV32F    ),
+    .ZERO_RV32M        ( ZERO_RV32M     ),
+    .ZERO_RV32E        ( ZERO_RV32E     )
+   )
+  top_i
   (
     .clk               ( s_clk        ),
     .rst_n             ( s_rst_n      ),
@@ -197,6 +218,8 @@ module tb;
 
     $display("Using MEMLOAD method: %s", memload);
 
+    $display("Using %s core", USE_ZERO_RISCY ? "zero-riscy" : "ri5cy");
+
     use_qspi = SPI == "QUAD" ? 1'b1 : 1'b0;
 
     s_rst_n      = 1'b0;
@@ -236,44 +259,87 @@ module tb;
 
     if(TEST == "DEBUG") begin
       debug_tests();
+    end else if (TEST == "DEBUG_IRQ") begin
+      debug_irq_tests();
     end else if (TEST == "MEM_DPI") begin
       mem_dpi(4567);
     end else if (TEST == "ARDUINO_UART") begin
-      if (~top_i.gpio_out[0])
-        wait(top_i.gpio_out[0]);
+      if (~gpio_out[0])
+        wait(gpio_out[0]);
       uart.send_char(8'h65);
     end else if (TEST == "ARDUINO_GPIO") begin
       // Here  test for GPIO Starts
-      #50us;
-      gpio_in[4]=1'b1;
-      #10us;
-      gpio_in[4]=1'b0;
-      #10us;
-      gpio_in[4]=1'b1;
-      gpio_in[7]=1'b1;
-    end else if (TEST == "ARDUINO_SHIFT") begin
-      if (~top_i.gpio_out[0])
-        wait(top_i.gpio_out[0]);
+      if (~gpio_out[0])
+        wait(gpio_out[0]);
 
+      gpio_in[4]=1'b1;
+
+      if (~gpio_out[1])
+        wait(gpio_out[1]);
+      if (~gpio_out[2])
+        wait(gpio_out[2]);
+      if (~gpio_out[3])
+        wait(gpio_out[3]);
+
+      gpio_in[7]=1'b1;
+
+    end else if (TEST == "ARDUINO_SHIFT") begin
+
+      if (~gpio_out[0])
+        wait(gpio_out[0]);
+      //start TEST
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b1;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b1;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b0;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b0;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b1;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b0;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b0;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
+      if (~gpio_out[4])
+        wait(gpio_out[4]);
       gpio_in[3]=1'b1;
-      #5us;
+      if (gpio_out[4])
+        wait(~gpio_out[4]);
+
     end else if (TEST == "ARDUINO_PULSEIN") begin
-      if (~top_i.gpio_out[0])
-        wait(top_i.gpio_out[0]);
+      if (~gpio_out[0])
+        wait(gpio_out[0]);
       #50us;
       gpio_in[4]=1'b1;
       #500us;
@@ -283,8 +349,8 @@ module tb;
       #500us;
       gpio_in[4]=1'b0;
     end else if (TEST == "ARDUINO_INT") begin
-      if (~top_i.gpio_out[0])
-        wait(top_i.gpio_out[0]);
+      if (~gpio_out[0])
+        wait(gpio_out[0]);
       #50us;
       gpio_in[1]=1'b1;
       #20us;
@@ -304,8 +370,8 @@ module tb;
 
 
     // end of computation
-    if (~top_i.gpio_out[8])
-      wait(top_i.gpio_out[8]);
+    if (~gpio_out[8])
+      wait(gpio_out[8]);
 
     spi_check_return_codes(exit_status);
 

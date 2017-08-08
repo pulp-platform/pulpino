@@ -2,3 +2,15 @@ linux-xlnx
 sd_image
 u-boot-xlnx
 buildroot
+hsi/fsbl/
+hsi/ps7_bd.tcl
+hsi/ps7_init.c
+hsi/ps7_init.h
+hsi/ps7_init.html
+hsi/ps7_init.tcl
+hsi/ps7_init_gpl.c
+hsi/ps7_init_gpl.h
+hsi/hsi.jou
+hsi/hsi.log
+hsi/pulpemu_top.bit
+hsi/pulpemu_top.sysdef

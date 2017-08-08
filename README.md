@@ -2,20 +2,32 @@
 
 # Introduction
 
-PULPino is an open-source microcontroller system, based on a small 32-bit
-RISC-V core developed at ETH Zurich. The core has an IPC close to 1, full
-support for the base integer instruction set (RV32I), compressed instructions
-(RV32C) and partial support for the multiplication instruction set
-extension (RV32M). It implements several ISA extensions such as:
-hardware loops, post-incrementing load and store instructions, ALU and MAC
-operations, which increase the efficiency of the core in low-power signal
-processing applications.
+PULPino is an open-source single-core microcontroller system, based on 32-bit
+RISC-V cores developed at ETH Zurich. PULPino is configurable to use either 
+the RISCY or the zero-riscy core.
 
-To allow embedded operating systems such as FreeRTOS to run, a subset of the
-privileged specification is supported. When the core is idle, the platform can
-be put into a low power mode, where only a simple event unit is active and
-everything else is clock-gated and consumes minimal power (leakage). A
-specialized event unit wakes up the core in case an event/interrupt arrives.
+RISCY is an in-order, single-issue core with 4 pipeline stages and it has
+an IPC close to 1, full support for the base integer instruction set (RV32I),
+compressed instructions (RV32C) and multiplication instruction set
+extension (RV32M). It can be configured to have single-precision floating-point
+instruction set extension (RV32F). It implements several ISA extensions such as:
+hardware loops, post-incrementing load and store instructions, bit-manipulation
+instructions, MAC operations, support fixed-point operations, packed-SIMD instructions
+and the dot product. It has been designed to increase the energy efficiency of
+in ultra-low-power signal processing applications.
+RISCY implementes a subset of the 1.9 privileged specification.
+Further informations can be found in http://ieeexplore.ieee.org/abstract/document/7864441/.
+
+zero-riscy is an in-order, single-issue core with 2 pipeline stages and it has
+full support for the base integer instruction set (RV32I) and 
+compressed instructions (RV32C). It can be configured to have multiplication instruction set
+extension (RV32M) and the reduced number of registers extension (RV32E).
+It has been designed to target ultra-low-power and ultra-low-area constraints.
+zero-riscy implementes a subset of the 1.9 privileged specification.
+
+When the core is idle, the platform can be put into a low power mode, 
+where only a simple event unit is active and everything else is clock-gated and consumes minimal power (leakage).
+A specialized event unit wakes up the core in case an event/interrupt arrives.
 
 For communication with the outside world, PULPino contains a broad set of
 peripherals, including I2S, I2C, SPI and UART. The platform internal devices
@@ -38,24 +50,20 @@ PULPino has the following requirements
 - riscv-toolchain, specifically you need riscv32-unknown-elf-gcc compiler and
   friends. There are two choices for this toolchain: Either using the official
   RISC-V toolchain supported by Berkeley or the custom RISC-V toolchain from
-  ETH. The ETH version supports all the ISA extensions that were incorporated
-  into the RI5CY core.
+  ETH. The ETH versions supports all the ISA extensions that were incorporated
+  into the RI5CY core as well as the reduced base instruction set for zero-riscy.
   Please make sure you are using the newlib version of the toolchain.
 - python2 >= 2.6
+- verilator 3.884 only necessary if you want to use Verilator to evaluate PULPino.
 
-## Editions
+## ISA Support
 
-There are two PULPino editions available, one for OR1K based on the OR10N core
-and one for RISCV based on the RI5CY core. Only the RISC-V based version is
-currently open-source.
-The software included in this repository is compatible with both ISAs and
-automatically targets the correct ISA based on the compiler used.
-
+PULPino can run either with RISCY or zero-riscy.
+The software included in this repository is compatible with both the cores
+and automatically targets the correct ISA based on the flags used.
 The simulator (modelsim) must be explicitely told which edition you want to build.
-Use the environment variable `PULP_CORE` and set it to either OR10N or riscv. It
-defaults to riscv when not set.
-
-
+Use the environment variable `USE_ZERO_RISCY` and set it to either `1` for zero-riscy or 
+`0` for RISCY.
 
 ## Version Control
 
@@ -88,19 +96,46 @@ Create a build folder somewhere, e.g. in the sw folder
 
     mkdir build
 
-Copy the cmake-configure.{or1k/riscv}.{gcc/llvm}.sh bash script to the build folder.
+Copy the cmake-configure.{*}.gcc.sh bash script to the build folder.
 This script can be found in the sw subfolder of the git repository.
 
 Modify the cmake-configure script to your needs and execute it inside the build folder.
 This will setup everything to perform simulations using ModelSim.
 
+Four cmake-configure bash scripts have been already configured:
+
+1) cmake_configure.riscv.gcc.sh
+
+It automatically selects the RISCY cores and compiles SW with all the PULP-extensions 
+and the RV32IM support.
+The GCC ETH compiler is needed and the GCC march flag set to "IMXpulpv2".
+
+2) cmake_configure.riscvfloat.gcc.sh
+
+It automatically selects the RISCY cores and compiles SW with all the PULP-extensions 
+and the RV32IMF support.
+The GCC ETH compiler is needed and he GCC march flag set to "IMFXpulpv2".
+
+3) cmake_configure.zeroriscy.gcc.sh
+
+It automatically selects the zero-riscy cores and compiles SW with the RV32IM support
+(march flag set to RV32IM).
+
+4) cmake_configure.microriscy.gcc.sh
+
+It automatically selects the zero-riscy cores and compiles SW with the RV32E support.
+The slim GCC ETH compiler is needed and he GCC march flag set to "RV32I" and the "-m16r"
+is passed to the compiler to use only the RV32E ISA support.
+
+
+Activate the RVC flag in the cmake file if compressed instructions are desired.
+
+
 Inside the build folder, execute
 
     make vcompile
 
-to compile the RTL libraries using ModelSim. CMake automatically takes care of
-setting the `PULP_CORE` environment variable to the correct value based on the
-compiler you specified when configuring cmake.
+to compile the RTL libraries using ModelSim.
 
 To run a simulation in the modelsim GUI use
 
@@ -135,8 +170,8 @@ to which the jtag bridge can connect to.
 
 ## Utilities
 
-We additionally provide some utilitiy targets that are supposed to make development for
-PULPino easier.
+We additionally provide some utilitiy targets that are supposed to make
+development for PULPino easier.
 
 For disassembling a program call
 
@@ -161,9 +196,12 @@ git internal folders and create a tar gz.
 
 ## Arduino compatible libraries
 
-Most of official Arduino libraries are supported by PULPino software, they can be compiled, simulated and uploded the same way as traditional software programs using the available PULPino utilities.
-You only need to include main.cpp at the begining of the program:
+Most of official Arduino libraries are supported by PULPino software, they can
+be compiled, simulated and uploded the same way as traditional software programs
+using the available PULPino utilities. You only need to include main.cpp at the
+beginning of the program:
 
 	#include "main.cpp"
 
-Take a look at the `sw/libs/Arduino_libs` subfolder for more information about the status of the currently supported libraries.
+Take a look at the `sw/libs/Arduino_libs` subfolder for more information about
+the status of the currently supported libraries.

@@ -3,6 +3,16 @@
 import sys
 import random
 
+# Copyright 2017 ETH Zurich and University of Bologna.
+# Copyright and related rights are licensed under the Solderpad Hardware
+# License, Version 0.51 (the License); you may not use this file except in
+# compliance with the License.  You may obtain a copy of the License at
+# http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+# or agreed to in writing, software, hardware and materials distributed under
+# this License is distributed on an AS IS BASIS, WITHOUT WARRANTIES OR
+# CONDITIONS OF ANY KIND, either express or implied. See the License for the
+# specific language governing permissions and limitations under the License.
+
 def write_hex8_arr(f, name, arr):
     f.write('unsigned int %s[] = {\n' % name)
     for v in arr:
@@ -260,31 +270,6 @@ write_hex32_arr(f, 'g_sra_a', ops_a)
 write_hex32_arr(f, 'g_sra_b', ops_b)
 write_hex32_arr(f, 'g_sra_act', ops_a)
 write_hex32_arr(f, 'g_sra_exp', exp_res)
-
-
-################################################################################
-# generate testdata for l.ror
-################################################################################
-ops_a    = []
-ops_b    = []
-exp_res  = []
-
-for i in range(N):
-    a = random.randint(0, 2**32-1)
-    b = random.randint(0, 31)
-
-    r = a >> b
-    r |= a << (32 - b)
-    r &= 0xFFFFFFFF
-
-    ops_a.append(a)
-    ops_b.append(b)
-    exp_res.append(r)
-
-write_hex32_arr(f, 'g_ror_a', ops_a)
-write_hex32_arr(f, 'g_ror_b', ops_b)
-write_hex32_arr(f, 'g_ror_act', ops_a)
-write_hex32_arr(f, 'g_ror_exp', exp_res)
 
 
 ################################################################################

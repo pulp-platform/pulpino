@@ -1,7 +1,7 @@
-// Copyright 2016 ETH Zurich and University of Bologna.
+// Copyright 2017 ETH Zurich and University of Bologna.
 // Copyright and related rights are licensed under the Solderpad Hardware
 // License, Version 0.51 (the “License”); you may not use this file except in
-// compliance with the License. You may obtain a copy of the License at
+// compliance with the License.  You may obtain a copy of the License at
 // http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
 // or agreed to in writing, software, hardware and materials distributed under
 // this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
@@ -25,7 +25,7 @@
  */
 void uart_set_cfg(int parity, uint16_t clk_counter) {
   unsigned int i;
-  CGREG |= (1 << CGUART);
+  CGREG |= (1 << CGUART); // don't clock gate UART
   *(volatile unsigned int*)(UART_REG_LCR) = 0x83; //sets 8N1 and set DLAB to 1
   *(volatile unsigned int*)(UART_REG_DLM) = (clk_counter >> 8) & 0xFF;
   *(volatile unsigned int*)(UART_REG_DLL) =  clk_counter       & 0xFF;
@@ -40,9 +40,11 @@ void uart_send(const char* str, unsigned int len) {
 
   while(len > 0) {
     // process this in batches of 16 bytes to actually use the FIFO in the UART
+
+    // wait until there is space in the fifo
+    while( (*(volatile unsigned int*)(UART_REG_LSR) & 0x20) == 0);
+
     for(i = 0; (i < UART_FIFO_DEPTH) && (len > 0); i++) {
-      // wait until there is space in the fifo
-      while( (*(volatile unsigned int*)(UART_REG_LSR) & 0x20) == 0);
       // load FIFO
       *(volatile unsigned int*)(UART_REG_THR) = *str++;
 

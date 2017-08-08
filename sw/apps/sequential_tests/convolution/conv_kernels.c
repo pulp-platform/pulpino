@@ -1,3 +1,13 @@
+// Copyright 2017 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
 #include "convolution.h"
 #include <stdio.h>
 
@@ -95,7 +105,7 @@ void __attribute__ ((noinline)) Conv5x5_Scalar  (Pixel * In_Img, Pixel * Out_Img
 
 void __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
-
+#ifdef DOTP
   FiltcV coeff_0, coeff_1, coeff_2;
   PixelV Img_0, Img_1, Img_2;
   PixelV new_data;
@@ -173,11 +183,12 @@ void __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Img
 
     Out_Img[t] = (Pixel)S;
   }
+#endif
 }
 
 void __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
-
+#ifdef DOTP
   FiltcV coeff_0, coeff_1, coeff_2, coeff_3, coeff_4, coeff_5, coeff_6;
   PixelV Img_0, Img_1, Img_2, Img_3, Img_4, Img_5, Img_6;
   PixelV new_data1, new_data2;
@@ -290,6 +301,7 @@ void __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img
 
     Out_Img[t] = (Pixel)S;
   }
+#endif
 }
 
 #else
@@ -297,6 +309,7 @@ void __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img
 void __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
 
+#ifdef DOTP
   FiltcV coeff_0, coeff_1, coeff_2, coeff_3, coeff_4;
   PixelV Img_0, Img_1, Img_2, Img_3, Img_4;
   PixelV new_data1,new_data2;
@@ -393,10 +406,12 @@ void __attribute__ ((noinline)) Conv3x3_Vector  (Pixel * In_Img, Pixel * Out_Img
 
     Out_Img[t] = (Pixel)S;
   }
+#endif
 }
 
 void __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img, int R, int C, Filtc  * Kernel)
 {
+ #ifdef DOTP
   FiltcV coeff_0, coeff_1, coeff_2, coeff_3, coeff_4, coeff_5, coeff_6, coeff_7, coeff_8, coeff_9, coeff_10, coeff_11, coeff_12;
   PixelV Img_0, Img_1, Img_2, Img_3, Img_4, Img_5, Img_6, Img_7, Img_8, Img_9, Img_10, Img_11, Img_12;
   PixelV new_data1, new_data2, new_data3;
@@ -555,6 +570,7 @@ void __attribute__ ((noinline)) Conv5x5_Vector  (Pixel * In_Img, Pixel * Out_Img
 
     Out_Img[t] = (Pixel)S;
   }
+#endif
 }
 
 #endif

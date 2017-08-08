@@ -1,3 +1,4 @@
+NAME:=RISCY
 PROJECT:=pulpino
 
 all:
@@ -20,6 +21,6 @@ clean:
 	rm -rf vivado*
 	rm -rf .Xil
 	rm -rf xgui
-	rm -rf ${PROJECT}.edf
+	rm -rf ${PROJECT}.edn
 	rm -rf ${PROJECT}_stub.v
 	rm -rf ${PROJECT}_funcsim.v

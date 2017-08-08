@@ -22,46 +22,57 @@ project (pulp_software C)
 
 enable_testing()
 
-if(CMAKE_C_COMPILER MATCHES "riscv(.*)")
-  set(RISCV 1)
-  message("NOTE: Detected RISCV compiler, using RISCV setup")
+set(RISCV 1)
 
-  if(${GCC_ETH})
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=IMXpulpv2 -Wa,-march=IMXpulpv2")
-    set(CMAKE_OBJDUMP_FLAGS -Mmarch=IMXpulpv2 -d)
-  else()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=RV32IM -Wa,-march=RV32IM")
-    set(CMAKE_OBJDUMP_FLAGS -Mmarch=RV32IM -d)
-  endif()
-
-  if(${RVC})
-    message("NOTE: Using compressed instructions")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
-  endif()
-
-
-  set(LDSCRIPT      "link.riscv.ld")
-  set(LDSCRIPT_BOOT "link.boot.ld" )
-
-elseif(CMAKE_C_COMPILER MATCHES "or1k(.*)")
-  set(RISCV 0)
-  message("NOTE: Detected or1k compiler, using OR1K setup")
-
-  # Clang supports a new ABI that takes care of the variadic function problem if
-  # the function is implicitely defined
-  if(CMAKE_C_COMPILER_ID MATCHES "(C|c?)lang")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mabi=new")
-  endif()
-
-  if(CMAKE_OBJDUMP MATCHES "llvm-objdump")
-    set(CMAKE_OBJDUMP_FLAGS -arch=or1kle -mattr=mac3,mul16,lv32,crtl -mcpu=pulp3 -symbolize -print-imm-hex -show-hr-enc -section-headers -disassemble -r -s)
-  else()
-    set(CMAKE_OBJDUMP_FLAGS -d)
-  endif()
-
-  set(LDSCRIPT      "link.or1k.ld")
-  set(LDSCRIPT_BOOT "link.boot.ld")
+if(${RISCY_RV32F} AND ${USE_ZERO_RISCY})
+  message(SEND_ERROR "Floating Point Extensions are not supported on zero-riscy")
 endif()
+
+# assign default architecture flags if not defined
+string(COMPARE EQUAL "${GCC_MARCH}" "" GCC_MARCH_NOT_SET)
+
+if(GCC_MARCH_NOT_SET)
+   message("\nUsing default architecture flags!!\n")
+
+   if(${USE_RISCY})
+      if(${RISCY_RV32F})
+         set(GCC_MARCH "IMFDXpulpv2")
+      else()
+         set(GCC_MARCH "IMXpulpv2")
+      endif()
+   else()
+      if(${ZERO_RV32M})
+        set(GCC_MARCH "RV32IM")
+      else()
+        set(GCC_MARCH "RV32I")
+      endif()
+   endif()
+endif()
+
+
+message(STATUS "GCC_MARCH= ${GCC_MARCH}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=${GCC_MARCH} -Wa,-march=${GCC_MARCH}")
+set(CMAKE_OBJDUMP_FLAGS -Mmarch=${GCC_MARCH} -d)
+
+if(${GCC_MARCH} MATCHES "IMFDXpulpv2")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mhard-float")
+endif()
+
+if(${RVC})
+  message("NOTE: Using compressed instructions")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
+endif()
+
+if(${ZERO_RV32E})
+  if (${USE_RISCY})
+    message(SEND_ERROR "RV32E can only be used with Zero-riscy")
+  endif()
+  message("NOTE: Using RV32E ISA")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m16r")
+endif()
+
+set(LDSCRIPT      "link.riscv.ld")
+set(LDSCRIPT_BOOT "link.boot.ld" )
 
 
 set(PULP_PC_ANALYZE "pulp-pc-analyze" CACHE PATH "path to pulp pc analyze binary")
@@ -81,62 +92,81 @@ set(VSIM "vsim" CACHE FILEPATH "Path to the vsim executable")
 
 ################################################################################
 
-if(${RISCV})
-  set(crt0      "ref/crt0.riscv.S")
-  set(crt0_boot "ref/crt0.boot.S")
-else()
-  set(crt0      "ref/crt0.or1k.S")
-  set(crt0_boot "ref/crt0.or1k.S") # dummy, not functional
-endif()
+ if(${ZERO_RV32E})
+   set(crt0      "ref/crt0.riscv_E.S")
+   set(crt0_boot "ref/crt0.boot_E.S")
+ else()
+   set(crt0      "ref/crt0.riscv.S")
+   set(crt0_boot "ref/crt0.boot.S")
+ endif()
 
-include_directories(libs/sys_lib/inc)
-include_directories(libs/Arduino_lib/core_libs/inc)
-include_directories(libs/Arduino_lib/separate_libs/inc)
+ include_directories(libs/sys_lib/inc)
 
-set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
-add_library(crt0 OBJECT ${crt0})
+ if(${ARDUINO_LIB})
+  include_directories(libs/Arduino_lib/core_libs/inc)
+  include_directories(libs/Arduino_lib/separate_libs/inc)
+ endif()
 
-add_library(crt0_boot OBJECT ${crt0_boot})
-set_target_properties(crt0_boot PROPERTIES COMPILE_FLAGS "-DBOOT")
+ if(${RISCY_RV32F})
+   include_directories(libs/math_fns_lib/inc)
+ endif()
+
+ set_source_files_properties(${crt0} PROPERTIES LANGUAGE C)
+ add_library(crt0 OBJECT ${crt0})
+
+ add_library(crt0_boot OBJECT ${crt0_boot})
+ set_target_properties(crt0_boot PROPERTIES COMPILE_FLAGS "-DBOOT")
 
 
 ################################################################################
 # Other targets
 ################################################################################
 
-if(${RISCV})
-  set(PULP_CORE "riscv")
-else()
-  set(PULP_CORE "OR10N")
-endif()
-
 
 add_custom_target(vcompile
-  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./vcompile/build_rtl_sim.csh"
+  COMMAND tcsh -c "./vcompile/build_rtl_sim.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
 add_custom_target(vcompile.ps
-  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./vcompile/vcompile_ps.csh"
+  COMMAND tcsh -c "env PL_NETLIST=${PL_NETLIST} ./vcompile/vcompile_ps.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
 add_custom_target(vcompile.pl
-  COMMAND tcsh -c "env PULP_CORE=${PULP_CORE} ./vcompile/vcompile_pl.csh"
+  COMMAND tcsh -c "env PL_NETLIST=${PL_NETLIST} ./vcompile/vcompile_pl.csh"
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
-add_custom_target(vcompile.core
+add_custom_target(vcompile.core.riscy
   COMMAND tcsh ./vcompile/vcompile_riscv.csh
   WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
   ${USES_TERMINAL})
 
+add_custom_target(vcompile.core.zero
+  COMMAND tcsh ./vcompile/vcompile_zero-riscy.csh
+  WORKING_DIRECTORY ${PULP_MODELSIM_DIRECTORY}
+  ${USES_TERMINAL})
 
 ################################################################################
 
 add_subdirectory(libs/string_lib)
 add_subdirectory(libs/sys_lib)
-add_subdirectory(libs/Arduino_lib)
+
+if(${RISCY_RV32F})
+ add_subdirectory(libs/math_fns_lib)
+endif()
+
+if(${ARDUINO_LIB})
+ add_subdirectory(libs/Arduino_lib)
+endif()
+
 add_subdirectory(libs/bench_lib)
+
+set(BEEBS_LIB 0)
+
+if(${BEEBS_LIB})
+ add_subdirectory(libs/beebs_lib)
+endif()
 
 add_subdirectory(apps)

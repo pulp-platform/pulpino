@@ -1,14 +1,14 @@
 # General Overview
 
 The currently supported Arduino libraries are in general; the core libraries and the priepheral libraries like SPI and I2C with details in the following sections.
- 
-These libraries were tested and their functionality was verified through simulation. 
-The device drivers for Servo, SD, LCD .. etc are not yet verified using FPGA, they may require some modifications on the original Arduino libraries. This should be done soon. 
+
+These libraries were tested and their functionality was verified through simulation.
+The device drivers for Servo, SD, LCD .. etc are not yet verified using FPGA, they may require some modifications on the original Arduino libraries. This should be done soon.
 
 ## Adding Arduino sketch to PULPino
 
-You can add Arduino sketches, compile and test them using the same procedures described in `sw` subfolder. 
-You only need to include main.cpp at the begining of the program:
+You can add Arduino sketches, compile and test them using the same procedures described in `sw` subfolder.
+You only need to include main.cpp at the beginning of the program:
 
 	#include "main.cpp"
 
@@ -34,7 +34,7 @@ Postponed:
 - delay_microseconds() function should be hardcoded depending on the frequency used to minimize error (currently a generic function is developed instead)
 
 Problems:
-- software PWM utilizes CPU if high frequency required. 
+- software PWM utilizes CPU if high frequency required.
 
 Comment:
 - we can merge PWM timer with millis timer in one timer, this would help the problems(frequency should suit some devices like motors).
@@ -54,4 +54,3 @@ Problems
 
 ## SPI
 Completed.
-

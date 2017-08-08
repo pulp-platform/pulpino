@@ -55,7 +55,7 @@ def find_server():
 
 if len(sys.argv) > 1:
     server = sys.argv[1]
-    group  = "pulp-project"
+    group  = "pulp-open"
     if "http" in server:
         remote = "%s/%s" % (server, group)
     else:
@@ -71,17 +71,17 @@ print "Using remote git server %s, remote is %s" % (server, remote)
 if os.path.exists("ipstools") and os.path.isdir("ipstools"):
     cwd = os.getcwd()
     os.chdir("ipstools")
-    execute("git pull", silent=True)
+    execute("git pull origin verilator", silent=True)
     os.chdir(cwd)
     import ipstools
 else:
     # try to find the ipstools repository
     if "http" in remote:
-        if execute("git clone %s/IPApproX.git ipstools" % (remote)) != 0:
-            execute("git clone %s/pulp-tools/IPApproX.git ipstools" % (server))
+        if execute("git clone %s/IPApproX.git ipstools -b verilator" % (remote)) != 0:
+            execute("git clone %s/pulp-tools/IPApproX.git ipstools -b verilator" % (server))
     else:
-        if execute("git clone %s/IPApproX.git ipstools" % (remote)) != 0:
-            execute("git clone %s:pulp-tools/IPApproX.git ipstools" % (server))
+        if execute("git clone %s/IPApproX.git ipstools -b verilator" % (remote)) != 0:
+            execute("git clone %s:pulp-tools/IPApproX.git ipstools -b verilator" % (server))
 
     import ipstools
 

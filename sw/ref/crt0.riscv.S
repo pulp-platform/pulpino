@@ -1,7 +1,7 @@
-// Copyright 2016 ETH Zurich and University of Bologna.
+// Copyright 2017 ETH Zurich and University of Bologna.
 // Copyright and related rights are licensed under the Solderpad Hardware
 // License, Version 0.51 (the “License”); you may not use this file except in
-// compliance with the License. You may obtain a copy of the License at
+// compliance with the License.  You may obtain a copy of the License at
 // http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
 // or agreed to in writing, software, hardware and materials distributed under
 // this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
@@ -17,6 +17,10 @@
   .section .text
 
 reset_handler:
+
+  /* set 0 in mtvec (base for IVT) */
+  csrrw x0, mtvec, x0
+
   /* set all registers to zero */
   mv  x1, x0
   mv  x2, x1
@@ -53,7 +57,6 @@ reset_handler:
   /* stack initilization */
   la   x2, _stack_start
 
-
 _start:
   .global _start
 
@@ -74,16 +77,16 @@ zero_loop_end:
 
 main_entry:
   addi   x10, x0, 0
-  addi   x11, x0, 1
+  addi   x11, x0, 0x1
   jal  uart_set_cfg;
 
   /* jump to main program entry point (argc = argv = 0) */
   addi x10, x0, 0
   addi x11, x0, 0
   jal x1, main
-
+  mv s0, a0
   jal  uart_wait_tx_done;
-
+  mv a0, s0
   /* if program exits call exit routine from library */
   jal  x1, exit
 
@@ -120,7 +123,7 @@ ISR_SPIM0_ASM:
   la x1, end_except
   jal x0, ISR_SPIM0
 
-/* ========================================== [ SPI Master recieve/transmit finish handler ] === */
+/* ========================================== [ SPI Master receive/transmit finish handler ] === */
 ISR_SPIM1_ASM:
   addi x2, x2, -EXCEPTION_STACK_SIZE
   sw x1, 0x5C(x2)
@@ -168,6 +171,13 @@ illegal_insn_handler:
   la x1, end_except
   jal x0, illegal_insn_handler_c
 
+/* ================================= [ ecall instruction handler] === */
+ecall_insn_handler:
+  addi x2, x2, -EXCEPTION_STACK_SIZE
+  sw x1, 0x5C(x2)
+  jal x1, store_regs
+  la x1, end_except
+  jal x0, ecall_insn_handler_c
 
 // saves all caller-saved registers (except return address)
 store_regs:
@@ -235,7 +245,7 @@ end_except:
   lw x31, 0x40(x2)
   lw  x1, 0x5C(x2)
   addi x2, x2, EXCEPTION_STACK_SIZE
-  eret
+  mret
 
   .global _init
   .global _fini
@@ -278,4 +288,4 @@ _fini:
 
   // ecall handler
   .org 0x88
-  jal x0, illegal_insn_handler
+  jal x0, ecall_insn_handler

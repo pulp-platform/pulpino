@@ -19,5 +19,5 @@ The debug bus signals are described as follows:
   \end{tabularx}
 \end{table}
 
-The protocol is very similar to the core data, and instruction interfaces. To read or write, the Master has to raise the request with the address, the write enable, and the data to write. As soon as the Slave sets the grant to 1, the transfer is granted. In case of a write operation the rvalid signal rises to one to inform the Master that the transaction was succesful.
+The protocol is very similar to the core data, and instruction interfaces. To read or write, the Master has to raise the request with the address, the write enable, and the data to write. As soon as the Slave sets the grant to 1, the transfer is granted. In case of a write operation the rvalid signal rises to one to inform the Master that the transaction was successful.
 In case of a read operation, the Slave returns the requested data on the rdata line, exactly one cycle after the grant.

@@ -1,12 +1,26 @@
-// SumDotp and Dotp are now defined on shorts!
-#define SumDotp(a, b, c) __builtin_pulp_sdotsp2(a, b, c)
-#define Dotp(a, b)       __builtin_pulp_dotsp2(a, b)
+// Copyright 2017 ETH Zurich and University of Bologna.
+// Copyright and related rights are licensed under the Solderpad Hardware
+// License, Version 0.51 (the “License”); you may not use this file except in
+// compliance with the License.  You may obtain a copy of the License at
+// http://solderpad.org/licenses/SHL-0.51. Unless required by applicable law
+// or agreed to in writing, software, hardware and materials distributed under
+// this License is distributed on an “AS IS” BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
 
+// SumDotp and Dotp are now defined on shorts!
+
+#ifdef DOTP
+  #define SumDotp(a, b, c) __builtin_pulp_sdotsp2(a, b, c)
+  #define Dotp(a, b)       __builtin_pulp_dotsp2(a, b)
+#endif
 typedef short pixel;
 typedef short pixelV __attribute__((vector_size (4)));
 
 void  __attribute__ ((noinline)) Conv3x3_fast(pixel * __restrict__ In, pixel * __restrict__ Out, pixel * __restrict__ Coeff)
 {
+#ifdef DOTP
+
   int i, j;
   pixelV V0, V1, V2, V3, V4;
   /* Move all Kernel coeffs into registers */
@@ -94,5 +108,5 @@ void  __attribute__ ((noinline)) Conv3x3_fast(pixel * __restrict__ In, pixel * _
     Out[k*IMG_WIDTH]                   = In[k*IMG_WIDTH];
     Out[k*IMG_WIDTH + IMG_WIDTH - 1]   = In[k*IMG_WIDTH + IMG_WIDTH - 1];
   }
-
+#endif
 }
