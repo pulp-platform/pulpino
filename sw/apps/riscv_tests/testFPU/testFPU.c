@@ -111,8 +111,10 @@ void check_basic(testresult_t *result, void (*start)(), void (*stop)()) {
   float g_sub_act[sizeof(g_in_b)/4];
   float g_mul_act[sizeof(g_in_b)/4];
   float g_div_act[sizeof(g_in_b)/4];
+  int   g_branch_act[sizeof(g_inbr_b)/4];
 
   start();
+
   //-----------------------------------------------------------------
   // Check fadd.s (floating point addition)
   //-----------------------------------------------------------------
@@ -165,6 +167,38 @@ void check_basic(testresult_t *result, void (*start)(), void (*stop)()) {
 
     check_float(result, "fsqrt.s", g_add_act[i],  g_sqrt_min[i], g_sqrt_max[i]);
   }
+
+  //-----------------------------------------------------------------
+  // Check f{eq,lt,le}.s (floating point compare instructions)
+  //-----------------------------------------------------------------
+
+  for(i = 0; i < (sizeof(g_branch_act)/4); i++) {
+    asm volatile ("feq.s %[c], %[a], %[b]\n"
+                  : [c] "=r" (g_branch_act[i])
+                  : [a] "f"  ( *(float*)&g_inbr_a[i] ), [b] "f" ( *(float*)&g_inbr_b[i] ));
+
+    check_uint32(result, "feq.s", g_branch_act[i], g_feq[i]);
+
+  }
+
+  for(i = 0; i < (sizeof(g_branch_act)/4); i++) {
+    asm volatile ("fle.s %[c], %[a], %[b]\n"
+                  : [c] "=r" (g_branch_act[i])
+                  : [a] "f"  ( *(float*)&g_inbr_a[i] ), [b] "f" ( *(float*)&g_inbr_b[i] ));
+
+    check_uint32(result, "fle.s", g_branch_act[i], g_fle[i]);
+
+  }
+
+  for(i = 0; i < (sizeof(g_branch_act)/4); i++) {
+    asm volatile ("flt.s %[c], %[a], %[b]\n"
+                  : [c] "=r" (g_branch_act[i])
+                  : [a] "f"  ( *(float*)&g_inbr_a[i] ), [b] "f" ( *(float*)&g_inbr_b[i] ));
+
+    check_uint32(result, "flt.s", g_branch_act[i], g_flt[i]);
+
+  }
+
   stop();
 }
 

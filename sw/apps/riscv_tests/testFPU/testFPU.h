@@ -1,5 +1,14 @@
 #include "mlShared.h"
 
+union float_int {
+  const uint32_t i;
+  const float    f;
+};
+
+#define F_QNAN 0x7FC00000
+#define F_SNAN 0x7FA00000
+#define F_INF  0x7F800000
+
 __attribute__ ((section(".heapsram"))) float g_in_a[] = {
   792.2073F,
   959.4924F,
@@ -24,6 +33,71 @@ __attribute__ ((section(".heapsram"))) float g_in_b[] = {
   823.4578F,
   694.8286F,
   317.0995F
+};
+
+__attribute__ ((section(".heapsram"))) int g_inbr_a[] = {
+  0x123123,       //1.67067e-39
+  F_QNAN,
+  0xABBAABBA,     //-1.32638e-12
+  0x4423ef68,     //655.741
+  0x420ed810,     //1.20994e-19
+  F_SNAN,
+  F_INF,
+  0x420bff10,    //34.9991
+  0x520b7833,    //1.49754e+11
+  0x4c0b8722     //3.65764e+07
+};
+
+__attribute__ ((section(".heapsram"))) int g_inbr_b[] = {
+  F_QNAN,
+  F_QNAN,
+  0xABBAABBA,     //-1.32638e-12
+  0xABBAABBA,     //-1.32638e-12
+  0xc20ed810,     //-35.711
+  F_SNAN,
+  F_INF,
+  0x420eff10,     //35.7491
+  0x520e7833,     //1.52975e+11
+  F_INF
+};
+
+__attribute__ ((section(".heapsram"))) int g_feq[] = {
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  1,
+  0,
+  0,
+  0
+};
+
+__attribute__ ((section(".heapsram"))) int g_fle[] = {
+  0,
+  0,
+  1,
+  0,
+  0,
+  0,
+  1,
+  1,
+  1,
+  1
+};
+
+__attribute__ ((section(".heapsram"))) int g_flt[] = {
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  0,
+  1,
+  1,
+  1
 };
 
 
