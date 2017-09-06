@@ -33,7 +33,8 @@ void check_trig    (testresult_t *result, void (*start)(), void (*stop)());
 void check_fma     (testresult_t *result, void (*start)(), void (*stop)());
 void check_explog  (testresult_t *result, void (*start)(), void (*stop)());
 void check_special (testresult_t *result, void (*start)(), void (*stop)());
-
+void check_basic_special   (testresult_t *result, void (*start)(), void (*stop)());
+void check_fma_special (testresult_t *result, void (*start)(), void (*stop)());
 
 
 /////////////////////////////////////////////////////////
@@ -45,6 +46,8 @@ testcase_t testcases[] = {
   {  .name = "fma",            .test = check_fma          },
   {  .name = "explog",         .test = check_explog       },
   {  .name = "special",        .test = check_special      },
+  {  .name = "basic_special",          .test = check_basic_special        },
+  {  .name = "fma_special",        .test = check_fma_special      },
   {0, 0}
 };
 
@@ -111,6 +114,8 @@ void check_basic(testresult_t *result, void (*start)(), void (*stop)()) {
   float g_sub_act[sizeof(g_in_b)/4];
   float g_mul_act[sizeof(g_in_b)/4];
   float g_div_act[sizeof(g_in_b)/4];
+  float g_div_act_ds[sizeof(g_inbr_b)/4];
+  float g_sqrt_act_ss[sizeof(g_inbr_b)/4];
   int   g_branch_act[sizeof(g_inbr_b)/4];
 
   start();
@@ -156,6 +161,8 @@ void check_basic(testresult_t *result, void (*start)(), void (*stop)()) {
 
     check_float(result, "fdiv.s", g_div_act[i],  g_div_min[i], g_div_max[i]);
   }
+
+
   //-----------------------------------------------------------------
   // Check fsqrt.s (floating point square root)
   //-----------------------------------------------------------------
@@ -167,6 +174,8 @@ void check_basic(testresult_t *result, void (*start)(), void (*stop)()) {
 
     check_float(result, "fsqrt.s", g_add_act[i],  g_sqrt_min[i], g_sqrt_max[i]);
   }
+
+
 
   //-----------------------------------------------------------------
   // Check f{eq,lt,le}.s (floating point compare instructions)
@@ -201,6 +210,82 @@ void check_basic(testresult_t *result, void (*start)(), void (*stop)()) {
 
   stop();
 }
+
+
+void check_basic_special(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+    float g_add_act_s[sizeof(g_in_b_ass)/4];
+    float g_sub_act_s[sizeof(g_in_b_ass)/4];
+    float g_mul_act_s[sizeof(g_in_b_ass)/4];
+    float g_div_act_s[sizeof(g_in_b_ass)/4];
+    float g_sqrt_act_ss[sizeof(g_sqrt_b_ss)/4];
+  int   g_branch_act[sizeof(g_inbr_b)/4];
+
+  start();
+
+  //-----------------------------------------------------------------
+  // Check fadd.s (floating point addition) special cases
+  //-----------------------------------------------------------------
+  for(i = 0; i < (sizeof(g_add_act_s)/4); i++) {
+    asm volatile ("fadd.s %[c], %[a], %[b]\n"
+                  : [c] "=f" (g_add_act_s[i])
+                  : [a] "f"  ( *(float*)&g_in_a_ass[i]), [b] "f" ( *(float*)&g_in_b_ass[i]));
+
+    check_float_value(result, "fadd.s", g_add_act_s[i],  ( *(float*)&g_output_as[i]) );
+  }
+
+  //-----------------------------------------------------------------
+  // Check fsub.s (floating point subtraction)  special cases
+  //-----------------------------------------------------------------
+  for(i = 0; i < (sizeof(g_sub_act_s)/4); i++) {
+    asm volatile ("fsub.s %[c], %[a], %[b]\n"
+                  : [c] "=f" (g_sub_act_s[i])
+                  : [a] "f"  ( *(float*)&g_in_a_ass[i]), [b] "f" ( *(float*)&g_in_b_ass[i]));
+
+    check_float_value(result, "fsub.s", g_sub_act_s[i], ( *(float*)&g_output_ss[i]) );
+  }
+
+
+  //-----------------------------------------------------------------
+  // Check fmul.s (floating point multiplication)  special cases
+  //-----------------------------------------------------------------
+  for(i = 0; i < (sizeof(g_mul_act_s)/4); i++) {
+    asm volatile ("fmul.s %[c], %[a], %[b]\n"
+                  : [c] "=f" (g_mul_act_s[i])
+                  : [a] "f"  ( *(float*)&g_in_a_ass[i]), [b] "f" ( *(float*)&g_in_b_ass[i]));
+
+    check_float_value(result, "fmul.s", g_mul_act_s[i], ( *(float*)&g_output_ms[i]) );
+  }
+
+ //-----------------------------------------------------------------
+  // Check fdiv.s (floating point division) full special cases
+  //-----------------------------------------------------------------
+  for(i = 0; i < (sizeof(g_div_act_s)/4); i++) {
+    asm volatile ("fdiv.s %[c], %[a], %[b]\n"
+                  : [c] "=f" (g_div_act_s[i])
+                  : [a] "f"  ( *(float*)&g_in_a_ass[i]), [b] "f" ( *(float*)&g_in_b_ass[i]));
+
+    check_float_value(result, "fdiv.s", g_div_act_s[i],  ( *(float*)&g_output_ds[i]));
+  }
+
+
+
+  //-----------------------------------------------------------------
+  // Check fsqrt.s (floating point square root) special cases
+  //-----------------------------------------------------------------
+
+  for(i = 0; i < (sizeof(g_sqrt_act_ss)/4); i++) {
+    asm volatile ("fsqrt.s %[c], %[a]\n"
+                  : [c] "=f" (g_sqrt_act_ss[i])
+                  : [a] "f"  ( *(float*)&g_sqrt_a_ss[i] ));
+
+    check_float_value(result, "fsqrt.s", g_sqrt_act_ss[i], ( *(float*)&g_sqrt_output_ss[i]) );
+  }
+
+  stop();
+}
+
+
 
 void check_explog(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i;
@@ -322,6 +407,52 @@ void check_fma(testresult_t *result, void (*start)(), void (*stop)()) {
   
   stop();
 }
+
+
+void check_fma_special(testresult_t *result, void (*start)(), void (*stop)()) {
+  unsigned int i;
+  start();
+  float g_fma_act_s[(sizeof(g_fma_init_s)/4)];
+
+  //-----------------------------------------------------------------
+  // Check fmadd.s (floating point multiply-add)
+  //-----------------------------------------------------------------
+  for(i = 0; i < (sizeof(g_fma_init_s)/4); i++) {
+    asm volatile ("fmadd.s %[c], %[a], %[b], %[d]\n"
+                  : [c] "=f" (g_fma_act_s[i])
+                  : [a] "f"  ( *(float*)&g_fma_a_s[i]), [b] "f" ( *(float*)&g_fma_b_s[i]), [d] "f" ( *(float*)&g_fma_init_s[i]) );
+
+    check_float_value(result, "fmadd.s", g_fma_act_s[i],  ( *(float*)&g_fma_output_sma[i]) );
+  }
+
+  for(i = 0; i < (sizeof(g_fma_init_s)/4); i++) {
+    asm volatile ("fnmadd.s %[c], %[a], %[b], %[d]\n"
+                  : [c] "=f" (g_fma_act_s[i])
+                  : [a] "f"  ( *(float*)&g_fma_a_s[i]), [b] "f" ( *(float*)&g_fma_b_s[i]), [d] "f" ( *(float*)&g_fma_init_s[i]) );
+
+    check_float_value(result, "fnmadd.s", g_fma_act_s[i],  ( *(float*)&g_fma_output_snma[i]) );
+  } 
+
+
+  for(i = 0; i < (sizeof(g_fma_init_s)/4); i++) {
+    asm volatile ("fmsub.s %[c], %[a], %[b], %[d]\n"
+                  : [c] "=f" (g_fma_act_s[i])
+                  : [a] "f"  ( *(float*)&g_fma_a_s[i]), [b] "f" ( *(float*)&g_fma_b_s[i]), [d] "f" ( *(float*)&g_fma_init_s[i]) );
+
+    check_float_value(result, "fmsub.s", g_fma_act_s[i],  ( *(float*)&g_fma_output_sms[i]) );
+  } 
+ 
+  for(i = 0; i < (sizeof(g_fma_init_s)/4); i++) {
+    asm volatile ("fnmsub.s %[c], %[a], %[b], %[d]\n"
+                  : [c] "=f" (g_fma_act_s[i])
+                  : [a] "f"  ( *(float*)&g_fma_a_s[i]), [b] "f" ( *(float*)&g_fma_b_s[i]), [d] "f" ( *(float*)&g_fma_init_s[i]) );
+
+    check_float_value(result, "fnmsub.s", g_fma_act_s[i],  ( *(float*)&g_fma_output_snms[i]) );
+  } 
+
+  stop();
+}
+
 
 void check_special(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i;
