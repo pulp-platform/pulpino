@@ -19,7 +19,7 @@ __attribute__ ((section(".heapsram"))) float g_in_a[] = {
   678.7352F,
   757.7401F,
   743.1325F,
-  392.2270F 
+  392.2270F
 };
 
 __attribute__ ((section(".heapsram"))) float g_in_b[] = {
@@ -34,6 +34,314 @@ __attribute__ ((section(".heapsram"))) float g_in_b[] = {
   694.8286F,
   317.0995F
 };
+////////////////////////////////////////////////////////////////////
+//         The added testcases                                    //
+//         Begin                                                 //
+///////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+//         ADD, SUB, Mult, DIV                                    //
+///////////////////////////////////////////////////////////////////
+__attribute__ ((section(".heapsram"))) int g_in_a_ass[] = {
+// For test special cases index 0-13
+  0x00000000,
+  0x00000000,
+  0x00000000,
+  0x00000000,
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  F_INF, 
+  F_INF, 
+  F_INF, 
+  F_INF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_SNAN,
+  F_SNAN,
+  F_SNAN,
+  F_SNAN
+};
+
+__attribute__ ((section(".heapsram"))) int g_in_b_ass[] = {
+// For test special cases index 0-13
+  0x00000000,
+  0x007fffff,   //1.17549e-38 
+  F_INF, 
+  F_QNAN,
+  0x00000000,
+  0x007fffff,   //1.17549e-38 
+  F_INF, 
+  F_QNAN,
+  0x00000000,
+  0x007fffff,   //1.17549e-38 
+  F_INF, 
+  F_QNAN,
+  0x00000000,
+  0x007fffff,   //1.17549e-38 
+  F_INF, 
+  F_QNAN,
+  0x00000000,
+  0x007fffff,   //1.17549e-38 
+  F_INF, 
+  F_QNAN
+};
+
+////////////////////////////////////////////////////////////////////
+//         Output for ADD                                        //
+///////////////////////////////////////////////////////////////////
+__attribute__ ((section(".heapsram"))) int g_output_as[] = {
+// For test special cases index 0-13
+  0x00000000,
+  0x007fffff,   //1.17549e-38 
+  F_INF, 
+  F_QNAN,
+  0x007fffff,   //1.17549e-38 
+  0x00fffffe,   //2.35099e-38 
+  F_INF, 
+  F_QNAN,
+  F_INF, 
+  F_INF, 
+  F_INF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN
+};
+////////////////////////////////////////////////////////////////////
+//         Output for SUB                                        //
+///////////////////////////////////////////////////////////////////
+__attribute__ ((section(".heapsram"))) int g_output_ss[] = {
+// For test special cases index 0-13
+  0x00000000,
+  0x807fffff,   //-1.17549e-38 
+  0xFF800000, 
+  F_QNAN,
+  0x007fffff,   //1.17549e-38 
+  0x00000000,    
+  0xFF800000, 
+  F_QNAN,
+  F_INF, 
+  F_INF, 
+  F_QNAN, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN
+};
+
+
+////////////////////////////////////////////////////////////////////
+//         Output for MUL                                        //
+///////////////////////////////////////////////////////////////////
+__attribute__ ((section(".heapsram"))) int g_output_ms[] = {
+// For test special cases index 0-13
+  0x00000000,
+  0x00000000,
+  F_QNAN,
+  F_QNAN,
+  0x00000000,
+  0x00000000,    
+  F_INF,
+  F_QNAN,
+  F_QNAN, 
+  F_INF, 
+  F_INF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN
+};
+
+////////////////////////////////////////////////////////////////////
+//         Output for DIV                                        //
+///////////////////////////////////////////////////////////////////
+__attribute__ ((section(".heapsram"))) int g_output_ds[] = {
+// For test special cases index 0-13
+  F_QNAN,
+  0x00000000,
+  0x00000000,
+  F_QNAN,
+  F_INF,
+  0x3f800000,    
+  0x00000000,
+  F_QNAN,
+  F_INF,
+  F_INF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN
+};
+
+
+
+
+////////////////////////////////////////////////////////////////////
+//         SQRT                                                   //
+///////////////////////////////////////////////////////////////////
+
+__attribute__ ((section(".heapsram"))) int g_sqrt_a_ss[] = {
+// For test SQRT special cases index 0-5
+  F_QNAN,
+  F_SNAN,
+  F_INF, 
+  0x00000000,
+  0x80000000,
+  0xd0600000  //-1.50324e+10 
+};
+
+
+__attribute__ ((section(".heapsram"))) int g_sqrt_b_ss[] = {
+// For test SQRT special cases index 0-5
+  0x00000000,
+  0x00000000,
+  0x00000000,
+  0x00000000,
+  0x00000000,
+  0x00000000
+};
+
+
+__attribute__ ((section(".heapsram"))) int g_sqrt_output_ss[] = {
+// For test SQRT special cases index 0-5
+  F_QNAN,
+  F_QNAN,
+  F_INF, 
+  0x00000000,
+  0x80000000,
+  F_QNAN
+};
+
+////////////////////////////////////////////////////////////////////
+//         FMAC                                                   //
+///////////////////////////////////////////////////////////////////
+
+__attribute__ ((section(".heapsram"))) int g_fma_init_s[] = {
+   0x007fffff,   //1.17549e-38
+   0x007fffff,
+   0x007fffff,
+   F_QNAN,
+   0x00000000,
+   0x00000000,
+   F_INF,
+   0x00000000,
+   0x00000000,
+   F_INF
+};
+
+__attribute__ ((section(".heapsram"))) int g_fma_a_s[] = {
+   0x007fffff,
+   0x007fffff,  
+   0x007fffff,  
+   0x00000000,
+   F_QNAN,
+   0x00000000,
+   0x00000000,
+   F_INF,
+   0x00000000,
+   F_INF
+};
+
+
+__attribute__ ((section(".heapsram"))) int g_fma_b_s[] = {
+   0x007fffff,
+   0x077fffff,  //1/92593e-34
+   0xf07fffff,  //-3.16913e+29
+   0x00000000,
+   0x00000000,
+   F_QNAN,
+   0x00000000,
+   0x00000000,
+   F_INF,
+   F_INF
+};
+
+
+__attribute__ ((section(".heapsram"))) int g_fma_output_sma[] = {
+   0x007fffff,
+   0x007fffff,
+   0xb17ffffd,
+   F_QNAN,
+   F_QNAN,
+   F_QNAN,
+   F_INF,
+   F_QNAN,
+   F_QNAN,
+   F_INF
+};
+
+
+__attribute__ ((section(".heapsram"))) int g_fma_output_snma[] = {
+   0x807fffff,
+   0x807fffff,
+   0x317ffffd,
+   F_QNAN,
+   F_QNAN,
+   F_QNAN,
+   0xFF800000,
+   F_QNAN,
+   F_QNAN,
+   0xFF800000
+};
+
+
+__attribute__ ((section(".heapsram"))) int g_fma_output_sms[] = {
+   0x807fffff,
+   0x807fffff,
+   0xb17ffffc,
+   F_QNAN,
+   F_QNAN,
+   F_QNAN,
+   0xFF800000,
+   F_QNAN,
+   F_QNAN,
+   F_QNAN
+};
+
+
+__attribute__ ((section(".heapsram"))) int g_fma_output_snms[] = {
+   0x007fffff,
+   0x007fffff,
+   0x317ffffc,
+   F_QNAN,
+   F_QNAN,
+   F_QNAN,
+   F_INF,
+   F_QNAN,
+   F_QNAN,
+   F_QNAN
+};
+
+
+////////////////////////////////////////////////////////////////////
+//         The added testcases                                    //
+//         End                                                   //
+///////////////////////////////////////////////////////////////////
+
 
 __attribute__ ((section(".heapsram"))) int g_inbr_a[] = {
   0x123123,       //1.67067e-39
