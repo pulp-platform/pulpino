@@ -77,7 +77,7 @@ void check_float(testresult_t* result, const char* fail_msg, float actual, float
 
 void check_float_value(testresult_t* result, const char* fail_msg, float actual, float exp)
 {
-  if(actual != exp) {
+  if((!(fIsNan(actual)&&(fIsNan(exp)))) && (actual != exp)) {
     printf("Error!:\n");
     printf("%s: \t", fail_msg);
     printFloat(actual);
@@ -87,6 +87,9 @@ void check_float_value(testresult_t* result, const char* fail_msg, float actual,
     result->errors += 1;
   }
 }
+
+
+
 
 /////////////////////////////////////////////////////////
 // Main
@@ -115,7 +118,7 @@ void check_basic(testresult_t *result, void (*start)(), void (*stop)()) {
   float g_mul_act[sizeof(g_in_b)/4];
   float g_div_act[sizeof(g_in_b)/4];
   float g_div_act_ds[sizeof(g_inbr_b)/4];
-  float g_sqrt_act_ss[sizeof(g_inbr_b)/4];
+  float g_sqrt_act_ss[sizeof(g_inbr_a)/4];
   int   g_branch_act[sizeof(g_inbr_b)/4];
 
   start();
@@ -218,7 +221,7 @@ void check_basic_special(testresult_t *result, void (*start)(), void (*stop)()) 
     float g_sub_act_s[sizeof(g_in_b_ass)/4];
     float g_mul_act_s[sizeof(g_in_b_ass)/4];
     float g_div_act_s[sizeof(g_in_b_ass)/4];
-    float g_sqrt_act_ss[sizeof(g_sqrt_b_ss)/4];
+    float g_sqrt_act_ss[sizeof(g_sqrt_a_ss)/4];
   int   g_branch_act[sizeof(g_inbr_b)/4];
 
   start();
@@ -423,6 +426,8 @@ void check_fma_special(testresult_t *result, void (*start)(), void (*stop)()) {
                   : [a] "f"  ( *(float*)&g_fma_a_s[i]), [b] "f" ( *(float*)&g_fma_b_s[i]), [d] "f" ( *(float*)&g_fma_init_s[i]) );
 
     check_float_value(result, "fmadd.s", g_fma_act_s[i],  ( *(float*)&g_fma_output_sma[i]) );
+//    check_uint32(result, "fmadd.s", (*(int*)&g_fma_act_s[i]), g_fma_output_sma[i]);
+
   }
 
   for(i = 0; i < (sizeof(g_fma_init_s)/4); i++) {
