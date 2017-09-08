@@ -5,9 +5,15 @@ union float_int {
   const float    f;
 };
 
+
+
+
+#define F_PZERO 0x00000000
+#define F_MZERO 0x80000000
 #define F_QNAN 0x7FC00000
 #define F_SNAN 0x7FA00000
-#define F_INF  0x7F800000
+#define F_PINF 0x7F800000
+#define F_MINF 0xFF800000
 
 __attribute__ ((section(".heapsram"))) float g_in_a[] = {
   792.2073F,
@@ -43,18 +49,18 @@ __attribute__ ((section(".heapsram"))) float g_in_b[] = {
 ///////////////////////////////////////////////////////////////////
 __attribute__ ((section(".heapsram"))) int g_in_a_ass[] = {
 // For test special cases index 0-13
-  0x00000000,
-  0x00000000,
-  0x00000000,
-  0x00000000,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
-  F_INF, 
-  F_INF, 
-  F_INF, 
-  F_INF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -67,25 +73,25 @@ __attribute__ ((section(".heapsram"))) int g_in_a_ass[] = {
 
 __attribute__ ((section(".heapsram"))) int g_in_b_ass[] = {
 // For test special cases index 0-13
-  0x00000000,
+  F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_INF, 
+  F_PINF, 
   F_QNAN,
-  0x00000000,
+  F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_INF, 
+  F_PINF, 
   F_QNAN,
-  0x00000000,
+  F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_INF, 
+  F_PINF, 
   F_QNAN,
-  0x00000000,
+  F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_INF, 
+  F_PINF, 
   F_QNAN,
-  0x00000000,
+  F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_INF, 
+  F_PINF, 
   F_QNAN
 };
 
@@ -94,17 +100,17 @@ __attribute__ ((section(".heapsram"))) int g_in_b_ass[] = {
 ///////////////////////////////////////////////////////////////////
 __attribute__ ((section(".heapsram"))) int g_output_as[] = {
 // For test special cases index 0-13
-  0x00000000,
+  F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_INF, 
+  F_PINF, 
   F_QNAN,
   0x007fffff,   //1.17549e-38 
   0x00fffffe,   //2.35099e-38 
-  F_INF, 
+  F_PINF, 
   F_QNAN,
-  F_INF, 
-  F_INF, 
-  F_INF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -120,16 +126,16 @@ __attribute__ ((section(".heapsram"))) int g_output_as[] = {
 ///////////////////////////////////////////////////////////////////
 __attribute__ ((section(".heapsram"))) int g_output_ss[] = {
 // For test special cases index 0-13
-  0x00000000,
+  F_PZERO,
   0x807fffff,   //-1.17549e-38 
-  0xFF800000, 
+  F_MINF, 
   F_QNAN,
   0x007fffff,   //1.17549e-38 
-  0x00000000,    
-  0xFF800000, 
+  F_PZERO,    
+  F_MINF, 
   F_QNAN,
-  F_INF, 
-  F_INF, 
+  F_PINF, 
+  F_PINF, 
   F_QNAN, 
   F_QNAN,
   F_QNAN,
@@ -148,17 +154,17 @@ __attribute__ ((section(".heapsram"))) int g_output_ss[] = {
 ///////////////////////////////////////////////////////////////////
 __attribute__ ((section(".heapsram"))) int g_output_ms[] = {
 // For test special cases index 0-13
-  0x00000000,
-  0x00000000,
+  F_PZERO,
+  F_PZERO,
   F_QNAN,
   F_QNAN,
-  0x00000000,
-  0x00000000,    
-  F_INF,
+  F_PZERO,
+  F_PZERO,    
+  F_PINF,
   F_QNAN,
   F_QNAN, 
-  F_INF, 
-  F_INF, 
+  F_PINF, 
+  F_PINF, 
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -176,15 +182,15 @@ __attribute__ ((section(".heapsram"))) int g_output_ms[] = {
 __attribute__ ((section(".heapsram"))) int g_output_ds[] = {
 // For test special cases index 0-13
   F_QNAN,
-  0x00000000,
-  0x00000000,
+  F_PZERO,
+  F_PZERO,
   F_QNAN,
-  F_INF,
+  F_PINF,
   0x3f800000,    
-  0x00000000,
+  F_PZERO,
   F_QNAN,
-  F_INF,
-  F_INF, 
+  F_PINF,
+  F_PINF, 
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -208,31 +214,22 @@ __attribute__ ((section(".heapsram"))) int g_sqrt_a_ss[] = {
 // For test SQRT special cases index 0-5
   F_QNAN,
   F_SNAN,
-  F_INF, 
-  0x00000000,
-  0x80000000,
+  F_PINF, 
+  F_PZERO,
+  F_MZERO,
   0xd0600000  //-1.50324e+10 
 };
 
 
-__attribute__ ((section(".heapsram"))) int g_sqrt_b_ss[] = {
-// For test SQRT special cases index 0-5
-  0x00000000,
-  0x00000000,
-  0x00000000,
-  0x00000000,
-  0x00000000,
-  0x00000000
-};
 
 
 __attribute__ ((section(".heapsram"))) int g_sqrt_output_ss[] = {
 // For test SQRT special cases index 0-5
   F_QNAN,
   F_QNAN,
-  F_INF, 
-  0x00000000,
-  0x80000000,
+  F_PINF, 
+  F_PZERO,
+  F_MZERO,
   F_QNAN
 };
 
@@ -241,99 +238,584 @@ __attribute__ ((section(".heapsram"))) int g_sqrt_output_ss[] = {
 ///////////////////////////////////////////////////////////////////
 
 __attribute__ ((section(".heapsram"))) int g_fma_init_s[] = {
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+/*
    0x007fffff,   //1.17549e-38
    0x007fffff,
    0x007fffff,
    F_QNAN,
-   0x00000000,
-   0x00000000,
-   F_INF,
-   0x00000000,
-   0x00000000,
-   F_INF
+   F_PZERO,
+   F_PZERO,
+   F_MINF,
+   F_PZERO,
+   F_PZERO,
+   F_MINF
+*/
 };
 
 __attribute__ ((section(".heapsram"))) int g_fma_a_s[] = {
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+/*
    0x007fffff,
    0x007fffff,  
    0x007fffff,  
-   0x00000000,
+   F_PZERO,
    F_QNAN,
-   0x00000000,
-   0x00000000,
-   F_INF,
-   0x00000000,
-   F_INF
+   F_PZERO,
+   F_PZERO,
+   F_MINF,
+   F_PZERO,
+   F_MINF
+*/
 };
 
 
 __attribute__ ((section(".heapsram"))) int g_fma_b_s[] = {
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+  F_PZERO,
+  0x007fffff,   //1.17549e-38 
+  F_PINF, 
+  F_QNAN,
+
+/*
    0x007fffff,
    0x077fffff,  //1/92593e-34
    0xf07fffff,  //-3.16913e+29
-   0x00000000,
-   0x00000000,
+   F_PZERO,
+   F_PZERO,
    F_QNAN,
-   0x00000000,
-   0x00000000,
-   F_INF,
-   F_INF
+   F_PZERO,
+   F_PZERO,
+   F_MINF,
+   F_MINF
+*/
 };
 
 
 __attribute__ ((section(".heapsram"))) int g_fma_output_sma[] = {
+  F_PZERO,
+  F_PZERO,
+  F_QNAN,
+  F_QNAN,
+  F_PZERO,
+  F_PZERO,    
+  F_PINF,
+  F_QNAN,
+  F_QNAN, 
+  F_PINF, 
+  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+
+  0x007fffff,   //1.17549e-38 
+  0x007fffff,   //1.17549e-38 
+  F_QNAN,
+  F_QNAN,
+  0x007fffff,   //1.17549e-38 
+  0x007fffff,   //1.17549e-38    
+  F_PINF,
+  F_QNAN,
+  F_QNAN, 
+  F_PINF, 
+  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+
+  F_PINF,
+  F_PINF,
+  F_QNAN,
+  F_QNAN,
+  F_PINF,
+  F_PINF,    
+  F_PINF,
+  F_QNAN,
+  F_QNAN, 
+  F_PINF, 
+  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+/*
    0x007fffff,
    0x007fffff,
    0xb17ffffd,
    F_QNAN,
    F_QNAN,
    F_QNAN,
-   F_INF,
+   F_MINF,
    F_QNAN,
    F_QNAN,
-   F_INF
+   F_MINF
+*/
 };
 
 
 __attribute__ ((section(".heapsram"))) int g_fma_output_snma[] = {
+  F_MZERO,
+  F_MZERO,
+  F_QNAN,
+  F_QNAN,
+  F_MZERO,
+  F_MZERO,    
+  F_MINF,
+  F_QNAN,
+  F_QNAN, 
+  F_MINF, 
+  F_MINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+
+  0x807fffff,   //1.17549e-38 
+  0x807fffff,   //1.17549e-38 
+  F_QNAN,
+  F_QNAN,
+  0x807fffff,   //1.17549e-38 
+  0x807fffff,   //1.17549e-38    
+  F_MINF,
+  F_QNAN,
+  F_QNAN, 
+  F_MINF, 
+  F_MINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+
+  F_MINF,
+  F_MINF,
+  F_QNAN,
+  F_QNAN,
+  F_MINF,
+  F_MINF,    
+  F_MINF,
+  F_QNAN,
+  F_QNAN, 
+  F_MINF, 
+  F_MINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+/*
    0x807fffff,
    0x807fffff,
    0x317ffffd,
    F_QNAN,
    F_QNAN,
    F_QNAN,
-   0xFF800000,
+   F_PINF,
    F_QNAN,
    F_QNAN,
-   0xFF800000
+   F_PINF
+*/
 };
 
 
 __attribute__ ((section(".heapsram"))) int g_fma_output_sms[] = {
+
+  F_MZERO,
+  F_MZERO,
+  F_QNAN,
+  F_QNAN,
+  F_MZERO,
+  F_MZERO,    
+  F_PINF,
+  F_QNAN,
+  F_QNAN, 
+  F_PINF, 
+  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+
+  0x807fffff,   //1.17549e-38 
+  0x807fffff,   //1.17549e-38 
+  F_QNAN,
+  F_QNAN,
+  0x807fffff,   //1.17549e-38 
+  0x807fffff,   //1.17549e-38    
+  F_PINF,
+  F_QNAN,
+  F_QNAN, 
+  F_PINF, 
+  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+
+  F_MINF,
+  F_MINF,
+  F_QNAN,
+  F_QNAN,
+  F_MINF,
+  F_MINF,    
+  F_QNAN,
+  F_QNAN,
+  F_QNAN, 
+  F_QNAN, 
+  F_QNAN, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+/*   0x807fffff,
    0x807fffff,
-   0x807fffff,
-   0xb17ffffc,
+   0xb17ffffd,
    F_QNAN,
    F_QNAN,
    F_QNAN,
-   0xFF800000,
+   F_PINF,
    F_QNAN,
    F_QNAN,
    F_QNAN
+*/
 };
 
 
 __attribute__ ((section(".heapsram"))) int g_fma_output_snms[] = {
+
+  F_PZERO,
+  F_PZERO,
+  F_QNAN,
+  F_QNAN,
+  F_PZERO,
+  F_PZERO,    
+  F_MINF,
+  F_QNAN,
+  F_QNAN, 
+  F_MINF, 
+  F_MINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+
+  0x007fffff,   //1.17549e-38 
+  0x007fffff,   //1.17549e-38 
+  F_QNAN,
+  F_QNAN,
+  0x007fffff,   //1.17549e-38 
+  0x007fffff,   //1.17549e-38    
+  F_MINF,
+  F_QNAN,
+  F_QNAN, 
+  F_MINF, 
+  F_MINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+
+  F_PINF,
+  F_PINF,
+  F_QNAN,
+  F_QNAN,
+  F_PINF,
+  F_PINF,    
+  F_QNAN,
+  F_QNAN,
+  F_QNAN, 
+  F_QNAN, 
+  F_QNAN, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+
+/*   0x007fffff,
    0x007fffff,
-   0x007fffff,
-   0x317ffffc,
+   0x317ffffd,
    F_QNAN,
    F_QNAN,
    F_QNAN,
-   F_INF,
+   F_MINF,
    F_QNAN,
    F_QNAN,
    F_QNAN
+*/
 };
 
 
@@ -350,7 +832,7 @@ __attribute__ ((section(".heapsram"))) int g_inbr_a[] = {
   0x4423ef68,     //655.741
   0x420ed810,     //1.20994e-19
   F_SNAN,
-  F_INF,
+  F_MINF,
   0x420bff10,    //34.9991
   0x520b7833,    //1.49754e+11
   0x4c0b8722     //3.65764e+07
@@ -363,10 +845,10 @@ __attribute__ ((section(".heapsram"))) int g_inbr_b[] = {
   0xABBAABBA,     //-1.32638e-12
   0xc20ed810,     //-35.711
   F_SNAN,
-  F_INF,
+  F_MINF,
   0x420eff10,     //35.7491
   0x520e7833,     //1.52975e+11
-  F_INF
+  F_MINF
 };
 
 __attribute__ ((section(".heapsram"))) int g_feq[] = {
