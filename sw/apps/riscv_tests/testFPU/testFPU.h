@@ -10,10 +10,10 @@ union float_int {
 
 #define F_PZERO 0x00000000
 #define F_MZERO 0x80000000
-#define F_QNAN 0x7FC00000
-#define F_SNAN 0x7FA00000
-#define F_PINF 0x7F800000
-#define F_MINF 0xFF800000
+#define F_QNAN  0x7FC00000
+#define F_SNAN  0x7FA00000
+#define F_PINF  0x7F800000
+#define F_MINF  0xFF800000
 
 __attribute__ ((section(".heapsram"))) float g_in_a[] = {
   792.2073F,
@@ -48,7 +48,7 @@ __attribute__ ((section(".heapsram"))) float g_in_b[] = {
 //         ADD, SUB, Mult, DIV                                    //
 ///////////////////////////////////////////////////////////////////
 __attribute__ ((section(".heapsram"))) int g_in_a_ass[] = {
-// For test special cases index 0-13
+// For test special cases index 0-19
   F_PZERO,
   F_PZERO,
   F_PZERO,
@@ -57,10 +57,10 @@ __attribute__ ((section(".heapsram"))) int g_in_a_ass[] = {
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -72,26 +72,26 @@ __attribute__ ((section(".heapsram"))) int g_in_a_ass[] = {
 };
 
 __attribute__ ((section(".heapsram"))) int g_in_b_ass[] = {
-// For test special cases index 0-13
+// For test special cases index 0-19
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN
 };
 
@@ -99,18 +99,18 @@ __attribute__ ((section(".heapsram"))) int g_in_b_ass[] = {
 //         Output for ADD                                        //
 ///////////////////////////////////////////////////////////////////
 __attribute__ ((section(".heapsram"))) int g_output_as[] = {
-// For test special cases index 0-13
+// For test special cases index 0-19
   F_PZERO,
   0x007fffff,   //1.17549e-38 
   F_PINF, 
   F_QNAN,
   0x007fffff,   //1.17549e-38 
   0x00fffffe,   //2.35099e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
+  F_PINF,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -125,18 +125,18 @@ __attribute__ ((section(".heapsram"))) int g_output_as[] = {
 //         Output for SUB                                        //
 ///////////////////////////////////////////////////////////////////
 __attribute__ ((section(".heapsram"))) int g_output_ss[] = {
-// For test special cases index 0-13
+// For test special cases index 0-19
   F_PZERO,
-  0x807fffff,   //-1.17549e-38 
-  F_MINF, 
+  0x807fffff,   //-1.17549e-38
+  F_MINF,
   F_QNAN,
-  0x007fffff,   //1.17549e-38 
-  F_PZERO,    
-  F_MINF, 
+  0x007fffff,   //1.17549e-38
+  F_PZERO,
+  F_MINF,
   F_QNAN,
-  F_PINF, 
-  F_PINF, 
-  F_QNAN, 
+  F_PINF,
+  F_PINF,
+  F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -153,18 +153,18 @@ __attribute__ ((section(".heapsram"))) int g_output_ss[] = {
 //         Output for MUL                                        //
 ///////////////////////////////////////////////////////////////////
 __attribute__ ((section(".heapsram"))) int g_output_ms[] = {
-// For test special cases index 0-13
+// For test special cases index 0-19
   F_PZERO,
   F_PZERO,
   F_QNAN,
   F_QNAN,
   F_PZERO,
-  F_PZERO,    
+  F_PZERO,
   F_PINF,
   F_QNAN,
-  F_QNAN, 
-  F_PINF, 
-  F_PINF, 
+  F_QNAN,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -180,17 +180,17 @@ __attribute__ ((section(".heapsram"))) int g_output_ms[] = {
 //         Output for DIV                                        //
 ///////////////////////////////////////////////////////////////////
 __attribute__ ((section(".heapsram"))) int g_output_ds[] = {
-// For test special cases index 0-13
+// For test special cases index 0-19
   F_QNAN,
   F_PZERO,
   F_PZERO,
   F_QNAN,
   F_PINF,
-  0x3f800000,    
+  0x3f800000,
   F_PZERO,
   F_QNAN,
   F_PINF,
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -214,7 +214,7 @@ __attribute__ ((section(".heapsram"))) int g_sqrt_a_ss[] = {
 // For test SQRT special cases index 0-5
   F_QNAN,
   F_SNAN,
-  F_PINF, 
+  F_PINF,
   F_PZERO,
   F_MZERO,
   0xd0600000  //-1.50324e+10 
@@ -227,7 +227,7 @@ __attribute__ ((section(".heapsram"))) int g_sqrt_output_ss[] = {
 // For test SQRT special cases index 0-5
   F_QNAN,
   F_QNAN,
-  F_PINF, 
+  F_PINF,
   F_PZERO,
   F_MZERO,
   F_QNAN
@@ -238,6 +238,7 @@ __attribute__ ((section(".heapsram"))) int g_sqrt_output_ss[] = {
 ///////////////////////////////////////////////////////////////////
 
 __attribute__ ((section(".heapsram"))) int g_fma_init_s[] = {
+  // For test special cases index 0-63
   F_PZERO,
   F_PZERO,
   F_PZERO,
@@ -270,22 +271,22 @@ __attribute__ ((section(".heapsram"))) int g_fma_init_s[] = {
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -302,21 +303,11 @@ __attribute__ ((section(".heapsram"))) int g_fma_init_s[] = {
   F_QNAN,
   F_QNAN,
   F_QNAN,
-/*
-   0x007fffff,   //1.17549e-38
-   0x007fffff,
-   0x007fffff,
-   F_QNAN,
-   F_PZERO,
-   F_PZERO,
-   F_MINF,
-   F_PZERO,
-   F_PZERO,
-   F_MINF
-*/
+
 };
 
 __attribute__ ((section(".heapsram"))) int g_fma_a_s[] = {
+  // For test special cases index 0-63
   F_PZERO,
   F_PZERO,
   F_PZERO,
@@ -325,10 +316,10 @@ __attribute__ ((section(".heapsram"))) int g_fma_a_s[] = {
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -341,10 +332,10 @@ __attribute__ ((section(".heapsram"))) int g_fma_a_s[] = {
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -357,10 +348,10 @@ __attribute__ ((section(".heapsram"))) int g_fma_a_s[] = {
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -373,130 +364,104 @@ __attribute__ ((section(".heapsram"))) int g_fma_a_s[] = {
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
   0x007fffff,   //1.17549e-38
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
-  F_PINF, 
+  F_PINF,
+  F_PINF,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
-  F_QNAN,
-
-/*
-   0x007fffff,
-   0x007fffff,  
-   0x007fffff,  
-   F_PZERO,
-   F_QNAN,
-   F_PZERO,
-   F_PZERO,
-   F_MINF,
-   F_PZERO,
-   F_MINF
-*/
+  F_QNAN
 };
 
 
 __attribute__ ((section(".heapsram"))) int g_fma_b_s[] = {
+  // For test special cases index 0-63
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
+  F_PINF,
   F_QNAN,
   F_PZERO,
   0x007fffff,   //1.17549e-38 
-  F_PINF, 
-  F_QNAN,
-
-/*
-   0x007fffff,
-   0x077fffff,  //1/92593e-34
-   0xf07fffff,  //-3.16913e+29
-   F_PZERO,
-   F_PZERO,
-   F_QNAN,
-   F_PZERO,
-   F_PZERO,
-   F_MINF,
-   F_MINF
-*/
+  F_PINF,
+  F_QNAN
 };
 
 
 __attribute__ ((section(".heapsram"))) int g_fma_output_sma[] = {
+  // For test special cases index 0-63
   F_PZERO,
   F_PZERO,
   F_QNAN,
   F_QNAN,
   F_PZERO,
-  F_PZERO,    
+  F_PZERO,
   F_PINF,
   F_QNAN,
-  F_QNAN, 
-  F_PINF, 
-  F_PINF, 
+  F_QNAN,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
-
-
   0x007fffff,   //1.17549e-38 
   0x007fffff,   //1.17549e-38 
   F_QNAN,
@@ -505,33 +470,25 @@ __attribute__ ((section(".heapsram"))) int g_fma_output_sma[] = {
   0x007fffff,   //1.17549e-38    
   F_PINF,
   F_QNAN,
-  F_QNAN, 
-  F_PINF, 
-  F_PINF, 
+  F_QNAN,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
-
-
   F_PINF,
   F_PINF,
   F_QNAN,
   F_QNAN,
   F_PINF,
-  F_PINF,    
+  F_PINF,
   F_PINF,
   F_QNAN,
-  F_QNAN, 
-  F_PINF, 
-  F_PINF, 
   F_QNAN,
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -548,75 +505,59 @@ __attribute__ ((section(".heapsram"))) int g_fma_output_sma[] = {
   F_QNAN,
   F_QNAN,
   F_QNAN,
-/*
-   0x007fffff,
-   0x007fffff,
-   0xb17ffffd,
-   F_QNAN,
-   F_QNAN,
-   F_QNAN,
-   F_MINF,
-   F_QNAN,
-   F_QNAN,
-   F_MINF
-*/
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN
 };
 
 
 __attribute__ ((section(".heapsram"))) int g_fma_output_snma[] = {
+  // For test special cases index 0-63
   F_MZERO,
   F_MZERO,
   F_QNAN,
   F_QNAN,
   F_MZERO,
-  F_MZERO,    
+  F_MZERO,
   F_MINF,
   F_QNAN,
-  F_QNAN, 
-  F_MINF, 
-  F_MINF, 
   F_QNAN,
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-
-
-  0x807fffff,   //1.17549e-38 
-  0x807fffff,   //1.17549e-38 
-  F_QNAN,
-  F_QNAN,
-  0x807fffff,   //1.17549e-38 
-  0x807fffff,   //1.17549e-38    
+  F_MINF,
   F_MINF,
   F_QNAN,
-  F_QNAN, 
-  F_MINF, 
-  F_MINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  0x807fffff,   //1.17549e-38
+  0x807fffff,   //1.17549e-38
+  F_QNAN,
+  F_QNAN,
+  0x807fffff,   //1.17549e-38
+  0x807fffff,   //1.17549e-38
+  F_MINF,
+  F_QNAN,
+  F_QNAN,
+  F_MINF,
+  F_MINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
-
-
   F_MINF,
   F_MINF,
   F_QNAN,
   F_QNAN,
   F_MINF,
-  F_MINF,    
+  F_MINF,
   F_MINF,
   F_QNAN,
-  F_QNAN, 
-  F_MINF, 
-  F_MINF, 
   F_QNAN,
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-
+  F_MINF,
+  F_MINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -633,65 +574,54 @@ __attribute__ ((section(".heapsram"))) int g_fma_output_snma[] = {
   F_QNAN,
   F_QNAN,
   F_QNAN,
-/*
-   0x807fffff,
-   0x807fffff,
-   0x317ffffd,
-   F_QNAN,
-   F_QNAN,
-   F_QNAN,
-   F_PINF,
-   F_QNAN,
-   F_QNAN,
-   F_PINF
-*/
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN
 };
 
 
 __attribute__ ((section(".heapsram"))) int g_fma_output_sms[] = {
-
+  // For test special cases index 0-63
   F_MZERO,
   F_MZERO,
   F_QNAN,
   F_QNAN,
   F_MZERO,
-  F_MZERO,    
+  F_MZERO,
   F_PINF,
   F_QNAN,
-  F_QNAN, 
-  F_PINF, 
-  F_PINF, 
   F_QNAN,
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-
-
-  0x807fffff,   //1.17549e-38 
-  0x807fffff,   //1.17549e-38 
-  F_QNAN,
-  F_QNAN,
-  0x807fffff,   //1.17549e-38 
-  0x807fffff,   //1.17549e-38    
+  F_PINF,
   F_PINF,
   F_QNAN,
-  F_QNAN, 
-  F_PINF, 
-  F_PINF, 
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  0x807fffff,   //1.17549e-38
+  0x807fffff,   //1.17549e-38
+  F_QNAN,
+  F_QNAN,
+  0x807fffff,   //1.17549e-38
+  0x807fffff,   //1.17549e-38
+  F_PINF,
+  F_QNAN,
+  F_QNAN,
+  F_PINF,
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
-
-
   F_MINF,
   F_MINF,
   F_QNAN,
   F_QNAN,
   F_MINF,
-  F_MINF,    
+  F_MINF,
   F_QNAN,
   F_QNAN,
   F_QNAN, 
@@ -702,7 +632,6 @@ __attribute__ ((section(".heapsram"))) int g_fma_output_sms[] = {
   F_QNAN,
   F_QNAN,
   F_QNAN,
-
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -718,29 +647,18 @@ __attribute__ ((section(".heapsram"))) int g_fma_output_sms[] = {
   F_QNAN,
   F_QNAN,
   F_QNAN,
-  F_QNAN,
-/*   0x807fffff,
-   0x807fffff,
-   0xb17ffffd,
-   F_QNAN,
-   F_QNAN,
-   F_QNAN,
-   F_PINF,
-   F_QNAN,
-   F_QNAN,
-   F_QNAN
-*/
+  F_QNAN
 };
 
 
 __attribute__ ((section(".heapsram"))) int g_fma_output_snms[] = {
-
+  // For test special cases index 0-63
   F_PZERO,
   F_PZERO,
   F_QNAN,
   F_QNAN,
   F_PZERO,
-  F_PZERO,    
+  F_PZERO,
   F_MINF,
   F_QNAN,
   F_QNAN, 
@@ -751,43 +669,28 @@ __attribute__ ((section(".heapsram"))) int g_fma_output_snms[] = {
   F_QNAN,
   F_QNAN,
   F_QNAN,
-
-
-  0x007fffff,   //1.17549e-38 
-  0x007fffff,   //1.17549e-38 
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
   F_QNAN,
   F_QNAN,
-  0x007fffff,   //1.17549e-38 
-  0x007fffff,   //1.17549e-38    
+  0x007fffff,   //1.17549e-38
+  0x007fffff,   //1.17549e-38
   F_MINF,
   F_QNAN,
-  F_QNAN, 
-  F_MINF, 
-  F_MINF, 
+  F_QNAN,
+  F_MINF,
+  F_MINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
   F_QNAN,
-
-
   F_PINF,
   F_PINF,
   F_QNAN,
   F_QNAN,
   F_PINF,
-  F_PINF,    
-  F_QNAN,
-  F_QNAN,
-  F_QNAN, 
-  F_QNAN, 
-  F_QNAN, 
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-  F_QNAN,
-
+  F_PINF,
   F_QNAN,
   F_QNAN,
   F_QNAN,
@@ -804,18 +707,16 @@ __attribute__ ((section(".heapsram"))) int g_fma_output_snms[] = {
   F_QNAN,
   F_QNAN,
   F_QNAN,
-
-/*   0x007fffff,
-   0x007fffff,
-   0x317ffffd,
-   F_QNAN,
-   F_QNAN,
-   F_QNAN,
-   F_MINF,
-   F_QNAN,
-   F_QNAN,
-   F_QNAN
-*/
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN,
+  F_QNAN
 };
 
 
@@ -832,7 +733,7 @@ __attribute__ ((section(".heapsram"))) int g_inbr_a[] = {
   0x4423ef68,     //655.741
   0x420ed810,     //1.20994e-19
   F_SNAN,
-  F_MINF,
+  F_PINF,
   0x420bff10,    //34.9991
   0x520b7833,    //1.49754e+11
   0x4c0b8722     //3.65764e+07
@@ -845,10 +746,10 @@ __attribute__ ((section(".heapsram"))) int g_inbr_b[] = {
   0xABBAABBA,     //-1.32638e-12
   0xc20ed810,     //-35.711
   F_SNAN,
-  F_MINF,
+  F_PINF,
   0x420eff10,     //35.7491
   0x520e7833,     //1.52975e+11
-  F_MINF
+  F_PINF
 };
 
 __attribute__ ((section(".heapsram"))) int g_feq[] = {
@@ -913,7 +814,7 @@ float g_add_max[] = {
     0776.9F,
     1582.2F,
     1439.0F,
-    0710.3F  
+    0710.3F
 };
 
 
@@ -927,7 +828,7 @@ float g_sub_min[] = {
   580.6034F,
   -66.7177F,
    47.3038F,
-   74.1275F 
+   74.1275F
 };
 
 float g_sub_max[] = {
@@ -940,7 +841,7 @@ float g_sub_max[] = {
   582.6034F,
   -64.7177F,
    49.3038F,
-   76.1275F 
+   76.1275F
 };
 
 float g_mul_min[] = {
@@ -953,7 +854,7 @@ float g_mul_min[] = {
    065925.7545787244F,
    623966.0423624737F,
    516348.7095158557F,
-   124373.9839601057F 
+   124373.9839601057F
 };
 
 float g_mul_max[] = {
@@ -966,7 +867,7 @@ float g_mul_max[] = {
    065927.7545787244F,
    623968.0423624737F,
    516350.7095158558F,
-   124375.9839601057F  
+   124375.9839601057F
 };
 
 
@@ -980,7 +881,7 @@ float g_div_min[] = {
    5.987776258418691F,
   -0.079806998595730F,
    0.069519077873077F,
-   0.236921042755694F 
+   0.236921042755694F
 };
 
 float g_div_max[] = {
@@ -993,7 +894,7 @@ float g_div_max[] = {
    7.987776258418691F,
    1.920193001404270F,
    2.069519077873077F,
-   2.236921042755695F 
+   2.236921042755695F
 };
 
 __attribute__ ((section(".heapsram"))) float g_fma_init[] = {
@@ -1006,7 +907,7 @@ __attribute__ ((section(".heapsram"))) float g_fma_init[] = {
    186.8726045543786F,
    489.7643957882311F,
    445.5862007108995F,
-   646.3130101112646F 
+   646.3130101112646F
 };
 
 
@@ -1020,7 +921,8 @@ float g_fma_min[] = {
    066112.6271832787F,
    624455.8067582619F,
    516794.2957165667F,
-   125020.2969702170F };
+   125020.2969702170F
+};
 
 float g_fma_max[] = {
    520225.6110117314F,
@@ -1032,7 +934,7 @@ float g_fma_max[] = {
    066114.6271832787F,
    624457.8067582618F,
    516796.2957165667F,
-   125022.2969702170F 
+   125022.2969702170F
 };
 
 
@@ -1046,7 +948,7 @@ float g_fms_min[] = {
   -065740.8819741700F,
   -623478.2779666855F,
   -515905.1233151448F,
-  -123729.6709499944F 
+  -123729.6709499944F
 };
 
 float g_fms_max[] = {
@@ -1059,7 +961,7 @@ float g_fms_max[] = {
   -065738.8819741700F,
   -623476.2779666855F,
   -515903.1233151449F,
-  -123727.6709499944F 
+  -123727.6709499944F
 };
 
 
@@ -1073,7 +975,7 @@ __attribute__ ((section(".heapsram"))) float g_trig_in[] = {
    0.118997681558377F,
    0.498364051982143F,
    0.959743958516081F,
-   0.340385726666133F 
+   0.340385726666133F
 };
 
 
@@ -1087,7 +989,7 @@ float g_sin_min[] = {
    0.018717036916856F,
    0.377989218242609F,
    0.719044696542342F,
-   0.233850712936964F 
+   0.233850712936964F
 };
 
 float g_sin_max[] = {
@@ -1100,7 +1002,7 @@ float g_sin_max[] = {
    0.218717036916856F,
    0.577989218242609F,
    0.919044696542342F,
-   0.433850712936964F 
+   0.433850712936964F
 };
 
 float g_cos_min[] = {
@@ -1113,7 +1015,7 @@ float g_cos_min[] = {
    0.892928126878115F,
    0.778365702451900F,
    0.473729714295733F,
-   0.842625960533382F 
+   0.842625960533382F
 };
 
 float g_cos_max[] = {
@@ -1126,7 +1028,7 @@ float g_cos_max[] = {
    1.092928126878115F,
    0.978365702451900F,
    0.673729714295733F,
-   1.042625960533382F 
+   1.042625960533382F
 };
 
 float g_atan_min[] = {
@@ -1166,7 +1068,7 @@ float g_exp_min[] = {
    109.4578046174749F,
    189.9963563331674F,
    171.6043102182665F,
-   014.1607602488125F 
+   014.1607602488125F
 };
 
 float g_exp_max[] = {
@@ -1179,7 +1081,7 @@ float g_exp_max[] = {
    111.4578046174749F,
    191.9963563331675F,
    173.6043102182665F,
-   016.1607602488125F    
+   016.1607602488125F
 };
 
 float g_mexp_min[] = {
@@ -1192,7 +1094,7 @@ float g_mexp_min[] = {
     0.5247F,
     0.4914F,
     0.4974F,
-    0.6620F 
+    0.6620F
 };
 
 float g_mexp_max[] = {
@@ -1205,7 +1107,7 @@ float g_mexp_max[] = {
     0.7247F,
     0.6914F,
     0.6974F,
-    0.8620F 
+    0.8620F
     };
 
 
@@ -1219,7 +1121,7 @@ float g_log_min[] = {
    9.306704928736242F,
    9.465559346077075F,
    9.437475593099149F,
-   8.515545112365650F 
+   8.515545112365650F
 };
 
 float g_log_max[] = {
@@ -1232,7 +1134,7 @@ float g_log_max[] = {
    9.506704928736241F,
    9.665559346077075F,
    9.637475593099149F,
-   8.715545112365650F 
+   8.715545112365650F
 };
 
 float g_pow_min[] = {
@@ -1245,7 +1147,7 @@ float g_pow_min[] = {
    460680.4104398059F,
    574169.1054888699F,
    552244.8651814296F,
-   153841.0348526567F  
+   153841.0348526567F
 };
 
 float g_pow_max[] = {
@@ -1258,7 +1160,7 @@ float g_pow_max[] = {
    460682.4104398059F,
    574171.1054888699F,
    552246.8651814296F,
-   153843.0348526567F 
+   153843.0348526567F
 };
 
 float g_sqrt_min[] = {
@@ -1271,7 +1173,7 @@ float g_sqrt_min[] = {
   25.952546034078384F,
   27.427079950084305F,
   27.160456124667395F,
-  19.704722152410220F 
+  19.704722152410220F
 };
 
 float g_sqrt_max[] = {
@@ -1284,7 +1186,7 @@ float g_sqrt_max[] = {
   26.152546034078387F,
   27.627079950084308F,
   27.360456124667397F,
-  19.904722152410223F 
+  19.904722152410223F
 };
 
 float g_mex_min[] = {
@@ -1297,7 +1199,7 @@ float g_mex_min[] = {
    001.0082828032969F,
    733.6847311402638F,
    234.3838127467586F,
-   002.7264751650322F 
+   002.7264751650322F
 };
 
 float g_mex_max[] = {
@@ -1310,7 +1212,7 @@ float g_mex_max[] = {
    003.0082828032969F,
    735.6847311402638F,
    236.3838127467586F,
-   004.7264751650322F 
+   004.7264751650322F
 };
 
 
@@ -1350,42 +1252,32 @@ float g_mul_small_max[] = {
    1034.105540292568F,
    9753.485036913650F,
    8071.964211185247F,
-   1947.359124376652F  
+   1947.359124376652F
 };
 
 
 float g_pow_small_min[] = {
-   09801.13207824813F, 
-   14379.77681727094F, 
-   06713.68538328702F, 
-  -00014.92693729041F, 
-   11260.44653258111F, 
-   13625.36541963589F, 
-   07193.14703812197F, 
-   08966.40789826359F, 
-   08623.84164345984F, 
-   02398.78179457276F  
+   09801.13207824813F,
+   14379.77681727094F,
+   06713.68538328702F,
+  -00014.92693729041F,
+   11260.44653258111F,
+   13625.36541963589F,
+   07193.14703812197F,
+   08966.40789826359F,
+   08623.84164345984F,
+   02398.78179457276F
 };
 
 float g_pow_small_max[] = {
-   09811.13207824813F, 
-   14389.77681727094F, 
-   06723.68538328702F, 
-   00024.92693729041F, 
-   11270.94653258111F, 
-   13635.36541963589F, 
-   07203.14703812197F, 
-   08976.40789826359F, 
-   08633.84164345984F, 
-   02408.78179457276F  
+   09811.13207824813F,
+   14389.77681727094F,
+   06723.68538328702F,
+   00024.92693729041F,
+   11270.94653258111F,
+   13635.36541963589F,
+   07203.14703812197F,
+   08976.40789826359F,
+   08633.84164345984F,
+   02408.78179457276F
 };
-
-   
-   
-   
-   
-   
-   
-   
-   
-   
