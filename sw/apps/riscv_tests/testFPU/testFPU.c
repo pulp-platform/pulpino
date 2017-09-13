@@ -41,13 +41,13 @@ void check_fma_special (testresult_t *result, void (*start)(), void (*stop)());
 // Test case selection
 /////////////////////////////////////////////////////////
 testcase_t testcases[] = {
-  {  .name = "basic",          .test = check_basic        },
-  {  .name = "trig",           .test = check_trig         },
-  {  .name = "fma",            .test = check_fma          },
-  {  .name = "explog",         .test = check_explog       },
-  {  .name = "special",        .test = check_special      },
-  {  .name = "basic_special",          .test = check_basic_special        },
-  {  .name = "fma_special",        .test = check_fma_special      },
+  {  .name = "basic",          .test = check_basic          },
+  {  .name = "trig",           .test = check_trig           },
+  {  .name = "fma",            .test = check_fma            },
+  {  .name = "explog",         .test = check_explog         },
+  {  .name = "special",        .test = check_special        },
+  {  .name = "basic_special",  .test = check_basic_special  },
+  {  .name = "fma_special",    .test = check_fma_special    },
   {0, 0}
 };
 
@@ -87,9 +87,6 @@ void check_float_value(testresult_t* result, const char* fail_msg, float actual,
     result->errors += 1;
   }
 }
-
-
-
 
 /////////////////////////////////////////////////////////
 // Main
@@ -177,8 +174,6 @@ void check_basic(testresult_t *result, void (*start)(), void (*stop)()) {
 
     check_float(result, "fsqrt.s", g_add_act[i],  g_sqrt_min[i], g_sqrt_max[i]);
   }
-
-
 
   //-----------------------------------------------------------------
   // Check f{eq,lt,le}.s (floating point compare instructions)
@@ -271,12 +266,9 @@ void check_basic_special(testresult_t *result, void (*start)(), void (*stop)()) 
     check_float_value(result, "fdiv.s", g_div_act_s[i],  ( *(float*)&g_output_ds[i]));
   }
 
-
-
   //-----------------------------------------------------------------
   // Check fsqrt.s (floating point square root) special cases
   //-----------------------------------------------------------------
-
   for(i = 0; i < (sizeof(g_sqrt_act_ss)/4); i++) {
     asm volatile ("fsqrt.s %[c], %[a]\n"
                   : [c] "=f" (g_sqrt_act_ss[i])
@@ -284,7 +276,6 @@ void check_basic_special(testresult_t *result, void (*start)(), void (*stop)()) 
 
     check_float_value(result, "fsqrt.s", g_sqrt_act_ss[i], ( *(float*)&g_sqrt_output_ss[i]) );
   }
-
   stop();
 }
 
@@ -426,8 +417,6 @@ void check_fma_special(testresult_t *result, void (*start)(), void (*stop)()) {
                   : [a] "f"  ( *(float*)&g_fma_a_s[i]), [b] "f" ( *(float*)&g_fma_b_s[i]), [d] "f" ( *(float*)&g_fma_init_s[i]) );
 
     check_float_value(result, "fmadd.s", g_fma_act_s[i],  ( *(float*)&g_fma_output_sma[i]) );
-//    check_uint32(result, "fmadd.s", (*(int*)&g_fma_act_s[i]), g_fma_output_sma[i]);
-
   }
 
   for(i = 0; i < (sizeof(g_fma_init_s)/4); i++) {
@@ -436,7 +425,7 @@ void check_fma_special(testresult_t *result, void (*start)(), void (*stop)()) {
                   : [a] "f"  ( *(float*)&g_fma_a_s[i]), [b] "f" ( *(float*)&g_fma_b_s[i]), [d] "f" ( *(float*)&g_fma_init_s[i]) );
 
     check_float_value(result, "fnmadd.s", g_fma_act_s[i],  ( *(float*)&g_fma_output_snma[i]) );
-  } 
+  }
 
 
   for(i = 0; i < (sizeof(g_fma_init_s)/4); i++) {
@@ -445,19 +434,17 @@ void check_fma_special(testresult_t *result, void (*start)(), void (*stop)()) {
                   : [a] "f"  ( *(float*)&g_fma_a_s[i]), [b] "f" ( *(float*)&g_fma_b_s[i]), [d] "f" ( *(float*)&g_fma_init_s[i]) );
 
     check_float_value(result, "fmsub.s", g_fma_act_s[i],  ( *(float*)&g_fma_output_sms[i]) );
-  } 
- 
+  }
+
   for(i = 0; i < (sizeof(g_fma_init_s)/4); i++) {
     asm volatile ("fnmsub.s %[c], %[a], %[b], %[d]\n"
                   : [c] "=f" (g_fma_act_s[i])
                   : [a] "f"  ( *(float*)&g_fma_a_s[i]), [b] "f" ( *(float*)&g_fma_b_s[i]), [d] "f" ( *(float*)&g_fma_init_s[i]) );
 
     check_float_value(result, "fnmsub.s", g_fma_act_s[i],  ( *(float*)&g_fma_output_snms[i]) );
-  } 
-
+  }
   stop();
 }
-
 
 void check_special(testresult_t *result, void (*start)(), void (*stop)()) {
   unsigned int i;
