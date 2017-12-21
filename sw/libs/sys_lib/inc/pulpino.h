@@ -63,24 +63,24 @@
 /* pointer to mem of apb pulpino unit - PointerSocCtrl */
 #define __PSC__(a) *(unsigned volatile int*) (SOC_CTRL_BASE_ADDR + a)
 
-/** Peripheral Glock gating */
+/** Peripheral Clock gating */
 #define CGREG __PSC__(0x04)
 
-/** Glock gate SPI */
+/** Clock gate SPI */
 #define CGSPI     0x00
-/** Glock gate UART */
+/** Clock gate UART */
 #define CGUART    0x01
-/** Glock gate GPIO */
+/** Clock gate GPIO */
 #define CGGPIO    0x02
-/** Glock gate SPI Master */
+/** Clock gate SPI Master */
 #define CGGSPIM   0x03
-/** Glock gate Timer */
+/** Clock gate Timer */
 #define CGTIM     0x04
-/** Glock gate Event Unit */
+/** Clock gate Event Unit */
 #define CGEVENT   0x05
-/** Glock gate I2C */
+/** Clock gate I2C */
 #define CGGI2C    0x06
-/** Glock gate FLL */
+/** Clock gate FLL */
 #define CGFLL     0x07
 
 /** Boot address register */
