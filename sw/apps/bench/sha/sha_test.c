@@ -11,7 +11,7 @@
 #include "common.h"
 
 SHA_INFO sha_info __sram;
-uint8_t data[256] __sram;
+uint8_t data[256+16] __sram;
 
 void test_setup() {
   for (int i = 0; i != 256; ++i)
