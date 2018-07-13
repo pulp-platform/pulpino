@@ -3,6 +3,7 @@
 import sys
 import random
 import argparse
+import math
 
 # Copyright 2017 ETH Zurich and University of Bologna.
 # Copyright and related rights are licensed under the Solderpad Hardware
@@ -45,12 +46,44 @@ def write_define(f, name,val):
     f.write('#define %s %d\n\n' % (name,val))
     return
 
+def bit_reverse(input, length, radix):
+    radix_log = int(math.floor(math.log(radix,2)))
+    mask = (1 << radix_log) - 1
+    input_reverse = input
+    for i in xrange(1,length/radix_log):
+        input >>= radix_log
+        input_reverse <<= radix_log
+        input_reverse |= (input & mask)
+    mask = (1 << length) - 1
+    input_reverse &= mask
+
+    return input_reverse
+
+def brev_encode(input, reg_src, reg_dst, length, radix, iteration):
+    radix = int(math.floor(math.log(radix,2))) - 1
+    inst_str = ""
+    inst_str += "asm volatile ("
+    # inst_str += "\"addi x%s, x0, %s;\"\n" % (reg_src,input)
+    inst_str += "\"li x%s, %s;\"\n" % (reg_src,input)
+    inst_binary = "11000%s%s%s101%s0110011"%('{0:02b}'.format(radix), '{0:05b}'.format(32-length), '{0:05b}'.format(reg_src), '{0:05b}'.format(reg_dst))
+    # print(inst_binary)
+    inst_str += "\".word %s;\"\n" % (hex(int(inst_binary, 2)))
+    inst_str += "\"nop\" : : : \"x%s\", \"x%s\");" % (reg_src,reg_dst)
+    print(inst_str + '\n')
+    # Load register
+    inst_str = "asm volatile ("
+    inst_str += "\"addi %%[c], x%s, 0\\n\": [c] \"=r\" (res));" % (reg_dst)
+    print(inst_str + '\n')
+
+    # Check
+    check_str = "check_uint32(result, \"brev\", res,  res_brev[%s]);\n\n" % (str(iteration))
+    print(check_str)
 
 if args.riscv: f = open('testBitManipulation_stimuli_riscv.h', 'w')
 else: f = open('testBitManipulation_stimuli.h', 'w')
 
 
-NumberOfStimuli = 10
+NumberOfStimuli = 200
 
 write_define(f, 'NumberOfStimuli',NumberOfStimuli)
 
@@ -66,6 +99,7 @@ exp_bclr_res  = []
 exp_bextract_res  = []
 exp_bextractu_res  = []
 exp_binsert_res  = []
+exp_brev_res = []
 
 for i in range(0,NumberOfStimuli):
 
@@ -84,7 +118,7 @@ for i in range(0,NumberOfStimuli):
       leng = 32 - imm
 
     Mask = (((1 << leng) -1 ) << imm) & 0xFFFFFFFF
-    print 'Mask is %08x' % Mask
+    # print 'Mask is %08x' % Mask
     imm_name  = 'IMM_' + str(i)
     leng_name = 'LEN_' + str(i)
 
@@ -114,11 +148,24 @@ for i in range(0,NumberOfStimuli):
 
     binsert = (((a << imm) & Mask) | (c & ~Mask)) & 0xFFFFFFFF
 
+# 
+
+    # print "{0:b}".format(a)
+
+    # print "{0:b}".format(brev)
+    rnd_radix = random.randint(1, 3)
+    rnd_len = rnd_radix*(random.randint(1,32/rnd_radix))
+    rnd_reg = random.randint(1,31)
+    brev = bit_reverse(a, rnd_len, pow(2, rnd_radix))
+
+    brev_encode(a, rnd_reg, rnd_reg, rnd_len, pow(2, rnd_radix), i)
+
     exp_bset_res.append(bset)
     exp_bclr_res.append(bclr)
     exp_bextract_res.append(bextract)
     exp_bextractu_res.append(bextractu)
     exp_binsert_res.append(binsert)
+    exp_brev_res.append(brev)
 
 
 
@@ -130,6 +177,7 @@ write_hex32_arr(f, 'res_bclr'     , exp_bclr_res)
 write_hex32_arr(f, 'res_bextract' , exp_bextract_res)
 write_hex32_arr(f, 'res_bextractu', exp_bextractu_res)
 write_hex32_arr(f, 'res_binsert'  , exp_binsert_res)
+write_hex32_arr(f, 'res_brev'     , exp_brev_res)
 
 ops_a    = []
 ops_b    = []
