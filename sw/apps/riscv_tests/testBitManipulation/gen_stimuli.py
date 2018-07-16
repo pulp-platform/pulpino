@@ -65,7 +65,7 @@ def brev_encode(input, reg_src, reg_dst, length, radix, iteration):
     inst_str += "asm volatile ("
     # inst_str += "\"addi x%s, x0, %s;\"\n" % (reg_src,input)
     inst_str += "\"li x%s, %s;\"\n" % (reg_src,input)
-    inst_binary = "11000%s%s%s101%s0110011"%('{0:02b}'.format(radix), '{0:05b}'.format(32-length), '{0:05b}'.format(reg_src), '{0:05b}'.format(reg_dst))
+    inst_binary = "11000%s%s%s101%s0110011"%('{0:02b}'.format(radix), '{0:05b}'.format(length), '{0:05b}'.format(reg_src), '{0:05b}'.format(reg_dst))
     # print(inst_binary)
     inst_str += "\".word %s;\"\n" % (hex(int(inst_binary, 2)))
     inst_str += "\"nop\" : : : \"x%s\", \"x%s\");" % (reg_src,reg_dst)
@@ -83,7 +83,7 @@ if args.riscv: f = open('testBitManipulation_stimuli_riscv.h', 'w')
 else: f = open('testBitManipulation_stimuli.h', 'w')
 
 
-NumberOfStimuli = 200
+NumberOfStimuli = 10
 
 write_define(f, 'NumberOfStimuli',NumberOfStimuli)
 
@@ -148,15 +148,12 @@ for i in range(0,NumberOfStimuli):
 
     binsert = (((a << imm) & Mask) | (c & ~Mask)) & 0xFFFFFFFF
 
-# 
-
-    # print "{0:b}".format(a)
-
-    # print "{0:b}".format(brev)
     rnd_radix = random.randint(1, 3)
-    rnd_len = rnd_radix*(random.randint(1,32/rnd_radix))
+    rnd_len = rnd_radix*(random.randint(0,(32/rnd_radix)-1))
     rnd_reg = random.randint(1,31)
     brev = bit_reverse(a, rnd_len, pow(2, rnd_radix))
+
+    brev = (brev & ((1 << rnd_len) - 1)) | (a & ~((1 << rnd_len) - 1))
 
     brev_encode(a, rnd_reg, rnd_reg, rnd_len, pow(2, rnd_radix), i)
 
