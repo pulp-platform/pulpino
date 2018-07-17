@@ -4,6 +4,7 @@ import sys
 import random
 import argparse
 import math
+import re
 
 # Copyright 2017 ETH Zurich and University of Bologna.
 # Copyright and related rights are licensed under the Solderpad Hardware
@@ -59,25 +60,51 @@ def bit_reverse(input, length, radix):
 
     return input_reverse
 
-def brev_encode(input, reg_src, reg_dst, length, radix, iteration):
+def brev_encode(input, reg_src, reg_dst, length, radix, iteration, inst_str):
     radix = int(math.floor(math.log(radix,2))) - 1
-    inst_str = ""
-    inst_str += "asm volatile ("
+    inst_str += "\n\tasm volatile ("
     # inst_str += "\"addi x%s, x0, %s;\"\n" % (reg_src,input)
     inst_str += "\"li x%s, %s;\"\n" % (reg_src,input)
     inst_binary = "11000%s%s%s101%s0110011"%('{0:02b}'.format(radix), '{0:05b}'.format(length), '{0:05b}'.format(reg_src), '{0:05b}'.format(reg_dst))
     # print(inst_binary)
-    inst_str += "\".word %s;\"\n" % (hex(int(inst_binary, 2)))
-    inst_str += "\"nop\" : : : \"x%s\", \"x%s\");" % (reg_src,reg_dst)
-    print(inst_str + '\n')
+    inst_str += "\t\".word %s;\"\n" % (hex(int(inst_binary, 2)))
+    inst_str += "\t\"nop\" : : : \"x%s\", \"x%s\");" % (reg_src,reg_dst)
     # Load register
-    inst_str = "asm volatile ("
-    inst_str += "\"addi %%[c], x%s, 0\\n\": [c] \"=r\" (res));" % (reg_dst)
-    print(inst_str + '\n')
+    inst_str += "\n\n\tasm volatile ("
+    inst_str += "\t\"addi %%[c], x%s, 0\\n\": [c] \"=r\" (res));" % (reg_dst)
 
     # Check
-    check_str = "check_uint32(result, \"brev\", res,  res_brev[%s]);\n\n" % (str(iteration))
-    print(check_str)
+    inst_str += "\n\n\tcheck_uint32(result, \"brev\", res,  res_brev[%s]);\n\n" % (str(iteration))
+    return inst_str
+
+def write_test_in_file(inst_str):
+    file_loc = "testBitManipulation.c"
+    file_lines = []
+    found_brev = False
+    file = open(file_loc, "r")
+    func_str = "void check_breverse(testresult_t *result, void (*start)(), void (*stop)()) {\n\
+              unsigned int i;\n\
+              unsigned int res;\n\n"
+    func_str += inst_str
+    func_str += "}\n\n"
+
+    for line in file:
+        if(re.findall("check_breverse\(testresult_t", line)):
+            found_brev = True
+            break
+        file_lines.append(line)
+
+    if(found_brev):
+        file_lines.append(func_str)
+        file_lines.append("#endif\n")
+    else:
+        last_line = file_lines[-1]
+        file_lines.insert(-1, func_str)
+
+    file.close()
+    file = open(file_loc, "w")
+    file.writelines(file_lines)
+
 
 if args.riscv: f = open('testBitManipulation_stimuli_riscv.h', 'w')
 else: f = open('testBitManipulation_stimuli.h', 'w')
@@ -100,6 +127,7 @@ exp_bextract_res  = []
 exp_bextractu_res  = []
 exp_binsert_res  = []
 exp_brev_res = []
+inst_str = ""
 
 for i in range(0,NumberOfStimuli):
 
@@ -155,8 +183,9 @@ for i in range(0,NumberOfStimuli):
 
     brev = (brev & ((1 << rnd_len) - 1)) | (a & ~((1 << rnd_len) - 1))
 
-    brev_encode(a, rnd_reg, rnd_reg, rnd_len, pow(2, rnd_radix), i)
-
+    inst_str_temp = ""
+    inst_str += brev_encode(a, rnd_reg, rnd_reg, rnd_len, pow(2, rnd_radix), i, inst_str_temp)
+ 
     exp_bset_res.append(bset)
     exp_bclr_res.append(bclr)
     exp_bextract_res.append(bextract)
@@ -164,8 +193,7 @@ for i in range(0,NumberOfStimuli):
     exp_binsert_res.append(binsert)
     exp_brev_res.append(brev)
 
-
-
+write_test_in_file(inst_str)
 write_hex32_arr(f, 'op_a' , ops_a)
 write_hex32_arr(f, 'op_c' , ops_c)
 
