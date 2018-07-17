@@ -68,7 +68,7 @@ def brev_encode(input, reg_src, reg_dst, length, radix, iteration):
     inst_binary = "11000%s%s%s101%s0110011"%('{0:02b}'.format(radix), '{0:05b}'.format(32-length), '{0:05b}'.format(reg_src), '{0:05b}'.format(reg_dst))
     # print(inst_binary)
     inst_str += "\".word %s;\"\n" % (hex(int(inst_binary, 2)))
-    inst_str += "\"nop\" : : : \"x%s\", \"x%s\");" % (reg_src,reg_dst)
+    inst_str += "\"nop\" : : : \"x%s\");" % (reg_dst)
     print(inst_str + '\n')
     # Load register
     inst_str = "asm volatile ("
@@ -155,7 +155,7 @@ for i in range(0,NumberOfStimuli):
     # print "{0:b}".format(brev)
     rnd_radix = random.randint(1, 3)
     rnd_len = rnd_radix*(random.randint(1,32/rnd_radix))
-    rnd_reg = random.randint(1,31)
+    rnd_reg = random.randint(5,7)
     brev = bit_reverse(a, rnd_len, pow(2, rnd_radix))
 
     brev_encode(a, rnd_reg, rnd_reg, rnd_len, pow(2, rnd_radix), i)
