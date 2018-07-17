@@ -63,17 +63,12 @@ def bit_reverse(input, length, radix):
 def brev_encode(input, reg_src, reg_dst, length, radix, iteration, inst_str):
     radix = int(math.floor(math.log(radix,2))) - 1
     inst_str += "\n\tasm volatile ("
-    # inst_str += "\"addi x%s, x0, %s;\"\n" % (reg_src,input)
     inst_str += "\"li x%s, %s;\"\n" % (reg_src,input)
     inst_binary = "11000%s%s%s101%s0110011"%('{0:02b}'.format(radix), '{0:05b}'.format(length), '{0:05b}'.format(reg_src), '{0:05b}'.format(reg_dst))
-    # print(inst_binary)
     inst_str += "\t\".word %s;\"\n" % (hex(int(inst_binary, 2)))
     inst_str += "\t\"nop\" : : : \"x%s\", \"x%s\");" % (reg_src,reg_dst)
-    # Load register
     inst_str += "\n\n\tasm volatile ("
     inst_str += "\t\"addi %%[c], x%s, 0\\n\": [c] \"=r\" (res));" % (reg_dst)
-
-    # Check
     inst_str += "\n\n\tcheck_uint32(result, \"brev\", res,  res_brev[%s]);\n\n" % (str(iteration))
     return inst_str
 
@@ -87,33 +82,27 @@ def write_test_in_file(inst_str):
               unsigned int res;\n\n"
     func_str += inst_str
     func_str += "}\n\n"
-
     for line in file:
         if(re.findall("check_breverse\(testresult_t", line)):
             found_brev = True
             break
         file_lines.append(line)
-
     if(found_brev):
         file_lines.append(func_str)
         file_lines.append("#endif\n")
     else:
         last_line = file_lines[-1]
         file_lines.insert(-1, func_str)
-
     file.close()
     file = open(file_loc, "w")
     file.writelines(file_lines)
 
-
 if args.riscv: f = open('testBitManipulation_stimuli_riscv.h', 'w')
 else: f = open('testBitManipulation_stimuli.h', 'w')
-
 
 NumberOfStimuli = 10
 
 write_define(f, 'NumberOfStimuli',NumberOfStimuli)
-
 
 upperboundA = 2**32-1
 lowerboundA = 0
