@@ -65,7 +65,7 @@ adv_dbg_if:
   commit: pulpinov1
 
 riscv:
-  commit: pulpinov1
+  commit: bitreverse_2nd_approach
 
 zero-riscy:
   commit: pulpinov1

@@ -64,12 +64,18 @@ def brev_encode(input, reg_src, reg_dst, length, radix, iteration, inst_str):
     radix = int(math.floor(math.log(radix,2))) - 1
     inst_str += "\n\tasm volatile ("
     inst_str += "\"li x%s, %s;\"\n" % (reg_src,input)
+    inst_str += "\t"+14*" "+"\"li x8, 4;\"\n"
     inst_binary = "11000%s%s%s101%s0110011"%('{0:02b}'.format(radix), '{0:05b}'.format(length), '{0:05b}'.format(reg_src), '{0:05b}'.format(reg_dst))
-    inst_str += "\t\".word %s;\"\n" % (hex(int(inst_binary, 2)))
-    inst_str += "\t\"nop\" : : : \"x%s\", \"x%s\");" % (reg_src,reg_dst)
-    inst_str += "\n\n\tasm volatile ("
-    inst_str += "\t\"addi %%[c], x%s, 0\\n\": [c] \"=r\" (res));" % (reg_dst)
-    inst_str += "\n\n\tcheck_uint32(result, \"brev\", res,  res_brev[%s]);\n\n" % (str(iteration))
+    inst_str += "\t"+14*" "+"\".word %s;\"\n" % (hex(int(inst_binary, 2)))
+    inst_str += "\t"+14*" "+"\"divu x8, x%s, x8;\"\n" % (reg_dst)
+    inst_str += "\t"+14*" "+"\"sw x8, 0(%[addr]);\"\n"
+
+    if reg_dst == reg_src:
+        inst_str += "\t"+14*" "+": : [addr] \"r\" (&res_vec[%s]) : \"x%s\" , \"x8\");\n" % (iteration, reg_src)
+
+    else:
+        inst_str += "\t"+14*" "+": : [addr] \"r\" (&res_vec[%s]) : \"x%s\", \"x%s\", \"x8\");\n" % (iteration, reg_src, reg_dst)
+        
     return inst_str
 
 def write_test_in_file(inst_str):
@@ -78,9 +84,16 @@ def write_test_in_file(inst_str):
     found_brev = False
     file = open(file_loc, "r")
     func_str = "void check_breverse(testresult_t *result, void (*start)(), void (*stop)()) {\n\
-              unsigned int i;\n\
-              unsigned int res;\n\n"
-    func_str += inst_str
+                  unsigned int i;\n\
+                  unsigned int res;\n\
+                  volatile unsigned int res_vec[NumberOfStimuli];\n\
+                  // Initialize result vector\n\
+                  for(i = 0; i < NumberOfStimuli; i++) res_vec[i] = 0;\n\n"
+
+    func_str += inst_str + "\n\n"
+    func_str += "for(i = 0; i < NumberOfStimuli; i++) {\n\
+    \tcheck_uint32(result, \"brev\", res_vec[i],  res_brev[i]);\n\
+    \t}\n\n"
     func_str += "}\n\n"
     for line in file:
         if(re.findall("check_breverse\(testresult_t", line)):
@@ -100,14 +113,15 @@ def write_test_in_file(inst_str):
 if args.riscv: f = open('testBitManipulation_stimuli_riscv.h', 'w')
 else: f = open('testBitManipulation_stimuli.h', 'w')
 
-NumberOfStimuli = 10
+# Must be larger than 10
+NumberOfStimuli = 200
 
 write_define(f, 'NumberOfStimuli',NumberOfStimuli)
 
 upperboundA = 2**32-1
 lowerboundA = 0
 
-ops_a	 = []
+ops_a    = []
 ops_c    = []
 
 exp_bset_res  = []
@@ -165,16 +179,19 @@ for i in range(0,NumberOfStimuli):
 
     binsert = (((a << imm) & Mask) | (c & ~Mask)) & 0xFFFFFFFF
 
+    # Bit reverse
     rnd_radix = random.randint(1, 3)
-    rnd_len = rnd_radix*(random.randint(0,(32/rnd_radix)-1))
-    rnd_reg = random.randint(1,31)
+    rnd_len = rnd_radix*(random.randint(1,31/rnd_radix))
+    rnd_src = random.randint(3,7)
+    rnd_dst = random.randint(3,7)
     brev = bit_reverse(a, rnd_len, pow(2, rnd_radix))
-
-    brev = (brev & ((1 << rnd_len) - 1)) | (a & ~((1 << rnd_len) - 1))
+    # divide by 4
+    brev /= 4
 
     inst_str_temp = ""
-    inst_str += brev_encode(a, rnd_reg, rnd_reg, rnd_len, pow(2, rnd_radix), i, inst_str_temp)
- 
+    a = a & ((1<<rnd_len) - 1)
+    inst_str += brev_encode(a, rnd_src, rnd_dst, rnd_len, pow(2, rnd_radix), i, inst_str_temp)
+
     exp_bset_res.append(bset)
     exp_bclr_res.append(bclr)
     exp_bextract_res.append(bextract)
@@ -182,7 +199,9 @@ for i in range(0,NumberOfStimuli):
     exp_binsert_res.append(binsert)
     exp_brev_res.append(brev)
 
+
 write_test_in_file(inst_str)
+
 write_hex32_arr(f, 'op_a' , ops_a)
 write_hex32_arr(f, 'op_c' , ops_c)
 
