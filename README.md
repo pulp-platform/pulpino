@@ -53,7 +53,7 @@ PULPino has the following requirements
   ETH. The ETH versions supports all the ISA extensions that were incorporated
   into the RI5CY core as well as the reduced base instruction set for zero-riscy.
   Please make sure you are using the newlib version of the toolchain.
-- python2 >= 2.6
+- python2 >= 2.6 (and PyYAML)
 - verilator 3.884 only necessary if you want to use Verilator to evaluate PULPino.
 
 ## ISA Support
