@@ -86,7 +86,7 @@ It is written in LaTeX and there is no pdf included in the repository. Simply ty
 
     make all
 
-inside the folder to generate the pdf. Note that you need a working version of latex for this step.
+inside the folder to generate the pdf. Note that you need a working version of latex and tgif for this step.
 
 
 ## Running simulations
