@@ -96,7 +96,7 @@ Create a build folder somewhere, e.g. in the sw folder
 
     mkdir build
 
-Copy the cmake-configure.{*}.gcc.sh bash script to the build folder.
+Copy the cmake_configure.{*}.gcc.sh bash script to the build folder.
 This script can be found in the sw subfolder of the git repository.
 
 Modify the cmake-configure script to your needs and execute it inside the build folder.
