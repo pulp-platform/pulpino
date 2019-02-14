@@ -12,3 +12,4 @@ vivado*.backup.log
 *.txt
 .Xil
 pulpemu_top.bit
+pulpemu_top.sysdef

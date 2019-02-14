@@ -105,7 +105,7 @@ devtree: sd_image/devicetree.dtb
 # fsbl
 ################################################################################
 
-hsi/pulpemu_top.sysdef: ../pulpemu/pulpemu.runs/impl_1/pulpemu_top.sysdef
+hsi/pulpemu_top.sysdef: ../pulpemu/pulpemu_top.sysdef
 	cp $< $@
 
 hsi/fsbl/executable.elf: hsi/pulpemu_top.sysdef
@@ -121,7 +121,7 @@ fsbl: sd_image/fsbl.elf
 # get bitstream
 ################################################################################
 
-sd_image/pulpemu_top.bit: ../pulpemu/pulpemu.runs/impl_1/pulpemu_top.bit
+sd_image/pulpemu_top.bit: ../pulpemu/pulpemu_top.bit
 	cp $< $@
 
 ################################################################################

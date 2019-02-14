@@ -10,6 +10,7 @@ impl:
 	rm -rf .Xil
 	vivado -mode batch -source tcl/impl.tcl
 	cp pulpemu_top.runs/impl_1/pulpemu_top.bit .
+	cp pulpemu.runs/impl_1/pulpemu_top.sysdef .
 	cp pulpemu_top.runs/impl_1/*.dcp .
 
 gui-synth:
@@ -44,6 +45,5 @@ clean:
 	rm -rf xgui
 	rm -rf .Xil
 	rm -rf ps_clock*
-	rm -rf pulpemu_top*
-	rm -rf pulpemu.edf
+	rm -rf ${PROJECT}_top*
 
