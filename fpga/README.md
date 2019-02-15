@@ -66,6 +66,14 @@ Linux running on the ARM cores of the ZYNQ.
 4. Prepare the SD card and the ZedBoard for booting via SD card.
    To prepare the card, follow the Xilinx guide [1].
 
+   Alternatively, you can run `make install SD_DEV=/dev/your_sd_card` 
+   in the `fpga/sw` directory. This will automatically partition the
+   given block device and copy the files of step 5 and 6. If `SD_DEV`
+   is not given `/dev/mmcblk0` will be used.
+   After running the script you can inspect the resulting file systems
+   in `/mnt/pulpino_...`. When done call `make umount` and continue with 
+   step 7. Attention: this removes all `/mnt/pulpino_*` directories.
+
 5. Copy the BOOT.BIN, uImage and devicetree.dtb files to the first partition of the SD card.
    Those files can be found inside the `fpga/sw/sd_image` folder.
 

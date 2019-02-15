@@ -140,3 +140,19 @@ clean:
 	make -C buildroot clean
 	rm -f hsi/pulpemu_top.sysdef
 	rm -f sd_image/*
+
+
+################################################################################
+# SD card handling/installation
+################################################################################
+MOUNT_POINT_BASE:=/mnt/pulpino_
+export MOUNT_POINT_BASE
+
+.PHONY: install
+install: 
+	@sudo ./install.sh $(SD_DEV)
+
+.PHONY: umount
+umount:
+	@sudo umount -Rl "$(MOUNT_POINT_BASE)"* 2>/dev/null || true
+	@sudo rm -rf "$(MOUNT_POINT_BASE)"*/
