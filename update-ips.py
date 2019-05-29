@@ -71,7 +71,7 @@ print "Using remote git server %s, remote is %s" % (server, remote)
 if os.path.exists("ipstools") and os.path.isdir("ipstools"):
     cwd = os.getcwd()
     os.chdir("ipstools")
-    execute("git pull origin verilator", silent=True)
+    execute("git pull origin verilator-pulpino", silent=True)
     os.chdir(cwd)
     import ipstools
 else:
