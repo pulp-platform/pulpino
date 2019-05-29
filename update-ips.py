@@ -77,11 +77,11 @@ if os.path.exists("ipstools") and os.path.isdir("ipstools"):
 else:
     # try to find the ipstools repository
     if "http" in remote:
-        if execute("git clone %s/IPApproX.git ipstools -b verilator" % (remote)) != 0:
-            execute("git clone %s/pulp-tools/IPApproX.git ipstools -b verilator" % (server))
+        if execute("git clone %s/IPApproX.git ipstools -b verilator-pulpino" % (remote)) != 0:
+            execute("git clone %s/pulp-tools/IPApproX.git ipstools -b verilator-pulpino" % (server))
     else:
-        if execute("git clone %s/IPApproX.git ipstools -b verilator" % (remote)) != 0:
-            execute("git clone %s:pulp-tools/IPApproX.git ipstools -b verilator" % (server))
+        if execute("git clone %s/IPApproX.git ipstools -b verilator-pulpino" % (remote)) != 0:
+            execute("git clone %s:pulp-tools/IPApproX.git ipstools -b verilator-pulpino" % (server))
 
     import ipstools
 
