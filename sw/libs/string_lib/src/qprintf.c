@@ -220,6 +220,10 @@ static int qprint(char **out, const char *format, va_list va)
         pc += qprints (out, scr, width, pad);
         continue;
       }
+      /* for such case:"xxxx%123\0xxxxx" */
+      if( *format == '\0' ) break;
+      /* for such case:"xxx%123%sxxx" */
+      if( *format == '%' ) --format;
     }
     else
     {
