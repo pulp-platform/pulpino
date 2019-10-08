@@ -32,7 +32,7 @@ apb/apb_i2c:
 apb/apb_pulpino:
   commit: pulpinov1
 apb/apb_spi_master:
-  commit: pulpinov1
+  commit: Pulpino_v2.2
 apb/apb_timer:
   commit: pulpinov1
 apb/apb_uart:

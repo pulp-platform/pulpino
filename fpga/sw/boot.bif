@@ -1,6 +1,0 @@
-the_ROM_image:
-{
-	[bootloader]./sd_image/fsbl.elf
-	./sd_image/pulpemu_top.bit
-	./sd_image/u-boot.elf
-}
