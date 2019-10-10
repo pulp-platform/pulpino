@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 # Francesco Conti <f.conti@unibo.it>
 #
 # Copyright (C) 2016 ETH Zurich, University of Bologna.
@@ -23,9 +23,13 @@ def execute_out(cmd, silent=False):
 def find_server():
     stdout = execute_out("git remote -v")
 
+    remote_name = "origin"
+    if "upstream" in stdout:
+        remote_name = "upstream"
+
     stdout = stdout.split('\n')
     for line in stdout:
-        if "origin" in line:
+        if remote_name in line:
             tmp = line.split(' ')
             tmp = tmp[0].split('\t')
 

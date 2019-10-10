@@ -53,7 +53,7 @@ PULPino has the following requirements
   ETH. The ETH versions supports all the ISA extensions that were incorporated
   into the RI5CY core as well as the reduced base instruction set for zero-riscy.
   Please make sure you are using the newlib version of the toolchain.
-- python2 >= 2.6
+- python2 >= 2.6 (and PyYAML)
 - verilator 3.884 only necessary if you want to use Verilator to evaluate PULPino.
 
 ## ISA Support
@@ -86,7 +86,7 @@ It is written in LaTeX and there is no pdf included in the repository. Simply ty
 
     make all
 
-inside the folder to generate the pdf. Note that you need a working version of latex for this step.
+inside the folder to generate the pdf. Note that you need a working version of latex and tgif for this step.
 
 
 ## Running simulations
@@ -96,7 +96,7 @@ Create a build folder somewhere, e.g. in the sw folder
 
     mkdir build
 
-Copy the cmake-configure.{*}.gcc.sh bash script to the build folder.
+Copy the cmake_configure.{*}.gcc.sh bash script to the build folder.
 This script can be found in the sw subfolder of the git repository.
 
 Modify the cmake-configure script to your needs and execute it inside the build folder.
