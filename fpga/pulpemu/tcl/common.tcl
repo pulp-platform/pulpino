@@ -1,3 +1,5 @@
+source ../common/common.tcl
+
 if { ![info exists ::env(BOARD) ]} {
   set ::env(BOARD) "zedboard"
 }

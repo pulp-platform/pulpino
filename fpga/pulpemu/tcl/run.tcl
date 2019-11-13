@@ -7,9 +7,6 @@ if { [info exists ::env(XILINX_BOARD) ] } {
   set_property board_part $::env(XILINX_BOARD) [current_project]
 }
 
-
-source ../common/common.tcl
-
 # create block design
 source tcl/ps7_bd.tcl
 
@@ -51,11 +48,14 @@ get_property source_mgmt_mode [current_project]
 set_property source_mgmt_mode DisplayOnly [current_project]
 get_property source_mgmt_mode [current_project]
 
-# save area
+# Synthesis strategy: save area
 set_property strategy Flow_AreaOptimized_High [get_runs synth_1]
 
-# synthesize
+# elaborate
 synth_design -rtl -name rtl_1
+
+# Create constraints file to avoid "outdated" synthesis and implementation runs later
+save_constraints
 
 launch_runs synth_1 -jobs $CPUS
 wait_on_run synth_1

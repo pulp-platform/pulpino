@@ -83,8 +83,6 @@ if {[string equal $::env(BOARD) "zybo"]} {
   #set_property PACKAGE_PIN Y17     [get_ports {je[7]}]
   #set_property IOSTANDARD LVCMOS33 [get_ports {je[7]}]
 
-  set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ext_tck_i_IBUF]
-
 
   # ----------------------------------------------------------------------------
   # ----------------------------------------------------------------------------
@@ -203,8 +201,6 @@ if {[string equal $::env(BOARD) "zybo"]} {
   set_property PACKAGE_PIN AA9  [get_ports {ext_tdo_o}];     # "P-MOD: JA4"
   set_property PACKAGE_PIN AB11 [get_ports {ext_trstn_i}];   # "P-MOD: JA7"
 
-  set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ext_tck_i_IBUF]
-
   # ----------------------------------------------------------------------------
   # User Push Buttons - Bank 34
   # ----------------------------------------------------------------------------
@@ -232,13 +228,10 @@ if {[string equal $::env(BOARD) "zybo"]} {
   set_property IOSTANDARD LVCMOS33 [get_ports -of_objects [get_iobanks 13]];
 }
 
-
-source ../common/common.tcl
-
-
 # physical constraints
 # source tcl/floorplan.xdc
 
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ext_tck_i_IBUF]
 save_constraints
 
 # set for RuntimeOptimized implementation
