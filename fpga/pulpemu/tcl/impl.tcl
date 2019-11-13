@@ -245,6 +245,7 @@ launch_runs impl_1 -jobs $CPUS
 wait_on_run impl_1
 launch_runs impl_1 -jobs $CPUS -to_step write_bitstream
 wait_on_run impl_1
+open_run impl_1
 
 # report area utilization
 report_utilization -hierarchical -hierarchical_depth 1 -file pulpemu.txt
