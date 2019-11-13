@@ -29,6 +29,7 @@
 #define SPIDEV               "/dev/spidev32766.0"
 #define CLKING_AXI_ADDR      0x51010000
 #define PULP_CTRL_AXI_ADDR   0x51000000
+#define PULP_GPIO_AXI_ADDR   0x51030000
 
 
 #define MAP_SIZE 4096UL
@@ -111,7 +112,7 @@ int wait_eoc(unsigned int timeout) {
       PROT_READ|PROT_WRITE,
       MAP_SHARED,
       mem_fd,
-      PULP_CTRL_AXI_ADDR & ~MAP_MASK
+      PULP_GPIO_AXI_ADDR & ~MAP_MASK
       );
 
 
@@ -122,7 +123,7 @@ int wait_eoc(unsigned int timeout) {
     goto fail;
   }
 
-  gpio_base = ctrl_map + (PULP_CTRL_AXI_ADDR & MAP_MASK);
+  gpio_base = ctrl_map + (PULP_GPIO_AXI_ADDR & MAP_MASK);
   volatile uint32_t* gpio = (volatile uint32_t*)(gpio_base + 0x0);
   volatile uint32_t* dir  = (volatile uint32_t*)(gpio_base + 0x4);
 
@@ -135,7 +136,7 @@ int wait_eoc(unsigned int timeout) {
     clock_gettime(CLOCK_REALTIME, &spec_end);
     spec_diff = timespec_sub(spec_end, spec_start);
 
-    if (*gpio == (0x1 << 8)) {
+    if (*gpio & (0x1 << 8)) {
       printf("EOC received!\n");
       break;
     }
