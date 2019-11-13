@@ -1,6 +1,8 @@
 source tcl_files/config/vsim_ips.tcl
 
+set cc [exec which gcc]
 set cmd "vsim -quiet $TB \
+  -dpicpppath $cc \
   -L pulpino_lib \
   $VSIM_IP_LIBS \
   +nowarnTRAN \
