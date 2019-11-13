@@ -131,6 +131,25 @@ sd_image/pulpemu_top.bit: ../pulpemu/pulpemu_top.bit
 sd_image/BOOT.BIN: sd_image/u-boot.elf sd_image/pulpemu_top.bit boot.bif sd_image/fsbl.elf
 	bootgen -image ./boot.bif -o i ./sd_image/BOOT.BIN -w on
 
+################################################################################
+# SD card handling/installation
+################################################################################
+MOUNT_POINT_BASE:=/mnt/pulpino_
+export MOUNT_POINT_BASE
+
+.PHONY: install
+install: sd_image/BOOT.BIN sd_image/pulpemu_top.bit sd_image/fsbl.elf sd_image/devicetree.dtb sd_image/rootfs.tar sd_image/u-boot.elf sd_image/uImage
+	@sudo ./install.sh $(SD_DEV)
+
+.PHONY: umount
+umount:
+	@echo "Umounting" "$(MOUNT_POINT_BASE)"*
+	@sudo umount -Rl "$(MOUNT_POINT_BASE)"* 2>/dev/null || true
+	@sudo rm -rf "$(MOUNT_POINT_BASE)"*/
+
+################################################################################
+# Cleanup
+################################################################################
 .PHONY: clean
 clean:
 	rm -rf u-boot-xlnx
@@ -140,3 +159,4 @@ clean:
 	make -C buildroot clean
 	rm -f hsi/pulpemu_top.sysdef
 	rm -f sd_image/*
+
