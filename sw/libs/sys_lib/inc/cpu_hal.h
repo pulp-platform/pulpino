@@ -14,7 +14,7 @@
 #include "spr-defs.h"
 #include <stdint.h>
 
-#ifdef __riscv__
+#if defined(__riscv__) || defined(__riscv)
 
 #define CSR_PCMR_ACTIVE 0x1
 

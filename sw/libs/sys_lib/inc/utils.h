@@ -33,7 +33,7 @@ static inline int get_core_num()
   return 0;
 }
 
-#ifdef __riscv__
+#if defined(__riscv__) || defined(__riscv)
 /**
  * @brief Write to CSR.
  * @param CSR register to write.
@@ -67,7 +67,7 @@ static inline void sleep(void) {
   asm volatile ("nop;nop;wfi");
 }
 
-#else // not __riscv__
+#else // not __riscv*
 /* For writing into SPR. */
 static inline void mtspr(unsigned long spr, unsigned long value)
 {

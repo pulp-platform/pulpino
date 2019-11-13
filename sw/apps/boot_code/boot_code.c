@@ -33,7 +33,7 @@ int main()
 
   for (int i = 0; i < 3000; i++) {
     //wait some time to have proper power up of external flash
-    #ifdef __riscv__
+    #if defined(__riscv__) || defined(__riscv)
         asm volatile ("nop");
     #else
         asm volatile ("l.nop");
@@ -188,7 +188,7 @@ void load_block(unsigned int addr, unsigned int len, int* dest) {
 
 void jump_and_start(volatile int *ptr)
 {
-#ifdef __riscv__
+#if defined(__riscv__) || defined(__riscv)
   asm("jalr x0, %0\n"
       "nop\n"
       "nop\n"
