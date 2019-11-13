@@ -13,9 +13,12 @@ or
 
 Note that if `BOARD` is not set, it defaults to zedboard.
 
+Additionally, you have to tell the build system which Vivado version it should use
+via the `VIVADO_VERSION` variable in the format `yyyy.vv`, e.g., `2015.1`.
+If not set it will default to `2018.3`.
 
-This environment variable has to be set during compilation of all FPGA related
-components. If you accidentally forget to set the environment variable during
+These environment variables have to be set during compilation of all FPGA related
+components. If you accidentally forget to set an environment variable during
 part of the compilation process, you may end up with a mixed zedboard/zybo
 build which will not work correctly.
 
@@ -28,9 +31,9 @@ The components that are affected by the BOARD variable are:
 
 ## Requirements
 
-This synthesis flow has been tested with `Vivado 2015.1`, there is no guarantee
+This synthesis flow has been tested with Vivado 2015.1 and 2018.3. There is no guarantee
 that it is going to work with any other version without modifications to the
-scripts.
+scripts - most likely it won't.
 
 For convenience reasons it is best to connect the ZedBoard to your local
 network. This way you can easily transfer files from your host computer to the
@@ -58,7 +61,7 @@ Linux running on the ARM cores of the ZYNQ.
    If you want to use the riscy core, do not set `USE_ZERO_RISCY` and set
    `RISCY_RV32F` for riscy with floating point extensions.
 
-3. Type `make all` in the fpga directory (or `vivado-2015.1 make clean all`).
+3. Type `make all` in the fpga directory.
    This builds the FPGA bitstream for the ZedBoard, downloads and compiles linux
    and u-boot, prepares the fsbl and devicetree, downloads and compiles buildroot
    and builds the boot.bin image for booting the ZYNQ.
@@ -114,7 +117,6 @@ Linux running on the ARM cores of the ZYNQ.
 
 3. Compile the spiload application for the ZYNQ.
    Just type `make` inside the sw/apps/spiload folder.
-   eg: `vivado-2015.1 make`
 
 4. Transfer this program to the ZYNQ. We suggest using scp, but any other
    method works as well of course.

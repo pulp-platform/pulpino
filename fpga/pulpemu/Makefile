@@ -5,12 +5,10 @@ all: synth
 synth:
 	vivado -mode batch -source tcl/run.tcl
 	cp ${PROJECT}.runs/impl_1/${PROJECT}_top.bit .
-	cp ${PROJECT}.runs/impl_1/${PROJECT}_top.sysdef .
 
 impl:
 	vivado -mode batch -source tcl/impl.tcl ${PROJECT}.xpr
 	cp ${PROJECT}.runs/impl_1/${PROJECT}_top.bit .
-	cp ${PROJECT}.runs/impl_1/${PROJECT}_top.sysdef .
 
 gui-synth:
 	vivado -mode gui -source tcl/run.tcl &

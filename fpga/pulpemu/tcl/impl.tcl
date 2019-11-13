@@ -258,6 +258,14 @@ report_timing         -file pulpemu_timing.txt         -max_paths 10
 write_verilog -force -mode timesim -cell pulpino_wrap_i ../simu/pulpino_impl.v
 write_sdf     -force -cell pulpino_wrap_i ../simu/pulpino_impl.sdf
 
+# export hardware design for sdk
+write_hwdef -force -file ./pulpemu.hwdef
+if { [string compare $::env(VIVADO_VERSION) "2018.3"] < 0 } {
+  write_sysdef -bitfile pulpemu_top.bit -hwdef pulpemu.hwdef -file pulpemu_top.sysdef
+} else {
+  write_sysdef -bitfile pulpemu_top.bit -hwdef pulpemu.hwdef pulpemu_top.sysdef
+}
+
 if { [info exists ::env(PROBES)] } {
    # create new design run for probes
    create_run impl_2 -parent_run synth_1 -flow {Vivado Implementation 2014}

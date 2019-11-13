@@ -33,7 +33,7 @@ if { $::env(USE_ZERO_RISCY)==0 & $::env(RISCY_RV32F)==1 } {
 	../pulpino/pulpino_stub.v \
 	../ips/xilinx_fp_fma/ip/xilinx_fp_fma_stub.vhdl \
 	../ips/xilinx_fp_fma/ip/xilinx_fp_fma_stub.v \
-	../pulpino/xilinx_fp_fma_floating_point_v7_0_viv.edn \
+	../pulpino/xilinx_fp_fma_floating_point_v7_1_viv.edn \
 	../pulpino/xilinx_fp_fma_mult_gen_v12_0_viv.edn \
 	../ips/xilinx_clock_manager/ip/xilinx_clock_manager.dcp
 } else {
@@ -51,19 +51,13 @@ get_property source_mgmt_mode [current_project]
 # Synthesis strategy: save area
 set_property strategy Flow_AreaOptimized_High [get_runs synth_1]
 
-# elaborate
-synth_design -rtl -name rtl_1
-
-# Create constraints file to avoid "outdated" synthesis and implementation runs later
-save_constraints
-
 launch_runs synth_1 -jobs $CPUS
 wait_on_run synth_1
 open_run synth_1 -name netlist_1
 # write_edif pulpemu.edf
 
-# export hardware design for sdk
-write_hwdef -force -file ./pulpemu.hwdef
+# Create constraints file to avoid "outdated" synthesis and implementation runs later
+save_constraints
 
 # run implementation
 source tcl/impl.tcl

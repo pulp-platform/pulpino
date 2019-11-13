@@ -1,7 +1,7 @@
 PWD=$(CURDIR)
 NCORES=4
 BOARD ?= zedboard
-VIVADO_VERSION ?= 2015.1
+VIVADO_VERSION ?= 2018.3
 
 # Fall back to ancient Xilinx GCC due to outdated Linux sources that can't handle modern ones
 ifeq ($(VIVADO_VERSION),2015.1)
@@ -95,9 +95,11 @@ u-boot: sd_image/u-boot.elf
 ################################################################################
 
 BUILDROOT_VERSION_2015.1 := 2015.05
+BUILDROOT_VERSION_2018.3 := 2017.08
 BUILDROOT_VERSION := $(BUILDROOT_VERSION_$(VIVADO_VERSION))
 
 BUSYBOX_VERSION_2015.1 := 1.23.2
+BUSYBOX_VERSION_2018.3 := 1.27.1
 BUSYBOX_VERSION := $(BUSYBOX_VERSION_$(VIVADO_VERSION))
 
 buildroot:
@@ -127,6 +129,7 @@ rootfs: sd_image/rootfs.tar
 ################################################################################
 
 DT_TOP_2015.1 := system.dts
+DT_TOP_2018.3 := system-top.dts
 DT_TOP := $(DT_TOP_$(VIVADO_VERSION))
 
 device_tree_repo:
