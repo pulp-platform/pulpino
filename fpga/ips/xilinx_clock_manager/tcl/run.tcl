@@ -4,7 +4,7 @@ if { ![info exists ::env(XILINX_PART)] } {
 }
 
 if { ![info exists ::env(XILINX_BOARD)] } {
-  set ::env(XILINX_BOARD) "em.avnet.com:zynq:zed:c"
+  set ::env(XILINX_BOARD) "em.avnet.com:zed:0.9"
 }
 
 source ../../common/common.tcl
@@ -15,7 +15,7 @@ set boardName  $::env(XILINX_BOARD)
 set ila_name xilinx_clock_manager
 
 create_project $ila_name . -part $partNumber
-set_property board $boardName [current_project]
+set_property board_part $boardName [current_project]
 
 create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name $ila_name
 

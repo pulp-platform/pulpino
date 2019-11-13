@@ -44,7 +44,7 @@ Linux running on the ARM cores of the ZYNQ.
    enviornment variables XILINX_BOARD and XILINX_PART to control the board and part number.
    if you don't specify these, the following defaults values are used:
    XILINX_PART "xc7z020clg484-1"
-   XILINX_BOARD "em.avnet.com:zynq:zed:c"
+   XILINX_BOARD "em.avnet.com:zed:0.9"
 
 
 1. Make sure you have the Vivado toolchain and the Xilinx SDK toolchain in your

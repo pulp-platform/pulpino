@@ -10,7 +10,7 @@ if { ![info exists ::env(XILINX_PART)] } {
     set ::env(XILINX_PART) "xc7z020clg484-1"
 
     if { ![info exists ::env(XILINX_BOARD)] } {
-      set ::env(XILINX_BOARD) "em.avnet.com:zynq:zed:c"
+      set ::env(XILINX_BOARD) "em.avnet.com:zed:0.9"
     }
   }
 }
@@ -39,7 +39,7 @@ set FPGA_PULPINO ../pulpino
 create_project pulpemu . -part $::env(XILINX_PART)
 
 if { [info exists ::env(XILINX_BOARD) ] } {
-  set_property board $::env(XILINX_BOARD) [current_project]
+  set_property board_part $::env(XILINX_BOARD) [current_project]
 }
 
 
