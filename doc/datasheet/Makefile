@@ -26,15 +26,12 @@ TGIF_OUTP_PDF_NAMES = $(addsuffix .pdf, $(TGIF_OUTP_NAMES))
 #####     Main Targets                                               #
 #####                                                                #
 ######################################################################
-do: pdf
-
-all: figures pdf
-	make -B pdf
-	make -B pdf
+all: $(MAIN_SRC).pdf
 
 pdf: $(MAIN_SRC).pdf
 
-%.pdf: %.tex $(CONTENT_SRC) preamble/preamble.tex
+%.pdf: %.tex $(CONTENT_SRC) preamble/preamble.tex figures
+	pdflatex $(MAIN_SRC).tex
 	pdflatex $(MAIN_SRC).tex
 
 clean: clean-figures
@@ -95,3 +92,5 @@ clean-tgif-figures:
 	-@rm -f $(TGIF_OUTP_EPS_NAMES) $(TGIF_OUTP_PDF_NAMES)
 
 clean-figures: clean-tgif-figures
+
+.PHONY: all pdf clean figures tgif_figures clean-tgif-figures clean-figures
