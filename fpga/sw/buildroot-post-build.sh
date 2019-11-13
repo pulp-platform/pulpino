@@ -6,3 +6,7 @@ if [ "x$1" = "xDEPENDENCIES" ]; then
     exit 0
 fi
 
+# SSH
+mkdir -p "${1}/root/.ssh/"
+[ -f ~/.ssh/authorized_keys ] && cp ~/.ssh/authorized_keys "${1}/root/.ssh/"
+
