@@ -16,9 +16,9 @@ all: u-boot linux rootfs devtree fsbl sd_image/BOOT.BIN
 
 linux-xlnx:
 	git clone git://github.com/Xilinx/linux-xlnx.git
-	cd linux-xlnx && git checkout tags/xilinx-v2015.1
 
-linux-xlnx/.config: $(filter-out $(wildcard linux-xlnx), linux-xlnx)
+linux-xlnx/.config: kernel.config | linux-xlnx
+	cd linux-xlnx && git checkout -f tags/xilinx-v2015.1
 	cp ./kernel.config ./linux-xlnx/.config
 
 linux-xlnx/arch/arm/boot/uImage: linux-xlnx/.config
@@ -38,18 +38,18 @@ linux: sd_image/uImage
 
 u-boot-xlnx:
 	git clone git://github.com/Xilinx/u-boot-xlnx.git
-ifeq ($(BOARD),zybo)
-	cd u-boot-xlnx && git checkout 84f81e5b8950748fd7ca967ecf0428affef7ecea
-else
-	cd u-boot-xlnx && git checkout tags/xilinx-v2015.1
-endif
-	cd u-boot-xlnx && patch -p1 < ../u-boot-xlnx-def-env.patch
 
-u-boot-xlnx/.config: $(filter-out $(wildcard u-boot-xlnx), u-boot-xlnx)
+u-boot-xlnx/.config: $(filter-out $(wildcard u-boot*), u-boot-xlnx) | u-boot-xlnx
 ifeq ($(BOARD),zybo)
-	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
+	cd u-boot-xlnx && \
+		git checkout -f 84f81e5b8950748fd7ca967ecf0428affef7ecea && \
+		patch -p1 < ../u-boot-xlnx-def-env.patch && \
+		$(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
 else
-	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
+	cd u-boot-xlnx && \
+		git checkout -f tags/xilinx-v2015.1 && \
+		patch -p1 < ../u-boot-xlnx-def-env.patch && \
+		$(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
 endif
 	cp ./u-boot.config.$(BOARD) ./u-boot-xlnx/.config
 
@@ -70,9 +70,9 @@ u-boot: sd_image/u-boot.elf
 
 buildroot:
 	git clone git://git.buildroot.net/buildroot.git
-	cd buildroot && git checkout tags/2015.05
 
-buildroot/.config: $(filter-out $(wildcard buildroot), buildroot)
+buildroot/.config: | buildroot
+	cd buildroot && git checkout -f tags/2015.05
 	cat ./buildroot.config | sed 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)"#g' > ./buildroot/.config
 
 buildroot/output/images/rootfs.tar: buildroot/.config
