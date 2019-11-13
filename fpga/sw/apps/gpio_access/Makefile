@@ -1,5 +1,5 @@
-CC=arm-xilinx-linux-gnueabi-gcc
-
+ARMCC ?= arm-linux-gnueabi-gcc
+CC = $(ARMCC)
 
 all: gpio_access
 

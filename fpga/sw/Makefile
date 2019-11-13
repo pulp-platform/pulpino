@@ -1,12 +1,24 @@
 PWD=$(CURDIR)
 NCORES=4
 BOARD ?= zedboard
-
 VIVADO_VERSION ?= 2015.1
 
-ARM_TOOLCHAIN_PATH := $(shell which arm-xilinx-linux-gnueabi-gcc)
-ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
-ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
+# Fall back to ancient Xilinx GCC due to outdated Linux sources that can't handle modern ones
+ifeq ($(VIVADO_VERSION),2015.1)
+  ARMTRIPLE:=arm-xilinx-linux-gnueabi
+else
+  ARMTRIPLE:=arm-linux-gnueabihf
+endif
+
+ARMCC:=$(ARMTRIPLE)-gcc
+export ARMCC
+
+ARCH=$(firstword $(subst -, ,$(ARMTRIPLE)))
+ARMCC_PATH := $(shell which $(ARMCC))
+ifeq ($(ARMCC_PATH),)
+  $(error Path to $(ARMCC) unknown. PATH is "$(PATH)")
+endif
+ARM_TOOLCHAIN_PATH := $(realpath $(dir $(ARMCC_PATH))..)
 
 all: u-boot linux rootfs devtree fsbl sd_image/BOOT.BIN
 
@@ -38,7 +50,7 @@ linux-xlnx/.config: config/kernel.config.$(VIVADO_VERSION) | linux-xlnx
 	cp config/kernel.config.$(VIVADO_VERSION) ./linux-xlnx/.config
 
 linux-xlnx/arch/arm/boot/uImage: linux-xlnx/.config
-	cd linux-xlnx && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH} -j${NCORES}
+	cd linux-xlnx && $(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(ARMTRIPLE)- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH} -j${NCORES}
 
 sd_image/uImage: linux-xlnx/arch/arm/boot/uImage | sd_image/
 	cp linux-xlnx/arch/arm/boot/uImage ./sd_image/uImage
@@ -59,17 +71,17 @@ ifeq ($(BOARD),zybo)
 	cd u-boot-xlnx && \
 		git checkout -f 84f81e5b8950748fd7ca967ecf0428affef7ecea && \
 		patch -p1 < ../config/u-boot-xlnx-def-env.patch.$(VIVADO_VERSION) && \
-		$(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
+		$(MAKE) CROSS_COMPILE=$(ARMTRIPLE)- zynq_zybo_config
 else
 	cd u-boot-xlnx && \
 		git checkout -f tags/xilinx-v$(VIVADO_VERSION) && \
 		patch -p1 < ../config/u-boot-xlnx-def-env.patch.$(VIVADO_VERSION) && \
-		$(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
+		$(MAKE) CROSS_COMPILE=$(ARMTRIPLE)- zynq_zed_config
 endif
 	cp config/u-boot.config.$(BOARD).$(VIVADO_VERSION) ./u-boot-xlnx/.config
 
 u-boot-xlnx/u-boot: u-boot-xlnx/.config
-	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi-
+	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=$(ARMTRIPLE)-
 
 sd_image/u-boot.elf: u-boot-xlnx/u-boot | sd_image/
 	cp u-boot-xlnx/u-boot ./sd_image/u-boot.elf
@@ -99,9 +111,9 @@ buildroot/.config: config/buildroot.config.$(VIVADO_VERSION) | buildroot
 		./config/buildroot.config.$(VIVADO_VERSION) > ./buildroot/.config
 
 buildroot/output/images/rootfs.tar: buildroot/.config buildroot-post-build.sh $(shell ./buildroot-post-build.sh DEPENDENCIES)
-	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- busybox-source
+	cd buildroot && $(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(ARMTRIPLE)- busybox-source
 	cp config/busybox.config.$(VIVADO_VERSION) buildroot/output/build/busybox-$(BUSYBOX_VERSION)/.config
-	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- -j${NCORES}
+	cd buildroot && $(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(ARMTRIPLE)- -j${NCORES}
 
 sd_image/rootfs.tar: buildroot/output/images/rootfs.tar | sd_image/
 	cp buildroot/output/images/rootfs.tar sd_image/rootfs.tar
