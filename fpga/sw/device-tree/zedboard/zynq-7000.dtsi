@@ -246,8 +246,8 @@
 			interrupts = <0 22 4>;
 			clocks = <&clkc 13>, <&clkc 30>;
 			clock-names = "ref_clk", "aper_clk";
-			local-mac-address = [00 0a 35 00 00 00];
 			xlnx,has-mdio = <0x1>;
+			local-mac-address = [0E BE 06 33 5F C6];
 			#address-cells = <1>;
 			#size-cells = <0>;
 		};
@@ -259,7 +259,6 @@
 			interrupts = <0 45 4>;
 			clocks = <&clkc 14>, <&clkc 31>;
 			clock-names = "ref_clk", "aper_clk";
-			local-mac-address = [00 0a 35 00 00 00];
 			xlnx,has-mdio = <0x1>;
 			#address-cells = <1>;
 			#size-cells = <0>;
