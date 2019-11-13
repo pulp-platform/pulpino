@@ -33,9 +33,9 @@ spiload: apps/spiload/spiload
 linux-xlnx:
 	git clone git://github.com/Xilinx/linux-xlnx.git
 
-linux-xlnx/.config: config/kernel.config | linux-xlnx
+linux-xlnx/.config: config/kernel.config.$(VIVADO_VERSION) | linux-xlnx
 	cd linux-xlnx && git checkout -f tags/xilinx-v$(VIVADO_VERSION)
-	cp config/kernel.config ./linux-xlnx/.config
+	cp config/kernel.config.$(VIVADO_VERSION) ./linux-xlnx/.config
 
 linux-xlnx/arch/arm/boot/uImage: linux-xlnx/.config
 	cd linux-xlnx && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH} -j${NCORES}
@@ -58,15 +58,15 @@ u-boot-xlnx/.config: $(wildcard config/u-boot*) | u-boot-xlnx
 ifeq ($(BOARD),zybo)
 	cd u-boot-xlnx && \
 		git checkout -f 84f81e5b8950748fd7ca967ecf0428affef7ecea && \
-		patch -p1 < ../config/u-boot-xlnx-def-env.patch && \
+		patch -p1 < ../config/u-boot-xlnx-def-env.patch.$(VIVADO_VERSION) && \
 		$(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
 else
 	cd u-boot-xlnx && \
 		git checkout -f tags/xilinx-v$(VIVADO_VERSION) && \
-		patch -p1 < ../config/u-boot-xlnx-def-env.patch && \
+		patch -p1 < ../config/u-boot-xlnx-def-env.patch.$(VIVADO_VERSION) && \
 		$(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
 endif
-	cp ./config/u-boot.config.$(BOARD) ./u-boot-xlnx/.config
+	cp config/u-boot.config.$(BOARD).$(VIVADO_VERSION) ./u-boot-xlnx/.config
 
 u-boot-xlnx/u-boot: u-boot-xlnx/.config
 	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi-
@@ -82,19 +82,25 @@ u-boot: sd_image/u-boot.elf
 # buildroot
 ################################################################################
 
+BUILDROOT_VERSION_2015.1 := 2015.05
+BUILDROOT_VERSION := $(BUILDROOT_VERSION_$(VIVADO_VERSION))
+
+BUSYBOX_VERSION_2015.1 := 1.23.2
+BUSYBOX_VERSION := $(BUSYBOX_VERSION_$(VIVADO_VERSION))
+
 buildroot:
 	git clone git://git.buildroot.net/buildroot.git
 
-buildroot/.config: config/buildroot.config | buildroot
-	cd buildroot && git checkout -f tags/2015.05
+buildroot/.config: config/buildroot.config.$(VIVADO_VERSION) | buildroot
+	cd buildroot && git checkout -f tags/$(BUILDROOT_VERSION)
 	sed \
 		-e 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)"#g' \
 		-e 's#BR2_ROOTFS_POST_BUILD_SCRIPT=""#BR2_ROOTFS_POST_BUILD_SCRIPT="../buildroot-post-build.sh"#g' \
-		./config/buildroot.config > ./buildroot/.config
+		./config/buildroot.config.$(VIVADO_VERSION) > ./buildroot/.config
 
 buildroot/output/images/rootfs.tar: buildroot/.config buildroot-post-build.sh $(shell ./buildroot-post-build.sh DEPENDENCIES)
 	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- busybox-source
-	cp config/busybox.config buildroot/output/build/busybox-1.23.2/.config
+	cp config/busybox.config.$(VIVADO_VERSION) buildroot/output/build/busybox-$(BUSYBOX_VERSION)/.config
 	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- -j${NCORES}
 
 sd_image/rootfs.tar: buildroot/output/images/rootfs.tar | sd_image/
@@ -109,8 +115,8 @@ rootfs: sd_image/rootfs.tar
 ################################################################################
 
 # uImage is used as an order-only prerequisite because the dtc binary used below is built that way.
-sd_image/devicetree.dtb: $(wildcard device-tree/$(BOARD)/*.dts*) | linux-xlnx/arch/arm/boot/uImage
-	cd device-tree/$(BOARD) && ../linux-xlnx/scripts/dtc/dtc -I dts -O dtb -o $(PWD)/sd_image/devicetree.dtb system.dts
+sd_image/devicetree.dtb: $(wildcard device-tree/$(VIVADO_VERSION)/$(BOARD)/*.dts*) | linux-xlnx/arch/arm/boot/uImage
+	cd device-tree/$(VIVADO_VERSION)/$(BOARD) && $(PWD)/linux-xlnx/scripts/dtc/dtc -I dts -O dtb -o $(PWD)/sd_image/devicetree.dtb system.dts
 
 .PHONY: devtree
 devtree: sd_image/devicetree.dtb
