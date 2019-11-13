@@ -32,9 +32,9 @@ spiload: apps/spiload/spiload
 linux-xlnx:
 	git clone git://github.com/Xilinx/linux-xlnx.git
 
-linux-xlnx/.config: kernel.config | linux-xlnx
+linux-xlnx/.config: config/kernel.config | linux-xlnx
 	cd linux-xlnx && git checkout -f tags/xilinx-v2015.1
-	cp ./kernel.config ./linux-xlnx/.config
+	cp ./config/kernel.config ./linux-xlnx/.config
 
 linux-xlnx/arch/arm/boot/uImage: linux-xlnx/.config
 	cd linux-xlnx && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH} -j${NCORES}
@@ -53,19 +53,19 @@ linux: sd_image/uImage
 u-boot-xlnx:
 	git clone git://github.com/Xilinx/u-boot-xlnx.git
 
-u-boot-xlnx/.config: $(filter-out $(wildcard u-boot*), u-boot-xlnx) | u-boot-xlnx
+u-boot-xlnx/.config: $(wildcard config/u-boot*) | u-boot-xlnx
 ifeq ($(BOARD),zybo)
 	cd u-boot-xlnx && \
 		git checkout -f 84f81e5b8950748fd7ca967ecf0428affef7ecea && \
-		patch -p1 < ../u-boot-xlnx-def-env.patch && \
+		patch -p1 < ../config/u-boot-xlnx-def-env.patch && \
 		$(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
 else
 	cd u-boot-xlnx && \
 		git checkout -f tags/xilinx-v2015.1 && \
-		patch -p1 < ../u-boot-xlnx-def-env.patch && \
+		patch -p1 < ../config/u-boot-xlnx-def-env.patch && \
 		$(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
 endif
-	cp ./u-boot.config.$(BOARD) ./u-boot-xlnx/.config
+	cp ./config/u-boot.config.$(BOARD) ./u-boot-xlnx/.config
 
 u-boot-xlnx/u-boot: u-boot-xlnx/.config
 	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi-
@@ -84,16 +84,16 @@ u-boot: sd_image/u-boot.elf
 buildroot:
 	git clone git://git.buildroot.net/buildroot.git
 
-buildroot/.config: | buildroot
+buildroot/.config: config/buildroot.config | buildroot
 	cd buildroot && git checkout -f tags/2015.05
 	sed \
 		-e 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)"#g' \
 		-e 's#BR2_ROOTFS_POST_BUILD_SCRIPT=""#BR2_ROOTFS_POST_BUILD_SCRIPT="../buildroot-post-build.sh"#g' \
-		./buildroot.config > ./buildroot/.config
+		./config/buildroot.config > ./buildroot/.config
 
 buildroot/output/images/rootfs.tar: buildroot/.config buildroot-post-build.sh $(shell ./buildroot-post-build.sh DEPENDENCIES)
 	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- busybox-source
-	cp busybox.config buildroot/output/build/busybox-1.23.2/.config
+	cp config/busybox.config buildroot/output/build/busybox-1.23.2/.config
 	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- -j${NCORES}
 
 sd_image/rootfs.tar: buildroot/output/images/rootfs.tar | sd_image/
