@@ -1,5 +1,7 @@
 PWD=$(CURDIR)
 NCORES=4
+BOARD ?= zedboard
+
 ARM_TOOLCHAIN_PATH := $(shell which arm-xilinx-linux-gnueabi-gcc)
 ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
 ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
@@ -46,11 +48,10 @@ endif
 u-boot-xlnx/.config: $(filter-out $(wildcard u-boot-xlnx), u-boot-xlnx)
 ifeq ($(BOARD),zybo)
 	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
-	cp ./u-boot.config.zybo ./u-boot-xlnx/.config
 else
 	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
-	cp ./u-boot.config ./u-boot-xlnx/.config
 endif
+	cp ./u-boot.config.$(BOARD) ./u-boot-xlnx/.config
 
 u-boot-xlnx/u-boot: u-boot-xlnx/.config
 	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi-
