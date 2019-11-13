@@ -14,6 +14,7 @@
 
 /* The options we understand. */
 static struct argp_option options[] = {
+  {"reset",   'r', NULL, OPTION_ARG_OPTIONAL, "Reset target CPU without uploading a program" },
   {"timeout", 't', "0", OPTION_ARG_OPTIONAL, "Timeout in seconds. 0 means no timeout" },
   { 0 }
 };
@@ -28,6 +29,11 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
   switch (key)
   {
+  case 'r':
+    if(!arg || atoi(arg) != 0)
+      arguments->reset = 1;
+    break;
+
   case 't':
     if(arg)
       arguments->timeout = atoi(arg);
@@ -39,6 +45,7 @@ parse_opt (int key, char *arg, struct argp_state *state)
 
   case ARGP_KEY_INIT:
     // default values
+    arguments->reset = 0;
     arguments->timeout = 0;
     break;
 

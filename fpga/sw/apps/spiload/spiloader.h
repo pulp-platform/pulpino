@@ -11,6 +11,7 @@
 #ifndef SPILOADER_H
 #define SPILOADER_H
 
+#include <stdbool.h>
 #include <time.h>
 
 static inline struct timespec timespec_sub(struct timespec lhs, struct timespec rhs) {
@@ -32,6 +33,7 @@ static inline struct timespec timespec_sub(struct timespec lhs, struct timespec 
 struct cmd_arguments_t {
   char* stim;
   unsigned int timeout;
+  bool reset;
 };
 
 void console_thread_start();

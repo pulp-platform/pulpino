@@ -379,56 +379,71 @@ fail:
   return retval;
 }
 
+int read_file(const char *path, char **bufp, size_t *sizep) {
+  int fd = open(path, O_RDWR);
+  if (fd <= 0) {
+    fprintf(stderr, "Could not open \"%s\": %s\n", path, strerror(errno));
+    return 1;
+  }
+
+  *sizep = lseek(fd, 0, SEEK_END);
+  if (*sizep == -1) {
+    fprintf(stderr, "Could not determine size of \"%s\": %s\n", path, strerror(errno));
+    return 1;
+  }
+
+  *bufp = malloc(*sizep);
+  if(*bufp == NULL) {
+    fprintf(stderr, "Could not allocate memory to buffer \"%s\".\n", path);
+    return 1;
+  }
+
+  if (lseek(fd, 0, SEEK_SET) == -1) {
+    fprintf(stderr, "Could not jump to start of file \"%s\": %s\n", path, strerror(errno));
+    return 1;
+  }
+
+  if (read(fd, *bufp, *sizep) != *sizep) {
+    fprintf(stderr, "Could not read from file \"%s\": %s\n", path, strerror(errno));
+    close(fd);
+    return 1;
+  }
+
+  return 0;
+}
+
 int main(int argc, char **argv)
 {
-  int fd;
-  char* buffer;
-  unsigned int size;
   struct cmd_arguments_t arguments;
 
   cmd_parsing(argc, argv, &arguments);
 
-  clock_manager();
-
-  // open binary and get data
-  fd = open(arguments.stim, O_RDWR);
-  if (fd <= 0) {
-    perror("File could not be opened\n");
+  if (clock_manager() != 0) {
+    fprintf(stderr, "Could not configure clock.\n");
     return 1;
   }
 
-  size = lseek(fd, 0, SEEK_END);
-  if (size == -1) {
-    perror("Could not determine file size\n");
+  // reset target
+  if (pulp_ctrl(0, 1) || pulp_ctrl(0, 0)) {
+    fprintf(stderr, "Could not reset target.\n");
     return 1;
   }
-
-  buffer = (char*)malloc(size);
-  if(buffer == NULL) {
-    printf("Could not allocate memory for file buffer\n");
-  }
-
-  if (lseek(fd, 0, SEEK_SET) == -1) {
-    perror("Could not jump to start of file\n");
-    return 1;
-  }
-
-  if (read(fd, buffer, size) != size) {
-    close(fd);
-    perror("Read Error");
-    return -1;
-  }
-
-  // reset device
-  pulp_ctrl(0, 1);
-  pulp_ctrl(0, 0);
 
   printf("Device has been reset\n");
 
-  process_file(buffer, size);
-
-  free(buffer);
-  close(fd);
+  if (!arguments.reset) {
+    char* buffer;
+    size_t size;
+    if (read_file(arguments.stim, &buffer, &size) != 0) {
+      fprintf(stderr, "Could not read in stim file.\n");
+      return 1;
+    }
+    if (process_file(buffer, size) != 0) {
+      fprintf(stderr, "Could not process stim file.\n");
+      return 1;
+    }
+    free(buffer);
+  }
 
   // Start device and wait for timeout (if any)
   set_boot_addr(0x00000000);
