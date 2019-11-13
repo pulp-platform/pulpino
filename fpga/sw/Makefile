@@ -9,6 +9,11 @@ ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
 
 all: u-boot linux rootfs devtree fsbl sd_image/BOOT.BIN
 
+# To make sure a destination directory exists simply include the 
+# directory as order-only target with a trailing /
+.PRECIOUS: %/
+%/:
+	@mkdir -p $@
 
 ################################################################################
 # linux
@@ -24,8 +29,7 @@ linux-xlnx/.config: kernel.config | linux-xlnx
 linux-xlnx/arch/arm/boot/uImage: linux-xlnx/.config
 	cd linux-xlnx && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH} -j${NCORES}
 
-sd_image/uImage: linux-xlnx/arch/arm/boot/uImage
-	mkdir -p sd_image
+sd_image/uImage: linux-xlnx/arch/arm/boot/uImage | sd_image/
 	cp linux-xlnx/arch/arm/boot/uImage ./sd_image/uImage
 
 .PHONY: linux
@@ -56,8 +60,7 @@ endif
 u-boot-xlnx/u-boot: u-boot-xlnx/.config
 	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi-
 
-sd_image/u-boot.elf: u-boot-xlnx/u-boot
-	mkdir -p sd_image
+sd_image/u-boot.elf: u-boot-xlnx/u-boot | sd_image/
 	cp u-boot-xlnx/u-boot ./sd_image/u-boot.elf
 
 .PHONY: u-boot
@@ -80,8 +83,7 @@ buildroot/output/images/rootfs.tar: buildroot/.config
 	cp busybox.config buildroot/output/build/busybox-1.23.2/.config
 	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- -j${NCORES}
 
-sd_image/rootfs.tar: buildroot/output/images/rootfs.tar
-	mkdir -p sd_image
+sd_image/rootfs.tar: buildroot/output/images/rootfs.tar | sd_image/
 	cp buildroot/output/images/rootfs.tar sd_image/rootfs.tar
 
 .PHONY: rootfs
@@ -119,14 +121,14 @@ fsbl: sd_image/fsbl.elf
 # get bitstream
 ################################################################################
 
-sd_image/pulpemu_top.bit: ../pulpemu/pulpemu_top.bit
+sd_image/pulpemu_top.bit: ../pulpemu/pulpemu_top.bit | sd_image/
 	cp $< $@
 
 ################################################################################
 # boot.bin
 ################################################################################
 
-sd_image/BOOT.BIN: sd_image/u-boot.elf sd_image/pulpemu_top.bit boot.bif sd_image/fsbl.elf
+sd_image/BOOT.BIN: sd_image/u-boot.elf sd_image/pulpemu_top.bit boot.bif sd_image/fsbl.elf | sd_image/
 	bootgen -image ./boot.bif -o i ./sd_image/BOOT.BIN -w on
 
 ################################################################################
