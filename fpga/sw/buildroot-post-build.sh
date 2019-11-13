@@ -6,6 +6,13 @@ if [ "x$1" = "xDEPENDENCIES" ]; then
     exit 0
 fi
 
+# Alias commands
+cat >"${1}/root/.profile" <<EOF
+alias ls='ls'
+alias ll='ls -l'
+alias la='ls -lA'
+EOF
+
 # SSH
 mkdir -p "${1}/root/.ssh/"
 [ -f ~/.ssh/authorized_keys ] && cp ~/.ssh/authorized_keys "${1}/root/.ssh/"
