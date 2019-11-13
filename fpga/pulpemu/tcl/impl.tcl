@@ -229,6 +229,8 @@ if {[string equal $::env(BOARD) "zybo"]} {
 }
 
 
+source ../common/common.tcl
+
 
 # physical constraints
 # source tcl/floorplan.xdc
@@ -241,9 +243,9 @@ save_constraints
 # set_property "steps.route_design.args.directive" "RuntimeOptimized" [get_runs impl_1]
 set_property strategy Area_Explore [get_runs impl_1]
 
-launch_runs impl_1
+launch_runs impl_1 -jobs $CPUS
 wait_on_run impl_1
-launch_runs impl_1 -to_step write_bitstream
+launch_runs impl_1 -jobs $CPUS -to_step write_bitstream
 wait_on_run impl_1
 
 # report area utilization
@@ -274,7 +276,7 @@ if { [info exists ::env(PROBES)] } {
    set_property "steps.place_design.args.directive" "RuntimeOptimized" [get_runs impl_2]
    set_property "steps.route_design.args.directive" "RuntimeOptimized" [get_runs impl_2]
 
-   launch_runs impl_2 -to_step write_bitstream
+   launch_runs -jobs $CPUS impl_2 -to_step write_bitstream
    wait_on_run impl_2
 }
 

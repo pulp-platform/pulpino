@@ -43,8 +43,7 @@ if { [info exists ::env(XILINX_BOARD) ] } {
 }
 
 
-# set up meaningful errors
-source ../common/messages.tcl
+source ../common/common.tcl
 
 # create block design
 source tcl/ps7_bd.tcl
@@ -93,7 +92,7 @@ set_property strategy Flow_AreaOptimized_High [get_runs synth_1]
 # synthesize
 synth_design -rtl -name rtl_1
 
-launch_runs synth_1
+launch_runs synth_1 -jobs $CPUS
 wait_on_run synth_1
 open_run synth_1 -name netlist_1
 # write_edif pulpemu.edf
