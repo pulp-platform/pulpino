@@ -92,7 +92,8 @@ rootfs: sd_image/rootfs.tar
 # device tree blob
 ################################################################################
 
-sd_image/devicetree.dtb: device-tree/*.dts* $(filter-out $(wildcard linux-xlnx), linux-xlnx)
+# uImage is used as an order-only prerequisite because the dtc binary used below is built that way.
+sd_image/devicetree.dtb: $(wildcard device-tree/*.dts*) | linux-xlnx/arch/arm/boot/uImage
 ifeq ($(BOARD),zybo)
 	cd device-tree/zybo/ && $(PWD)/linux-xlnx/scripts/dtc/dtc -I dts -O dtb -o $(PWD)/sd_image/devicetree.dtb system.dts
 else
