@@ -150,11 +150,14 @@ umount:
 ################################################################################
 .PHONY: clean
 clean:
-	rm -rf u-boot-xlnx
-	$(MAKE) -C linux-xlnx clean
+	$(foreach d,$(wildcard u-boot-xlnx linux-xlnx buildroot apps/spiload),\
+		$(MAKE) -C $(d) clean ;)
+	rm -f u-boot-xlnx/.config
 	rm -f linux-xlnx/.config
 	rm -f buildroot/.config
-	$(MAKE) -C buildroot clean
 	rm -f hsi/pulpemu_top.sysdef
 	rm -f sd_image/*
 
+.PHONY: distclean
+distclean:
+	rm -rf u-boot-xlnx linux-xlnx buildroot apps/spiload/spiload sd_image hsi/pulpemu_top.sysdef
