@@ -34,6 +34,7 @@ clean:
 	rm -rf ${PROJECT}.sdk
 	rm -rf ${PROJECT}.cache
 	rm -rf ${PROJECT}.ioplanning
+	rm -rf ${PROJECT}.ip_user_files
 	rm -rf ${PROJECT}.hwdef
 	rm -rf *.log
 	rm -rf ulpsoc.txt
