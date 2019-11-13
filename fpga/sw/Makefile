@@ -2,10 +2,11 @@ PWD=$(CURDIR)
 NCORES=4
 BOARD ?= zedboard
 
+VIVADO_VERSION ?= 2015.1
+
 ARM_TOOLCHAIN_PATH := $(shell which arm-xilinx-linux-gnueabi-gcc)
 ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
 ARM_TOOLCHAIN_PATH := $(shell dirname $(ARM_TOOLCHAIN_PATH))
-
 
 all: u-boot linux rootfs devtree fsbl sd_image/BOOT.BIN
 
@@ -33,8 +34,8 @@ linux-xlnx:
 	git clone git://github.com/Xilinx/linux-xlnx.git
 
 linux-xlnx/.config: config/kernel.config | linux-xlnx
-	cd linux-xlnx && git checkout -f tags/xilinx-v2015.1
-	cp ./config/kernel.config ./linux-xlnx/.config
+	cd linux-xlnx && git checkout -f tags/xilinx-v$(VIVADO_VERSION)
+	cp config/kernel.config ./linux-xlnx/.config
 
 linux-xlnx/arch/arm/boot/uImage: linux-xlnx/.config
 	cd linux-xlnx && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH} -j${NCORES}
@@ -61,7 +62,7 @@ ifeq ($(BOARD),zybo)
 		$(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
 else
 	cd u-boot-xlnx && \
-		git checkout -f tags/xilinx-v2015.1 && \
+		git checkout -f tags/xilinx-v$(VIVADO_VERSION) && \
 		patch -p1 < ../config/u-boot-xlnx-def-env.patch && \
 		$(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
 endif
