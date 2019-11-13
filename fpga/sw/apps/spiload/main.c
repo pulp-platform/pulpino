@@ -38,39 +38,43 @@
 int clock_manager();
 int process_file(char* buffer, size_t size);
 
-int pulp_ctrl(int fetch_en, int reset) {
-  char* ctrl_map = MAP_FAILED;
-  char* gpio_base;
-  int mem_fd;
-  int retval = 0;
+char *map_device(char *base, uint32_t axi_addr) {
+  // Map device only once
+  if (base != NULL)
+    return base;
 
-  if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
-    printf("can't open /dev/mem \n");
-
-    retval = -1;
-    goto fail;
+  static int mem_fd = -1;
+  if (mem_fd < 0) {
+    if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
+      perror("Can't open /dev/mem");
+      return NULL;
+    }
   }
 
-  ctrl_map = (char*)mmap(
+  char* map = (char*)mmap(
       NULL,
       MAP_SIZE,
       PROT_READ|PROT_WRITE,
       MAP_SHARED,
       mem_fd,
-      PULP_CTRL_AXI_ADDR & ~MAP_MASK
-      );
-
-
-  if (ctrl_map == MAP_FAILED) {
-    perror("mmap error\n");
-
-    retval = -1;
-    goto fail;
+      axi_addr & ~MAP_MASK
+  );
+  if (map == MAP_FAILED) {
+    perror("mmap error");
+    return NULL;
   }
 
-  gpio_base = ctrl_map + (PULP_CTRL_AXI_ADDR & MAP_MASK);
-  volatile uint32_t* gpio = (volatile uint32_t*)(gpio_base + 0x0);
-  volatile uint32_t* dir  = (volatile uint32_t*)(gpio_base + 0x4);
+  return map + (axi_addr & MAP_MASK);
+}
+
+int pulp_ctrl(int fetch_en, int reset) {
+  static char* ctrl_base = NULL;
+  ctrl_base = map_device(ctrl_base, PULP_CTRL_AXI_ADDR);
+  if (ctrl_base == NULL)
+    return -1;
+
+  volatile uint32_t* gpio = (volatile uint32_t*)(ctrl_base + 0x0);
+  volatile uint32_t* dir  = (volatile uint32_t*)(ctrl_base + 0x4);
 
   // now we can actually write to the peripheral
   uint32_t val = 0x0;
@@ -83,47 +87,17 @@ int pulp_ctrl(int fetch_en, int reset) {
   *dir  = 0x0; // configure as output
   *gpio = val;
 
-fail:
-  close(mem_fd);
-
-  if(ctrl_map != MAP_FAILED)
-    munmap(ctrl_map, MAP_SIZE);
-
-  return retval;
+  return 0;
 }
 
 int wait_eoc(unsigned int timeout) {
-  char* ctrl_map = MAP_FAILED;
-  char* gpio_base;
-  int mem_fd;
-  int retval = 0;
+  static char* gpio_base = NULL;
+  gpio_base = map_device(gpio_base, PULP_GPIO_AXI_ADDR);
+  if (gpio_base == NULL)
+    return -1;
+
   struct timespec spec_start, spec_end, spec_diff;
 
-  if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
-    printf("can't open /dev/mem \n");
-
-    retval = -1;
-    goto fail;
-  }
-
-  ctrl_map = (char*)mmap(
-      NULL,
-      MAP_SIZE,
-      PROT_READ|PROT_WRITE,
-      MAP_SHARED,
-      mem_fd,
-      PULP_GPIO_AXI_ADDR & ~MAP_MASK
-      );
-
-
-  if (ctrl_map == MAP_FAILED) {
-    perror("mmap error\n");
-
-    retval = -1;
-    goto fail;
-  }
-
-  gpio_base = ctrl_map + (PULP_GPIO_AXI_ADDR & MAP_MASK);
   volatile uint32_t* gpio = (volatile uint32_t*)(gpio_base + 0x0);
   volatile uint32_t* dir  = (volatile uint32_t*)(gpio_base + 0x4);
 
@@ -149,13 +123,7 @@ int wait_eoc(unsigned int timeout) {
 
   printf("Stopped after %ld.%ld\n", (long)spec_diff.tv_sec, spec_diff.tv_nsec);
 
-fail:
-  close(mem_fd);
-
-  if(ctrl_map != MAP_FAILED)
-    munmap(ctrl_map, MAP_SIZE);
-
-  return retval;
+  return 0;
 }
 
 int spi_read_reg(unsigned int addr) {
@@ -544,36 +512,11 @@ int process_file(char* buffer, size_t size) {
 }
 
 int clock_manager() {
-  char* clk_map = MAP_FAILED;
-  char* clk_base;
-  int mem_fd;
-  int retval = 0;
+  static char* clk_base = NULL;
+  clk_base = map_device(clk_base, CLKING_AXI_ADDR);
+  if (clk_base == NULL)
+    return -1;
 
-  if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
-    printf("can't open /dev/mem \n");
-
-    retval = -1;
-    goto fail;
-  }
-
-  clk_map = (char*)mmap(
-      NULL,
-      MAP_SIZE,
-      PROT_READ|PROT_WRITE,
-      MAP_SHARED,
-      mem_fd,
-      CLKING_AXI_ADDR & ~MAP_MASK
-      );
-
-
-  if (clk_map == MAP_FAILED) {
-    perror("mmap error\n");
-
-    retval = -1;
-    goto fail;
-  }
-
-  clk_base = clk_map + (CLKING_AXI_ADDR & MAP_MASK);
   // volatile uint32_t* sr = (volatile uint32_t*)(clk_base + 0x4);
   volatile uint32_t* ccr0  = (volatile uint32_t*)(clk_base + 0x200);
   volatile uint32_t* ccr2  = (volatile uint32_t*)(clk_base + 0x208);
@@ -586,11 +529,5 @@ int clock_manager() {
   *ccr0 = 0x04004005;
   *ccr2 = 0x00040080;
 
-fail:
-  close(mem_fd);
-
-  if(clk_map != MAP_FAILED)
-    munmap(clk_map, MAP_SIZE);
-
-  return retval;
+  return 0;
 }
