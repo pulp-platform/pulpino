@@ -1,3 +1,5 @@
+apps/gpio_access/gpio_access
+apps/spiload/spiload
 linux-xlnx
 sd_image
 u-boot-xlnx
@@ -10,7 +12,7 @@ hsi/ps7_init.html
 hsi/ps7_init.tcl
 hsi/ps7_init_gpl.c
 hsi/ps7_init_gpl.h
-hsi/hsi.jou
-hsi/hsi.log
+hsi/*.jou
+hsi/*.log
 hsi/pulpemu_top.bit
 hsi/pulpemu_top.sysdef
