@@ -76,9 +76,12 @@ buildroot:
 
 buildroot/.config: | buildroot
 	cd buildroot && git checkout -f tags/2015.05
-	cat ./buildroot.config | sed 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)"#g' > ./buildroot/.config
+	sed \
+		-e 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)"#g' \
+		-e 's#BR2_ROOTFS_POST_BUILD_SCRIPT=""#BR2_ROOTFS_POST_BUILD_SCRIPT="../buildroot-post-build.sh"#g' \
+		./buildroot.config > ./buildroot/.config
 
-buildroot/output/images/rootfs.tar: buildroot/.config
+buildroot/output/images/rootfs.tar: buildroot/.config buildroot-post-build.sh $(shell ./buildroot-post-build.sh DEPENDENCIES)
 	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- busybox-source
 	cp busybox.config buildroot/output/build/busybox-1.23.2/.config
 	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- -j${NCORES}
