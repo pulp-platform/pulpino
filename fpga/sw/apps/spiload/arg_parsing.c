@@ -9,6 +9,7 @@
 // specific language governing permissions and limitations under the License.
 
 #include <argp.h>
+#include <stdlib.h>
 #include "spiloader.h"
 
 /* The options we understand. */

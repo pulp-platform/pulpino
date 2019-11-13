@@ -8,7 +8,8 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#include <asm/termios.h>
+#include <asm/termbits.h>
+#include <sys/ioctl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -33,7 +34,6 @@ void read_port()
   struct termios2 tio;
   int fd;
   unsigned int i;
-  int n;
   char c;
 
   if ((fd = open(TTY_DEV, O_RDONLY | O_NOCTTY) ) < 0) {
@@ -82,11 +82,12 @@ void read_port()
 
 void* console_thread(void* ptr) {
   read_port();
+  return NULL;
 }
 
 void console_thread_start() {
   g_should_exit = 0;
-  if (pthread_create (&g_thread, NULL, console_thread, NULL) ) {
+  if (pthread_create(&g_thread, NULL, console_thread, NULL) ) {
     printf("Error creating console listening thread\n");
   }
 }

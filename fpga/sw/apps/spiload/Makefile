@@ -1,5 +1,5 @@
 CC     = arm-xilinx-linux-gnueabi-gcc
-CFLAGS =
+CFLAGS = -Wall
 
 ifeq ($(BOARD),zybo)
 	CFLAGS += -DZYBO

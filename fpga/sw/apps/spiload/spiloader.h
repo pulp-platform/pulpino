@@ -34,7 +34,8 @@ struct cmd_arguments_t {
   unsigned int timeout;
 };
 
-void* console_thread(void* ptr);
+void console_thread_start();
 void console_thread_stop();
+void cmd_parsing(int argc, char* argv[], struct cmd_arguments_t* arguments);
 
 #endif

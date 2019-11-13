@@ -147,7 +147,7 @@ int wait_eoc(unsigned int timeout) {
     }
   }
 
-  printf("Stopped after %d.%d\n", spec_diff.tv_sec, spec_diff.tv_nsec);
+  printf("Stopped after %ld.%ld\n", (long)spec_diff.tv_sec, spec_diff.tv_nsec);
 
 fail:
   close(mem_fd);
@@ -254,8 +254,6 @@ int set_boot_addr(uint32_t boot_addr) {
     retval = -1;
     goto fail;
   }
-
-  close(fd);
 
 fail:
   // close spidev
@@ -386,7 +384,6 @@ int main(int argc, char **argv)
   int fd;
   char* buffer;
   unsigned int size;
-  int i;
   struct cmd_arguments_t arguments;
 
   cmd_parsing(argc, argv, &arguments);
@@ -556,7 +553,7 @@ int clock_manager() {
   }
 
   clk_base = clk_map + (CLKING_AXI_ADDR & MAP_MASK);
-  volatile uint32_t* sr = (volatile uint32_t*)(clk_base + 0x4);
+  // volatile uint32_t* sr = (volatile uint32_t*)(clk_base + 0x4);
   volatile uint32_t* ccr0  = (volatile uint32_t*)(clk_base + 0x200);
   volatile uint32_t* ccr2  = (volatile uint32_t*)(clk_base + 0x208);
 
