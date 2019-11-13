@@ -180,7 +180,10 @@ if(${ARDUINO_LIB})
  add_subdirectory(libs/Arduino_lib)
 endif()
 
-add_subdirectory(libs/bench_lib)
+set(BENCH_LIB 1 CACHE STRING "Enable inclusion and linkage of the bench library") # default to on if not given
+if(${BENCH_LIB})
+  add_subdirectory(libs/bench_lib)
+endif()
 
 set(BEEBS_LIB 0)
 
