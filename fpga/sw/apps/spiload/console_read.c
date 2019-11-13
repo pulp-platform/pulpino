@@ -18,6 +18,12 @@
 #include <pthread.h>
 #include <signal.h>
 
+#ifdef ZYBO
+  #define TTY_DEV "/dev/ttyPS1"
+#else
+  #define TTY_DEV "/dev/ttyPS0"
+#endif
+
 pthread_t g_thread;
 int g_should_exit;
 
@@ -30,17 +36,10 @@ void read_port()
   int n;
   char c;
 
-#ifdef ZYBO
-  if ((fd = open("/dev/ttyPS1", O_RDONLY | O_NOCTTY) ) < 0) {
-    perror("open_port: Unable to open /dev/ttyPS0");
+  if ((fd = open(TTY_DEV, O_RDONLY | O_NOCTTY) ) < 0) {
+    perror("open_port: Unable to open " TTY_DEV);
     return;
   }
-#else
-  if ((fd = open("/dev/ttyPS0", O_RDONLY | O_NOCTTY) ) < 0) {
-    perror("open_port: Unable to open /dev/ttyPS0");
-    return;
-  }
-#endif
 
   // set baudrate
   ioctl(fd, TCGETS2, &tio);
