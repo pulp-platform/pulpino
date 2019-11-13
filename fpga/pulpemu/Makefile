@@ -8,11 +8,9 @@ synth:
 	cp ${PROJECT}.runs/impl_1/${PROJECT}_top.sysdef .
 
 impl:
-	rm -rf .Xil
-	vivado -mode batch -source tcl/impl.tcl
-	cp pulpemu_top.runs/impl_1/pulpemu_top.bit .
-	cp pulpemu.runs/impl_1/pulpemu_top.sysdef .
-	cp pulpemu_top.runs/impl_1/*.dcp .
+	vivado -mode batch -source tcl/impl.tcl ${PROJECT}.xpr
+	cp ${PROJECT}.runs/impl_1/${PROJECT}_top.bit .
+	cp ${PROJECT}.runs/impl_1/${PROJECT}_top.sysdef .
 
 gui-synth:
 	vivado -mode gui -source tcl/run.tcl &
@@ -24,7 +22,7 @@ continue:
 	vivado -mode gui ${PROJECT}.xpr
 
 clean-impl:
-	rm -rf pulpemu_top*
+	rm -f ${PROJECT}_top.*
 
 clean:
 	rm -rf ${PROJECT}.hw

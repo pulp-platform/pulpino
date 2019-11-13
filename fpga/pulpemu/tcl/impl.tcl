@@ -1,3 +1,7 @@
+source ./tcl/common.tcl
+
+open_run synth_1 -name synth_1
+
 # clocks
 create_clock -period 50.000 -name clk      [get_nets {pulpino_wrap_i/clk}]
 create_clock -period 40.000 -name spi_sck  [get_nets {pulpino_wrap_i/spi_clk_i}]
@@ -243,6 +247,7 @@ save_constraints
 # set_property "steps.route_design.args.directive" "RuntimeOptimized" [get_runs impl_1]
 set_property strategy Area_Explore [get_runs impl_1]
 
+reset_run impl_1
 launch_runs impl_1 -jobs $CPUS
 wait_on_run impl_1
 launch_runs impl_1 -jobs $CPUS -to_step write_bitstream
