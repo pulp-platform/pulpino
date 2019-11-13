@@ -44,6 +44,10 @@ pulpemu: pulpemu/pulpemu_top.bit pulpemu/pulpemu_top.sysdef
 sw: pulpemu/pulpemu_top.bit pulpemu/pulpemu_top.sysdef
 	$(MAKE) -C sw all
 
+# Download bit stream to FPGA via Linux already running on the PS
+.PHONY: push
+push: pulpemu/pulpemu_top.bit
+	ssh root@$(FPGA_HOSTNAME) "cat >/dev/xdevcfg" <$<
 
 .PHONY: clean
 clean:
