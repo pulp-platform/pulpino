@@ -81,7 +81,7 @@ endif
 	cp config/u-boot.config.$(BOARD).$(VIVADO_VERSION) ./u-boot-xlnx/.config
 
 u-boot-xlnx/u-boot: u-boot-xlnx/.config
-	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=$(ARMTRIPLE)-
+	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=$(ARMTRIPLE)- -j${NCORES}
 
 sd_image/u-boot.elf: u-boot-xlnx/u-boot | sd_image/
 	cp u-boot-xlnx/u-boot ./sd_image/u-boot.elf
