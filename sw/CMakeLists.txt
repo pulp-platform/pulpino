@@ -30,37 +30,56 @@ endif()
 
 # assign default architecture flags if not defined
 string(COMPARE EQUAL "${GCC_MARCH}" "" GCC_MARCH_NOT_SET)
-
+string(COMPARE EQUAL "${GCC_MABI}" "" GCC_MABI_NOT_SET)
 if(GCC_MARCH_NOT_SET)
-   message("\nUsing default architecture flags!!\n")
+   message("\nUsing default architecture flags.\n")
 
-   if(${USE_RISCY})
+   if (${USE_ZERO_RISCY})
+      if(${ZERO_RV32M})
+        set(GCC_MARCH "rv32im")
+      else()
+        set(GCC_MARCH "rv32i")
+      endif()
+   else()
       if(${RISCY_RV32F})
          set(GCC_MARCH "IMFDXpulpv2")
       else()
          set(GCC_MARCH "IMXpulpv2")
       endif()
-   else()
-      if(${ZERO_RV32M})
-        set(GCC_MARCH "RV32IM")
-      else()
-        set(GCC_MARCH "RV32I")
-      endif()
    endif()
+
+  # Insert c into ARCH string to enable compressed instructions if RVC is set
+  if(${RVC})
+    message("NOTE: Using compressed instructions")
+    string(REGEX MATCH "([^xX]+)([xX])?(.*)" dummy "${GCC_MARCH}")
+    set(GCC_MARCH "${CMAKE_MATCH_1}c${CMAKE_MATCH_2}${CMAKE_MATCH_3}")
+  endif()
+else()
+  math(EXPR ignored_vars "${RISCY_RV32F} + ${ZERO_RV32M} + ${USE_ZERO_RISCY} + ${RVC}")
+  if(${ignored_vars} GREATER 0)
+    message(WARNING "Since GCC_MARCH is set (to ${GCC_MARCH}) any values of RISCY_RV32F, ZERO_RV32M, USE_ZERO_RISCY, RVC are ignored.")
+  endif()
 endif()
 
+# Derive GCC_MABI from GCC_MARCH if need be
+if(GCC_MABI_NOT_SET)
+  set(GCC_MABI "ilp32")
+  if(${GCC_MARCH} MATCHES "^[^xX]+[dD]") # Test for double
+    set(RISCY_RV32F 1)
+    set(GCC_MABI "${GCC_MABI}d")
+  elseif(${GCC_MARCH} MATCHES "^[^xX]+[fF]") # Test for float
+    set(RISCY_RV32F 1)
+    set(GCC_MABI "${GCC_MABI}f")
+  endif()
+endif()
 
 message(STATUS "GCC_MARCH= ${GCC_MARCH}")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -m32 -march=${GCC_MARCH} -Wa,-march=${GCC_MARCH}")
+message(STATUS "GCC_MABI= ${GCC_MABI}")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mabi=${GCC_MABI} -march=${GCC_MARCH}")
 set(CMAKE_OBJDUMP_FLAGS -Mmarch=${GCC_MARCH} -d)
 
 if(${GCC_MARCH} MATCHES "IMFDXpulpv2")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mhard-float")
-endif()
-
-if(${RVC})
-  message("NOTE: Using compressed instructions")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -mrvc")
 endif()
 
 if(${ZERO_RV32E})
