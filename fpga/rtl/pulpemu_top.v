@@ -208,19 +208,37 @@ module pulpemu_top(
   assign td_i    = ext_tdi_i;
   assign tms_i   = ext_tms_i;
 
-  assign ext_tdo_o = td_o;
-
-
-  // GPIO signals
+  // Workaround Vivado issue, see #270
+  reg ext_tdo_o_q;
   always @(posedge s_clk_pulpino or negedge s_rstn_pulpino)
   begin
     if (~s_rstn_pulpino)
-      LD_q <= 8'b0;
+      ext_tdo_o_q <= 1'b0;
     else
+      ext_tdo_o_q <= td_o;
+  end
+  assign ext_tdo_o = ext_tdo_o_q;
+
+  // GPIO signals
+  reg oled_dc_o_q;
+  reg oled_res_o_q;
+
+  always @(posedge s_clk_pulpino or negedge s_rstn_pulpino)
+  begin
+    if (~s_rstn_pulpino) begin
+      LD_q <= 8'b0;
+      oled_dc_o_q <= 1'b0;
+      oled_res_o_q <= 1'b0;
+    end else begin
       LD_q <= gpio_out[15:8];
+      oled_dc_o_q <= gpio_out[16];
+      oled_res_o_q <= gpio_out[17];
+    end
   end
 
   assign LD_o = LD_q;
+  assign oled_dc_o = oled_dc_o_q;
+  assign oled_res_o = oled_res_o_q;
 
   assign gpio_in[7:0]   = sw_i;
   assign gpio_in[15:8]  = 8'b0;
@@ -236,9 +254,6 @@ module pulpemu_top(
 
   assign oled_vbat_o  = 1'b1;
   assign oled_vdd_o   = 1'b1;
-
-  assign oled_dc_o    = gpio_out[16];
-  assign oled_res_o   = gpio_out[17];
 
   // Zynq Processing System
   ps7_wrapper ps7_wrapper_i (
