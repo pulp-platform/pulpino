@@ -6,21 +6,19 @@ top-level SystemVerilog file.
 
 \begin{figure}[H]
   \centering
-  %\includegraphics[width=0.8\textwidth]{./figures/memory_map}
-
+  \resizebox{!}{0.7\textheight}{
   \begin{bytefield}{24}
   \begin{rightwordgroup}{Instruction Memory}
-  \memsection{0x0000 0000}{0x0000 8000}{7}{32kB RAM}
+  \memsection{0x0000 0000}{}{7}{32kB RAM}
   \end{rightwordgroup}\\
-  \memsection{}{}{2}{}\\
   \begin{rightwordgroup}{Boot ROM (r/o)}
-  \memsection{0x0008 0000}{0x0008 0200}{3}{512B ROM}
+  \memsection{0x0000 8000}{}{3}{512B ROM}
   \end{rightwordgroup}\\
-  \memsection{}{}{3}{} \\
+  \memsection{0x0000 8200}{}{3}{} \\
   \begin{rightwordgroup}{Data Memory}
-  \memsection{0x0010 0000}{0x0010 8000}{7}{32kB RAM}
+  \memsection{0x0010 0000}{}{7}{32kB RAM}
   \end{rightwordgroup}\\
-  \memsection{}{}{3}{} \\
+  \memsection{0x0010 8000}{}{3}{} \\
   \begin{rightwordgroup}{Peripherals}
   \memsection{0x1A10 0000}{}{2}{UART} \\
   \memsection{0x1A10 1000}{}{2}{GPIO} \\
@@ -34,6 +32,7 @@ top-level SystemVerilog file.
   \end{rightwordgroup}
   \\
   \end{bytefield}
+  }
 
   \caption{\pulpino memory map.}
   \label{fig:pulpino_memory_map}
