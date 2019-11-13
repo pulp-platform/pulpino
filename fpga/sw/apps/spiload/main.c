@@ -142,7 +142,7 @@ int wait_eoc(unsigned int timeout) {
     }
 
     if (spec_diff.tv_sec >= timeout) {
-      printf ("Timeout reached!\n");
+      fprintf(stderr, "Timeout reached!\n");
       break;
     }
   }
@@ -170,7 +170,7 @@ int spi_read_reg(unsigned int addr) {
   // open spidev
   fd = open(SPIDEV, O_RDWR);
   if (fd <= 0) {
-    perror("Device not found\n");
+    perror(SPIDEV " not found");
 
     retval = -1;
     goto fail;
@@ -198,7 +198,7 @@ int spi_read_reg(unsigned int addr) {
     case 2: wr_buf[0] = 0x21; break; // read reg2
     case 3: wr_buf[0] = 0x30; break; // read reg3
     default:
-            printf("Not a valid address for reading a register\n");
+            fprintf(stderr, "Not a valid address for reading a register\n");
             goto fail;
   }
 
@@ -241,7 +241,7 @@ int set_boot_addr(uint32_t boot_addr) {
   // open spidev
   fd = open(SPIDEV, O_RDWR);
   if (fd <= 0) {
-    perror("Device not found\n");
+    perror(SPIDEV " not found");
 
     retval = -1;
     goto fail;
@@ -249,7 +249,7 @@ int set_boot_addr(uint32_t boot_addr) {
 
   // write to spidev
   if (write(fd, wr_buf, 9) != 9) {
-    perror("Write Error");
+    perror("Could not write to " SPIDEV);
 
     retval = -1;
     goto fail;
@@ -281,7 +281,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
 
   wr_buf = (char*)malloc(transfer_len);
   if (wr_buf == NULL) {
-    printf("Unable to acquire write buffer\n");
+    fprintf(stderr, "Unable to acquire write buffer\n");
 
     retval = -1;
     goto fail;
@@ -301,7 +301,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
   // open spidev
   fd = open(SPIDEV, O_RDWR);
   if (fd <= 0) {
-    perror("Device not found\n");
+    perror(SPIDEV " not found");
 
     retval = -1;
     goto fail;
@@ -309,7 +309,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
 
   // write to spidev
   if (write(fd, wr_buf, size + 5) != (size + 5)) {
-    perror("Write Error");
+    perror("Could not write to " SPIDEV);
 
     retval = -1;
     goto fail;
@@ -319,7 +319,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
   // prepare for readback
   rd_buf = (char*)malloc(transfer_len);
   if (rd_buf == NULL) {
-    printf("Unable to acquire buffer to check if write was successful\n");
+    fprintf(stderr, "Unable to acquire buffer to check if write was successful\n");
 
     retval = -1;
     goto fail;
@@ -362,7 +362,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
 
   for(i = 0; i < in_size; i++) {
     if (in_buf[i] != rd_buf[i + 9]) {
-      printf("Read check failed at idx %d: Expected %02X, got %02X\n", i, in_buf[i], rd_buf[i + 9]);
+      fprintf(stderr, "Read check failed at idx %d: Expected %02X, got %02X\n", i, in_buf[i], rd_buf[i + 9]);
     }
   }
 
@@ -429,7 +429,7 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  printf("Device has been reset\n");
+  printf("Target is in reset\n");
 
   if (!arguments.reset) {
     char* buffer;
@@ -445,16 +445,22 @@ int main(int argc, char **argv)
     free(buffer);
   }
 
-  // Start device and wait for timeout (if any)
-  set_boot_addr(0x00000000);
+  // Start target and wait for timeout (if any)
+  if (set_boot_addr(0x00000000) != 0) {
+      fprintf(stderr, "Could not set PC.\n");
+      return 1;
+  }
 
   if (arguments.timeout > 0) {
     console_thread_start();
     sleep(1);
   }
 
-  printf("Starting device\n");
-  pulp_ctrl(1, 0);
+  printf("Starting target\n");
+  if (pulp_ctrl(1, 0) != 0) {
+      fprintf(stderr, "Could not (re)start target.\n");
+      return 1;
+  }
 
   if (arguments.timeout > 0) {
     printf("Waiting for EOC...\n");
@@ -499,7 +505,7 @@ int process_file(char* buffer, size_t size) {
 
       i++;
       if (i == 18) {
-        printf("Failed to parse, couldn't find line\n");
+        fprintf(stderr, "Failed to parse, couldn't find line\n");
         return -1;
       }
     }
@@ -513,13 +519,13 @@ int process_file(char* buffer, size_t size) {
     entries++;
 
     if (entries == NUM_ENTRIES) {
-      printf("Too many entries in file\n");
+      fprintf(stderr, "Too many entries in file\n");
       return -1;
     }
   }
 
   if (entries == 0) {
-    printf("No entries found\n");
+    fprintf(stderr, "No entries found\n");
     return -1;
   }
 
