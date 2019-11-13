@@ -20,7 +20,7 @@ linux-xlnx/.config: $(filter-out $(wildcard linux-xlnx), linux-xlnx)
 	cp ./kernel.config ./linux-xlnx/.config
 
 linux-xlnx/arch/arm/boot/uImage: linux-xlnx/.config
-	cd linux-xlnx && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH} -j${NCORES}
+	cd linux-xlnx && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- UIMAGE_LOADADDR=0x8000 uImage PATH=$(shell pwd)/u-boot-xlnx/tools/:${PATH} -j${NCORES}
 
 sd_image/uImage: linux-xlnx/arch/arm/boot/uImage
 	mkdir -p sd_image
@@ -45,15 +45,15 @@ endif
 
 u-boot-xlnx/.config: $(filter-out $(wildcard u-boot-xlnx), u-boot-xlnx)
 ifeq ($(BOARD),zybo)
-	cd u-boot-xlnx && make CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
+	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zybo_config
 	cp ./u-boot.config.zybo ./u-boot-xlnx/.config
 else
-	cd u-boot-xlnx && make CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
+	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi- zynq_zed_config
 	cp ./u-boot.config ./u-boot-xlnx/.config
 endif
 
 u-boot-xlnx/u-boot: u-boot-xlnx/.config
-	cd u-boot-xlnx && make CROSS_COMPILE=arm-xilinx-linux-gnueabi-
+	cd u-boot-xlnx && $(MAKE) CROSS_COMPILE=arm-xilinx-linux-gnueabi-
 
 sd_image/u-boot.elf: u-boot-xlnx/u-boot
 	mkdir -p sd_image
@@ -75,9 +75,9 @@ buildroot/.config: $(filter-out $(wildcard buildroot), buildroot)
 	cat ./buildroot.config | sed 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)"#g' > ./buildroot/.config
 
 buildroot/output/images/rootfs.tar: buildroot/.config
-	cd buildroot && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- busybox-source
+	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- busybox-source
 	cp busybox.config buildroot/output/build/busybox-1.23.2/.config
-	cd buildroot && make ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- -j${NCORES}
+	cd buildroot && $(MAKE) ARCH=arm CROSS_COMPILE=arm-xilinx-linux-gnueabi- -j${NCORES}
 
 sd_image/rootfs.tar: buildroot/output/images/rootfs.tar
 	mkdir -p sd_image
@@ -153,10 +153,10 @@ umount:
 .PHONY: clean
 clean:
 	rm -rf u-boot-xlnx
-	make -C linux-xlnx clean
+	$(MAKE) -C linux-xlnx clean
 	rm -f linux-xlnx/.config
 	rm -f buildroot/.config
-	make -C buildroot clean
+	$(MAKE) -C buildroot clean
 	rm -f hsi/pulpemu_top.sysdef
 	rm -f sd_image/*
 
