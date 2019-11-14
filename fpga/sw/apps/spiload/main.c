@@ -464,7 +464,7 @@ int process_file(char* buffer, size_t size) {
   unsigned int entries = 0;
 
   // extract lines
-  const char const* buffer_end = buffer + size;
+  const char *const buffer_end = buffer + size;
   char line[20];
   unsigned int i;
 
