@@ -107,6 +107,9 @@ buildroot:
 
 buildroot/.config: config/buildroot.config.$(VIVADO_VERSION) | buildroot
 	cd buildroot && git checkout -f tags/$(BUILDROOT_VERSION)
+ifeq ($(VIVADO_VERSION),2018.3)
+	cd buildroot && git am ../config/buildroot.patch.2018.3
+endif
 	sed \
 		-e 's#BR2_TOOLCHAIN_EXTERNAL_PATH="/to/be/defined/"#BR2_TOOLCHAIN_EXTERNAL_PATH="$(ARM_TOOLCHAIN_PATH)"#g' \
 		-e 's#BR2_ROOTFS_POST_BUILD_SCRIPT=""#BR2_ROOTFS_POST_BUILD_SCRIPT="../buildroot-post-build.sh"#g' \
