@@ -4,6 +4,7 @@ linux-xlnx
 sd_image
 u-boot-xlnx
 buildroot
+device_tree_repo
 hsi/fsbl/
 hsi/ps7_bd.tcl
 hsi/ps7_init.c
@@ -16,3 +17,4 @@ hsi/*.jou
 hsi/*.log
 hsi/pulpemu_top.bit
 hsi/pulpemu_top.sysdef
+hsi/dts_out/

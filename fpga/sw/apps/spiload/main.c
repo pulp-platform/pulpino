@@ -26,7 +26,7 @@
 
 #include "spiloader.h"
 
-#define SPIDEV               "/dev/spidev32766.0"
+#define SPIDEV               "/dev/spidev1.0"
 #define CLKING_AXI_ADDR      0x51010000
 #define PULP_CTRL_AXI_ADDR   0x51000000
 #define PULP_GPIO_AXI_ADDR   0x51030000

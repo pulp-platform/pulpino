@@ -126,9 +126,47 @@ rootfs: sd_image/rootfs.tar
 # device tree blob
 ################################################################################
 
+DT_TOP_2015.1 := system.dts
+DT_TOP := $(DT_TOP_$(VIVADO_VERSION))
+
+device_tree_repo:
+	git clone https://github.com/Xilinx/device-tree-xlnx.git device_tree_repo
+
+hsi/dts_out/$(VIVADO_VERSION)-$(BOARD)/$(DT_TOP): device_tree_repo hsi/pulpemu_top.sysdef | hsi/dts_out/$(VIVADO_VERSION)-$(BOARD)/
+	cd device_tree_repo && git checkout -f tags/xilinx-v$(VIVADO_VERSION)
+	cd hsi && hsi -mode batch -source dt.tcl -tclargs dts_out/$(VIVADO_VERSION)-$(BOARD)
+
+# If there is no dts available in this repo, try creating it.
+# NB: The order-only prerequisites guarantee that we don't touch an existing .dts
+# This has been semi-successful in the past but is a good starting point
+# for further customizations (to be then committed as dts files in device-tree/).
+# Additionally, the sed call below improves the output of hsi as follows
+#  - fix the memory node if need be
+#  - set stdout-path to UART1
+#  - adapt the spi aliases to ensure /dev/spidev1.0 is the RISC-V memory mapping
+#  - set the MAC address of the ethernet PHY to a valid (but random) value
+#  - replace the kernel boot arguments to set the correct UART and root FS location
+#
 # uImage is used as an order-only prerequisite because the dtc binary used below is built that way.
-sd_image/devicetree.dtb: $(wildcard device-tree/$(VIVADO_VERSION)/$(BOARD)/*.dts*) | linux-xlnx/arch/arm/boot/uImage
-	cd device-tree/$(VIVADO_VERSION)/$(BOARD) && $(PWD)/linux-xlnx/scripts/dtc/dtc -I dts -O dtb -o $(PWD)/sd_image/devicetree.dtb system.dts
+device-tree/$(VIVADO_VERSION)-$(BOARD).dts: | hsi/dts_out/$(VIVADO_VERSION)-$(BOARD)/$(DT_TOP) linux-xlnx/arch/arm/boot/uImage
+	$(info Generating new Device Tree for $(BOARD) with Vivado $(VIVADO_VERSION).)
+	$(info Don't expect this to work out of the box.)
+	cd hsi/dts_out/$(VIVADO_VERSION)-$(BOARD) && \
+		cpp -nostdinc -undef -x assembler-with-cpp $(DT_TOP) | \
+			$(PWD)/linux-xlnx/scripts/dtc/dtc -I dts -O dts - | \
+			sed \
+				-e 's|memory {|memory@0 {|' \
+				-e 's|stdout-path = "serial0:|stdout-path = "serial1:|' \
+				-e '/spi[01] = .*;/d' \
+				-e 's|serial1 = "/amba/serial@e0001000";|serial1 = "/amba/serial@e0001000";\n\t\tspi0 = "/amba/spi@e000d000";\n\t\tspi1 = "/amba/spi@e0006000";|' \
+				-e '/local-mac-address = .*;/d' \
+				-e 's|ethernet@e000b000 {|ethernet@e000b000 {\n\t\t\tlocal-mac-address = [0e be 06 33 5f c6];|' \
+				-e 's|bootargs = ".*";|bootargs = "console=ttyPS1,115200n8 ip=on rootfstype=ext4 root=/dev/mmcblk0p2 rw earlyprintk";|' \
+			> $(PWD)/$@
+
+# uImage is used as an order-only prerequisite because the dtc binary used below is built that way.
+sd_image/devicetree.dtb: device-tree/$(VIVADO_VERSION)-$(BOARD).dts | linux-xlnx/arch/arm/boot/uImage
+	linux-xlnx/scripts/dtc/dtc -I dts -O dtb -o $@ $<
 
 .PHONY: devtree
 devtree: sd_image/devicetree.dtb
@@ -190,6 +228,7 @@ clean:
 	rm -f linux-xlnx/.config
 	rm -f buildroot/.config
 	rm -f hsi/pulpemu_top.sysdef
+	rm -fr hsi/dts_out/
 	rm -f sd_image/*
 
 .PHONY: distclean
