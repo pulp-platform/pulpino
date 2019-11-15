@@ -47,6 +47,12 @@ linux-xlnx:
 
 linux-xlnx/.config: config/kernel.config.$(VIVADO_VERSION) | linux-xlnx
 	cd linux-xlnx && git checkout -f tags/xilinx-v$(VIVADO_VERSION)
+# Work around a bug in Xilinx' UART Linux kernel driver by using an old version
+ifeq ($(VIVADO_VERSION),2018.3)
+	cd linux-xlnx && \
+		git checkout xilinx-v2017.4 -- ./drivers/tty/serial/xilinx_uartps.c && \
+		sed -ie 's/CONFIG_SERIAL_XILINX_NR_UARTS/2/' drivers/tty/serial/xilinx_uartps.c
+endif
 	cp config/kernel.config.$(VIVADO_VERSION) ./linux-xlnx/.config
 
 linux-xlnx/arch/arm/boot/uImage: linux-xlnx/.config
