@@ -231,9 +231,9 @@ fail:
 }
 
 int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
-  int fd;
-  char* wr_buf;
-  char* rd_buf;
+  int fd = -1;
+  char* wr_buf = NULL;
+  char* rd_buf = NULL;
   unsigned int i;
   size_t size;
   size_t transfer_len;
@@ -335,14 +335,12 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
   }
 
 fail:
-  // close spidev
-  close(fd);
+  // close spidev if opened
+  if (fd > 0)
+    close(fd);
 
-  if (wr_buf != NULL)
-    free(wr_buf);
-
-  if (rd_buf != NULL)
-    free(rd_buf);
+  free(wr_buf);
+  free(rd_buf);
 
   return retval;
 }
@@ -503,7 +501,10 @@ int process_file(char* buffer, size_t size) {
     if(addr[i] != (addr[i-1] + 0x4) || (i - start_idx) == 255 || i == (entries - 1)) {
       // send block
       printf("Sending block addr %08X with %d entries\n", addr[start_idx], i - start_idx + 1);
-      spi_load(addr[start_idx], (char*)&data[start_idx], (i - start_idx + 1) * 4);
+      if (spi_load(addr[start_idx], (char*)&data[start_idx], (i - start_idx + 1) * 4) != 0) {
+        fprintf(stderr, "Sending block failed!\n");
+        return -1;
+      }
       start_idx = i;
     }
   }
