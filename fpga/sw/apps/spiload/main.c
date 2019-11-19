@@ -196,15 +196,15 @@ int set_boot_addr(uint32_t boot_addr) {
   const uint32_t reg_addr = 0x1A107008;
 
   wr_buf[0] = 0x02; // write command
-  wr_buf[1] = reg_addr >> 24;
-  wr_buf[2] = reg_addr >> 16;
-  wr_buf[3] = reg_addr >> 8;
-  wr_buf[4] = reg_addr;
+  wr_buf[1] = (reg_addr >> 24) & 0xFF;
+  wr_buf[2] = (reg_addr >> 16) & 0xFF;
+  wr_buf[3] = (reg_addr >>  8) & 0xFF;
+  wr_buf[4] = (reg_addr >>  0) & 0xFF;
   // address
-  wr_buf[5] = boot_addr >> 24;
-  wr_buf[6] = boot_addr >> 16;
-  wr_buf[7] = boot_addr >> 8;
-  wr_buf[8] = boot_addr;
+  wr_buf[5] = (boot_addr >> 24) & 0xFF;
+  wr_buf[6] = (boot_addr >> 16) & 0xFF;
+  wr_buf[7] = (boot_addr >>  8) & 0xFF;
+  wr_buf[8] = (boot_addr >>  0) & 0xFF;
 
   // open spidev
   fd = open(SPIDEV, O_RDWR);
@@ -259,10 +259,10 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
 
   wr_buf[0] = 0x02; // write command
   // address
-  wr_buf[1] = addr >> 24;
-  wr_buf[2] = addr >> 16;
-  wr_buf[3] = addr >> 8;
-  wr_buf[4] = addr;
+  wr_buf[1] = (addr >> 24) & 0xFF;
+  wr_buf[2] = (addr >> 16) & 0xFF;
+  wr_buf[3] = (addr >>  8) & 0xFF;
+  wr_buf[4] = (addr >>  0) & 0xFF;
 
   memcpy(wr_buf + 5, in_buf, in_size);
 
@@ -311,10 +311,10 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
 
   wr_buf[0] = 0x0B; // read command
   // address
-  wr_buf[1] = addr >> 24;
-  wr_buf[2] = addr >> 16;
-  wr_buf[3] = addr >> 8;
-  wr_buf[4] = addr;
+  wr_buf[1] = (addr >> 24) & 0xFF;
+  wr_buf[2] = (addr >> 16) & 0xFF;
+  wr_buf[3] = (addr >>  8) & 0xFF;
+  wr_buf[4] = (addr >>  0) & 0xFF;
 
   // check if write was successful
   if (ioctl(fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
