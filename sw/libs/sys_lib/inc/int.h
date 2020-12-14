@@ -47,7 +47,6 @@ static inline void int_disable(void) {
   asm volatile ("csrr %0, mstatus": "=r" (mstatus));
   mstatus &= 0xFFFFFFF7;
   asm volatile ("csrw mstatus, %0" : /* no output */ : "r" (mstatus));
-  asm("csrw 0x300, %0" : : "r" (0x0) );
 #else
   mtspr(SPR_SR, mfspr(SPR_SR) & (~SPR_SR_IEE));
 #endif
