@@ -59,13 +59,13 @@ git clone하는 것을 추천한다.
 아래는 zedboard를 위한 petalinux (BOOT.BIN, uImage, devicetree.dtb),
 PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들기 위한 과정이다.<br/><br/>
 
-1. 리눅스 환경에 Vivado 2015.1이 정상적으로 설치되어 있고, Vivado License Manager에서 xc7z020를 지원하는지 확인한다.
+### 1.리눅스 환경에 Vivado 2015.1이 정상적으로 설치되어 있고, Vivado License Manager에서 xc7z020를 지원하는지 확인한다.
 <img src="https://github.com/JunyeonL/pulpino/blob/master/vivado_license.JPG"> <br/><br/>
 
 2. 빌드하려는 코어 종류에 맞게 아래와 같이 설정한다.  (설정 안할경우 RISCY 코어로 기본 선택)
   > zero-riscy : `setenv USE_ZERO_RISCY 1`  and `setenv ZERO_RV32M 1`
   
-  > RISCY : `setenv USE_ZERO_RISCY 0` <br/>
+  > RISCY : `setenv USE_ZERO_RISCY 0` <br/><br/>
 
 3. fpga 폴더로 이동한다. <br/><br/><br/>
 
@@ -75,21 +75,23 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
     $ make all
     ```
 
-5. 빌드가 성공적으로 끝나면 `fpga/sw/sd_image` 폴더에 생성된 이미지를 확인한다. 정상적으로 빌드 완료 되었다면 BOOT.BIN, devicetree.dtb, rootfs.tar, uImage 등이 생성된다. <br/>
+<br/><br/>
+
+5. 빌드가 성공적으로 끝나면 `fpga/sw/sd_image` 폴더에 생성된 이미지를 확인한다. 정상적으로 빌드 완료 되었다면 BOOT.BIN, devicetree.dtb, rootfs.tar, uImage 등이 생성된다. <br/><br/>
 
 
-6. spiloader (petalinux 위에서 동작하는 앱) 빌드를 위해 `sw/apps/spiload`로 이동한다. <br/>
+6. spiloader (petalinux 위에서 동작하는 앱) 빌드를 위해 `sw/apps/spiload`로 이동한다. <br/><br/>
 
 
-7. `make` 명령어를 실행한다. (여기서 arm-xilinx-linux-gnueabi-gcc가 없다는 에러가 발생한다면 Vivado 및 Vivado SDK의 settings64.sh를 실행했는지 다시 확인해본다. 반드시 필요) <br/>
+7. `make` 명령어를 실행한다. (여기서 arm-xilinx-linux-gnueabi-gcc가 없다는 에러가 발생한다면 Vivado 및 Vivado SDK의 settings64.sh를 실행했는지 다시 확인해본다. 반드시 필요) <br/><br/>
 
 
-8. 컴파일이 정상적으로 된다면 spiload 실행 파일이 생성된다. <br/>
+8. 컴파일이 정상적으로 된다면 spiload 실행 파일이 생성된다. <br/><br/>
 
 
 9. Zedboard Boot image를 굽기 위한 SD카드를 준비한다.
 
-  > 참고 : https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841655/Prepare+Boot+Medium <br/>
+  > 참고 : https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841655/Prepare+Boot+Medium <br/><br/>
     
     
 10. SD카드의 boot 파티션에는 BOOT.BIN, devicetree.dtb, uImage를 넣고, root 파티션에는 rootfs.tar를 압축 해제한다.
