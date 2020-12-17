@@ -1,3 +1,6 @@
+#### This README.ld file was written by Sungyeong Jang and Junyeon Lee. If you have any question or need to modify this file, please use pull request.
+
+
 <img src="https://raw.githubusercontent.com/pulp-platform/pulpino/master/doc/datasheet/figures/pulpino_logo_inline1.png" width="400px" />
 
 # Introduction
@@ -47,19 +50,22 @@ low-area, low-power 환경을 위해 디자인 되었으며 RISCY와 마찬가�
 
 ## Download source code
 먼저 PULPino 프로젝트를 git clone 하여 다운받는다.
-    $ git clone https://github.com/pulp-platform/pulpino.git
+    ```
+    $ git clone --recursive https://github.com/pulp-platform/pulpino.git
+    ```
 
 pulp toolchain은 다양한 sub repository들을 사용하고 있기 때문에 아래 명령어를 사용하는 것을 추천한다. 
 
    	$ git clone --recursive https://github.com/pulp-platform/pulp-riscv-gnu-toolchain
 
-나머지는 해당 링크를 참조하되 Installation (PULP) 의 명령어를 일부 수정하여 configure해야 한다.
+나머지는 해당 링크를 참조하되 Toolchain은 Installation (PULP) 의 명령어를 일부 수정하여 configure해야 한다.
 
     $ ./configure --prefix=/TOOLCHAIN_PATH --with-arch=rv32imc --enable-multilib
 
-그다음 Hardware ip들을 받기 위해 다음 스크립트를 실행한다.
+그다음 Pulpino 디렉토리에서 Hardware ip들을 받기 위해 다음 스크립트를 실행한다.
 
     ./update-ips.py
+<br\>
     
 ## HW (FPGA) Synthesis 및 petalinux 빌드
 아래는 zedboard를 위한 petalinux (BOOT.BIN, uImage, devicetree.dtb),
