@@ -59,13 +59,14 @@ git clone하는 것을 추천한다.
 아래는 zedboard를 위한 petalinux (BOOT.BIN, uImage, devicetree.dtb),
 PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들기 위한 과정이다.<br/><br/>
 
-### 1.리눅스 환경에 Vivado 2015.1이 정상적으로 설치되어 있고, Vivado License Manager에서 xc7z020를 지원하는지 확인한다.
-<img src="https://github.com/JunyeonL/pulpino/blob/master/vivado_license.JPG"> <br/><br/>
+1.리눅스 환경에 Vivado 2015.1이 정상적으로 설치되어 있고, Vivado License Manager에서 xc7z020를 지원하는지 확인한다.
+<img src="https://github.com/JunyeonL/pulpino/blob/master/vivado_license.JPG">
+<br/><br/>
 
 2. 빌드하려는 코어 종류에 맞게 아래와 같이 설정한다.  (설정 안할경우 RISCY 코어로 기본 선택)
-  > zero-riscy : `setenv USE_ZERO_RISCY 1`  and `setenv ZERO_RV32M 1`
+  - zero-riscy : `setenv USE_ZERO_RISCY 1`  and `setenv ZERO_RV32M 1`
   
-  > RISCY : `setenv USE_ZERO_RISCY 0` <br/><br/>
+  - RISCY : `setenv USE_ZERO_RISCY 0` <br/><br/>
 
 3. fpga 폴더로 이동한다. <br/><br/><br/>
 
