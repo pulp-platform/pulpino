@@ -67,7 +67,7 @@ pulp toolchain은 다양한 sub repository들을 사용하고 있기 때문에 �
 그다음 Pulpino 디렉토리에서 Hardware ip들을 받기 위해 다음 스크립트를 실행한다.
 
     ./update-ips.py
-<br\>
+<br/>
     
 ## HW (FPGA) Synthesis 및 petalinux 빌드
 아래는 zedboard를 위한 petalinux (BOOT.BIN, uImage, devicetree.dtb),
