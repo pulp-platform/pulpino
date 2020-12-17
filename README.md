@@ -48,7 +48,7 @@ git clone하는 것을 추천한다.
 
     $ git clone --recursive https://github.com/JunyeonL/pulpino
 
-그다음 Hardware ip들을 받기 위해 다음 명령어를 실행한다.
+그다음 Hardware ip들을 받기 위해 다음 스크립트를 실행한다.
 
     ./update-ips.py
     
@@ -60,14 +60,17 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 <img src="https://github.com/JunyeonL/pulpino/blob/master/vivado_license.JPG">
 
 2. 빌드하려는 코어 종류에 맞게 아래와 같이 설정한다.  (설정 안할경우 RISCY 코어로 기본 선택)
- - zero-riscy : `setenv USE_ZERO_RISCY 1`  and `setenv ZERO_RV32M 1`
- - RISCY : `setenv USE_ZERO_RISCY 0`
+  + zero-riscy : `setenv USE_ZERO_RISCY 1`  and `setenv ZERO_RV32M 1`
+  + RISCY : `setenv USE_ZERO_RISCY 0`
 
 3. fpga 폴더로 이동한다.
 
 4. 빌드 명령어를 실행한다 (bitstream, petalinux 모두 빌드하기 때문에 많은 시간이 소요된다)
+
+    ```
     $ make all
-    
+    ```
+
 5. 빌드가 성공적으로 끝나면 `fpga/sw/sd_image` 폴더에 생성된 이미지를 확인한다. 정상적으로 빌드 완료 되었다면 BOOT.BIN, devicetree.dtb, rootfs.tar, uImage 등이 생성된다.
 
 6. spiloader (petalinux 위에서 동작하는 앱) 빌드를 위해 `sw/apps/spiload`로 이동한다.
@@ -77,17 +80,23 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 8. 컴파일이 정상적으로 된다면 spiload 실행 파일이 생성된다.
 
 9. Zedboard Boot image를 굽기 위한 SD카드를 준비한다.
-    참고 : https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841655/Prepare+Boot+Medium
+
+  + 참고 : https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841655/Prepare+Boot+Medium
     
 10. SD카드의 boot 파티션에는 BOOT.BIN, devicetree.dtb, uImage를 넣고, root 파티션에는 rootfs.tar를 압축 해제한다.
+
+```
     $ cp BOOT.BIN /path-to-boot-partition/
     $ cp devicetree.dtb /path-to-boot-partition/
     $ cp uImage /path-to-boot-partition/
 
     $ tar -xvf rootfs.tar /path-to-root-partition/.
+```
 
 11. 5번 단계에서 생성한 spiload 프로그램을 SD카드 root partition의 home 폴더에 복사한다.
+```
     $ cp ./sw/apps/spiload/spiload /path-to-root-partition/home/
+```
 
 12. SD카드를 Zedboard에 넣고, petalinux가 정상적으로 부팅되는지 확인한다. 만약 정상적으로 로그가 뜬다면,
    buildroot 메시지를 볼 수 있고, `username : root` 를 입력하면 된다.
@@ -102,22 +111,25 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 3. RISCV 소스 코드 컴파일 과정에 Vivado(xilinx) 컴파일러와 충돌 문제가 있으므로, 새로운 터미널을 열어서 RISCV 소스코드 컴파일 하는 것을 추천한다. (새로운 터미널은 Vivado 및 Vivado SDK에서 지원하는 settings64.sh 스크립트가 실행되지 않은 환경 이어야 한다.)
 
 4. pulpino/sw/ 폴더 안에 build 폴더를 만든다.
+    ```
     $ cd sw
     $ mkdir build
+    ```
     
 5. sw폴더에 있는 cmake_configure.riscv.gcc.sh 스크립트를 build 폴더로 복사한다.
+    ```
     $ cp ../cmake_configure.riscv.gcc.sh .
-    
+    ```
 6. cmake_configure.riscv.gcc.sh를 열어서 아래 부분을 수정한다.
+    ```
     -TARGET_C_FLAGS="-O3 -m32 -g"
     +TARGET_C_FLAGS="-O3 -march=rv32g -g"
 
     -GCC_MARCH="IMXpulpv2"
-    +#GCC_MARCH="IMXpulpv2"
-     #compile arduino lib
+    
     -ARDUINO_LIB=1
     +ARDUINO_LIB=0
-
+    ```
 
 3. Transfer this program to the ZYNQ. We suggest using scp, but any other
    method works as well of course.
