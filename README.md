@@ -63,8 +63,9 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 <img src="https://github.com/JunyeonL/pulpino/blob/master/vivado_license.JPG"> <br/><br/>
 
 2. 빌드하려는 코어 종류에 맞게 아래와 같이 설정한다.  (설정 안할경우 RISCY 코어로 기본 선택)
-  >>> zero-riscy : `setenv USE_ZERO_RISCY 1`  and `setenv ZERO_RV32M 1`
-  >>> RISCY : `setenv USE_ZERO_RISCY 0` <br/>
+  > zero-riscy : `setenv USE_ZERO_RISCY 1`  and `setenv ZERO_RV32M 1`
+  
+  > RISCY : `setenv USE_ZERO_RISCY 0` <br/>
 
 3. fpga 폴더로 이동한다. <br/><br/><br/>
 
@@ -88,7 +89,7 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 
 9. Zedboard Boot image를 굽기 위한 SD카드를 준비한다.
 
-  >>> 참고 : https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841655/Prepare+Boot+Medium <br/>
+  > 참고 : https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841655/Prepare+Boot+Medium <br/>
     
     
 10. SD카드의 boot 파티션에는 BOOT.BIN, devicetree.dtb, uImage를 넣고, root 파티션에는 rootfs.tar를 압축 해제한다.
@@ -153,11 +154,12 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 
 
 8. 여기서 두 가지 문제가 발생할 수 있는데
-  >> riscv32-unknown 툴체인을 찾을 수 없다는 경우
-   >>> https://github.com/pulp-platform/pulp-riscv-gnu-toolchain 툴체인을 다운받아 빌드한다.
-   >>> 만약 이미 설치한 상태라면 riscv32-unknown-elf-gcc가 위치한 경로를 시스템 PATH에 추가한다.
-  >> riscv.ld 링커 스크립트를 찾을 수 없다는 경우 (아래 링크 참고)
-   >>> https://github.com/pulp-platform/pulpino/issues/281
+  > riscv32-unknown 툴체인을 찾을 수 없다는 경우
+   >> https://github.com/pulp-platform/pulp-riscv-gnu-toolchain 툴체인을 다운받아 빌드한다.
+   >> 만약 이미 설치한 상태라면 riscv32-unknown-elf-gcc가 위치한 경로를 시스템 PATH에 추가한다.
+   
+  > riscv.ld 링커 스크립트를 찾을 수 없다는 경우 (아래 링크 참고)
+   >> https://github.com/pulp-platform/pulpino/issues/281
 
 
 9. 정상적으로 cmake configure 스크립트가 실행되었다면, sw/build 폴더 안에서 `make helloworld` 명령어를 실행한다.
@@ -173,7 +175,7 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
    ```
    $ scp <Linux 계정명>@<Linux IP address>:<파일경로>
    ```
-   >>> 예시
+   > 예시
    ```
    $ scp jun@192.168.0.11:/home/pulpino/sw/build/apps/helloworld/slm_files/spi_stim.txt
    ```
