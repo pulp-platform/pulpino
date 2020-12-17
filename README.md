@@ -177,13 +177,13 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
   - 만약 Zedboard와 ethernet 통신이 가능하다면 scp를 이용해서 복사할 수 있다.
   - Zedboard에서 아래와 같이 실행하면 파일을 당겨올 수 있다.
 
-   ```
-   $ scp <Linux 계정명>@<Linux IP address>:<파일경로>
-   ```
-   - 예시
-   ```
-   $ scp jun@192.168.0.11:/home/pulpino/sw/build/apps/helloworld/slm_files/spi_stim.txt
-   ```
+    ```
+    $ scp <Linux 계정명>@<Linux IP address>:<파일경로>
+    ```
+    - 예시
+    ```
+    $ scp jun@192.168.0.11:/home/pulpino/sw/build/apps/helloworld/slm_files/spi_stim.txt
+    ```
 
 <br/>
 
