@@ -1,4 +1,4 @@
-#### This README.ld file was written by Sungyeong Jang and Junyeon Lee. If you have any question or need to modify it, please use pull request.
+#### It was written by Sungyeong Jang and Junyeon Lee. If you have any question or need to modify it, please use pull request.
 
 <br/><br/>
 
