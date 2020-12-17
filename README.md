@@ -157,11 +157,11 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 
 8. 여기서 두 가지 문제가 발생할 수 있는데
  - riscv32-unknown 툴체인을 찾을 수 없다는 경우
-  - https://github.com/pulp-platform/pulp-riscv-gnu-toolchain 툴체인을 다운받아 빌드한다.
-  - 만약 이미 설치한 상태라면 riscv32-unknown-elf-gcc가 위치한 경로를 시스템 PATH에 추가한다.
+   - https://github.com/pulp-platform/pulp-riscv-gnu-toolchain 툴체인을 다운받아 빌드한다.
+   - 만약 이미 설치한 상태라면 riscv32-unknown-elf-gcc가 위치한 경로를 시스템 PATH에 추가한다.
    
  - riscv.ld 링커 스크립트를 찾을 수 없다는 경우 (아래 링크 참고)
-  - https://github.com/pulp-platform/pulpino/issues/281
+   - https://github.com/pulp-platform/pulpino/issues/281
 <br/>
 
 9. 정상적으로 cmake configure 스크립트가 실행되었다면, sw/build 폴더 안에서 `make helloworld` 명령어를 실행한다. <br/><br/>
@@ -188,9 +188,29 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 <br/>
 
 12. petalinux에서 아래 명령어를 실행한다.
-   ```
-   $ ./spiload -t10 spi_stim.txt
-   ```
+    ```
+    $ ./spiload -t10 spi_stim.txt
+    ```
 
+    ```
+    # ./spiload -t10 ./apps/helloworld_spi_stim.txt
+    SR   is 00000001
+    CCR0 is 04004005
+    CCR2 is 00040080
+    Device has been reset
+    Sending block addr 00000000 with 256 entries
+    Sending block addr 000003FC with 256 entries
+    Sending block addr 000007F8 with 256 entries
+    Sending block addr 00000BF4 with 256 entries
+    Sending block addr 00000FF0 with 225 entries
+    Sending block addr 00100000 with 25 entries
+    Console Thread start
+    Starting device
+    Waiting for EOC...
+    PULPino: Hello World!!!!!
 
+    Timeout reached!
+    Stopped after 10.7370672
+    #
+    ```
 
