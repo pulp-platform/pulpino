@@ -8,12 +8,12 @@ PULPino는 오픈소스로 개발되었으며 ETH Zurich에서 개발한 32-bit 
 `USE_ZERO_RISCY = 0` or `USE_ZERO_RISCY = 1` <br/>
 
 ## RISCY Core
-RISCY 코어는 in-order, single issue, 4 states 파이프라인을 지원하며, IPC = 1에
+RISCY 코어는 in-order, single issue, 4 stages 파이프라인을 지원하며, IPC = 1에
 가까운 성능을 제공한다. 또한 RISCY 코어는 RV32I, C, M (Integer, Compressed,
 Multiplication) ISA를 지원하며, single-precision floating point ISA 사용 여부는
 configure 할 수 있다. 
 
-RISCY 코어는 RV32ICM(F) 이외 별도의 Custom ISA를 추가로 지원하고 있다.
+RISCY 코어는 RV32ICM(F) 와 별도의 Custom ISA를 추가로 지원하고 있다.
  1. Hardware Loops
  2. Post-incrementing load and store instructions
  3. Bit-manipulation instruction
@@ -27,10 +27,10 @@ RISCV 1.9 privileged
  - `http://ieeexplore.ieee.org/abstract/document/7864441/` <br/>
 
 ## zero-riscy Core
-zero-riscy는 RISCY보다 작은 코어로 In-order, Single issue, 2 stage 파이프라인을
+zero-riscy는 RISCY보다 작은 코어로 In-order, Single issue, 2 stages 파이프라인을
 지원하며, RV32I, C를 기본으로 지원한다. 또한 configuration을 통해 M(Multiplication),
 E(reduced number of registers extension)을 사용할 수 있다. zero-riscy 코어는
-low-area, low-power 환경을 위해 디자인 되었으며 RISCY와 마찬가지로 privileged명령어는
+low-area, low-power 환경을 위해 디자인 되었으며 RISCY와 마찬가지로 privileged 명령어는
 1.9버전을 기준으로 한다.
 
 이외 자세한 PULPino 스펙은 pulpino github을 참고하길 바란다.
@@ -46,10 +46,16 @@ low-area, low-power 환경을 위해 디자인 되었으며 RISCY와 마찬가�
 - Vivado 2015.1
 
 ## Download source code
-PULPino는 다양한 sub repository들을 사용하고 있기 때문에 아래 명령어로
-git clone하는 것을 추천한다.
+먼저 PULPino 프로젝트를 git clone 하여 다운받는다.
+    $ git clone https://github.com/pulp-platform/pulpino.git
 
-    $ git clone --recursive https://github.com/JunyeonL/pulpino
+pulp toolchain은 다양한 sub repository들을 사용하고 있기 때문에 아래 명령어를 사용하는 것을 추천한다. 
+
+   	$ git clone --recursive https://github.com/pulp-platform/pulp-riscv-gnu-toolchain
+
+나머지는 해당 링크를 참조하되 Installation (PULP) 의 명령어를 일부 수정하여 configure해야 한다.
+
+    $ ./configure --prefix=/TOOLCHAIN_PATH --with-arch=rv32imc --enable-multilib
 
 그다음 Hardware ip들을 받기 위해 다음 스크립트를 실행한다.
 
@@ -155,13 +161,34 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
     ```
     <br/>
 
-8. 여기서 두 가지 문제가 발생할 수 있는데
+8. 여기서 문제가 발생할 수 있는데
  - riscv32-unknown 툴체인을 찾을 수 없다는 경우
    - https://github.com/pulp-platform/pulp-riscv-gnu-toolchain 툴체인을 다운받아 빌드한다.
    - 만약 이미 설치한 상태라면 riscv32-unknown-elf-gcc가 위치한 경로를 시스템 PATH에 추가한다.
    
  - riscv.ld 링커 스크립트를 찾을 수 없다는 경우 (아래 링크 참고)
    - https://github.com/pulp-platform/pulpino/issues/281
+   - build 폴더에 CMakeFiles 폴더를 생성하여 해결할 수도 있다.
+ 
+ - unrecognized command line option '-m32' 에러가 발생한 경우
+   build 폴더 밖에 아래 스크립트를 생성하고, build 폴더 내에서 생성하여 m32 옵션을 제거해야 한다.
+   ```
+   #!/bin/bash
+
+   # Find and replace all occurrances of '-m32' and fix rest of line.
+
+   for file in $(find); do
+       if [[ -f $file ]]; then
+           [[ $(cat $file | grep m32) ]]
+           if [[ $? == 0 ]]; then
+               echo writing...
+               echo $file
+              sed 's/\-m32//g' $file > tmp && mv tmp $file
+          fi
+       fi
+   done
+   ```
+ 
 <br/>
 
 9. 정상적으로 cmake configure 스크립트가 실행되었다면, sw/build 폴더 안에서 `make helloworld` 명령어를 실행한다. <br/><br/>
