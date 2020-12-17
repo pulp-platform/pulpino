@@ -100,13 +100,13 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 
     $ tar -xvf rootfs.tar /path-to-root-partition/.
     ```
-<\br>
+<br/>
 
 11. 5번 단계에서 생성한 spiload 프로그램을 SD카드 root partition의 home 폴더에 복사한다.
     ```
     $ cp ./sw/apps/spiload/spiload /path-to-root-partition/home/
     ```
-<\br>
+<br/>
 
 12. SD카드를 Zedboard에 넣고, petalinux가 정상적으로 부팅되는지 확인한다. 만약 정상적으로 로그가 뜬다면,
    buildroot 메시지를 볼 수 있고, `username : root` 를 입력하면 된다. <br/><br/><br/>
@@ -129,13 +129,13 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
     $ cd sw
     $ mkdir build
     ```
-    <\br>
+    <br/>
     
 5. sw폴더에 있는 cmake_configure.riscv.gcc.sh 스크립트를 build 폴더로 복사한다.
     ```
     $ cp ../cmake_configure.riscv.gcc.sh .
     ```
-    <\br>
+    <br/>
     
 6. cmake_configure.riscv.gcc.sh를 열어서 아래 부분을 수정한다.
     ```
@@ -147,35 +147,35 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
     -ARDUINO_LIB=1
     +ARDUINO_LIB=0
     ```
-    <\br>
+    <br/>
 
 7. sw/build 에서 cmake_config.riscv.gcc.sh을 실행한다.
     ```
     $ ./cmake_configure.riscv.gcc.sh .
     ```
-    <\br>
+    <br/>
 
 8. 여기서 두 가지 문제가 발생할 수 있는데
-  - riscv32-unknown 툴체인을 찾을 수 없다는 경우
-   - https://github.com/pulp-platform/pulp-riscv-gnu-toolchain 툴체인을 다운받아 빌드한다.
-   - 만약 이미 설치한 상태라면 riscv32-unknown-elf-gcc가 위치한 경로를 시스템 PATH에 추가한다.
+ - riscv32-unknown 툴체인을 찾을 수 없다는 경우
+  - https://github.com/pulp-platform/pulp-riscv-gnu-toolchain 툴체인을 다운받아 빌드한다.
+  - 만약 이미 설치한 상태라면 riscv32-unknown-elf-gcc가 위치한 경로를 시스템 PATH에 추가한다.
    
-  - riscv.ld 링커 스크립트를 찾을 수 없다는 경우 (아래 링크 참고)
-   - https://github.com/pulp-platform/pulpino/issues/281
-<\br>
+ - riscv.ld 링커 스크립트를 찾을 수 없다는 경우 (아래 링크 참고)
+  - https://github.com/pulp-platform/pulpino/issues/281
+<br/>
 
-9. 정상적으로 cmake configure 스크립트가 실행되었다면, sw/build 폴더 안에서 `make helloworld` 명령어를 실행한다. <\br><\br>
+9. 정상적으로 cmake configure 스크립트가 실행되었다면, sw/build 폴더 안에서 `make helloworld` 명령어를 실행한다. <br/><br/>
 
 
 10. `sw/build/apps/helloworld/slm_files/` 폴더에 `spi_stim.txt` 파일이 만들어졌다면 컴파일 성공.
- - 여기서 `spi_stim.txt`는 `helloworld` C 코드를 riscv toolchain을 이용하여 컴파일한 바이너리를 PULPino에서 실행하기 위해 PULPino Memory map을 반영한 파일이다.
- - 또한 Zedboard의 `PS(petalinux)`에서 `PL(PULPino)`로 spiload 프로그램을 이용하여 spi_stim.txt를 전송하기 위한 파일 규격을 맞추어 놓았다.
-   - `pulpino/fpga/sw/apps/spiload/main.c` 프로그램 코드와 같이 분석하는 것을 추천 <\br><\br>
+  - 여기서 `spi_stim.txt`는 `helloworld` C 코드를 riscv toolchain을 이용하여 컴파일한 바이너리를 PULPino에서 실행하기 위해 PULPino Memory map을 반영한 파일이다.
+  - 또한 Zedboard의 `PS(petalinux)`에서 `PL(PULPino)`로 spiload 프로그램을 이용하여 spi_stim.txt를 전송하기 위한 파일 규격을 맞추어 놓았다.
+    - `pulpino/fpga/sw/apps/spiload/main.c` 프로그램 코드와 같이 분석하는 것을 추천 <br/><br/>
 
 
 11. `spi_stim.txt` 파일을 SD카드 root 파티션의 home 폴더로 복사한다.
- - 만약 Zedboard와 ethernet 통신이 가능하다면 scp를 이용해서 복사할 수 있다.
- - Zedboard에서 아래와 같이 실행하면 파일을 당겨올 수 있다.
+  - 만약 Zedboard와 ethernet 통신이 가능하다면 scp를 이용해서 복사할 수 있다.
+  - Zedboard에서 아래와 같이 실행하면 파일을 당겨올 수 있다.
 
    ```
    $ scp <Linux 계정명>@<Linux IP address>:<파일경로>
@@ -183,6 +183,13 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
    - 예시
    ```
    $ scp jun@192.168.0.11:/home/pulpino/sw/build/apps/helloworld/slm_files/spi_stim.txt
+   ```
+
+<br/>
+
+12. petalinux에서 아래 명령어를 실행한다.
+   ```
+   $ ./spiload -t10 spi_stim.txt
    ```
 
 
