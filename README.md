@@ -1,6 +1,6 @@
 #### This README.ld file was written by Sungyeong Jang and Junyeon Lee. If you have any question or need to modify it, please use pull request.
 
-<br\><br\>
+<br/><br/>
 
 
 <img src="https://raw.githubusercontent.com/pulp-platform/pulpino/master/doc/datasheet/figures/pulpino_logo_inline1.png" width="400px" />
