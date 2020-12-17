@@ -67,36 +67,43 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 
 4. 빌드 명령어를 실행한다 (bitstream, petalinux 모두 빌드하기 때문에 많은 시간이 소요된다)
 
-    ```
-    $ make all
-    ```
+```
+$ make all
+```
 
 5. 빌드가 성공적으로 끝나면 `fpga/sw/sd_image` 폴더에 생성된 이미지를 확인한다. 정상적으로 빌드 완료 되었다면 BOOT.BIN, devicetree.dtb, rootfs.tar, uImage 등이 생성된다.
 
+
 6. spiloader (petalinux 위에서 동작하는 앱) 빌드를 위해 `sw/apps/spiload`로 이동한다.
+
 
 7. `make` 명령어를 실행한다. (여기서 arm-xilinx-linux-gnueabi-gcc가 없다는 에러가 발생한다면 Vivado 및 Vivado SDK의 settings64.sh를 실행했는지 다시 확인해본다. 반드시 필요)
 
+
 8. 컴파일이 정상적으로 된다면 spiload 실행 파일이 생성된다.
+
 
 9. Zedboard Boot image를 굽기 위한 SD카드를 준비한다.
 
   + 참고 : https://xilinx-wiki.atlassian.net/wiki/spaces/A/pages/18841655/Prepare+Boot+Medium
     
+    
 10. SD카드의 boot 파티션에는 BOOT.BIN, devicetree.dtb, uImage를 넣고, root 파티션에는 rootfs.tar를 압축 해제한다.
 
 ```
-    $ cp BOOT.BIN /path-to-boot-partition/
-    $ cp devicetree.dtb /path-to-boot-partition/
-    $ cp uImage /path-to-boot-partition/
+$ cp BOOT.BIN /path-to-boot-partition/
+$ cp devicetree.dtb /path-to-boot-partition/
+$ cp uImage /path-to-boot-partition/
 
-    $ tar -xvf rootfs.tar /path-to-root-partition/.
+$ tar -xvf rootfs.tar /path-to-root-partition/.
 ```
+
 
 11. 5번 단계에서 생성한 spiload 프로그램을 SD카드 root partition의 home 폴더에 복사한다.
 ```
-    $ cp ./sw/apps/spiload/spiload /path-to-root-partition/home/
+$ cp ./sw/apps/spiload/spiload /path-to-root-partition/home/
 ```
+
 
 12. SD카드를 Zedboard에 넣고, petalinux가 정상적으로 부팅되는지 확인한다. 만약 정상적으로 로그가 뜬다면,
    buildroot 메시지를 볼 수 있고, `username : root` 를 입력하면 된다.
@@ -106,9 +113,12 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
 
 1. 반드시 위의 HW 과정을 마무리하여야 하고, petalinux 부팅이 정상적으로 이루어진 뒤 다음 과정을 진행하길 바란다.
 
+
 2. RISCV용 샘플 코드는 pulpino/sw 폴더에 위치해 있고, helloworld, gpio, freertos 등 다양한 샘플 코드를 지원한다.
 
+
 3. RISCV 소스 코드 컴파일 과정에 Vivado(xilinx) 컴파일러와 충돌 문제가 있으므로, 새로운 터미널을 열어서 RISCV 소스코드 컴파일 하는 것을 추천한다. (새로운 터미널은 Vivado 및 Vivado SDK에서 지원하는 settings64.sh 스크립트가 실행되지 않은 환경 이어야 한다.)
+
 
 4. pulpino/sw/ 폴더 안에 build 폴더를 만든다.
     ```
@@ -116,10 +126,13 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
     $ mkdir build
     ```
     
+    
 5. sw폴더에 있는 cmake_configure.riscv.gcc.sh 스크립트를 build 폴더로 복사한다.
     ```
     $ cp ../cmake_configure.riscv.gcc.sh .
     ```
+    
+    
 6. cmake_configure.riscv.gcc.sh를 열어서 아래 부분을 수정한다.
     ```
     -TARGET_C_FLAGS="-O3 -m32 -g"
@@ -131,84 +144,26 @@ PULPino bitstream 및 spiloader (PS->PL로 코드전송 프로그램)를 만들�
     +ARDUINO_LIB=0
     ```
 
-3. Transfer this program to the ZYNQ. We suggest using scp, but any other
-   method works as well of course.
 
-5. Now you need to compile the program you want to run on PULPino.
-   Please take a look at the README in pulpino/sw directory which explains how
-   applications can be compiled using cmake.
-   Use this flow to compile your application. We need the spi_stim.txt file
-   from the applications slm_files subfolder.
-
-6. Transfer the spi_stim.txt file to the ZYNQ.
-
-7. Run the spiload application on the ZYNQ like this
-
-    ./spiload ./spi_stim.txt
-
-   This resets PULPino, transfers the application to the memories of PULPino
-   and starts it.
+7. sw/build 에서 cmake_config.riscv.gcc.sh을 실행한다.
+    ```
+    $ ./cmake_configure.riscv.gcc.sh .
+    ```
 
 
-As an alternative, there is a cmake target for running applications on fpga
-directly. Just call
-
-    make applicationName.fpga
-
-You need to be able to ssh into the Linux running on the ZYNQ fpga (e.g. using
-public keys) and you need to setup the environment variable `$FPGA_HOSTNAME`.
-Take a look at the script `./sw/utils/run-on-fpga.sh` to understand how it
-works.
+8. 여기서 두 가지 문제가 발생할 수 있는데
+  + riscv32-unknown 툴체인을 찾을 수 없다는 경우
+   + https://github.com/pulp-platform/pulp-riscv-gnu-toolchain 툴체인을 다운받아 빌드한다.
+   + 만약 이미 설치한 상태라면 riscv32-unknown-elf-gcc가 위치한 경로를 시스템 PATH에 추가한다.
+  + riscv.ld 링커 스크립트를 찾을 수 없다는 경우 (아래 링크 참고)
+   + https://github.com/pulp-platform/pulpino/issues/281
 
 
-## stdout via printf on PULPino
-
-When PULPino is run on the FPGA, it transfers all output via printf via UART to
-the ARM host processor in the ZYNQ. To display it, either use a console program
-like minicom to read directly from the serial port, or specify a timeout when
-using `spiload`. `spiload` will connect to the serial port and display
-everything that PULPino sends via UART until the timeout expires.
-
-## Connected peripherals & communication with PULPino
-
-PULPino includes a set of built-in peripherals like SPI, UART and GPIOs.
-The SPI slave peripheral is connected to the SPI master of the ZYNQ, thus it is
-possible to directly write to any memory address of PULPino from outside.
-
-UART is connected to UART0 of the ZYNQ and is available under /dev/ttyPS0 in
-linux.
+9. 정상적으로 cmake configure 스크립트가 실행되었다면, sw/build 폴더 안에서 `make helloworld` 명령어를 실행한다.
 
 
-Some of GPIO pins are connected to LEDs, switches and buttons on the ZedBoard.
-
-Specifically the following is connected:
-
-    PULPino GPIO pin  0: SW 0
-    PULPino GPIO pin  1: SW 1
-    PULPino GPIO pin  2: SW 2
-    PULPino GPIO pin  3: SW 3
-    PULPino GPIO pin  4: SW 4
-    PULPino GPIO pin  5: SW 5
-    PULPino GPIO pin  6: SW 6
-    PULPino GPIO pin  7: SW 7
-
-    PULPino GPIO pin  8: LD 0
-    PULPino GPIO pin  9: LD 1
-    PULPino GPIO pin 10: LD 2
-    PULPino GPIO pin 11: LD 3
-    PULPino GPIO pin 12: LD 4
-    PULPino GPIO pin 13: LD 5
-    PULPino GPIO pin 14: LD 6
-    PULPino GPIO pin 15: LD 7
-
-    PULPino GPIO pin 16: BTNC
-    PULPino GPIO pin 17: BTND
-    PULPino GPIO pin 18: BTNL
-    PULPino GPIO pin 19: BTNR
-    PULPino GPIO pin 20: BTNU
+10. `sw/build/apps/helloworld/slm_files/` 폴더에 `spi_stim.txt` 파일이 만들어졌다면 성공.
 
 
-
-
-[1] http://www.wiki.xilinx.com/Prepare+Boot+Medium
+11.
 
