@@ -1,5 +1,9 @@
-CC=arm-xilinx-linux-gnueabi-gcc
-
+ifeq ($(VIVADO_VERSION),2018.3)
+	ARMCC?=arm-linux-gnueabihf-gcc
+else
+	ARMCC?=arm-xilinx-linux-gnueabi-gcc
+endif
+CC = $(ARMCC)
 
 all: gpio_access
 

@@ -13,9 +13,12 @@ or
 
 Note that if `BOARD` is not set, it defaults to zedboard.
 
+Additionally, you have to tell the build system which Vivado version it should use
+via the `VIVADO_VERSION` variable in the format `yyyy.vv`, e.g., `2015.1`.
+If not set it will default to `2018.3`.
 
-This environment variable has to be set during compilation of all FPGA related
-components. If you accidentally forget to set the environment variable during
+These environment variables have to be set during compilation of all FPGA related
+components. If you accidentally forget to set an environment variable during
 part of the compilation process, you may end up with a mixed zedboard/zybo
 build which will not work correctly.
 
@@ -28,9 +31,9 @@ The components that are affected by the BOARD variable are:
 
 ## Requirements
 
-This synthesis flow has been tested with `Vivado 2015.1`, there is no guarantee
+This synthesis flow has been tested with Vivado 2015.1 and 2018.3. There is no guarantee
 that it is going to work with any other version without modifications to the
-scripts.
+scripts - most likely it won't.
 
 For convenience reasons it is best to connect the ZedBoard to your local
 network. This way you can easily transfer files from your host computer to the
@@ -44,7 +47,7 @@ Linux running on the ARM cores of the ZYNQ.
    enviornment variables XILINX_BOARD and XILINX_PART to control the board and part number.
    if you don't specify these, the following defaults values are used:
    XILINX_PART "xc7z020clg484-1"
-   XILINX_BOARD "em.avnet.com:zynq:zed:c"
+   XILINX_BOARD "em.avnet.com:zed:0.9"
 
 
 1. Make sure you have the Vivado toolchain and the Xilinx SDK toolchain in your
@@ -58,13 +61,22 @@ Linux running on the ARM cores of the ZYNQ.
    If you want to use the riscy core, do not set `USE_ZERO_RISCY` and set
    `RISCY_RV32F` for riscy with floating point extensions.
 
-3. Type `make all` in the fpga directory (or `vivado-2015.1 make clean all`).
+3. Type `make all` in the fpga directory.
    This builds the FPGA bitstream for the ZedBoard, downloads and compiles linux
    and u-boot, prepares the fsbl and devicetree, downloads and compiles buildroot
    and builds the boot.bin image for booting the ZYNQ.
+   The boot.bin and rootfs.tar files can be found under the folder sw/sd_image.
 
 4. Prepare the SD card and the ZedBoard for booting via SD card.
    To prepare the card, follow the Xilinx guide [1].
+
+   Alternatively, you can run `make install SD_DEV=/dev/your_sd_card` 
+   in the `fpga/sw` directory. This will automatically partition the
+   given block device and copy the files of step 5 and 6. If `SD_DEV`
+   is not given `/dev/mmcblk0` will be used.
+   After running the script you can inspect the resulting file systems
+   in `/mnt/pulpino_...`. When done call `make umount` and continue with 
+   step 7. Attention: this removes all `/mnt/pulpino_*` directories.
 
 5. Copy the BOOT.BIN, uImage and devicetree.dtb files to the first partition of the SD card.
    Those files can be found inside the `fpga/sw/sd_image` folder.
@@ -92,10 +104,6 @@ Linux running on the ARM cores of the ZYNQ.
        password: pulp
 
 
-
-The boot.bin and rootfs.tar files can be found under the folder sw/sd_image.
-
-
 ## Running applications on PULPino
 
 1. Make sure you have a fully working Linux running on the ZYNQ.
@@ -109,7 +117,6 @@ The boot.bin and rootfs.tar files can be found under the folder sw/sd_image.
 
 3. Compile the spiload application for the ZYNQ.
    Just type `make` inside the sw/apps/spiload folder.
-   eg: `vivado-2015.1 make`
 
 4. Transfer this program to the ZYNQ. We suggest using scp, but any other
    method works as well of course.

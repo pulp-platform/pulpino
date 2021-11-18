@@ -4,8 +4,10 @@ if { ![info exists ::env(XILINX_PART)] } {
 }
 
 if { ![info exists ::env(XILINX_BOARD)] } {
-  set ::env(XILINX_BOARD) "em.avnet.com:zynq:zed:c"
+  set ::env(XILINX_BOARD) "em.avnet.com:zed:0.9"
 }
+
+source ../../common/common.tcl
 
 set partNumber $::env(XILINX_PART)
 set boardName  $::env(XILINX_BOARD)
@@ -13,7 +15,7 @@ set boardName  $::env(XILINX_BOARD)
 set ila_name xilinx_clock_manager
 
 create_project $ila_name . -part $partNumber
-set_property board $boardName [current_project]
+set_property board_part $boardName [current_project]
 
 create_ip -name clk_wiz -vendor xilinx.com -library ip -module_name $ila_name
 
@@ -24,6 +26,6 @@ set_property -dict [list CONFIG.INTERFACE_SELECTION {Enable_AXI} CONFIG.USE_DYN_
 generate_target {instantiation_template} [get_files ./$ila_name.srcs/sources_1/ip/$ila_name/$ila_name.xci]
 generate_target all [get_files  ./$ila_name.srcs/sources_1/ip/$ila_name/$ila_name.xci]
 create_ip_run [get_files -of_objects [get_fileset sources_1] ./$ila_name.srcs/sources_1/ip/$ila_name/$ila_name.xci]
-launch_run -jobs 8 ${ila_name}_synth_1
+launch_run -jobs $CPUS ${ila_name}_synth_1
 wait_on_run ${ila_name}_synth_1
 

@@ -7,7 +7,7 @@ if { ![info exists ::env(XILINX_PART)] } {
 }
 
 if { ![info exists ::env(XILINX_BOARD)] } {
-  set ::env(XILINX_BOARD) "em.avnet.com:zynq:zed:c"
+  set ::env(XILINX_BOARD) "em.avnet.com:zed:0.9"
 }
 
 if { ![info exists ::env(USE_ZERO_RISCY)] } {
@@ -57,12 +57,11 @@ if { $::env(USE_ZERO_RISCY)==1} {
 
 # create project
 create_project pulpino . -part $::env(XILINX_PART)
-set_property board $::env(XILINX_BOARD) [current_project]
+set_property board_part $::env(XILINX_BOARD) [current_project]
 
 source tcl/ips_inc_dirs.tcl
 
-# set up meaningful errors
-source ../common/messages.tcl
+source ../common/common.tcl
 
 source tcl/ips_src_files.tcl
 source tcl/src_files.tcl
@@ -112,7 +111,7 @@ synth_design -rtl -name rtl_1 -generic USE_ZERO_RISCY=$::env(USE_ZERO_RISCY) -ge
 #set_property STEPS.SYNTH_DESIGN.ARGS.KEEP_EQUIVALENT_REGISTERS true [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.RESOURCE_SHARING off [get_runs synth_1]
 #set_property STEPS.SYNTH_DESIGN.ARGS.NO_LC true [get_runs synth_1]
-launch_runs synth_1
+launch_runs synth_1 -jobs $CPUS
 wait_on_run synth_1
 
 open_run synth_1

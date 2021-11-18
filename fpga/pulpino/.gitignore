@@ -1,5 +1,5 @@
 pulpino.cache/
-pulpino.edf
+pulpino.edn
 pulpino.hw/
 pulpino.runs/
 pulpino.xpr
@@ -7,4 +7,4 @@ pulpino_funcsim.v
 pulpino_stub.v
 vivado.jou
 vivado.log
-reports
+reports*

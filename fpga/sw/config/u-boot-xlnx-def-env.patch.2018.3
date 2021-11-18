@@ -1,0 +1,22 @@
+diff a/include/configs/zynq-common.h b/include/configs/zynq-common.h
+--- a/include/configs/zynq-common.h
++++ b/include/configs/zynq-common.h
+@@ -215,7 +215,7 @@
+ /* Default environment */
+ #ifndef CONFIG_EXTRA_ENV_SETTINGS
+ #define CONFIG_EXTRA_ENV_SETTINGS	\
+-	"ethaddr=00:0a:35:00:01:22\0"	\
++	"ethaddr=0e:be:06:33:5f:c6\0"	\
+ 	"kernel_image=uImage\0"	\
+ 	"kernel_load_address=0x2080000\0" \
+ 	"ramdisk_image=uramdisk.image.gz\0"	\
+@@ -273,8 +273,7 @@
+ 			"echo Copying Linux from SD to RAM... && " \
+ 			"load mmc 0 ${kernel_load_address} ${kernel_image} && " \
+ 			"load mmc 0 ${devicetree_load_address} ${devicetree_image} && " \
+-			"load mmc 0 ${ramdisk_load_address} ${ramdisk_image} && " \
+-			"bootm ${kernel_load_address} ${ramdisk_load_address} ${devicetree_load_address}; " \
++			"bootm ${kernel_load_address} - ${devicetree_load_address}; " \
+ 		"fi\0" \
+ 	"usbboot=if usb start; then " \
+ 			"run uenvboot; " \

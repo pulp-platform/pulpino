@@ -10,8 +10,12 @@ RANLIB=`which riscv32-unknown-elf-ranlib`
 
 VSIM=`which vsim`
 
-TARGET_C_FLAGS="-O3 -m32 -g"
-#TARGET_C_FLAGS="-O2 -g -falign-functions=16  -funroll-all-loops"
+TARGET_C_FLAGS="-O3 -g"
+
+# Setting GCC_MARCH below allows to explicitly set the ISA.
+# This would override the flags below.
+# If PULPextensions are used (e.g., IMXpulpv2), it is required to use the ETH GCC Compiler
+# GCC_MARCH="IMXpulpv2"
 
 # if you want to have compressed instructions, set this to 1
 RVC=0
@@ -27,8 +31,7 @@ ZERO_RV32M=0
 # zeroriscy with only 16 registers
 ZERO_RV32E=0
 
-# riscy with PULPextensions, it is assumed you use the ETH GCC Compiler
-GCC_MARCH="IMXpulpv2"
+
 #compile arduino lib
 ARDUINO_LIB=1
 

@@ -22,7 +22,6 @@ macro(add_application NAME SOURCE_FILES)
     ${CMAKE_SOURCE_DIR}/libs/malloc_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/string_lib/inc
     ${CMAKE_SOURCE_DIR}/libs/sys_lib/inc
-    ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
   )
 
   if(${ARDUINO_LIB})
@@ -36,6 +35,12 @@ macro(add_application NAME SOURCE_FILES)
     include_directories(
         ${CMAKE_SOURCE_DIR}/libs/beebs_lib/inc
       )
+  endif()
+
+  if(${BENCH_LIB})
+    include_directories(
+      ${CMAKE_SOURCE_DIR}/libs/bench_lib/inc
+    )
   endif()
 
   add_executable(${NAME}.elf $<TARGET_OBJECTS:crt0> ${SOURCE_FILES})
@@ -72,8 +77,14 @@ macro(add_application NAME SOURCE_FILES)
     set(ARDUINO_SEP "")
   endif()
 
+  if(${BENCH_LIB})
+    set(BENCH_LIB_NAME "bench")
+  else()
+    set(BENCH_LIB_NAME "")
+  endif()
+
   # link libraries
-  target_link_libraries(${NAME}.elf ${ARG_LIBS} ${ARDUINO_SEP} ${ARDUINO_CORE} ${BEEBS_LIB_NAME} bench ${MATH_FNS_LIB} string sys m)
+  target_link_libraries(${NAME}.elf ${ARG_LIBS} ${ARDUINO_SEP} ${ARDUINO_CORE} ${BEEBS_LIB_NAME} ${BENCH_LIB_NAME} ${MATH_FNS_LIB} string sys m)
 
   # this specifies the testbench to use for simulation
   if(ARG_TB)
@@ -198,7 +209,9 @@ if(${ARDUINO_LIB})
   add_subdirectory(Arduino_tests)
 endif()
 
-add_subdirectory(bench)
+if(${BENCH_LIB})
+  add_subdirectory(bench)
+endif()
 
 if(${BEEBS_LIB})
   add_subdirectory(beebs)

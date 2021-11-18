@@ -1,0 +1,581 @@
+/dts-v1/;
+
+/ {
+	#address-cells = <0x1>;
+	#size-cells = <0x1>;
+	compatible = "xlnx,zynq-7000";
+
+	cpus {
+		#address-cells = <0x1>;
+		#size-cells = <0x0>;
+
+		ps7_cortexa9_0: cpu@0 {
+			bus-handle = <0x1>;
+			clock-latency = <0x3e8>;
+			clocks = <0x2 0x3>;
+			compatible = "arm,cortex-a9";
+			device_type = "cpu";
+			interrupt-handle = <0x3>;
+			operating-points = <0xa2c2b 0xf4240 0x51616 0xf4240 0x3640f 0xf4240>;
+		};
+
+		ps7_cortexa9_1: cpu@1 {
+			bus-handle = <0x1>;
+			clock-latency = <0x3e8>;
+			clocks = <0x2 0x3>;
+			compatible = "arm,cortex-a9";
+			device_type = "cpu";
+			interrupt-handle = <0x3>;
+			operating-points = <0xa2c2b 0xf4240 0x51616 0xf4240 0x3640f 0xf4240>;
+		};
+	};
+
+	ps7_pmu: ps7_pmu@0xf8891000 {
+		compatible = "arm,cortex-a9-pmu";
+		reg = <0xf8891000 0x1000 0xf8893000 0x1000>;
+		reg-names = "cpu0", "cpu1";
+	};
+
+	ps7_axi_interconnect_0: amba@0 {
+		#address-cells = <0x1>;
+		#size-cells = <0x1>;
+		compatible = "xlnx,ps7-axi-interconnect-1.00.a", "simple-bus";
+		ranges;
+		linux,phandle = <0x1>;
+		phandle = <0x1>;
+
+		ps7_afi_0: ps7-afi@f8008000 {
+			compatible = "xlnx,ps7-afi-1.00.a";
+			reg = <0xf8008000 0x1000>;
+		};
+
+		ps7_afi_1: ps7-afi@f8009000 {
+			compatible = "xlnx,ps7-afi-1.00.a";
+			reg = <0xf8009000 0x1000>;
+		};
+
+		ps7_afi_2: ps7-afi@f800a000 {
+			compatible = "xlnx,ps7-afi-1.00.a";
+			reg = <0xf800a000 0x1000>;
+		};
+
+		ps7_afi_3: ps7-afi@f800b000 {
+			compatible = "xlnx,ps7-afi-1.00.a";
+			reg = <0xf800b000 0x1000>;
+		};
+
+		ps7_coresight_comp_0: ps7-coresight-comp@f8800000 {
+			compatible = "xlnx,ps7-coresight-comp-1.00.a";
+			reg = <0xf8800000 0x100000>;
+		};
+
+		ps7_ddrc_0: ps7-ddrc@f8006000 {
+			compatible = "xlnx,zynq-ddrc-1.0";
+			reg = <0xf8006000 0x1000>;
+			xlnx,has-ecc = <0x0>;
+		};
+
+		ps7_dev_cfg_0: ps7-dev-cfg@f8007000 {
+			clock-names = "ref_clk", "fclk0", "fclk1", "fclk2", "fclk3";
+			clocks = <0x2 0xc 0x2 0xf 0x2 0x10 0x2 0x11 0x2 0x12>;
+			compatible = "xlnx,zynq-devcfg-1.0";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x8 0x4>;
+			reg = <0xf8007000 0x100>;
+		};
+
+		ps7_dma_s: ps7-dma@f8003000 {
+			#dma-cells = <0x1>;
+			#dma-channels = <0x8>;
+			#dma-requests = <0x4>;
+			clock-names = "apb_pclk";
+			clocks = <0x2 0x1b>;
+			compatible = "arm,primecell", "arm,pl330";
+			interrupt-names = "abort", "dma0", "dma1", "dma2", "dma3", "dma4", "dma5", "dma6", "dma7";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0xd 0x4 0x0 0xe 0x4 0x0 0xf 0x4 0x0 0x10 0x4 0x0 0x11 0x4 0x0 0x28 0x4 0x0 0x29 0x4 0x0 0x2a 0x4 0x0 0x2b 0x4>;
+			reg = <0xf8003000 0x1000>;
+		};
+
+		ps7_ethernet_0: ps7-ethernet@e000b000 {
+			#address-cells = <0x1>;
+			#size-cells = <0x0>;
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <0x2 0xd 0x2 0x1e>;
+			compatible = "xlnx,ps7-ethernet-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x16 0x4>;
+			local-mac-address = [00 0a 35 00 00 00];
+			phy-handle = <0x4>;
+			phy-mode = "rgmii-id";
+			reg = <0xe000b000 0x1000>;
+			xlnx,ptp-enet-clock = <0x6750918>;
+			xlnx,enet-reset = [00];
+			xlnx,eth-mode = <0x1>;
+			xlnx,has-mdio = <0x1>;
+
+			mdio {
+				#address-cells = <0x1>;
+				#size-cells = <0x0>;
+
+				phy0: phy@1 {
+					compatible = "realtek,RTL8211E";
+					device_type = "ethernet-phy";
+					reg = <0x1>;
+					linux,phandle = <0x4>;
+					phandle = <0x4>;
+				};
+			};
+		};
+
+		ps7_globaltimer_0: ps7-globaltimer@f8f00200 {
+			clocks = <0x2 0x4>;
+			compatible = "arm,cortex-a9-global-timer";
+			interrupt-parent = <0x3>;
+			interrupts = <0x1 0xb 0x301>;
+			reg = <0xf8f00200 0x100>;
+		};
+
+		ps7_gpio_0: ps7-gpio@e000a000 {
+			#gpio-cells = <0x2>;
+			clocks = <0x2 0x2a>;
+			compatible = "xlnx,zynq-gpio-1.0";
+			emio-gpio-width = <0x40>;
+			gpio-controller;
+			gpio-mask-high = <0x0>;
+			gpio-mask-low = <0x5600>;
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x14 0x4>;
+			reg = <0xe000a000 0x1000>;
+			xlnx,emio-gpio-width = <0x40>;
+			xlnx,mio-gpio-mask = <0x5600>;
+			linux,phandle = <0x5>;
+			phandle = <0x5>;
+		};
+
+		ps7_gpv_0: ps7-gpv@f8900000 {
+			compatible = "xlnx,ps7-gpv-1.00.a";
+			reg = <0xf8900000 0x100000>;
+		};
+
+		ps7_i2c_0: ps7-i2c@e0004000 {
+			clock-frequency = <0x61a80>;
+			clocks = <0x2 0x26>;
+			compatible = "cdns,i2c-r1p10";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x19 0x4>;
+			reg = <0xe0004000 0x1000>;
+			xlnx,has-interrupt = <0x1>;
+			xlnx,i2c-reset = [00];
+		};
+
+		ps7_intc_dist_0: ps7-intc-dist@f8f01000 {
+			compatible = "xlnx,ps7-intc-dist-1.00.a";
+			reg = <0xf8f01000 0x1000>;
+		};
+
+		ps7_iop_bus_config_0: ps7-iop-bus-config@e0200000 {
+			compatible = "xlnx,ps7-iop-bus-config-1.00.a";
+			reg = <0xe0200000 0x1000>;
+		};
+
+		ps7_l2cachec_0: ps7-l2cachec@f8f02000 {
+			compatible = "xlnx,ps7-l2cachec-1.00.a";
+			reg = <0xf8f02000 0x1000>;
+		};
+
+		ps7_ocmc_0: ps7-ocmc@f800c000 {
+			compatible = "xlnx,zynq-ocmc-1.0";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x3 0x4>;
+			reg = <0xf800c000 0x1000>;
+		};
+
+		ps7_pl310_0: ps7-pl310@f8f02000 {
+			arm,data-latency = <0x3 0x2 0x2>;
+			arm,tag-latency = <0x2 0x2 0x2>;
+			cache-level = <0x2>;
+			cache-unified;
+			compatible = "arm,pl310-cache";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x2 0x4>;
+			reg = <0xf8f02000 0x1000>;
+		};
+
+		ps7_qspi_0: ps7-qspi@e000d000 {
+			#address-cells = <0x1>;
+			#size-cells = <0x0>;
+			clock-names = "ref_clk", "pclk";
+			clocks = <0x2 0xa 0x2 0x2b>;
+			compatible = "xlnx,zynq-qspi-1.0";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x13 0x4>;
+			is-dual = <0x0>;
+			num-cs = <0x1>;
+			reg = <0xe000d000 0x1000>;
+			xlnx,fb-clk = <0x1>;
+			xlnx,qspi-mode = <0x0>;
+		};
+
+		ps7_qspi_linear_0: ps7-qspi-linear@fc000000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <0x2 0xa 0x2 0x2b>;
+			compatible = "xlnx,ps7-qspi-linear-1.00.a";
+			reg = <0xfc000000 0x1000000>;
+		};
+
+		ps7_ram_0: ps7-ram@00000000 {
+			compatible = "xlnx,ps7-ocm";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x3 0x4>;
+			reg = <0xfffc0000 0x40000>;
+		};
+
+		ps7_scuc_0: ps7-scuc@f8f00000 {
+			compatible = "xlnx,ps7-scuc-1.00.a";
+			reg = <0xf8f00000 0xfd>;
+		};
+
+		ps7_scugic_0: ps7-scugic@f8f00100 {
+			#address-cells = <0x2>;
+			#interrupt-cells = <0x3>;
+			#size-cells = <0x1>;
+			compatible = "arm,cortex-a9-gic", "arm,gic";
+			interrupt-controller;
+			num_cpus = <0x2>;
+			num_interrupts = <0x60>;
+			reg = <0xf8f01000 0x1000 0xf8f00100 0x100>;
+			xlnx,irq-f2p-mode = "DIRECT";
+			linux,phandle = <0x3>;
+			phandle = <0x3>;
+		};
+
+		ps7_scutimer_0: ps7-scutimer@f8f00600 {
+			clocks = <0x2 0x4>;
+			compatible = "arm,cortex-a9-twd-timer";
+			interrupt-parent = <0x3>;
+			interrupts = <0x1 0xd 0x301>;
+			reg = <0xf8f00600 0x20>;
+		};
+
+		ps7_scuwdt_0: watchdog@f8f00620 {
+			clocks = <0x2 0x4>;
+			compatible = "xlnx,zynq-scuwdt-1.00.a";
+			device_type = "watchdog";
+			interrupt-parent = <0x3>;
+			interrupts = <0x1 0xe 0x301>;
+			reg = <0xf8f00620 0xe0>;
+		};
+
+		ps7_sd_0: ps7-sdio@e0100000 {
+			clock-frequency = <0x2faf080>;
+			clock-names = "clk_xin", "clk_ahb";
+			clocks = <0x2 0x15 0x2 0x20>;
+			compatible = "arasan,sdhci-8.9a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x18 0x4>;
+			reg = <0xe0100000 0x1000>;
+			xlnx,has-cd = <0x1>;
+			xlnx,has-power = <0x0>;
+			xlnx,has-wp = <0x1>;
+		};
+
+		ps7_slcr_0: ps7-slcr@f8000000 {
+			#address-cells = <0x1>;
+			#size-cells = <0x1>;
+			compatible = "xlnx,zynq-slcr", "syscon";
+			ranges;
+			reg = <0xf8000000 0x1000>;
+
+			clkc: clkc@0x100 {
+				#clock-cells = <0x1>;
+				clock-output-names = "armpll", "ddrpll", "iopll", "cpu_6or4x", "cpu_3or2x", "cpu_2x", "cpu_1x", "ddr2x", "ddr3x", "dci", "lqspi", "smc", "pcap", "gem0", "gem1", "fclk0", "fclk1", "fclk2", "fclk3", "can0", "can1", "sdio0", "sdio1", "uart0", "uart1", "spi0", "spi1", "dma", "usb0_aper", "usb1_aper", "gem0_aper", "gem1_aper", "sdio0_aper", "sdio1_aper", "spi0_aper", "spi1_aper", "can0_aper", "can1_aper", "i2c0_aper", "i2c1_aper", "uart0_aper", "uart1_aper", "gpio_aper", "lqspi_aper", "smc_aper", "swdt", "dbg_trc", "dbg_apb";
+				compatible = "xlnx,ps7-clkc";
+				fclk-enable = <0xf>;
+				ps-clk-frequency = <0x2faf080>;
+				reg = <0x100 0x100>;
+				linux,phandle = <0x2>;
+				phandle = <0x2>;
+			};
+		};
+
+		ps7_spi_0: ps7-spi@e0006000 {
+			clock-names = "ref_clk", "pclk";
+			clocks = <0x2 0x19 0x2 0x22>;
+			compatible = "cdns,spi-r1p6";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x1a 0x4>;
+			is-decoded-cs = <0x0>;
+			num-cs = <0x3>;
+			reg = <0xe0006000 0x1000>;
+			xlnx,has-ss0 = <0x1>;
+			xlnx,has-ss1 = <0x1>;
+			xlnx,has-ss2 = <0x1>;
+			#address-cells = <0x1>;
+			#size-cells = <0x0>;
+			status = "okay";
+
+			device@0 {
+				compatible = "spidev";
+				reg = <0x0>;
+				spi-max-frequency = <0x7a120>;
+				spi-cpol = <0x0>;
+				spi-cpha = <0x0>;
+			};
+		};
+
+		ps7_ttc_0: ps7-ttc@f8001000 {
+			clocks = <0x2 0x6>;
+			compatible = "cdns,ttc";
+			interrupt-names = "ttc0", "ttc1", "ttc2";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0xa 0x4 0x0 0xb 0x4 0x0 0xc 0x4>;
+			reg = <0xf8001000 0x1000>;
+			xlnx,ttc-clk0-clksrc = <0x0>;
+			xlnx,ttc-clk0-freq-hz = <0x6750918>;
+			xlnx,ttc-clk1-clksrc = <0x0>;
+			xlnx,ttc-clk1-freq-hz = <0x6750918>;
+			xlnx,ttc-clk2-clksrc = <0x0>;
+			xlnx,ttc-clk2-freq-hz = <0x6750918>;
+		};
+
+		ps7_uart_1: serial@e0001000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <0x2 0x18 0x2 0x29>;
+			compatible = "xlnx,xuartps";
+			current-speed = <0x1c200>;
+			device_type = "serial";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x32 0x4>;
+			port-number = <0x0>;
+			reg = <0xe0001000 0x1000>;
+			xlnx,has-modem = <0x0>;
+		};
+
+		ps7_usb_0: ps7-usb@e0002000 {
+			clocks = <0x2 0x1c>;
+			compatible = "xlnx,zynq-usb-1.00.a";
+			dr_mode = "host";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x15 0x4>;
+			phy_type = "ulpi";
+			reg = <0xe0002000 0x1000>;
+			usb-reset = <0x5 0x2e 0x0>;
+		};
+
+		ps7_xadc_0: ps7-xadc@f8007100 {
+			clocks = <0x2 0xc>;
+			compatible = "xlnx,zynq-xadc-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x7 0x4>;
+			reg = <0xf8007100 0x21>;
+		};
+
+		ps7_can_0: ps7-can@0xe0008000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <0x2 0x13 0x2 0x24>;
+			compatible = "xlnx,ps7-can-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x1c 0x4>;
+			reg = <0xe0008000 0x1000>;
+			status = "disabled";
+		};
+
+		ps7_can_1: ps7-can@0xe0009000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <0x2 0x14 0x2 0x25>;
+			compatible = "xlnx,ps7-can-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x33 0x4>;
+			reg = <0xe0009000 0x1>;
+			status = "disabled";
+		};
+
+		ps7_ethernet_1: ps7-ethernet@0xe000c000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <0x2 0xe 0x2 0x1f>;
+			compatible = "xlnx,ps7-ethernet-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x2d 0x4>;
+			reg = <0xe000c000 0x1000>;
+			status = "disabled";
+		};
+
+		ps7_i2c_1: ps7-i2c@0xe0005000 {
+			clocks = <0x2 0x27>;
+			compatible = "xlnx,ps7-i2c-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x30 0x4>;
+			reg = <0xe0005000 0x1000>;
+			status = "disabled";
+		};
+
+		ps7_nand_0: ps7-nand@0xe1000000 {
+			compatible = "xlnx,ps7-nand-1.00.a";
+			reg = <0xe1000000 0x1000000>;
+			status = "disabled";
+		};
+
+		ps7_sd_1: ps7-sd@0xe0101000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <0x2 0x16 0x2 0x21>;
+			compatible = "xlnx,ps7-sd-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x2f 0x4>;
+			reg = <0xe0101000 0x1000>;
+			status = "disabled";
+		};
+
+		ps7_smcc_0: ps7-smcc@0xe000e000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <0x2 0xb 0x2 0x2c>;
+			compatible = "xlnx,ps7-smcc-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x12 0x4>;
+			reg = <0xe000e000 0x1000>;
+			status = "disabled";
+		};
+
+		ps7_spi_1: ps7-spi@0xe0007000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <0x2 0x1a 0x2 0x23>;
+			compatible = "xlnx,ps7-spi-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x31 0x4>;
+			reg = <0xe0007000 0x1000>;
+			status = "disabled";
+		};
+
+		ps7_sram_0: ps7-sram@0xe2000000 {
+			compatible = "xlnx,ps7-sram-1.00.a";
+			reg = <0xe2000000 0x2000000>;
+			status = "disabled";
+		};
+
+		ps7_trace_0: ps7-trace@0xe1000000 {
+			compatible = "xlnx,ps7-trace-1.00.a";
+			reg = <0xe1000000 0x1000>;
+			status = "disabled";
+		};
+
+		ps7_ttc_1: ps7-ttc@0xf8002000 {
+			clocks = <0x2 0x6>;
+			compatible = "xlnx,ps7-ttc-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x25 0x4 0x0 0x26 0x4 0x0 0x27 0x4>;
+			reg = <0xf8002000 0x1000>;
+			status = "disabled";
+		};
+
+		ps7_uart_0: ps7-uart@0xe0000000 {
+			clock-names = "ref_clk", "aper_clk";
+			clocks = <0x2 0x17 0x2 0x28>;
+			compatible = "xlnx,xuartps";
+			current-speed = <0x1c200>;
+			device_type = "serial";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x1b 0x4>;
+			port-number = <0x1>;
+			reg = <0xe0000000 0x1000>;
+		};
+
+		ps7_usb_1: ps7-usb@0xe0003000 {
+			clocks = <0x2 0x1d>;
+			compatible = "xlnx,ps7-usb-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x2c 0x4>;
+			reg = <0xe0003000 0x1000>;
+			status = "disabled";
+		};
+
+		ps7_wdt_0: ps7-wdt@0xf8005000 {
+			clocks = <0x2 0x2d>;
+			compatible = "xlnx,ps7-wdt-1.00.a";
+			interrupt-parent = <0x3>;
+			interrupts = <0x0 0x9 0x1>;
+			reg = <0xf8005000 0x1000>;
+			status = "disabled";
+		};
+	};
+
+	amba_pl: amba_pl {
+		#address-cells = <0x1>;
+		#size-cells = <0x1>;
+		compatible = "simple-bus";
+		ranges;
+
+		axi_pulp_control: gpio@51000000 {
+			#gpio-cells = <0x2>;
+			compatible = "xlnx,xps-gpio-1.00.a";
+			gpio-controller;
+			reg = <0x51000000 0x10000>;
+			xlnx,all-inputs = <0x1>;
+			xlnx,all-inputs-2 = <0x0>;
+			xlnx,all-outputs = <0x0>;
+			xlnx,all-outputs-2 = <0x1>;
+			xlnx,dout-default = <0x0>;
+			xlnx,dout-default-2 = <0x0>;
+			xlnx,gpio-width = <0x20>;
+			xlnx,gpio2-width = <0x20>;
+			xlnx,interrupt-present = <0x0>;
+			xlnx,is-dual = <0x1>;
+			xlnx,tri-default = <0xffffffff>;
+			xlnx,tri-default-2 = <0xffffffff>;
+		};
+
+		axi_gpio_emu: gpio@51030000 {
+			#gpio-cells = <0x2>;
+			compatible = "xlnx,xps-gpio-1.00.a";
+			gpio-controller;
+			reg = <0x51030000 0x10000>;
+			xlnx,all-inputs = <0x0>;
+			xlnx,all-inputs-2 = <0x0>;
+			xlnx,all-outputs = <0x0>;
+			xlnx,all-outputs-2 = <0x0>;
+			xlnx,dout-default = <0x0>;
+			xlnx,dout-default-2 = <0x0>;
+			xlnx,gpio-width = <0x20>;
+			xlnx,gpio2-width = <0x20>;
+			xlnx,interrupt-present = <0x0>;
+			xlnx,is-dual = <0x0>;
+			xlnx,tri-default = <0xffffffff>;
+			xlnx,tri-default-2 = <0xffffffff>;
+		};
+
+		axi_jtag_emu: gpio@51020000 {
+			#gpio-cells = <0x2>;
+			compatible = "xlnx,xps-gpio-1.00.a";
+			gpio-controller;
+			reg = <0x51020000 0x10000>;
+			xlnx,all-inputs = <0x0>;
+			xlnx,all-inputs-2 = <0x0>;
+			xlnx,all-outputs = <0x0>;
+			xlnx,all-outputs-2 = <0x0>;
+			xlnx,dout-default = <0x0>;
+			xlnx,dout-default-2 = <0x0>;
+			xlnx,gpio-width = <0x20>;
+			xlnx,gpio2-width = <0x20>;
+			xlnx,interrupt-present = <0x0>;
+			xlnx,is-dual = <0x0>;
+			xlnx,tri-default = <0xffffffff>;
+			xlnx,tri-default-2 = <0xffffffff>;
+		};
+	};
+
+	chosen {
+		bootargs = "console=ttyPS0,115200 ip=on root=/dev/mmcblk0p2 rw earlyprintk";
+		linux,stdout-path = "/amba@0/serial@e0001000";
+	};
+
+	aliases {
+		ethernet0 = "/amba@0/ps7-ethernet@e000b000";
+		i2c0 = "/amba@0/ps7-i2c@e0004000";
+		serial0 = "/amba@0/serial@e0001000";
+		spi0 = "/amba@0/ps7-qspi@e000d000";
+	};
+
+	ps7_ddr_0: memory@00100000 {
+		device_type = "memory";
+		reg = <0x0 0x20000000>;
+	};
+};

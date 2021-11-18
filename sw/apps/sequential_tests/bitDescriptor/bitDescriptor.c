@@ -49,7 +49,7 @@ void Process_Descriptor(unsigned int *Descr, int Size, void action(int index))
   }
 }
 
-#ifndef __riscv__
+#if !defined(__riscv__) && !defined(__riscv)
 void Process_Descriptor_Bis(unsigned int *Descr, int Size, void action(int index))
 
 {
@@ -104,7 +104,7 @@ void Process(testresult_t *result, char *Mess, unsigned int *Descr, int Descr_Si
   printf("Regular:  %s -> %d actions triggered\n", Mess, Count);
   Count_Regular = Count;
 
-#ifndef __riscv__
+#if !defined(__riscv__) && !defined(__riscv)
   Count = 0;
   reset_timer();
   start_timer();

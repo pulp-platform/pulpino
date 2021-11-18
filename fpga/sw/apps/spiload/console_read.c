@@ -8,7 +8,8 @@
 // CONDITIONS OF ANY KIND, either express or implied. See the License for the
 // specific language governing permissions and limitations under the License.
 
-#include <asm/termios.h>
+#include <asm/termbits.h>
+#include <sys/ioctl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -17,6 +18,12 @@
 #include <errno.h>
 #include <pthread.h>
 #include <signal.h>
+
+#ifdef ZYBO
+  #define TTY_DEV "/dev/ttyPS1"
+#else
+  #define TTY_DEV "/dev/ttyPS0"
+#endif
 
 pthread_t g_thread;
 int g_should_exit;
@@ -27,20 +34,12 @@ void read_port()
   struct termios2 tio;
   int fd;
   unsigned int i;
-  int n;
   char c;
 
-#ifdef ZYBO
-  if ((fd = open("/dev/ttyPS1", O_RDONLY | O_NOCTTY) ) < 0) {
-    perror("open_port: Unable to open /dev/ttyPS0");
+  if ((fd = open(TTY_DEV, O_RDONLY | O_NOCTTY) ) < 0) {
+    perror("open_port: Unable to open " TTY_DEV);
     return;
   }
-#else
-  if ((fd = open("/dev/ttyPS0", O_RDONLY | O_NOCTTY) ) < 0) {
-    perror("open_port: Unable to open /dev/ttyPS0");
-    return;
-  }
-#endif
 
   // set baudrate
   ioctl(fd, TCGETS2, &tio);
@@ -83,11 +82,12 @@ void read_port()
 
 void* console_thread(void* ptr) {
   read_port();
+  return NULL;
 }
 
 void console_thread_start() {
   g_should_exit = 0;
-  if (pthread_create (&g_thread, NULL, console_thread, NULL) ) {
+  if (pthread_create(&g_thread, NULL, console_thread, NULL) ) {
     printf("Error creating console listening thread\n");
   }
 }

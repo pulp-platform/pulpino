@@ -44,7 +44,7 @@ void sleep_busy(volatile int iter)
     asm volatile ("nop");
 }
 
-#ifdef __riscv__
+#if defined(__riscv__) || defined(__riscv)
 /* Set the specified counter to the specified value */
 void cpu_perf_set(unsigned int counterId, unsigned int value) {
   printf("cpu_perf_set: not implemented yet\n");

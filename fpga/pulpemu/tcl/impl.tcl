@@ -1,3 +1,7 @@
+source ./tcl/common.tcl
+
+open_run synth_1 -name synth_1
+
 # clocks
 create_clock -period 50.000 -name clk      [get_nets {pulpino_wrap_i/clk}]
 create_clock -period 40.000 -name spi_sck  [get_nets {pulpino_wrap_i/spi_clk_i}]
@@ -78,8 +82,6 @@ if {[string equal $::env(BOARD) "zybo"]} {
   #IO_L7N_T1_34
   #set_property PACKAGE_PIN Y17     [get_ports {je[7]}]
   #set_property IOSTANDARD LVCMOS33 [get_ports {je[7]}]
-
-  set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ext_tck_i_IBUF]
 
 
   # ----------------------------------------------------------------------------
@@ -199,8 +201,6 @@ if {[string equal $::env(BOARD) "zybo"]} {
   set_property PACKAGE_PIN AA9  [get_ports {ext_tdo_o}];     # "P-MOD: JA4"
   set_property PACKAGE_PIN AB11 [get_ports {ext_trstn_i}];   # "P-MOD: JA7"
 
-  set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ext_tck_i_IBUF]
-
   # ----------------------------------------------------------------------------
   # User Push Buttons - Bank 34
   # ----------------------------------------------------------------------------
@@ -228,11 +228,10 @@ if {[string equal $::env(BOARD) "zybo"]} {
   set_property IOSTANDARD LVCMOS33 [get_ports -of_objects [get_iobanks 13]];
 }
 
-
-
 # physical constraints
 # source tcl/floorplan.xdc
 
+set_property CLOCK_DEDICATED_ROUTE FALSE [get_nets ext_tck_i_IBUF]
 save_constraints
 
 # set for RuntimeOptimized implementation
@@ -241,10 +240,12 @@ save_constraints
 # set_property "steps.route_design.args.directive" "RuntimeOptimized" [get_runs impl_1]
 set_property strategy Area_Explore [get_runs impl_1]
 
-launch_runs impl_1
+reset_run impl_1
+launch_runs impl_1 -jobs $CPUS
 wait_on_run impl_1
-launch_runs impl_1 -to_step write_bitstream
+launch_runs impl_1 -jobs $CPUS -to_step write_bitstream
 wait_on_run impl_1
+open_run impl_1
 
 # report area utilization
 report_utilization -hierarchical -hierarchical_depth 1 -file pulpemu.txt
@@ -256,6 +257,14 @@ report_timing         -file pulpemu_timing.txt         -max_paths 10
 # output Verilog netlist + SDC for timing simulation
 write_verilog -force -mode timesim -cell pulpino_wrap_i ../simu/pulpino_impl.v
 write_sdf     -force -cell pulpino_wrap_i ../simu/pulpino_impl.sdf
+
+# export hardware design for sdk
+write_hwdef -force -file ./pulpemu.hwdef
+if { [string compare $::env(VIVADO_VERSION) "2018.3"] < 0 } {
+  write_sysdef -bitfile pulpemu_top.bit -hwdef pulpemu.hwdef -file pulpemu_top.sysdef
+} else {
+  write_sysdef -bitfile pulpemu_top.bit -hwdef pulpemu.hwdef pulpemu_top.sysdef
+}
 
 if { [info exists ::env(PROBES)] } {
    # create new design run for probes
@@ -274,7 +283,7 @@ if { [info exists ::env(PROBES)] } {
    set_property "steps.place_design.args.directive" "RuntimeOptimized" [get_runs impl_2]
    set_property "steps.route_design.args.directive" "RuntimeOptimized" [get_runs impl_2]
 
-   launch_runs impl_2 -to_step write_bitstream
+   launch_runs -jobs $CPUS impl_2 -to_step write_bitstream
    wait_on_run impl_2
 }
 

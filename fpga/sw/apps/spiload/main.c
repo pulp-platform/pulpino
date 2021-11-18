@@ -26,9 +26,10 @@
 
 #include "spiloader.h"
 
-#define SPIDEV               "/dev/spidev32766.0"
+#define SPIDEV               "/dev/spidev1.0"
 #define CLKING_AXI_ADDR      0x51010000
 #define PULP_CTRL_AXI_ADDR   0x51000000
+#define PULP_GPIO_AXI_ADDR   0x51030000
 
 
 #define MAP_SIZE 4096UL
@@ -37,39 +38,43 @@
 int clock_manager();
 int process_file(char* buffer, size_t size);
 
-int pulp_ctrl(int fetch_en, int reset) {
-  char* ctrl_map = MAP_FAILED;
-  char* gpio_base;
-  int mem_fd;
-  int retval = 0;
+char *map_device(char *base, uint32_t axi_addr) {
+  // Map device only once
+  if (base != NULL)
+    return base;
 
-  if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
-    printf("can't open /dev/mem \n");
-
-    retval = -1;
-    goto fail;
+  static int mem_fd = -1;
+  if (mem_fd < 0) {
+    if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
+      perror("Can't open /dev/mem");
+      return NULL;
+    }
   }
 
-  ctrl_map = (char*)mmap(
+  char* map = (char*)mmap(
       NULL,
       MAP_SIZE,
       PROT_READ|PROT_WRITE,
       MAP_SHARED,
       mem_fd,
-      PULP_CTRL_AXI_ADDR & ~MAP_MASK
-      );
-
-
-  if (ctrl_map == MAP_FAILED) {
-    perror("mmap error\n");
-
-    retval = -1;
-    goto fail;
+      axi_addr & ~MAP_MASK
+  );
+  if (map == MAP_FAILED) {
+    perror("mmap error");
+    return NULL;
   }
 
-  gpio_base = ctrl_map + (PULP_CTRL_AXI_ADDR & MAP_MASK);
-  volatile uint32_t* gpio = (volatile uint32_t*)(gpio_base + 0x0);
-  volatile uint32_t* dir  = (volatile uint32_t*)(gpio_base + 0x4);
+  return map + (axi_addr & MAP_MASK);
+}
+
+int pulp_ctrl(int fetch_en, int reset) {
+  static char* ctrl_base = NULL;
+  ctrl_base = map_device(ctrl_base, PULP_CTRL_AXI_ADDR);
+  if (ctrl_base == NULL)
+    return -1;
+
+  volatile uint32_t* gpio = (volatile uint32_t*)(ctrl_base + 0x0);
+  volatile uint32_t* dir  = (volatile uint32_t*)(ctrl_base + 0x4);
 
   // now we can actually write to the peripheral
   uint32_t val = 0x0;
@@ -82,47 +87,17 @@ int pulp_ctrl(int fetch_en, int reset) {
   *dir  = 0x0; // configure as output
   *gpio = val;
 
-fail:
-  close(mem_fd);
-
-  if(ctrl_map != MAP_FAILED)
-    munmap(ctrl_map, MAP_SIZE);
-
-  return retval;
+  return 0;
 }
 
 int wait_eoc(unsigned int timeout) {
-  char* ctrl_map = MAP_FAILED;
-  char* gpio_base;
-  int mem_fd;
-  int retval = 0;
+  static char* gpio_base = NULL;
+  gpio_base = map_device(gpio_base, PULP_GPIO_AXI_ADDR);
+  if (gpio_base == NULL)
+    return -1;
+
   struct timespec spec_start, spec_end, spec_diff;
 
-  if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
-    printf("can't open /dev/mem \n");
-
-    retval = -1;
-    goto fail;
-  }
-
-  ctrl_map = (char*)mmap(
-      NULL,
-      MAP_SIZE,
-      PROT_READ|PROT_WRITE,
-      MAP_SHARED,
-      mem_fd,
-      PULP_CTRL_AXI_ADDR & ~MAP_MASK
-      );
-
-
-  if (ctrl_map == MAP_FAILED) {
-    perror("mmap error\n");
-
-    retval = -1;
-    goto fail;
-  }
-
-  gpio_base = ctrl_map + (PULP_CTRL_AXI_ADDR & MAP_MASK);
   volatile uint32_t* gpio = (volatile uint32_t*)(gpio_base + 0x0);
   volatile uint32_t* dir  = (volatile uint32_t*)(gpio_base + 0x4);
 
@@ -135,26 +110,20 @@ int wait_eoc(unsigned int timeout) {
     clock_gettime(CLOCK_REALTIME, &spec_end);
     spec_diff = timespec_sub(spec_end, spec_start);
 
-    if (*gpio == (0x1 << 8)) {
+    if (*gpio & (0x1 << 8)) {
       printf("EOC received!\n");
       break;
     }
 
     if (spec_diff.tv_sec >= timeout) {
-      printf ("Timeout reached!\n");
+      fprintf(stderr, "Timeout reached!\n");
       break;
     }
   }
 
-  printf("Stopped after %d.%d\n", spec_diff.tv_sec, spec_diff.tv_nsec);
+  printf("Stopped after %ld.%ld\n", (long)spec_diff.tv_sec, spec_diff.tv_nsec);
 
-fail:
-  close(mem_fd);
-
-  if(ctrl_map != MAP_FAILED)
-    munmap(ctrl_map, MAP_SIZE);
-
-  return retval;
+  return 0;
 }
 
 int spi_read_reg(unsigned int addr) {
@@ -169,7 +138,7 @@ int spi_read_reg(unsigned int addr) {
   // open spidev
   fd = open(SPIDEV, O_RDWR);
   if (fd <= 0) {
-    perror("Device not found\n");
+    perror(SPIDEV " not found");
 
     retval = -1;
     goto fail;
@@ -197,7 +166,7 @@ int spi_read_reg(unsigned int addr) {
     case 2: wr_buf[0] = 0x21; break; // read reg2
     case 3: wr_buf[0] = 0x30; break; // read reg3
     default:
-            printf("Not a valid address for reading a register\n");
+            fprintf(stderr, "Not a valid address for reading a register\n");
             goto fail;
   }
 
@@ -227,20 +196,20 @@ int set_boot_addr(uint32_t boot_addr) {
   const uint32_t reg_addr = 0x1A107008;
 
   wr_buf[0] = 0x02; // write command
-  wr_buf[1] = reg_addr >> 24;
-  wr_buf[2] = reg_addr >> 16;
-  wr_buf[3] = reg_addr >> 8;
-  wr_buf[4] = reg_addr;
+  wr_buf[1] = (reg_addr >> 24) & 0xFF;
+  wr_buf[2] = (reg_addr >> 16) & 0xFF;
+  wr_buf[3] = (reg_addr >>  8) & 0xFF;
+  wr_buf[4] = (reg_addr >>  0) & 0xFF;
   // address
-  wr_buf[5] = boot_addr >> 24;
-  wr_buf[6] = boot_addr >> 16;
-  wr_buf[7] = boot_addr >> 8;
-  wr_buf[8] = boot_addr;
+  wr_buf[5] = (boot_addr >> 24) & 0xFF;
+  wr_buf[6] = (boot_addr >> 16) & 0xFF;
+  wr_buf[7] = (boot_addr >>  8) & 0xFF;
+  wr_buf[8] = (boot_addr >>  0) & 0xFF;
 
   // open spidev
   fd = open(SPIDEV, O_RDWR);
   if (fd <= 0) {
-    perror("Device not found\n");
+    perror(SPIDEV " not found");
 
     retval = -1;
     goto fail;
@@ -248,13 +217,11 @@ int set_boot_addr(uint32_t boot_addr) {
 
   // write to spidev
   if (write(fd, wr_buf, 9) != 9) {
-    perror("Write Error");
+    perror("Could not write to " SPIDEV);
 
     retval = -1;
     goto fail;
   }
-
-  close(fd);
 
 fail:
   // close spidev
@@ -264,9 +231,9 @@ fail:
 }
 
 int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
-  int fd;
-  char* wr_buf;
-  char* rd_buf;
+  int fd = -1;
+  char* wr_buf = NULL;
+  char* rd_buf = NULL;
   unsigned int i;
   size_t size;
   size_t transfer_len;
@@ -282,7 +249,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
 
   wr_buf = (char*)malloc(transfer_len);
   if (wr_buf == NULL) {
-    printf("Unable to acquire write buffer\n");
+    fprintf(stderr, "Unable to acquire write buffer\n");
 
     retval = -1;
     goto fail;
@@ -292,17 +259,17 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
 
   wr_buf[0] = 0x02; // write command
   // address
-  wr_buf[1] = addr >> 24;
-  wr_buf[2] = addr >> 16;
-  wr_buf[3] = addr >> 8;
-  wr_buf[4] = addr;
+  wr_buf[1] = (addr >> 24) & 0xFF;
+  wr_buf[2] = (addr >> 16) & 0xFF;
+  wr_buf[3] = (addr >>  8) & 0xFF;
+  wr_buf[4] = (addr >>  0) & 0xFF;
 
   memcpy(wr_buf + 5, in_buf, in_size);
 
   // open spidev
   fd = open(SPIDEV, O_RDWR);
   if (fd <= 0) {
-    perror("Device not found\n");
+    perror(SPIDEV " not found");
 
     retval = -1;
     goto fail;
@@ -310,7 +277,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
 
   // write to spidev
   if (write(fd, wr_buf, size + 5) != (size + 5)) {
-    perror("Write Error");
+    perror("Could not write to " SPIDEV);
 
     retval = -1;
     goto fail;
@@ -320,7 +287,7 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
   // prepare for readback
   rd_buf = (char*)malloc(transfer_len);
   if (rd_buf == NULL) {
-    printf("Unable to acquire buffer to check if write was successful\n");
+    fprintf(stderr, "Unable to acquire buffer to check if write was successful\n");
 
     retval = -1;
     goto fail;
@@ -344,10 +311,10 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
 
   wr_buf[0] = 0x0B; // read command
   // address
-  wr_buf[1] = addr >> 24;
-  wr_buf[2] = addr >> 16;
-  wr_buf[3] = addr >> 8;
-  wr_buf[4] = addr;
+  wr_buf[1] = (addr >> 24) & 0xFF;
+  wr_buf[2] = (addr >> 16) & 0xFF;
+  wr_buf[3] = (addr >>  8) & 0xFF;
+  wr_buf[4] = (addr >>  0) & 0xFF;
 
   // check if write was successful
   if (ioctl(fd, SPI_IOC_MESSAGE(1), &transfer) < 0) {
@@ -363,85 +330,103 @@ int spi_load(uint32_t addr, char* in_buf, size_t in_size) {
 
   for(i = 0; i < in_size; i++) {
     if (in_buf[i] != rd_buf[i + 9]) {
-      printf("Read check failed at idx %d: Expected %02X, got %02X\n", i, in_buf[i], rd_buf[i + 9]);
+      fprintf(stderr, "Read check failed at idx %d: Expected %02X, got %02X\n", i, in_buf[i], rd_buf[i + 9]);
     }
   }
 
 fail:
-  // close spidev
-  close(fd);
+  // close spidev if opened
+  if (fd > 0)
+    close(fd);
 
-  if (wr_buf != NULL)
-    free(wr_buf);
-
-  if (rd_buf != NULL)
-    free(rd_buf);
+  free(wr_buf);
+  free(rd_buf);
 
   return retval;
 }
 
+int read_file(const char *path, char **bufp, size_t *sizep) {
+  int fd = open(path, O_RDWR);
+  if (fd <= 0) {
+    fprintf(stderr, "Could not open \"%s\": %s\n", path, strerror(errno));
+    return 1;
+  }
+
+  *sizep = lseek(fd, 0, SEEK_END);
+  if (*sizep == -1) {
+    fprintf(stderr, "Could not determine size of \"%s\": %s\n", path, strerror(errno));
+    return 1;
+  }
+
+  *bufp = malloc(*sizep);
+  if(*bufp == NULL) {
+    fprintf(stderr, "Could not allocate memory to buffer \"%s\".\n", path);
+    return 1;
+  }
+
+  if (lseek(fd, 0, SEEK_SET) == -1) {
+    fprintf(stderr, "Could not jump to start of file \"%s\": %s\n", path, strerror(errno));
+    return 1;
+  }
+
+  if (read(fd, *bufp, *sizep) != *sizep) {
+    fprintf(stderr, "Could not read from file \"%s\": %s\n", path, strerror(errno));
+    close(fd);
+    return 1;
+  }
+
+  return 0;
+}
+
 int main(int argc, char **argv)
 {
-  int fd;
-  char* buffer;
-  unsigned int size;
-  int i;
   struct cmd_arguments_t arguments;
 
   cmd_parsing(argc, argv, &arguments);
 
-  clock_manager();
-
-  // open binary and get data
-  fd = open(arguments.stim, O_RDWR);
-  if (fd <= 0) {
-    perror("File could not be opened\n");
+  if (clock_manager() != 0) {
+    fprintf(stderr, "Could not configure clock.\n");
     return 1;
   }
 
-  size = lseek(fd, 0, SEEK_END);
-  if (size == -1) {
-    perror("Could not determine file size\n");
+  // reset target
+  if (pulp_ctrl(0, 1) || pulp_ctrl(0, 0)) {
+    fprintf(stderr, "Could not reset target.\n");
     return 1;
   }
 
-  buffer = (char*)malloc(size);
-  if(buffer == NULL) {
-    printf("Could not allocate memory for file buffer\n");
+  printf("Target is in reset\n");
+
+  if (!arguments.reset) {
+    char* buffer;
+    size_t size;
+    if (read_file(arguments.stim, &buffer, &size) != 0) {
+      fprintf(stderr, "Could not read in stim file.\n");
+      return 1;
+    }
+    if (process_file(buffer, size) != 0) {
+      fprintf(stderr, "Could not process stim file.\n");
+      return 1;
+    }
+    free(buffer);
   }
 
-  if (lseek(fd, 0, SEEK_SET) == -1) {
-    perror("Could not jump to start of file\n");
-    return 1;
+  // Start target and wait for timeout (if any)
+  if (set_boot_addr(0x00000000) != 0) {
+      fprintf(stderr, "Could not set PC.\n");
+      return 1;
   }
-
-  if (read(fd, buffer, size) != size) {
-    close(fd);
-    perror("Read Error");
-    return -1;
-  }
-
-  // reset device
-  pulp_ctrl(0, 1);
-  pulp_ctrl(0, 0);
-
-  printf("Device has been reset\n");
-
-  process_file(buffer, size);
-
-  free(buffer);
-  close(fd);
-
-  // Start device and wait for timeout (if any)
-  set_boot_addr(0x00000000);
 
   if (arguments.timeout > 0) {
     console_thread_start();
     sleep(1);
   }
 
-  printf("Starting device\n");
-  pulp_ctrl(1, 0);
+  printf("Starting target\n");
+  if (pulp_ctrl(1, 0) != 0) {
+      fprintf(stderr, "Could not (re)start target.\n");
+      return 1;
+  }
 
   if (arguments.timeout > 0) {
     printf("Waiting for EOC...\n");
@@ -464,7 +449,7 @@ int process_file(char* buffer, size_t size) {
   unsigned int entries = 0;
 
   // extract lines
-  const char const* buffer_end = buffer + size;
+  const char *const buffer_end = buffer + size;
   char line[20];
   unsigned int i;
 
@@ -486,7 +471,7 @@ int process_file(char* buffer, size_t size) {
 
       i++;
       if (i == 18) {
-        printf("Failed to parse, couldn't find line\n");
+        fprintf(stderr, "Failed to parse, couldn't find line\n");
         return -1;
       }
     }
@@ -500,13 +485,13 @@ int process_file(char* buffer, size_t size) {
     entries++;
 
     if (entries == NUM_ENTRIES) {
-      printf("Too many entries in file\n");
+      fprintf(stderr, "Too many entries in file\n");
       return -1;
     }
   }
 
   if (entries == 0) {
-    printf("No entries found\n");
+    fprintf(stderr, "No entries found\n");
     return -1;
   }
 
@@ -516,7 +501,10 @@ int process_file(char* buffer, size_t size) {
     if(addr[i] != (addr[i-1] + 0x4) || (i - start_idx) == 255 || i == (entries - 1)) {
       // send block
       printf("Sending block addr %08X with %d entries\n", addr[start_idx], i - start_idx + 1);
-      spi_load(addr[start_idx], (char*)&data[start_idx], (i - start_idx + 1) * 4);
+      if (spi_load(addr[start_idx], (char*)&data[start_idx], (i - start_idx + 1) * 4) != 0) {
+        fprintf(stderr, "Sending block failed!\n");
+        return -1;
+      }
       start_idx = i;
     }
   }
@@ -525,37 +513,12 @@ int process_file(char* buffer, size_t size) {
 }
 
 int clock_manager() {
-  char* clk_map = MAP_FAILED;
-  char* clk_base;
-  int mem_fd;
-  int retval = 0;
+  static char* clk_base = NULL;
+  clk_base = map_device(clk_base, CLKING_AXI_ADDR);
+  if (clk_base == NULL)
+    return -1;
 
-  if ((mem_fd = open("/dev/mem", O_RDWR|O_SYNC) ) < 0) {
-    printf("can't open /dev/mem \n");
-
-    retval = -1;
-    goto fail;
-  }
-
-  clk_map = (char*)mmap(
-      NULL,
-      MAP_SIZE,
-      PROT_READ|PROT_WRITE,
-      MAP_SHARED,
-      mem_fd,
-      CLKING_AXI_ADDR & ~MAP_MASK
-      );
-
-
-  if (clk_map == MAP_FAILED) {
-    perror("mmap error\n");
-
-    retval = -1;
-    goto fail;
-  }
-
-  clk_base = clk_map + (CLKING_AXI_ADDR & MAP_MASK);
-  volatile uint32_t* sr = (volatile uint32_t*)(clk_base + 0x4);
+  // volatile uint32_t* sr = (volatile uint32_t*)(clk_base + 0x4);
   volatile uint32_t* ccr0  = (volatile uint32_t*)(clk_base + 0x200);
   volatile uint32_t* ccr2  = (volatile uint32_t*)(clk_base + 0x208);
 
@@ -567,11 +530,5 @@ int clock_manager() {
   *ccr0 = 0x04004005;
   *ccr2 = 0x00040080;
 
-fail:
-  close(mem_fd);
-
-  if(clk_map != MAP_FAILED)
-    munmap(clk_map, MAP_SIZE);
-
-  return retval;
+  return 0;
 }

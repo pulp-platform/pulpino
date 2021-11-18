@@ -1,5 +1,10 @@
-CC     = arm-xilinx-linux-gnueabi-gcc
-CFLAGS =
+ifeq ($(VIVADO_VERSION),2018.3)
+	ARMCC?=arm-linux-gnueabihf-gcc
+else
+	ARMCC?=arm-xilinx-linux-gnueabi-gcc
+endif
+CC = $(ARMCC)
+CFLAGS = -Wall
 
 ifeq ($(BOARD),zybo)
 	CFLAGS += -DZYBO

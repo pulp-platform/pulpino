@@ -100,7 +100,7 @@ void check_uint32(testresult_t* result, const char* fail_msg, uint32_t actual, u
 }
 
 void perf_print_all(void) {
-#ifdef __riscv__
+#if defined(__riscv__) || defined(__riscv)
   printf("Perf CYCLES:   %d\n", cpu_perf_get(0));
   printf("Perf INSN:     %d\n", cpu_perf_get(1));
   printf("Perf CINSN:    %d\n", cpu_perf_get(10));
@@ -135,7 +135,7 @@ __attribute__((weak))
 void illegal_insn_handler_c(void)
 {
   unsigned int exception_address, insn;
-#ifdef __riscv__
+#if defined(__riscv__) || defined(__riscv)
   asm("csrr %0, 0x341" : "=r" (exception_address) : );
 #else
   exception_address = mfspr(SPR_EPCR_BASE);
