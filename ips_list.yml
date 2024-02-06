@@ -62,7 +62,7 @@ axi/core2axi:
   commit: pulpinov1
 
 adv_dbg_if:
-  commit: pulpinov1
+  commit: c440ae8 # pulpinov1 branch was deleted, this is the commit where pulpinov1 was merged.
 
 riscv:
   commit: pulpinov1
